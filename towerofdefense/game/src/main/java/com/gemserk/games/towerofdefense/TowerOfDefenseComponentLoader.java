@@ -1,26 +1,30 @@
-package com.gemserk.games.towerofdefense.gamestates;
+package com.gemserk.games.towerofdefense;
 
 import org.newdawn.slick.Input;
 
 import com.gemserk.componentsengine.components.ComponentManager;
 import com.gemserk.componentsengine.resources.ResourceLoader;
+import com.gemserk.games.towerofdefense.components.BarRendererComponent;
 import com.gemserk.games.towerofdefense.components.BulletCollisionComponent;
+import com.gemserk.games.towerofdefense.components.DefenseComponent;
+import com.gemserk.games.towerofdefense.components.DefenseTriggerComponent;
+import com.gemserk.games.towerofdefense.components.EntityRendererComponent;
+import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
 import com.gemserk.games.towerofdefense.components.FireComponent;
 import com.gemserk.games.towerofdefense.components.FollowEntityComponent;
 import com.gemserk.games.towerofdefense.components.FollowPathComponent;
+import com.gemserk.games.towerofdefense.components.FollowPathRenderComponent;
 import com.gemserk.games.towerofdefense.components.ImageRenderableComponent;
 import com.gemserk.games.towerofdefense.components.MovementComponent;
+import com.gemserk.games.towerofdefense.components.RadiusRendererComponent;
 import com.gemserk.games.towerofdefense.components.RemoveWhenNearComponent;
+import com.gemserk.games.towerofdefense.components.RestartSceneComponent;
+import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
 import com.gemserk.games.towerofdefense.components.editor.AddItemComponent;
-import com.gemserk.games.towerofdefense.renderers.BarRendererComponent;
-import com.gemserk.games.towerofdefense.renderers.DefenseComponent;
-import com.gemserk.games.towerofdefense.renderers.EntityRendererComponent;
-import com.gemserk.games.towerofdefense.renderers.FollowPathRenderComponent;
-import com.gemserk.games.towerofdefense.renderers.RadiusRendererComponent;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public class TodhComponentLoader implements ResourceLoader {
+public class TowerOfDefenseComponentLoader implements ResourceLoader {
 
 	@Inject
 	ComponentManager componentManager;

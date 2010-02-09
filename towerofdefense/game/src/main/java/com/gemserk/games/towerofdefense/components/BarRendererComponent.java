@@ -1,4 +1,4 @@
-package com.gemserk.games.towerofdefense.renderers;
+package com.gemserk.games.towerofdefense.components;
 
 import static com.gemserk.componentsengine.properties.Properties.property;
 
@@ -9,7 +9,6 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.utils.Container;
-import com.gemserk.games.towerofdefense.components.Component;
 
 public class BarRendererComponent extends Component {
 

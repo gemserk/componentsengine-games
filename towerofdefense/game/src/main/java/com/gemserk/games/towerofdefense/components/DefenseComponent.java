@@ -1,4 +1,4 @@
-package com.gemserk.games.towerofdefense.renderers;
+package com.gemserk.games.towerofdefense.components;
 
 import static com.gemserk.componentsengine.properties.Properties.property;
 
@@ -15,7 +15,6 @@ import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.utils.Container;
 import com.gemserk.componentsengine.world.World;
-import com.gemserk.games.towerofdefense.components.Component;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;

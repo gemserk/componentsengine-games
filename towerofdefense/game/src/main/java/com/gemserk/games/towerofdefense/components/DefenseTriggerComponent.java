@@ -1,13 +1,13 @@
-package com.gemserk.games.towerofdefense.gamestates;
+package com.gemserk.games.towerofdefense.components;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.properties.Properties;
 
-public final class DefenseTriggerComponent extends ReflectionComponent {
+public class DefenseTriggerComponent extends ReflectionComponent {
 
-	DefenseTriggerComponent(String name) {
+	public DefenseTriggerComponent(String name) {
 		super(name);
 	}
 

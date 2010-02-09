@@ -1,6 +1,5 @@
-package com.gemserk.games.towerofdefense.gamestates;
+package com.gemserk.games.towerofdefense;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.newdawn.slick.Input;
@@ -18,7 +17,7 @@ import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.world.World;
 import com.google.inject.Inject;
 
-public class TodhController implements InputListener, InputController {
+public class TowerOfDefenseController implements InputListener, InputController {
 
 	Entity selectedEntity = null;
 
@@ -42,7 +41,7 @@ public class TodhController implements InputListener, InputController {
 		this.world = world;
 	}
 
-	public TodhController() {
+	public TowerOfDefenseController() {
 
 	}
 
@@ -60,9 +59,6 @@ public class TodhController implements InputListener, InputController {
 		if (!editMode)
 			return;
 
-		if (onMousePressedHandleDragVertex(mousePosition))
-			return;
-
 		if (onMousePressedHandleDrag(mousePosition))
 			return;
 
@@ -77,49 +73,42 @@ public class TodhController implements InputListener, InputController {
 
 	}
 
-	private boolean onMousePressedHandleAddPath(int button,
-			final Vector2f mousePosition) {
+	private boolean onMousePressedHandleAddPath(int button, final Vector2f mousePosition) {
 
 		if (button != Input.MOUSE_LEFT_BUTTON)
 			return false;
 
-		world.handleMessage(new GenericMessage("addPathAction",
-				new PropertiesMapBuilder() {
-					{
-						property("value", mousePosition);
-						property("entityId", "hero");
-					}
-				}.build()));
+		world.handleMessage(new GenericMessage("addPathAction", new PropertiesMapBuilder() {
+			{
+				property("value", mousePosition);
+				property("entityId", "hero");
+			}
+		}.build()));
 
 		return true;
 	}
 
-	private boolean onMousePressedHandleAddItem(int button,
-			final Vector2f mousePosition) {
+	private boolean onMousePressedHandleAddItem(int button, final Vector2f mousePosition) {
 
 		if (button != Input.MOUSE_RIGHT_BUTTON)
 			return false;
 
-		game.handleMessage(new GenericMessage("addItemAction",
-				new PropertiesMapBuilder() {
-					{
-						property("value", mousePosition);
-					}
-				}.build()));
+		game.handleMessage(new GenericMessage("addItemAction", new PropertiesMapBuilder() {
+			{
+				property("value", mousePosition);
+			}
+		}.build()));
 
 		return true;
 	}
 
 	private boolean onMousePressedHandleResize(final Vector2f mousePosition) {
-		Collection<Entity> rangedEntities = world.getEntities(EntityPredicates
-				.withAllTags("ranged"));
+		Collection<Entity> rangedEntities = world.getEntities(EntityPredicates.withAllTags("ranged"));
 
 		for (Entity rangedEntity : rangedEntities) {
 
-			Vector2f center = (Vector2f) Properties.property("position")
-					.getValue(rangedEntity);
-			Float radius = (Float) Properties.property("radius").getValue(
-					rangedEntity);
+			Vector2f center = (Vector2f) Properties.property("position").getValue(rangedEntity);
+			Float radius = (Float) Properties.property("radius").getValue(rangedEntity);
 
 			if (Math.abs(mousePosition.distance(center) - radius) < 10f) {
 				selectedEntity = rangedEntity;
@@ -134,31 +123,13 @@ public class TodhController implements InputListener, InputController {
 
 	Vector2f selectedVertex = null;
 
-	private boolean onMousePressedHandleDragVertex(Vector2f mousePosition) {
-
-		Entity entity = world.getEntityById("hero");
-
-		ArrayList<Vector2f> line = (ArrayList<Vector2f>) Properties.property(
-				"followpath.path").getValue(entity);
-
-		for (Vector2f vertex : line) {
-			if (vertex.distance(mousePosition) < 5.0f) {
-				selectedVertex = vertex;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	private boolean onMousePressedHandleDrag(final Vector2f mousePosition) {
 		// Collection<Entity> dragableEntities =
 		// world.getEntities(Predicates.and(
 		// EntityPredicates.withAllTags("dragable"), EntityPredicates
 		// .isNear(mousePosition, 30.0f)));
 
-		Collection<Entity> dragableEntities = world
-				.getEntities(EntityPredicates.isNear(mousePosition, 20.0f));
+		Collection<Entity> dragableEntities = world.getEntities(EntityPredicates.isNear(mousePosition, 20.0f));
 
 		if (dragableEntities.isEmpty())
 			return false;
@@ -210,17 +181,14 @@ public class TodhController implements InputListener, InputController {
 		if (!changingRadius)
 			return false;
 
-		PropertyLocator<Vector2f> positionProperty = Properties
-				.property("position");
-		final float distance = mousePosition.distance(positionProperty
-				.getValue(selectedEntity));
+		PropertyLocator<Vector2f> positionProperty = Properties.property("position");
+		final float distance = mousePosition.distance(positionProperty.getValue(selectedEntity));
 		if (distance > 30.0f) {
-			selectedEntity.handleMessage(new GenericMessage("changeradius",
-					new PropertiesMapBuilder() {
-						{
-							property("value", distance);
-						}
-					}.build()));
+			selectedEntity.handleMessage(new GenericMessage("changeradius", new PropertiesMapBuilder() {
+				{
+					property("value", distance);
+				}
+			}.build()));
 
 			return true;
 
@@ -234,12 +202,11 @@ public class TodhController implements InputListener, InputController {
 		if (selectedEntity == null)
 			return false;
 
-		selectedEntity.handleMessage(new GenericMessage("move",
-				new PropertiesMapBuilder() {
-					{
-						property("value", mousePosition);
-					}
-				}.build()));
+		selectedEntity.handleMessage(new GenericMessage("move", new PropertiesMapBuilder() {
+			{
+				property("value", mousePosition);
+			}
+		}.build()));
 
 		return true;
 
@@ -269,12 +236,11 @@ public class TodhController implements InputListener, InputController {
 	public void keyPressed(int key, char c) {
 
 		if (key == Input.KEY_R) {
-			game.handleMessage(new GenericMessage("loadScene",
-					new PropertiesMapBuilder() {
-						{
-							property("scene", "todh.scenes.scene1");
-						}
-					}.build()));
+			game.handleMessage(new GenericMessage("loadScene", new PropertiesMapBuilder() {
+				{
+					property("scene", "todh.scenes.scene1");
+				}
+			}.build()));
 		}
 
 		if (key == Input.KEY_E) {

@@ -11,4 +11,12 @@
   <name>Resources</name>
   <description>Images, Animations, Sounds and Scripts.</description>
   
+  <dependencies>
+  	 <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>game</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  
 </project>
