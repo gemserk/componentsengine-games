@@ -9,107 +9,8 @@
 	<artifactId>game</artifactId>
 	<packaging>jar</packaging>
 
-	<properties>
-		<webstart.url>http://www.gemserk.com/prototipos/${project.artifactId}-webstart-latest/</webstart.url>
-
-		<finalName>${project.artifactId}-${project.version}</finalName>
-
-		<main.class>com.gemserk.games.towerofdefense.TowerOfDefenserGame</main.class>
-		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
-
-		<natives>${basedir}/target/natives/</natives>
-
-		<!-- Properties for keystore generation  -->
-		<gemserk.keystore>/tmp/keystore-gemserk</gemserk.keystore>
-		<gemserk.keypass>m2m2m2</gemserk.keypass>
-		<gemserk.storepass>m2m2m2</gemserk.storepass>
-
-		<gemserk.alias>gemserk.com</gemserk.alias>
-
-		<gemserk.keystore.delete>true</gemserk.keystore.delete>
-		<gemserk.keystore.gen>true</gemserk.keystore.gen>
-	</properties>
-
-	<build>
-
-		<plugins>
-
-			<plugin>
-				<groupId>com.googlecode.mavennatives</groupId>
-				<artifactId>maven-nativedependencies-plugin</artifactId>
-				<version>0.0.1</version>
-				<executions>
-					<execution>
-						<id>unpacknatives</id>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo.webstart</groupId>
-				<artifactId>webstart-maven-plugin</artifactId>
-				<version>1.0-alpha-2-gemserk</version>
-
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jnlp-inline</goal>
-						</goals>
-					</execution>
-				</executions>
-
-				<configuration>
-					<artifactWithMainClass>${finalName}</artifactWithMainClass>
-
-					<pack200>true</pack200>
-					<gzip>true</gzip>
-
-					<jnlp>
-						<j2seVersion>${compiler.version}+</j2seVersion>
-						<inputTemplateResourcePath>${project.basedir}/src/main/jnlp</inputTemplateResourcePath>
-						<inputTemplate>jnlptemplate.vm</inputTemplate>
-						<outputFile>${artifactId}.jnlp</outputFile>
-						<mainClass>${jnlp.applet.mainClass}</mainClass>
-					</jnlp>
-
-					<!-- SIGNING -->
-					<!--
-						defining this will automatically sign the jar and its dependencies
-					-->
-					<sign>
-
-						<keystore>${gemserk.keystore}</keystore>
-						<keypass>${gemserk.keypass}</keypass>
-						<storepass>${gemserk.storepass}</storepass>
-						<alias>${gemserk.alias}</alias>
-
-						<validity>3560</validity>
-						<dnameCn>Gemserk</dnameCn>
-						<dnameOu>Gemserk</dnameOu>
-						<dnameO>Gemserk</dnameO>
-						<dnameL>Montevideo</dnameL>
-						<dnameSt>Montevideo</dnameSt>
-						<dnameC>UY</dnameC>
-
-						<verify>true</verify>
-
-						<keystoreConfig>
-							<delete>${gemserk.keystore.delete}</delete>
-							<gen>${gemserk.keystore.gen}</gen>
-						</keystoreConfig>
-					</sign>
-
-					<verbose>false</verbose>
-
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
+	<name>Game</name>
+	<description>Logic of the game</description>
 
 	<dependencies>
 
@@ -119,20 +20,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.gemserk.componentsengine</groupId>
-			<artifactId>core</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>resources</artifactId>
+			<groupId>com.gemserk.componentsengine</groupId>
+			<artifactId>core</artifactId>
 		</dependency>
-
 	</dependencies>
 
 </project>

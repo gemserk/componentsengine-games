@@ -32,6 +32,7 @@
 	<modules>
 		<module>game</module>
 		<module>resources</module>
+		<module>main</module>
 	</modules>
 
 	<properties>
@@ -39,6 +40,25 @@
 	</properties>
 
 	<build>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.googlecode.mavennatives</groupId>
+					<artifactId>maven-nativedependencies-plugin</artifactId>
+					<version>0.0.1</version>
+					<executions>
+						<execution>
+							<id>unpacknatives</id>
+							<goals>
+								<goal>copy</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
 
 			<plugin>
@@ -98,6 +118,11 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>game</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!--
 				<dependency> <groupId>com.gemserk.utils</groupId>

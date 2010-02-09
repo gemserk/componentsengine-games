@@ -8,5 +8,7 @@
   
   <artifactId>resources</artifactId>
   <packaging>jar</packaging>
+  <name>Resources</name>
+  <description>Images, Animations, Sounds and Scripts.</description>
   
 </project>
