@@ -1,4 +1,4 @@
-package com.gemserk.games.todh.components;
+package com.gemserk.games.towerofdefense.components;
 
 import org.newdawn.slick.Graphics;
 

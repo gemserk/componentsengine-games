@@ -1,4 +1,4 @@
-package com.gemserk.games.todh.app;
+package com.gemserk.games.towerofdefense;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -24,14 +24,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-public class TodhGame extends BasicGame {
+public class TowerOfDefenseGame extends BasicGame {
 
-	protected static final Logger logger = LoggerFactory.getLogger(TodhGame.class);
+	protected static final Logger logger = LoggerFactory.getLogger(TowerOfDefenseGame.class);
 
 	public static void main(String[] arguments) {
 
 		try {
-			TodhGame game = new TodhGame();
+			TowerOfDefenseGame game = new TowerOfDefenseGame();
 
 			AppGameContainer app = new AppGameContainer(game);
 
@@ -50,8 +50,8 @@ public class TodhGame extends BasicGame {
 		}
 	}
 
-	public TodhGame() {
-		super("Hero of the TOD");
+	public TowerOfDefenseGame() {
+		super("Tower of defense");
 	}
 
 	private GameContainer gameContainer;
@@ -75,7 +75,7 @@ public class TodhGame extends BasicGame {
 		});
 
 		game = injector.getInstance(Game.class);
-		game.loadScene("todh.scenes.scene1");
+		game.loadScene("towerofdefense.scenes.scene1");
 	}
 
 	@Override

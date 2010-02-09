@@ -1,3 +1,5 @@
+package towerofdefense.entities;
+
 builder.entity("tower-${Math.random()}") {
 
 	tags("tower", "dragable", "ranged")

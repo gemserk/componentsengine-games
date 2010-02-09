@@ -1,10 +1,10 @@
-package com.gemserk.games.todh.gamestates;
+package com.gemserk.games.towerofdefense.gamestates;
 
 import com.gemserk.componentsengine.game.Game;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.games.todh.components.Component;
+import com.gemserk.games.towerofdefense.components.Component;
 import com.google.inject.Inject;
 
 public class RestartSceneComponent extends Component {

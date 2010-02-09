@@ -1,7 +1,9 @@
+package towerofdefense.entities;
+
 builder.entity("${entityName}") {
 
-	tags("hero")
-
+	tags("enemy")
+	
 	// component("renderer")
 	component("movement")
 	component("followpath")
@@ -26,7 +28,7 @@ builder.entity("${entityName}") {
 	component("followpath-renderer")
 	
 	component("imagerenderer")
-	property("image", image("todh.images.hero"))
+	property("image", image("todh.images.simpleenemy"))
 	
 	property("movement.friction", 0.5f)
 	property("movement.constSpeed", 0.5f)

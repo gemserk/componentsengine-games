@@ -1,10 +1,10 @@
-package com.gemserk.games.todh.gamestates;
+package com.gemserk.games.towerofdefense.gamestates;
 
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.games.todh.components.Component;
+import com.gemserk.games.towerofdefense.components.Component;
 
 public class FaceTargetComponent extends Component {
 

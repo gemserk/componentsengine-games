@@ -1,4 +1,4 @@
-package com.gemserk.games.todh.components;
+package com.gemserk.games.towerofdefense.components;
 
 import static com.gemserk.componentsengine.properties.Properties.property;
 

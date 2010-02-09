@@ -1,4 +1,4 @@
-package com.gemserk.games.todh.gamestates;
+package com.gemserk.games.towerofdefense.gamestates;
 
 import java.util.Collection;
 
@@ -8,7 +8,7 @@ import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.world.World;
-import com.gemserk.games.todh.components.Component;
+import com.gemserk.games.towerofdefense.components.Component;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 

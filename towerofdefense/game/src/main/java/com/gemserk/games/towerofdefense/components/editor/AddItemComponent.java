@@ -1,4 +1,4 @@
-package com.gemserk.games.todh.components.editor;
+package com.gemserk.games.towerofdefense.components.editor;
 
 import java.util.HashMap;
 
@@ -11,7 +11,7 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.gemserk.componentsengine.world.World;
-import com.gemserk.games.todh.components.Component;
+import com.gemserk.games.towerofdefense.components.Component;
 import com.google.inject.Inject;
 
 public class AddItemComponent extends Component {

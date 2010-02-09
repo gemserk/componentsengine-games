@@ -1,7 +1,9 @@
+package towerofdefense.entities;
+
 builder.entity("${entityName}") {
 
 	tags("bullet")
-
+	
 	component("renderer")
 	component("movement")
 	component("simplepath")
