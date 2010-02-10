@@ -8,8 +8,6 @@ builder.scene("todh.scenes.scene1") {
 	
 	input("playerInputMapping","towerofdefense.input.inputmapping")
 	
-	//	controller(com.gemserk.games.towerofdefense.TowerOfDefenseController.class)
-	
 	components(com.gemserk.games.towerofdefense.TowerOfDefenseComponentLoader.class);
 	
 	entity(template:"towerofdefense.entities.path", id:"path")	{
@@ -36,25 +34,32 @@ builder.scene("todh.scenes.scene1") {
 	entity(template:"towerofdefense.entities.spawner", id:"spawner")	{
 		position=utils.vector(-10,300)
 		template="towerofdefense.entities.critter"
-		spawnDelay=utils.interval(300,1500)
+		spawnDelay=utils.interval(1000,3500)
 		instanceParameters= [
-				maxVelocity:0.1f,
+				maxVelocity:0.06f,
 				pathEntityId:"path",
 				pathProperty:"path",
 				color:utils.color(1.0f, 0.5f, 0.5f, 0.95f)
 				]		
 	}
-
-	entity(template:"towerofdefense.entities.spawner", id:"spawner2")	{
-		position=utils.vector(-10,300)
-		template="towerofdefense.entities.critter"
-		spawnDelay=utils.interval(400,1600)
+	
+	entity(template:"towerofdefense.entities.tower", id:"tower1")	{
+		position=utils.vector(300,300)
+		direction=utils.vector(-1,0)
+		radius=150f
+		
+		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
+		fillColor=utils.color(0.0f, 0.0f, 0.0f, 0.2f)
+		color=utils.color(0.0f, 0.2f, 0.0f, 1.0f)
+		
+		template="towerofdefense.entities.bullet"
+		reloadTime=700				
 		instanceParameters= [
-				maxVelocity:0.1f,
-				pathEntityId:"path",
-				pathProperty:"path",
-				color:utils.color(0.5f, 1.0f, 0.5f, 0.95f)
+				damage:0.0f,
+				radius:0.0f,
+				maxVelocity:0.5f,
+				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
 				]		
 	}
-
+	
 }

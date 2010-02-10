@@ -1,22 +1,20 @@
 package towerofdefense.entities;
 
-builder.entity("${entityName}") {
+builder.entity("bullet-${Math.random()}") {
 
-	tags("bullet")
+	tags("bullet", "nofriction")
 	
-	component("renderer")
-	component("movement")
-	component("simplepath")
-	
-	property("color", parameters.color)
-	property("size", 5.0f)
-
-	property("movement.friction", 0.0f);
-	property("movement.constSpeed", 1.0f);
-	property("movement.turnRate", 0.1f);
-	property("movement.speed", 0.0f);
-
 	property("position", parameters.position);
-	property("targetEntity", parameters.targetEntity);
+	propertyRef("direction", "movement.velocity");
 	property("damage", parameters.damage);
+	property("radius", parameters.damageRadius);
+
+	component("movement")
+		property("movement.velocity", parameters.direction.scale(parameters.maxVelocity))
+		property("movement.maxVelocity", parameters.maxVelocity)
+		propertyRef("movement.position", "position")
+	
+	component("imagerenderer")
+		property("image", image("towerofdefense.images.bullet"))
+		property("color", parameters.color)
 }

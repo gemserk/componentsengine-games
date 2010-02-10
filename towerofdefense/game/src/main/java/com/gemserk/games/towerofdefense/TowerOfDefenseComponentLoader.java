@@ -21,8 +21,11 @@ import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.resources.ResourceLoader;
 import com.gemserk.componentsengine.world.World;
+import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
 import com.gemserk.games.towerofdefense.components.RemoveWhenNearComponent;
+import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
 import com.gemserk.games.towerofdefense.components.SpawnerComponent;
+import com.gemserk.games.towerofdefense.components.WeaponComponent;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -140,6 +143,9 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 				new ImageRenderableComponent("imagerenderer"),//
 				new RemoveWhenNearComponent("remover"),//
 				new SpawnerComponent("creator"),//
+				new FaceTargetComponent("faceTarget"),//
+				new SelectTargetWithinRangeComponent("selectTarget"),//
+				new WeaponComponent("shooter")
 				};
 
 		for (com.gemserk.componentsengine.components.Component component : components) {

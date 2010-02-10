@@ -2,42 +2,40 @@ package towerofdefense.entities;
 
 builder.entity("tower-${Math.random()}") {
 
-	tags("tower", "dragable", "ranged")
-
-	component("radiusrenderer")
-	component("shoot")
-	component("imagerenderer")
-	
-	component("faceTargetComponent")
-	propertyRef("faceTargetComponent.targetEntity", "selectTargetWithinRangeComponent.targetEntity")	
-	
-	component("selectTargetWithinRangeComponent")	
-	property("selectTargetWithinRangeComponent.targetTag", "hero")
-	property("selectTargetWithinRangeComponent.targetEntity", null)
-	propertyRef("selectTargetWithinRangeComponent.visibleRadius", "radius")
-	
-	property("image", image("todh.images.tower1"))
-	
-	property("color", parameters.color)
+	tags("tower")
 
 	property("position", parameters.position)
 	property("direction", parameters.direction)
-	property("size", parameters.size)
 	property("radius", parameters.radius)
-
-	property("laser.enabled", false)
-	property("reloadTime", parameters.reloadTime)
-	property("template", parameters.template)
-	property("damage", parameters.damage)
-
-	property("targetId", "hero")
-
-	genericComponent(id:"changePositionOnEvent", messageId:"move"){ message ->				
-		message.entity.getProperty("position").set(message.getProperty("value").get())		
-	}
-
-	genericComponent(id:"changeRadiusOnEvent", messageId:"changeradius"){ message ->
-		message.entity.getProperty("radius").set(message.getProperty("value").get())
-	}
+	
+	property("targetEntity", null)
+	
+	component("circlerenderer")
+		property("circle.lineColor", parameters.lineColor)
+		property("circle.fillColor", parameters.fillColor)
+		propertyRef("circle.position", "position")
+		propertyRef("circle.radius", "radius")
+		
+	component("faceTarget")
+		propertyRef("faceTarget.position", "position")
+		propertyRef("faceTarget.direction", "direction")
+		propertyRef("faceTarget.targetEntity", "targetEntity")
+	
+	component("selectTarget")	
+		property("selectTarget.targetTag", "critter")
+		propertyRef("selectTarget.targetEntity", "targetEntity")
+		propertyRef("selectTarget.radius", "radius")
+		propertyRef("selectTarget.position", "position")
+	
+	component("imagerenderer")
+		property("image", image("towerofdefense.images.tower1"))
+		property("color", parameters.color)
+		
+	component("shooter")
+		property("shooter.template", parameters.template)
+		property("shooter.reloadTime", parameters.reloadTime)
+		property("shooter.instanceParameters", parameters.instanceParameters)
+		propertyRef("shooter.position", "position")
+		propertyRef("shooter.targetEntity", "targetEntity")
 	
 }
