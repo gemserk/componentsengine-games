@@ -13,6 +13,9 @@ builder.entity {
 		property("circle.fillColor", parameters.fillColor)
 		propertyRef("circle.position", "position")
 		propertyRef("circle.radius", "radius")
-		propertyRef("circle.radius", "radius")
+		
+	component("remover")
+		propertyRef("remover.position", "position")
+		propertyRef("remover.range", "radius")
 
 }

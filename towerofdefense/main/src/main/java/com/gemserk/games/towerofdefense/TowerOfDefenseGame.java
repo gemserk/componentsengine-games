@@ -40,7 +40,7 @@ public class TowerOfDefenseGame extends BasicGame {
 
 			app.setDisplayMode(800, 600, false);
 			app.setAlwaysRender(true);
-			app.setMinimumLogicUpdateInterval(10);
+			//app.setMinimumLogicUpdateInterval(10);
 			app.setShowFPS(true);
 
 			app.setTargetFrameRate(60);
