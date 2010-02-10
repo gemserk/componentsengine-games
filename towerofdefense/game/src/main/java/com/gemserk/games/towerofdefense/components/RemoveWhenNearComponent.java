@@ -8,7 +8,7 @@ import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.world.World;
 
-public class RemoveWhenNearComponent extends Component {
+public class RemoveWhenNearComponent extends TodComponent {
 
 	PropertyLocator<Vector2f> positionProperty = property("position");
 

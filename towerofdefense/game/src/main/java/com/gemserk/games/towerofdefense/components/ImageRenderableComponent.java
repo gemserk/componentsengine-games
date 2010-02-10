@@ -13,7 +13,7 @@ import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
-public class ImageRenderableComponent extends Component {
+public class ImageRenderableComponent extends TodComponent {
 
 	PropertyLocator<Image> imageLocator = property("image");
 

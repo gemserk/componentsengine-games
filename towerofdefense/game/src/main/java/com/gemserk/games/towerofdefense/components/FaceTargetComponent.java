@@ -5,7 +5,7 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.Properties;
 
-public class FaceTargetComponent extends Component {
+public class FaceTargetComponent extends TodComponent {
 
 	public FaceTargetComponent(String name) {
 		super(name);

@@ -9,7 +9,7 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
-public class EntityRendererComponent extends Component {
+public class EntityRendererComponent extends TodComponent {
 
 	PropertyLocator<Vector2f> positionProperty = property("position");
 

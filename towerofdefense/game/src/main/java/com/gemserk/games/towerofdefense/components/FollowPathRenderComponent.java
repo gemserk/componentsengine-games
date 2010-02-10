@@ -11,7 +11,7 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
-public class FollowPathRenderComponent extends Component {
+public class FollowPathRenderComponent extends TodComponent {
 
 	PropertyLocator<ArrayList<Vector2f>> pathProperty = property("followpath.path");
 

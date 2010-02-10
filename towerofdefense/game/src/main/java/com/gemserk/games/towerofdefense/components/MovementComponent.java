@@ -7,7 +7,7 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
-public class MovementComponent extends Component {
+public class MovementComponent extends TodComponent {
 
 	PropertyLocator<Float> frictionProperty = property("movement.friction");
 

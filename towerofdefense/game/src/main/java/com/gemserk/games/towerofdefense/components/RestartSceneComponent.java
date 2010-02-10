@@ -6,7 +6,7 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.properties.Properties;
 import com.google.inject.Inject;
 
-public class RestartSceneComponent extends Component {
+public class RestartSceneComponent extends TodComponent {
 	@Inject
 	Game game;
 

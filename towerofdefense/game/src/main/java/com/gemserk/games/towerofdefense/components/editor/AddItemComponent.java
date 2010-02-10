@@ -11,10 +11,10 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.gemserk.componentsengine.world.World;
-import com.gemserk.games.towerofdefense.components.Component;
+import com.gemserk.games.towerofdefense.components.TodComponent;
 import com.google.inject.Inject;
 
-public class AddItemComponent extends Component {
+public class AddItemComponent extends TodComponent {
 
 	World world;
 

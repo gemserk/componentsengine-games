@@ -19,7 +19,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
-public class DefenseComponent extends Component {
+public class DefenseComponent extends TodComponent {
 
 	PropertyLocator<Vector2f> positionProperty;
 

@@ -11,7 +11,7 @@ import com.gemserk.componentsengine.world.World;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
-public class SelectTargetWithinRangeComponent extends Component {
+public class SelectTargetWithinRangeComponent extends TodComponent {
 
 	@Inject
 	World world;

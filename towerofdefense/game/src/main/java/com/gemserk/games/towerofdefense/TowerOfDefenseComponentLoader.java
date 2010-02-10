@@ -1,30 +1,69 @@
 package com.gemserk.games.towerofdefense;
 
-import org.newdawn.slick.Input;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.geom.Vector2f;
+
+import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
+import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.components.ComponentManager;
+import com.gemserk.componentsengine.components.ReflectionComponent;
+import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
+import com.gemserk.componentsengine.properties.Properties;
+import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.resources.ResourceLoader;
-import com.gemserk.games.towerofdefense.components.BarRendererComponent;
-import com.gemserk.games.towerofdefense.components.BulletCollisionComponent;
-import com.gemserk.games.towerofdefense.components.DefenseComponent;
-import com.gemserk.games.towerofdefense.components.DefenseTriggerComponent;
-import com.gemserk.games.towerofdefense.components.EntityRendererComponent;
-import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
-import com.gemserk.games.towerofdefense.components.FireComponent;
-import com.gemserk.games.towerofdefense.components.FollowEntityComponent;
-import com.gemserk.games.towerofdefense.components.FollowPathComponent;
-import com.gemserk.games.towerofdefense.components.FollowPathRenderComponent;
-import com.gemserk.games.towerofdefense.components.ImageRenderableComponent;
-import com.gemserk.games.towerofdefense.components.MovementComponent;
-import com.gemserk.games.towerofdefense.components.RadiusRendererComponent;
-import com.gemserk.games.towerofdefense.components.RemoveWhenNearComponent;
-import com.gemserk.games.towerofdefense.components.RestartSceneComponent;
-import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
-import com.gemserk.games.towerofdefense.components.editor.AddItemComponent;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 public class TowerOfDefenseComponentLoader implements ResourceLoader {
+
+	public static class PathRendererComponent extends ReflectionComponent {
+
+		PropertyLocator<Color> lineColorProperty = Properties.property("path.lineColor");
+
+		PropertyLocator<List<Vector2f>> pathProperty = Properties.property("path.path");
+
+		public PathRendererComponent(String id) {
+			super(id);
+		}
+
+		public void handleMessage(SlickRenderMessage slickRenderMessage) {
+			Graphics g = slickRenderMessage.getGraphics();
+			Entity entity = slickRenderMessage.getEntity();
+
+			List<Vector2f> path = pathProperty.getValue(entity);
+			Color lineColor = lineColorProperty.getValue(entity, Color.white);
+
+			if (path.size() == 0)
+				return;
+
+			g.pushTransform();
+			{
+				g.setColor(lineColor);
+				for (int i = 0; i < path.size(); i++) {
+					Vector2f source = path.get(i);
+					int j = i + 1;
+
+					if (j >= path.size())
+						continue;
+
+					Vector2f target = path.get(j);
+
+					float lineWidth = g.getLineWidth();
+					g.setLineWidth(3.0f);
+					g.drawLine(source.x, source.y, target.x, target.y);
+					g.setLineWidth(lineWidth);
+				}
+			}
+			g.popTransform();
+		}
+	}
 
 	@Inject
 	ComponentManager componentManager;
@@ -38,34 +77,7 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 	@Override
 	public void load() {
 
-		com.gemserk.componentsengine.components.Component[] components = {
-
-				// [rendering]
-				new EntityRendererComponent("renderer"),
-				new DefenseComponent("defense1"),
-				new DefenseComponent("defense2"),
-				new BarRendererComponent("containerrenderer"),
-				new FollowPathRenderComponent("followpath-renderer"),
-				new RadiusRendererComponent("radiusrenderer"),
-				new ImageRenderableComponent("imagerenderer"),
-
-				// [game_mechanics]
-				new MovementComponent("movement"),
-				new FollowPathComponent("followpath"),
-				new FireComponent("shoot"),
-				new FollowEntityComponent("simplepath"),
-				new RemoveWhenNearComponent("removewhennear"),
-				new BulletCollisionComponent("bulletcollision"),
-
-				new SelectTargetWithinRangeComponent(
-						"selectTargetWithinRangeComponent"),
-				new FaceTargetComponent("faceTargetComponent"),
-				new DefenseTriggerComponent("defense.trigger"),
-
-				// [editor]
-				new AddItemComponent("editor.addItem"),
-
-				new RestartSceneComponent("restartComponent") };
+		Component[] components = { new PathRendererComponent("pathrenderer"), new CircleRenderableComponent("circlerenderer") };
 
 		for (com.gemserk.componentsengine.components.Component component : components) {
 			injector.injectMembers(component);
@@ -74,5 +86,4 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 		componentManager.addComponents(components);
 
 	}
-
 }

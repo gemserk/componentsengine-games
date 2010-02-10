@@ -37,6 +37,7 @@
 
 	<properties>
 		<compiler.version>1.6</compiler.version>
+		<componentsengine.version>0.0.1-SNAPSHOT</componentsengine.version>
 	</properties>
 
 	<build>
@@ -102,8 +103,13 @@
 			<dependency>
 				<groupId>com.gemserk.componentsengine</groupId>
 				<artifactId>core</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-				<type>jar</type>
+				<version>${componentsengine.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.gemserk.componentsengine</groupId>
+				<artifactId>commons</artifactId>
+				<version>${componentsengine.version}</version>
 			</dependency>
 
 			<dependency>

@@ -10,7 +10,7 @@ import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.utils.Container;
 
-public class BarRendererComponent extends Component {
+public class BarRendererComponent extends TodComponent {
 
 	PropertyLocator<Vector2f> positionProperty;
 

@@ -2,6 +2,7 @@ package com.gemserk.games.towerofdefense;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -81,6 +82,8 @@ public class TowerOfDefenseGame extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 
+		g.setBackground(new Color(0.8f, 0.8f, 1.0f));
+		
 		game.handleMessage(new SlickRenderMessage(g));
 
 	}

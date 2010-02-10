@@ -7,9 +7,9 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 
-public class Component extends com.gemserk.componentsengine.components.Component {
+public class TodComponent extends com.gemserk.componentsengine.components.Component {
 
-	public Component(String id) {
+	public TodComponent(String id) {
 		super(id);
 	}
 

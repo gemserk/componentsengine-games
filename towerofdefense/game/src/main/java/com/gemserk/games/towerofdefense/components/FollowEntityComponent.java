@@ -7,7 +7,7 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
-public class FollowEntityComponent extends Component {
+public class FollowEntityComponent extends TodComponent {
 
 	PropertyLocator<Vector2f> directionProperty = property("movement.direction");
 

@@ -17,7 +17,7 @@ import com.gemserk.componentsengine.world.World;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
-public class FireComponent extends Component {
+public class FireComponent extends TodComponent {
 
 	PropertyLocator<Vector2f> positionProperty = property("position");
 
