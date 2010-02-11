@@ -9,6 +9,8 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.RemoveEntityMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.PropertyLocator;
@@ -20,6 +22,9 @@ public class RemoveWhenNearComponent extends ReflectionComponent {
 
 	@Inject
 	World world;
+	
+	@Inject
+	MessageQueue messageQueue;
 
 	PropertyLocator<Vector2f> positionProperty;
 
@@ -41,7 +46,7 @@ public class RemoveWhenNearComponent extends ReflectionComponent {
 		Collection<Entity> entities = world.getEntities(Predicates.and(EntityPredicates.withAllTags("critter"), EntityPredicates.isNear(position, range)));
 
 		for (Entity candidate : entities) {
-			world.queueRemoveEntity(candidate);
+			messageQueue.enqueue(new RemoveEntityMessage(candidate));
 		}
 	}
 

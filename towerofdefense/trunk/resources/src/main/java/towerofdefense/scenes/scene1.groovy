@@ -13,7 +13,7 @@ builder.scene("todh.scenes.scene1") {
 	entity(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
 		utils.vector(0, 300), 		      
-		utils.vector(200, 300), 		      
+		utils.vector(100, 300), 
 		utils.vector(200, 400), 		      
 		utils.vector(400, 400), 		      
 		utils.vector(400, 300), 		      
@@ -34,7 +34,7 @@ builder.scene("todh.scenes.scene1") {
 	entity(template:"towerofdefense.entities.spawner", id:"spawner")	{
 		position=utils.vector(-10,300)
 		template="towerofdefense.entities.critter"
-		spawnDelay=utils.interval(1000,3500)
+		spawnDelay=utils.interval(400,1000)
 		instanceParameters= [
 				maxVelocity:0.06f,
 				pathEntityId:"path",
@@ -53,7 +53,7 @@ builder.scene("todh.scenes.scene1") {
 		color=utils.color(0.0f, 0.2f, 0.0f, 1.0f)
 		
 		template="towerofdefense.entities.bullet"
-		reloadTime=700				
+		reloadTime=1000				
 		instanceParameters= [
 				damage:0.0f,
 				radius:10.0f,

@@ -1,5 +1,7 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.messages.RemoveEntityMessage 
+
 builder.entity("critter-${Math.random()}") {
 	
 	tags("critter", "nofriction")
@@ -21,5 +23,13 @@ builder.entity("critter-${Math.random()}") {
 	component("imagerenderer")
 		property("image", image("towerofdefense.images.critter1"))
 		property("color", parameters.color)
+		
+		
+	genericComponent(id:"hithandler", messageId:"hit"){ message ->
+		def entity = message.entity		
+		if (message.getProperty("targets").get().contains(entity))
+			messageQueue.enqueue(new RemoveEntityMessage(entity))
+			
+	}
 	
 }

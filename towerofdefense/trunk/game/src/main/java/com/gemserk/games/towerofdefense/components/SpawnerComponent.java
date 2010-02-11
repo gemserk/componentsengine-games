@@ -1,6 +1,7 @@
 package com.gemserk.games.towerofdefense.components;
 
-import java.util.HashMap;
+import static com.gemserk.componentsengine.properties.Properties.property;
+
 import java.util.Map;
 import java.util.Random;
 
@@ -8,16 +9,14 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.messages.AddEntityMessage;
 import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.gemserk.componentsengine.utils.Interval;
-import com.gemserk.componentsengine.world.World;
 import com.google.inject.Inject;
-
-import static com.gemserk.componentsengine.properties.Properties.*;
 
 public class SpawnerComponent extends Component {
 
@@ -31,8 +30,8 @@ public class SpawnerComponent extends Component {
 	
 	PropertyLocator<Map<String,Object>> instanceParametersProperty;
 
-	private World world;
-
+	@Inject MessageQueue messageQueue;
+	
 	private TemplateProvider templateProvider;
 
 	private final Random random = new Random();
@@ -45,11 +44,6 @@ public class SpawnerComponent extends Component {
 		spawnDelayProperty = property(id, "spawnDelay");
 		templateNameProperty = property(id, "template");
 		instanceParametersProperty= property(id, "instanceParameters");
-	}
-
-	@Inject
-	public void setWorld(World world) {
-		this.world = world;
 	}
 
 	@Inject
@@ -71,7 +65,7 @@ public class SpawnerComponent extends Component {
 			
 			String templateName = templateNameProperty.getValue(entity);
 			Entity newEntity = templateProvider.getTemplate(templateName).instantiate("", instanceProperties);
-			world.queueAddEntity(newEntity);
+			messageQueue.enqueue(new AddEntityMessage(newEntity));
 
 			Interval interval = this.spawnDelayProperty.getValue(entity);
 			Integer delay = interval.getMin() + random.nextInt(interval.getLength() + 1);

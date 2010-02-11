@@ -2,31 +2,25 @@ package com.gemserk.games.towerofdefense.components;
 
 import static com.gemserk.componentsengine.properties.Properties.property;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.messages.AddEntityMessage;
+import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.templates.EntityTemplate;
 import com.gemserk.componentsengine.templates.TemplateProvider;
-import com.gemserk.componentsengine.world.World;
-import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
 public class WeaponComponent extends ReflectionComponent {
 
 	PropertyLocator<Entity> targetEntityProperty;
 
-	World world;
 
 	TemplateProvider templateProvider;
 
@@ -40,11 +34,12 @@ public class WeaponComponent extends ReflectionComponent {
 
 	PropertyLocator<Map<String, Object>> instanceParametersProperty;
 
-	@Inject
-	public void setWorld(World world) {
-		this.world = world;
+	MessageQueue messageQueue;
+	@Inject 
+	public void setMessageQueue(MessageQueue messageQueue) {
+		this.messageQueue = messageQueue;
 	}
-
+	
 	@Inject
 	public void setTemplateProvider(TemplateProvider templateProvider) {
 		this.templateProvider = templateProvider;
@@ -94,7 +89,7 @@ public class WeaponComponent extends ReflectionComponent {
 		
 		Entity bullet = bulletTemplate.instantiate("", instanceParameters);
 		
-		world.queueAddEntity(bullet);
+		messageQueue.enqueue(new AddEntityMessage(bullet));
 		
 		currentReloadTime = reloadTimeProperty.getValue(entity);
 		currentReloadTimeProperty.setValue(entity, currentReloadTime);

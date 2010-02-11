@@ -1,5 +1,6 @@
 package com.gemserk.games.towerofdefense;
 
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -10,9 +11,12 @@ import org.newdawn.slick.SlickException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.components.MessageHandler;
 import com.gemserk.componentsengine.game.Game;
 import com.gemserk.componentsengine.input.MonitorFactory;
 import com.gemserk.componentsengine.input.SlickMonitorFactory;
+import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.MessageQueueImpl;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.scene.GroovySceneProvider;
@@ -56,6 +60,7 @@ public class TowerOfDefenseGame extends BasicGame {
 	}
 
 	private GameContainer gameContainer;
+	private MessageQueue messageQueue;
 
 	@Override
 	public void init(final GameContainer container) throws SlickException {
@@ -72,30 +77,34 @@ public class TowerOfDefenseGame extends BasicGame {
 
 				bind(GroovyScriptProvider.class).toInstance(new CachedScriptProvider(new GroovyScriptProviderImpl()));
 				bind(MonitorFactory.class).to(SlickMonitorFactory.class).in(Singleton.class);
+				bind(MessageHandler.class).to(Game.class).in(Singleton.class);
+				bind(MessageQueue.class).to(MessageQueueImpl.class).in(Singleton.class);
 			}
 		});
-
+		messageQueue = injector.getInstance(MessageQueue.class);
 		game = injector.getInstance(Game.class);
 		game.loadScene("towerofdefense.scenes.scene1");
 	}
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
-
 		g.setBackground(new Color(0.8f, 0.8f, 1.0f));
 		
-		game.handleMessage(new SlickRenderMessage(g));
-
+		SlickRenderMessage message = new SlickRenderMessage(g);
+		messageQueue.enqueue(message);
+		messageQueue.processMessages();
 	}
 
 	private Game game;
 
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException {
-
-		game.handleMessage(new UpdateMessage(delta));
+		
+		UpdateMessage message = new UpdateMessage(delta);
+		messageQueue.enqueue(message);
+		messageQueue.processMessages();
 	}
-
+	
 	@Override
 	public void keyPressed(int key, char c) {
 

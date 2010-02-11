@@ -1,5 +1,5 @@
 package towerofdefense.entities;
-
+import com.gemserk.componentsengine.messages.RemoveEntityMessage;
 builder.entity("bullet-${Math.random()}") {
 
 	tags("bullet", "nofriction")
@@ -24,9 +24,10 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("bullethit.radius", "radius")
 		
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
-//		def entity = message.entity		
-//		if (message.getProperty("source").get() == entity)
-//			world.queueRemoveEntity(entity)
+		def entity = message.entity		
+		if (message.getProperty("source").get() == entity)
+			messageQueue.enqueue(new RemoveEntityMessage(entity))
+			
 	}
 		
 }

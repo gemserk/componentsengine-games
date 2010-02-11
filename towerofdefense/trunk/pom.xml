@@ -37,7 +37,7 @@
 
 	<properties>
 		<compiler.version>1.6</compiler.version>
-		<componentsengine.version>0.0.1-SNAPSHOT</componentsengine.version>
+		<componentsengine.version>0.0.2-SNAPSHOT</componentsengine.version>
 	</properties>
 
 	<build>
