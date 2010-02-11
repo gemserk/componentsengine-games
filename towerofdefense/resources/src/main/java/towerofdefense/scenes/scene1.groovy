@@ -44,9 +44,9 @@ builder.scene("todh.scenes.scene1") {
 	}
 	
 	entity(template:"towerofdefense.entities.tower", id:"tower1")	{
-		position=utils.vector(300,300)
+		position=utils.vector(350,350)
 		direction=utils.vector(-1,0)
-		radius=150f
+		radius=100f
 		
 		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
 		fillColor=utils.color(0.0f, 0.0f, 0.0f, 0.2f)
@@ -56,7 +56,7 @@ builder.scene("todh.scenes.scene1") {
 		reloadTime=700				
 		instanceParameters= [
 				damage:0.0f,
-				radius:0.0f,
+				radius:10.0f,
 				maxVelocity:0.5f,
 				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
 				]		

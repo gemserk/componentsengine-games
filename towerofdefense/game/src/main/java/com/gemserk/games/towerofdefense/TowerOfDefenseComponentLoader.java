@@ -1,9 +1,10 @@
 package com.gemserk.games.towerofdefense;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -14,10 +15,12 @@ import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.components.ComponentManager;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.messages.Message;
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
+import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.resources.ResourceLoader;
 import com.gemserk.componentsengine.world.World;
@@ -26,104 +29,12 @@ import com.gemserk.games.towerofdefense.components.RemoveWhenNearComponent;
 import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
 import com.gemserk.games.towerofdefense.components.SpawnerComponent;
 import com.gemserk.games.towerofdefense.components.WeaponComponent;
+import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 public class TowerOfDefenseComponentLoader implements ResourceLoader {
 
-	public static class PathRendererComponent extends ReflectionComponent {
-
-		PropertyLocator<Color> lineColorProperty = Properties.property("path.lineColor");
-
-		PropertyLocator<Path> pathProperty = Properties.property("path.path");
-
-		public PathRendererComponent(String id) {
-			super(id);
-		}
-
-		public void handleMessage(SlickRenderMessage slickRenderMessage) {
-			Graphics g = slickRenderMessage.getGraphics();
-			Entity entity = slickRenderMessage.getEntity();
-
-			List<Vector2f> points = pathProperty.getValue(entity).getPoints();
-			Color lineColor = lineColorProperty.getValue(entity, Color.white);
-
-			if (points.size() == 0)
-				return;
-
-			g.pushTransform();
-			{
-				g.setColor(lineColor);
-				for (int i = 0; i < points.size(); i++) {
-					Vector2f source = points.get(i);
-					int j = i + 1;
-
-					if (j >= points.size())
-						continue;
-
-					Vector2f target = points.get(j);
-
-					float lineWidth = g.getLineWidth();
-					g.setLineWidth(3.0f);
-					g.drawLine(source.x, source.y, target.x, target.y);
-					g.setLineWidth(lineWidth);
-				}
-			}
-			g.popTransform();
-		}
-	}
-
-	public static class FollowPathComponent extends ReflectionComponent {
-
-		@Inject
-		World world;
-
-		PropertyLocator<String> pathEntityIdProperty = Properties.property("followpath", "pathEntityId");
-
-		PropertyLocator<String> pathProperty = Properties.property("followpath", "path");
-
-		PropertyLocator<Integer> pathIndexProperty = Properties.property("followpath", "pathindex");
-
-		PropertyLocator<Vector2f> forceProperty = Properties.property("followpath", "force");
-
-		PropertyLocator<Vector2f> positionProperty = Properties.property("followpath", "position");
-
-		public FollowPathComponent(String id) {
-			super(id);
-		}
-
-		public void handleMessage(UpdateMessage updateMessage) {
-			Entity entity = updateMessage.getEntity();
-
-			Path path = getPath(entity);
-
-			Vector2f position = positionProperty.getValue(entity);
-			Integer pathIndex = pathIndexProperty.getValue(entity);
-
-			int nextPathIndex = path.getNextIndex(position, pathIndex);
-			pathIndexProperty.setValue(entity, nextPathIndex);
-
-			Vector2f nextPosition = path.getPoint(nextPathIndex);
-
-			Vector2f direction = nextPosition.copy().sub(position).normalise();
-			Vector2f currentForce = forceProperty.getValue(entity).copy();
-
-			currentForce.add(direction.scale(1000f));
-
-			forceProperty.setValue(entity, currentForce);
-		}
-
-		private Path getPath(Entity entity) {
-			String pathEntityId = pathEntityIdProperty.getValue(entity);
-			Entity pathEntity = world.getEntityById(pathEntityId);
-
-			String pathPropertyString = pathProperty.getValue(entity);
-			Path path = (Path) Properties.property(pathPropertyString).getValue(pathEntity);
-			return path;
-		}
-
-	}
-	
 	@Inject
 	ComponentManager componentManager;
 
@@ -132,6 +43,67 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 
 	@Inject
 	Input input;
+
+	public static class MessageBuilder {
+
+		// TODO: message builder from closure
+
+		public Message build(Map<String, Object> map) {
+			return new GenericMessage("hit", new PropertiesMapBuilder().addProperties(map).build());
+		}
+
+	}
+
+	public static class HitComponent extends ReflectionComponent {
+
+		private PropertyLocator<Vector2f> positionProperty;
+
+		private PropertyLocator<Float> radiusProperty;
+
+		// private PropertyLocator<MessageBuilder> messageBuilderProperty;
+
+		private PropertyLocator<String> targetTagProperty;
+
+		@Inject
+		World world;
+
+		public HitComponent(String id) {
+			super(id);
+
+			positionProperty = Properties.property(id, "position");
+			radiusProperty = Properties.property(id, "radius");
+			// messageBuilderProperty = Properties.property(id, "messageBuilder");
+			targetTagProperty = Properties.property(id, "targetTag");
+
+		}
+
+		public void handleMessage(UpdateMessage message) {
+
+			final Entity entity = message.getEntity();
+
+			Vector2f position = positionProperty.getValue(entity);
+			Float radius = radiusProperty.getValue(entity);
+			String targetTags = targetTagProperty.getValue(entity);
+
+			final Collection<Entity> candidates = world.getEntities(Predicates.and(EntityPredicates.withAllTags(targetTags), EntityPredicates.isNear(position, radius)));
+
+			if (candidates.size() == 0)
+				return;
+
+			// MessageBuilder messageBuilder = messageBuilderProperty.getValue(entity);
+			MessageBuilder messageBuilder = new MessageBuilder();
+
+			Message hitMessage = messageBuilder.build(new HashMap<String, Object>() {
+				{
+					put("source", entity);
+					put("targets", new ArrayList<Entity>(candidates));
+				}
+			});
+
+			world.handleMessage(hitMessage);
+		}
+
+	}
 
 	@Override
 	public void load() {
@@ -145,8 +117,8 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 				new SpawnerComponent("creator"),//
 				new FaceTargetComponent("faceTarget"),//
 				new SelectTargetWithinRangeComponent("selectTarget"),//
-				new WeaponComponent("shooter")
-				};
+				new WeaponComponent("shooter"),//
+				new HitComponent("bullethit") };
 
 		for (com.gemserk.componentsengine.components.Component component : components) {
 			injector.injectMembers(component);
