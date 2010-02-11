@@ -21,7 +21,7 @@
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>towerofdefense-${project.version}</finalName>
 
-		<appletGameParameter>com.gemserk.games.towerofdefense.TowerOfDefenserGame</appletGameParameter>
+		<appletGameParameter>com.gemserk.games.towerofdefense.TowerOfDefenseGame</appletGameParameter>
 		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
 
 		<natives>${basedir}/target/natives/</natives>
