@@ -11,6 +11,17 @@
   <name>Resources</name>
   <description>Images, Animations, Sounds and Scripts.</description>
   
+  <build>
+  	<resources>
+  		<resource>
+  			<directory>src/main/java</directory>
+  		</resource>
+  		<resource>
+  			<directory>src/main/resources</directory>
+  		</resource>
+  	</resources>
+  </build>
+  
   <dependencies>
   	 <dependency>
       <groupId>${project.groupId}</groupId>
