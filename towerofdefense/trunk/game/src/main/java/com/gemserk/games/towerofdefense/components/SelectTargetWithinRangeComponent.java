@@ -49,7 +49,18 @@ public class SelectTargetWithinRangeComponent extends TodComponent {
 			return;
 		}
 
+		PropertyLocator<Vector2f> targetPositionProperty = Properties.property("position");
 		Entity selectedEntity = targetEntities.iterator().next();
+		Vector2f selectedEntityPosition = targetPositionProperty.getValue(selectedEntity);
+		for (Entity candidate : targetEntities) {
+			Vector2f positionCandidate = targetPositionProperty.getValue(candidate);
+			if(positionCandidate.distance(position) < selectedEntityPosition.distance(position)){
+				selectedEntity = candidate;
+				selectedEntityPosition = targetPositionProperty.getValue(candidate);
+			}
+		}
+		
+		
 		targetEntityProperty.setValue(entity, selectedEntity);
 	}
 }
