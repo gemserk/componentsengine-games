@@ -1,20 +1,22 @@
 package towerofdefense.entities;
 
 builder.entity {
-
+	
 	tags("spawner")
-
+	
 	property("position", parameters.position)
 	
-	component("circlerenderer")
-		property("circle.radius", 10.0f)
-		propertyRef("circle.position", "position")
-
-	component("creator")
-		property("creator.spawnDelay", parameters.spawnDelay)
-		property("creator.template", parameters.template)
-		property("creator.instanceParameters", parameters.instanceParameters)
-		propertyRef("creator.position", "position")
+	component("circlerenderer"){
+		property("radius", 10.0f)
+		propertyRef("position", "position")
+	}
+	
+	component("creator"){
+		property("spawnDelay", parameters.spawnDelay)
+		property("template", parameters.template)
+		property("instanceParameters", parameters.instanceParameters)
+		propertyRef("position", "position")
+	}
 	
 	
 }

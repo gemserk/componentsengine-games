@@ -17,12 +17,16 @@ import com.gemserk.componentsengine.properties.PropertyLocator;
 
 public class PathRendererComponent extends ReflectionComponent {
 
-	PropertyLocator<Color> lineColorProperty = Properties.property("path.lineColor");
 
-	PropertyLocator<Path> pathProperty = Properties.property("path.path");
+
+	private PropertyLocator<Color> lineColorProperty;
+	private PropertyLocator<Path> pathProperty;
 
 	public PathRendererComponent(String id) {
 		super(id);
+		lineColorProperty = Properties.property(id, "lineColor");
+
+		pathProperty = Properties.property(id, "path");
 	}
 
 	public void handleMessage(SlickRenderMessage slickRenderMessage) {

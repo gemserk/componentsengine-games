@@ -9,16 +9,18 @@ builder.entity("critter-${Math.random()}") {
 	property("position", parameters.position)
 	propertyRef("direction", "movement.velocity")
 	
-	component("movement")
-		property("movement.maxVelocity", parameters.maxVelocity)
-		propertyRef("movement.position", "position")
+	component("movement"){
+		property("maxVelocity", parameters.maxVelocity)
+		propertyRef("position", "position")
+	}
 	
-	component("followpath")
-		property("followpath.pathEntityId", parameters.pathEntityId);
-		property("followpath.path", parameters.pathProperty);
-		property("followpath.pathindex", 0);
-		propertyRef("followpath.force", "movement.force");
-		propertyRef("followpath.position", "position");
+	component("followpath"){
+		property("pathEntityId", parameters.pathEntityId);
+		property("path", parameters.pathProperty);
+		property("pathindex", 0);
+		propertyRef("force", "movement.force");
+		propertyRef("position", "position");
+	}
 	
 	component("imagerenderer")
 		property("image", image("towerofdefense.images.critter1"))
