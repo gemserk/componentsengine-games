@@ -50,9 +50,9 @@
 		#end
 	</resources>
   
-    <applet-desc name="Hero of the TOD" main-class="org.newdawn.slick.AppletGameContainer"
+    <applet-desc name="$project.Description" main-class="$mainClass"
       width="800" height="600">
-    	<param name="game" value="com.gemserk.games.todh.app.TodhGame"/>
+    	<param name="game" value="$project.Properties.appletGameParameter"/>
   	</applet-desc>
   
 </jnlp>

@@ -9,15 +9,19 @@
 	<groupId>com.gemserk.games.towerofdefense</groupId>
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Main</name>
-	<description>Loader of the game.</description>
+	<name>Tower of Defense - Loader</name>
+	<description>Tower of Defense - Loader</description>
+	
+	<url>${webstart.url}</url>
 
 	<properties>
-		<webstart.url>http://www.gemserk.com/prototipos/${project.artifactId}-webstart-latest/</webstart.url>
+	
+		<webstart.url>http://www.gemserk.com/prototipos/towerofdefense-webstart-latest/</webstart.url>
 
-		<finalName>${project.artifactId}-${project.version}</finalName>
+		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
+		<finalName>towerofdefense-${project.version}</finalName>
 
-		<main.class>com.gemserk.games.towerofdefense.TowerOfDefenserGame</main.class>
+		<appletGameParameter>com.gemserk.games.towerofdefense.TowerOfDefenserGame</appletGameParameter>
 		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
 
 		<natives>${basedir}/target/natives/</natives>
@@ -61,7 +65,7 @@
 						<j2seVersion>${compiler.version}+</j2seVersion>
 						<inputTemplateResourcePath>${project.basedir}/src/main/jnlp</inputTemplateResourcePath>
 						<inputTemplate>jnlptemplate.vm</inputTemplate>
-						<outputFile>${artifactId}.jnlp</outputFile>
+						<outputFile>launch.jnlp</outputFile>
 						<mainClass>${jnlp.applet.mainClass}</mainClass>
 					</jnlp>
 
