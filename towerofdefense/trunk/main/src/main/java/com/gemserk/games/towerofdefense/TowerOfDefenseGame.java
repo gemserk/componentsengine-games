@@ -1,5 +1,8 @@
 package com.gemserk.games.towerofdefense;
 
+import groovy.lang.Closure;
+
+import java.util.Map;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -15,10 +18,12 @@ import com.gemserk.componentsengine.components.MessageHandler;
 import com.gemserk.componentsengine.game.Game;
 import com.gemserk.componentsengine.input.MonitorFactory;
 import com.gemserk.componentsengine.input.SlickMonitorFactory;
+import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.MessageQueueImpl;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.scene.BuilderUtils;
 import com.gemserk.componentsengine.scene.GroovySceneProvider;
 import com.gemserk.componentsengine.scene.SceneProvider;
 import com.gemserk.componentsengine.templates.CachedScriptProvider;
@@ -44,7 +49,7 @@ public class TowerOfDefenseGame extends BasicGame {
 
 			app.setDisplayMode(800, 600, false);
 			app.setAlwaysRender(true);
-			//app.setMinimumLogicUpdateInterval(10);
+			// app.setMinimumLogicUpdateInterval(10);
 			app.setShowFPS(true);
 
 			app.setTargetFrameRate(60);
@@ -79,17 +84,30 @@ public class TowerOfDefenseGame extends BasicGame {
 				bind(MonitorFactory.class).to(SlickMonitorFactory.class).in(Singleton.class);
 				bind(MessageHandler.class).to(Game.class).in(Singleton.class);
 				bind(MessageQueue.class).to(MessageQueueImpl.class).in(Singleton.class);
+
+				bind(BuilderUtils.class).in(Singleton.class);
 			}
 		});
+
 		messageQueue = injector.getInstance(MessageQueue.class);
 		game = injector.getInstance(Game.class);
 		game.loadScene("towerofdefense.scenes.scene1");
+
+		BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
+		builderUtils.addCustomUtil("messageBuilderFactory", new Object() {
+			
+			public MessageBuilder messageBuilder(String messageId, Closure closure) {
+				return new GroovyMessageBuilder(messageId, closure);
+			}
+			
+		});
+
 	}
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		g.setBackground(new Color(0.8f, 0.8f, 1.0f));
-		
+
 		SlickRenderMessage message = new SlickRenderMessage(g);
 		messageQueue.enqueue(message);
 		messageQueue.processMessages();
@@ -99,12 +117,12 @@ public class TowerOfDefenseGame extends BasicGame {
 
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException {
-		
+
 		UpdateMessage message = new UpdateMessage(delta);
 		messageQueue.enqueue(message);
 		messageQueue.processMessages();
 	}
-	
+
 	@Override
 	public void keyPressed(int key, char c) {
 

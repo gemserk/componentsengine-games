@@ -1,6 +1,18 @@
-package towerofdefense.scenes;
 
-import org.newdawn.slick.Color;
+package towerofdefense.scenes;
+import towerofdefense.GroovyBootstrapper;
+import towerofdefense.components.TowerDeployer;
+
+import com.gemserk.componentsengine.components.ReflectionComponent 
+import com.gemserk.componentsengine.entities.Entity 
+import com.gemserk.componentsengine.messages.AddEntityMessage 
+import com.gemserk.componentsengine.messages.GenericMessage 
+import com.gemserk.componentsengine.messages.MessageQueue 
+import com.gemserk.componentsengine.templates.EntityTemplate 
+import com.gemserk.componentsengine.templates.TemplateProvider 
+import com.google.inject.Inject 
+import org.newdawn.slick.Input 
+
 import org.newdawn.slick.Input 
 import org.newdawn.slick.geom.Vector2f;
 
@@ -11,20 +23,14 @@ import com.gemserk.componentsengine.templates.EntityTemplate;
 
 import com.gemserk.componentsengine.templates.TemplateProvider;
 
-import com.google.inject.Inject;
-
-import com.google.inject.Inject;
-
 import com.gemserk.componentsengine.messages.GenericMessage;
-
-import com.gemserk.componentsengine.templates.TemplateProvider;
-
-
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.games.towerofdefense.Path;
 
 builder.scene("todh.scenes.scene1") {
+	
+	new GroovyBootstrapper();
 	
 	images("assets/images.properties")
 	
@@ -61,70 +67,39 @@ builder.scene("todh.scenes.scene1") {
 				maxVelocity:0.06f,
 				pathEntityId:"path",
 				pathProperty:"path",
-				color:utils.color(1.0f, 0.5f, 0.5f, 0.95f)
+				color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
+				health:utils.container(100,100)
 				]		
 	}
 	
-	component(new ReflectionComponent("towerDeployer"){
+	entity(template:"towerofdefense.entities.generic", id:"towerDeployer")	{
 		
-		@Inject TemplateProvider templateProvider
-		@Inject Input input;
-		@Inject MessageQueue messageQueue;
-		
-		public void handleMessage(GenericMessage message){
-			if(message.id == "deployturret"){
-				def parameters = [
-				                  position:new Vector2f(input.getMouseX(),input.getMouseY()),
-				                  direction:new Vector2f(-1,0),
-				                  radius:100f,
-				                  lineColor:new Color(0.0f, 0.0f, 0.0f, 1.0f),
-				                  fillColor:new Color(0.0f, 0.0f, 0.0f, 0.2f),
-				                  color:new Color(0.0f, 0.2f, 0.0f, 1.0f),
-				                  template:"towerofdefense.entities.bullet",
-				                  reloadTime:1000,
-				                  instanceParameters: [
-				                                       damage:0.0f,
-				                                       radius:10.0f,
-				                                       maxVelocity:0.5f,
-				                                       color:new Color(0.4f, 1.0f, 0.4f, 1.0f)
-				                                       ]		
-				                                       ];
-				
-				 EntityTemplate bulletTemplate = templateProvider.getTemplate("towerofdefense.entities.tower");
-				
-				Entity tower = bulletTemplate.instantiate("tower-${Math.random()}", parameters);
-				
-				messageQueue.enqueue(new AddEntityMessage(tower));
-			}
-		}
-	});
-	
-	
-	entity(template:"towerofdefense.entities.tower", id:"tower1")	{
-		position=utils.vector(350,350)
-		direction=utils.vector(-1,0)
-		radius=100f
-		
-		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
-		fillColor=utils.color(0.0f, 0.0f, 0.0f, 0.2f)
-		color=utils.color(0.0f, 0.2f, 0.0f, 1.0f)
-		
-		template="towerofdefense.entities.bullet"
-		reloadTime=1000				
-		instanceParameters= [
-				damage:0.0f,
+		property_template="towerofdefense.entities.tower"
+		property_instanceParameters = [
+				direction:utils.vector(-1,0),
+				radius:100f,
+				lineColor:utils.color(0.0f, 0.0f, 0.0f, 1.0f),
+				fillColor:utils.color(0.0f, 0.0f, 0.0f, 0.2f),
+				color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
+				template:"towerofdefense.entities.bullet",
+				reloadTime:1000,
+				instanceParameters: [
+				damage:25.0f,
 				radius:10.0f,
 				maxVelocity:0.5f,
 				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
 				]		
+				];
+		
+		component_towerdeployer=new TowerDeployer("towerdeployer")
 	}
-	
+
 	input("inputmapping"){
 		mouse {
-		
+			
 			press(button:"left", eventId:"deployturret");
-
-		
+			
+			
 		}
 	}
 	

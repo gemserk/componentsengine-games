@@ -3,7 +3,6 @@ package com.gemserk.games.towerofdefense;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Vector2f;
@@ -15,12 +14,10 @@ import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.components.ComponentManager;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.resources.ResourceLoader;
 import com.gemserk.componentsengine.world.World;
@@ -44,23 +41,13 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 	@Inject
 	Input input;
 
-	public static class MessageBuilder {
-
-		// TODO: message builder from closure
-
-		public Message build(Map<String, Object> map) {
-			return new GenericMessage("hit", new PropertiesMapBuilder().addProperties(map).build());
-		}
-
-	}
-
 	public static class HitComponent extends ReflectionComponent {
 
 		private PropertyLocator<Vector2f> positionProperty;
 
 		private PropertyLocator<Float> radiusProperty;
 
-		// private PropertyLocator<MessageBuilder> messageBuilderProperty;
+		private PropertyLocator<MessageBuilder> messageBuilderProperty;
 
 		private PropertyLocator<String> targetTagProperty;
 
@@ -72,7 +59,7 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 
 			positionProperty = Properties.property(id, "position");
 			radiusProperty = Properties.property(id, "radius");
-			// messageBuilderProperty = Properties.property(id, "messageBuilder");
+			messageBuilderProperty = Properties.property(id, "messageBuilder");
 			targetTagProperty = Properties.property(id, "targetTag");
 
 		}
@@ -90,8 +77,8 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 			if (candidates.size() == 0)
 				return;
 
-			// MessageBuilder messageBuilder = messageBuilderProperty.getValue(entity);
-			MessageBuilder messageBuilder = new MessageBuilder();
+			MessageBuilder messageBuilder = messageBuilderProperty.getValue(entity);
+			// MessageBuilder messageBuilder = new CustomMessageBuilder();
 
 			Message hitMessage = messageBuilder.build(new HashMap<String, Object>() {
 				{

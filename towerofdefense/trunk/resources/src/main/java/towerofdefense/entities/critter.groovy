@@ -7,6 +7,7 @@ builder.entity("critter-${Math.random()}") {
 	tags("critter", "nofriction")
 	
 	property("position", parameters.position)
+	property("health", parameters.health)
 	propertyRef("direction", "movement.velocity")
 	
 	component("movement"){
@@ -23,15 +24,19 @@ builder.entity("critter-${Math.random()}") {
 	}
 	
 	component("imagerenderer")
-		property("image", image("towerofdefense.images.critter1"))
-		property("color", parameters.color)
-		
-		
+	property("image", image("towerofdefense.images.critter1"))
+	property("color", parameters.color)
+	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
-		def entity = message.entity		
-		if (message.getProperty("targets").get().contains(entity))
-			messageQueue.enqueue(new RemoveEntityMessage(entity))
-			
+		def entity = message.entity
+		if (message.targets.contains(entity)) {
+			println "health: $entity.health"
+			entity.health.remove(message.damage)
+			if (entity.health.isEmpty())
+				messageQueue.enqueue(new RemoveEntityMessage(entity))
+		}
+		
 	}
 	
 }
+

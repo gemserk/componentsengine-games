@@ -23,13 +23,19 @@ builder.entity("bullet-${Math.random()}") {
 		property("targetTag", "critter")
 		propertyRef("position", "position")
 		propertyRef("radius", "radius")
+		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") { 
+			def source = message.source
+			def damage = source.damage
+			message.damage = damage;
+		})
 	}
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def entity = message.entity		
+		println message.damage;
 		if (message.getProperty("source").get() == entity)
 			messageQueue.enqueue(new RemoveEntityMessage(entity))
-		
 	}
+	
 	
 }
