@@ -15,6 +15,7 @@ import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.templates.EntityTemplate;
 import com.gemserk.componentsengine.templates.TemplateProvider;
+import com.gemserk.games.towerofdefense.GenericProvider;
 import com.google.inject.Inject;
 
 public class WeaponComponent extends ReflectionComponent {
@@ -32,7 +33,7 @@ public class WeaponComponent extends ReflectionComponent {
 
 	private PropertyLocator<String> templateProperty;
 
-	PropertyLocator<Map<String, Object>> instanceParametersProperty;
+	PropertyLocator<GenericProvider> instanceParametersProviderProperty;
 
 	MessageQueue messageQueue;
 	@Inject 
@@ -52,7 +53,7 @@ public class WeaponComponent extends ReflectionComponent {
 		reloadTimeProperty = property(id, "reloadTime");
 		currentReloadTimeProperty = property(id, "currentReloadTime");
 		templateProperty = property(id, "template");
-		instanceParametersProperty = property(id, "instanceParameters");
+		instanceParametersProviderProperty = property(id, "instanceParameters");
 	}
 
 	@Override
@@ -83,7 +84,7 @@ public class WeaponComponent extends ReflectionComponent {
 		
 		Vector2f targetPosition = (Vector2f) Properties.property("position").getValue(targetEntity);
 		
-		Map<String, Object> instanceParameters = instanceParametersProperty.getValue(entity);
+		Map<String, Object> instanceParameters = instanceParametersProviderProperty.getValue(entity).get();
 		instanceParameters.put("position", position.copy());
 		instanceParameters.put("direction", targetPosition.copy().sub(position).normalise());
 		

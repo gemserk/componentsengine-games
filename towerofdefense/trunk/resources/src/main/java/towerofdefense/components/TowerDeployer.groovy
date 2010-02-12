@@ -27,8 +27,8 @@ class TowerDeployer extends ReflectionComponent{
 		if(message.id != "deployturret")
 			return;
 		
-		def instanceParameters = message.entity.getProperty("instanceParameters").get()
-		def template = message.entity.getProperty("template").get()
+		def instanceParameters = message.entity.instanceParameters.get()
+		def template = message.entity.template
 		
 		instanceParameters.put("position", new Vector2f(input.getMouseX(), input.getMouseY()))
 		

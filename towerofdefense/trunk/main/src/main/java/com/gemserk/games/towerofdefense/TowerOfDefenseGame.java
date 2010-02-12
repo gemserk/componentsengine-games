@@ -90,8 +90,6 @@ public class TowerOfDefenseGame extends BasicGame {
 		});
 
 		messageQueue = injector.getInstance(MessageQueue.class);
-		game = injector.getInstance(Game.class);
-		game.loadScene("towerofdefense.scenes.scene1");
 
 		BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
 		builderUtils.addCustomUtil("messageBuilderFactory", new Object() {
@@ -99,9 +97,18 @@ public class TowerOfDefenseGame extends BasicGame {
 			public MessageBuilder messageBuilder(String messageId, Closure closure) {
 				return new GroovyMessageBuilder(messageId, closure);
 			}
+		});
+		
+		builderUtils.addCustomUtil("genericprovider", new Object(){
+			
+			public GenericProvider provide(Closure closure){
+				return new ValueFromClosure(closure);
+			}
 			
 		});
 
+		game = injector.getInstance(Game.class);
+		game.loadScene("towerofdefense.scenes.scene1");
 	}
 
 	@Override

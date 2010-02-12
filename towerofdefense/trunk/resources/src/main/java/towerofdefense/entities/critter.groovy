@@ -30,10 +30,12 @@ builder.entity("critter-${Math.random()}") {
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def entity = message.entity
 		if (message.targets.contains(entity)) {
-			println "health: $entity.health"
 			entity.health.remove(message.damage)
 			if (entity.health.isEmpty())
 				messageQueue.enqueue(new RemoveEntityMessage(entity))
+
+			entity.color.a = entity.health.percentage
+			println "health: $entity.health"
 		}
 		
 	}

@@ -16,6 +16,7 @@ import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.gemserk.componentsengine.utils.Interval;
+import com.gemserk.games.towerofdefense.GenericProvider;
 import com.google.inject.Inject;
 
 public class SpawnerComponent extends Component {
@@ -28,7 +29,7 @@ public class SpawnerComponent extends Component {
 
 	PropertyLocator<Integer> timeToNextSpawnProperty;
 	
-	PropertyLocator<Map<String,Object>> instanceParametersProperty;
+	PropertyLocator<GenericProvider> instanceParametersProviderProperty;
 
 	@Inject MessageQueue messageQueue;
 	
@@ -43,7 +44,7 @@ public class SpawnerComponent extends Component {
 		spawnPositionProperty = property(id, "position");
 		spawnDelayProperty = property(id, "spawnDelay");
 		templateNameProperty = property(id, "template");
-		instanceParametersProperty= property(id, "instanceParameters");
+		instanceParametersProviderProperty= property(id, "instanceParameters");
 	}
 
 	@Inject
@@ -59,7 +60,7 @@ public class SpawnerComponent extends Component {
 		if (timeToNextSpawn <= 0) {
 			final Vector2f entityPosition = spawnPositionProperty.getValue(entity).copy();
 			
-			Map<String, Object> instanceProperties = instanceParametersProperty.getValue(entity);
+			Map<String, Object> instanceProperties = instanceParametersProviderProperty.getValue(entity).get();
 
 			instanceProperties.put("position", entityPosition.copy());
 			

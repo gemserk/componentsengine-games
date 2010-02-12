@@ -63,37 +63,43 @@ builder.scene("todh.scenes.scene1") {
 		position=utils.vector(-10,300)
 		template="towerofdefense.entities.critter"
 		spawnDelay=utils.interval(400,1000)
-		instanceParameters= [
-				maxVelocity:0.06f,
-				pathEntityId:"path",
-				pathProperty:"path",
-				color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-				health:utils.container(100,100)
-				]		
+		instanceParameters= utils.custom.genericprovider.provide{
+			[
+			maxVelocity:0.06f,
+			pathEntityId:"path",
+			pathProperty:"path",
+			color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
+			health:utils.container(100,100)
+			]	
+		}	
 	}
 	
 	entity(template:"towerofdefense.entities.generic", id:"towerDeployer")	{
 		
 		property_template="towerofdefense.entities.tower"
-		property_instanceParameters = [
-				direction:utils.vector(-1,0),
-				radius:100f,
-				lineColor:utils.color(0.0f, 0.0f, 0.0f, 1.0f),
-				fillColor:utils.color(0.0f, 0.0f, 0.0f, 0.2f),
-				color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
-				template:"towerofdefense.entities.bullet",
-				reloadTime:1000,
-				instanceParameters: [
+		property_instanceParameters = utils.custom.genericprovider.provide{
+			[
+			direction:utils.vector(-1,0),
+			radius:100f,
+			lineColor:utils.color(0.0f, 0.0f, 0.0f, 0.2f),
+			fillColor:utils.color(0.0f, 0.0f, 0.0f, 0.0f),
+			color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
+			template:"towerofdefense.entities.bullet",
+			reloadTime:1000,
+			instanceParameters: utils.custom.genericprovider.provide{
+				[
 				damage:25.0f,
 				radius:10.0f,
 				maxVelocity:0.5f,
 				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
-				]		
-				];
+				]
+			}	
+			]
+		}
 		
 		component_towerdeployer=new TowerDeployer("towerdeployer")
 	}
-
+	
 	input("inputmapping"){
 		mouse {
 			
