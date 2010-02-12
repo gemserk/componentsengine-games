@@ -2,6 +2,7 @@ package com.gemserk.games.towerofdefense.components;
 
 import static com.gemserk.componentsengine.properties.Properties.property;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -28,11 +29,12 @@ public class SpawnerComponent extends Component {
 	PropertyLocator<String> templateNameProperty;
 
 	PropertyLocator<Integer> timeToNextSpawnProperty;
-	
+
 	PropertyLocator<GenericProvider> instanceParametersProviderProperty;
 
-	@Inject MessageQueue messageQueue;
-	
+	@Inject
+	MessageQueue messageQueue;
+
 	private TemplateProvider templateProvider;
 
 	private final Random random = new Random();
@@ -44,7 +46,7 @@ public class SpawnerComponent extends Component {
 		spawnPositionProperty = property(id, "position");
 		spawnDelayProperty = property(id, "spawnDelay");
 		templateNameProperty = property(id, "template");
-		instanceParametersProviderProperty= property(id, "instanceParameters");
+		instanceParametersProviderProperty = property(id, "instanceParameters");
 	}
 
 	@Inject
@@ -58,12 +60,9 @@ public class SpawnerComponent extends Component {
 			timeToNextSpawn = 0;
 
 		if (timeToNextSpawn <= 0) {
-			final Vector2f entityPosition = spawnPositionProperty.getValue(entity).copy();
-			
-			Map<String, Object> instanceProperties = instanceParametersProviderProperty.getValue(entity).get();
 
-			instanceProperties.put("position", entityPosition.copy());
-			
+			Map<String, Object> instanceProperties = instanceParametersProviderProperty.getValue(entity).get(entity);
+
 			String templateName = templateNameProperty.getValue(entity);
 			Entity newEntity = templateProvider.getTemplate(templateName).instantiate("", instanceProperties);
 			messageQueue.enqueue(new AddEntityMessage(newEntity));

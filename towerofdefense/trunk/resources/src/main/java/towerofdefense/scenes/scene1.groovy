@@ -1,4 +1,3 @@
-
 package towerofdefense.scenes;
 import towerofdefense.GroovyBootstrapper;
 import towerofdefense.components.TowerDeployer;
@@ -26,7 +25,10 @@ import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.gemserk.componentsengine.messages.GenericMessage;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
+import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.Path;
+import com.gemserk.games.towerofdefense.waves.Wave;
+import com.gemserk.games.towerofdefense.waves.Waves;
 
 builder.scene("todh.scenes.scene1") {
 	
@@ -37,6 +39,7 @@ builder.scene("todh.scenes.scene1") {
 	input("playerInputMapping","towerofdefense.input.inputmapping")
 	
 	components(com.gemserk.games.towerofdefense.TowerOfDefenseComponentLoader.class);
+	component("instructions")
 	
 	entity(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
@@ -61,17 +64,56 @@ builder.scene("todh.scenes.scene1") {
 	
 	entity(template:"towerofdefense.entities.spawner", id:"spawner")	{
 		position=utils.vector(-10,300)
-		template="towerofdefense.entities.critter"
 		spawnDelay=utils.interval(400,1000)
-		instanceParameters= utils.custom.genericprovider.provide{
-			[
-			maxVelocity:0.06f,
-			pathEntityId:"path",
-			pathProperty:"path",
-			color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-			health:utils.container(100,100)
-			]	
-		}	
+		waves=new Waves().setWaves([new Wave(1000,10,new InstantiationTemplateImpl(
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.06f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
+					health:utils.container(100,100)
+					]	
+				}	
+				)), new Wave(1200,5,new InstantiationTemplateImpl(
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.07f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
+					health:utils.container(125,125)
+					]	
+				}	
+				)), new Wave(2500,5,new InstantiationTemplateImpl(
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.02f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
+					health:utils.container(350,350)
+					]	
+				}	
+				)), new Wave(1200,25,new InstantiationTemplateImpl(
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.05f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
+					health:utils.container(235,235)
+					]	
+				}	
+				))])
 	}
 	
 	entity(template:"towerofdefense.entities.generic", id:"towerDeployer")	{
@@ -100,7 +142,12 @@ builder.scene("todh.scenes.scene1") {
 		component_towerdeployer=new TowerDeployer("towerdeployer")
 	}
 	
+	
+	
 	input("inputmapping"){
+		keyboard {
+			press(button:"w", eventId:"nextWave")
+		}
 		mouse {
 			
 			press(button:"left", eventId:"deployturret");

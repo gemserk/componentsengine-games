@@ -10,11 +10,13 @@ public class ValueFromClosure implements GenericProvider {
 		this.closure = closure;	
 	}
 		
-	/* (non-Javadoc)
-	 * @see com.gemserk.games.towerofdefense.GenericProvider#get()
-	 */
 	public <T> T get(){
-		return (T) closure.call();
+		return get(new Object[] { });
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T get(Object... objects) {
+		return (T) closure.call(objects);
 	}
 
 }

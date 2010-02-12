@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -15,6 +17,7 @@ import com.gemserk.componentsengine.components.ComponentManager;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
@@ -25,6 +28,7 @@ import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
 import com.gemserk.games.towerofdefense.components.RemoveWhenNearComponent;
 import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
 import com.gemserk.games.towerofdefense.components.SpawnerComponent;
+import com.gemserk.games.towerofdefense.components.WavesSpawnerComponent;
 import com.gemserk.games.towerofdefense.components.WeaponComponent;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
@@ -40,6 +44,22 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 
 	@Inject
 	Input input;
+
+	public static  class InstructionRenderComponent extends ReflectionComponent {
+		private InstructionRenderComponent(String id) {
+			super(id);
+		}
+
+		public void handleMessage(SlickRenderMessage message) {
+			Graphics g = message.getGraphics();
+			g.pushTransform();
+			{
+			g.setColor(Color.black);
+			g.drawString("Press 'w' to send the next wave", 100,50);
+			}
+			g.popTransform();
+		}
+	}
 
 	public static class HitComponent extends ReflectionComponent {
 
@@ -101,11 +121,13 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 				new FollowPathComponent("followpath"),//
 				new ImageRenderableComponent("imagerenderer"),//
 				new RemoveWhenNearComponent("remover"),//
-				new SpawnerComponent("creator"),//
+				new WavesSpawnerComponent("creator"),//
 				new FaceTargetComponent("faceTarget"),//
 				new SelectTargetWithinRangeComponent("selectTarget"),//
 				new WeaponComponent("shooter"),//
-				new HitComponent("bullethit") };
+				new HitComponent("bullethit"),//
+				new InstructionRenderComponent("instructions")
+		};
 
 		for (com.gemserk.componentsengine.components.Component component : components) {
 			injector.injectMembers(component);

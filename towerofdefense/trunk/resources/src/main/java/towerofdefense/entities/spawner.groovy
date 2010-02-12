@@ -1,5 +1,7 @@
 package towerofdefense.entities;
 
+import com.gemserk.games.towerofdefense.waves.Waves;
+
 builder.entity {
 	
 	tags("spawner")
@@ -12,11 +14,14 @@ builder.entity {
 	}
 	
 	component("creator"){
-		property("spawnDelay", parameters.spawnDelay)
-		property("template", parameters.template)
-		property("instanceParameters", parameters.instanceParameters)
+		property("waves", parameters.waves)
 		propertyRef("position", "position")
 	}
 	
+	genericComponent(id:"nextWaveHandler", messageId:"nextWave"){ message ->	
+		Waves waves = message.entity."creator.waves"
+		if(!waves.isLastWaveStarted())
+			waves.nextWave()	
+	}
 	
 }
