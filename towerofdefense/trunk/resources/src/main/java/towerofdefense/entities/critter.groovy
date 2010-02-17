@@ -10,6 +10,7 @@ builder.entity("critter-${Math.random()}") {
 	property("position", parameters.position)
 	property("health", parameters.health)
 	property("reward",parameters.reward)
+	property("points",parameters.points)
 	propertyRef("direction", "movement.velocity")
 	
 	component("movement"){

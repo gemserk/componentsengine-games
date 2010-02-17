@@ -33,6 +33,7 @@ import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
+import com.gemserk.games.towerofdefense.components.OutOfBoundsRemover;
 import com.gemserk.games.towerofdefense.waves.Wave;
 import com.gemserk.games.towerofdefense.waves.Waves;
 
@@ -48,10 +49,9 @@ builder.scene("todh.scenes.scene1") {
 	component("instructions")
 	component("groovyconsole")
 	
-	property("money",100f)
-	
-	
-	
+	property("money",250f)
+	property("points",0)
+		
 	entity(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
 		utils.vector(0, 300), 		      
@@ -60,7 +60,6 @@ builder.scene("todh.scenes.scene1") {
 		utils.vector(400, 400), 		      
 		utils.vector(400, 300), 		      
 		utils.vector(670, 300)])		
-		
 		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
 	}
 	
@@ -86,7 +85,8 @@ builder.scene("todh.scenes.scene1") {
 					pathProperty:"path",
 					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
 					health:utils.container(100,100),
-					reward:15f					
+					points: 5,
+					reward:25f					
 					]	
 				}	
 				)), new Wave(1200,5,new InstantiationTemplateImpl(
@@ -99,7 +99,8 @@ builder.scene("todh.scenes.scene1") {
 					pathProperty:"path",
 					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 					health:utils.container(125,125),
-					reward:15f
+					points: 10,
+					reward:30f
 					]	
 				}	
 				)), new Wave(2500,5,new InstantiationTemplateImpl(
@@ -112,20 +113,22 @@ builder.scene("todh.scenes.scene1") {
 					pathProperty:"path",
 					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
 					health:utils.container(350,350),
-					reward:15f
+					points: 15,
+					reward:35f
 					]	
 				}	
-				)), new Wave(1200,25,new InstantiationTemplateImpl(
+				)), new Wave(1200,1000,new InstantiationTemplateImpl(
 				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 				utils.custom.genericprovider.provide{ entity ->
 					[
 					position:entity.position.copy(),
-					maxVelocity:0.05f,
+					maxVelocity:0.09f,
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
-					health:utils.container(235,235),
-					reward:15f
+					health:utils.container(335,335),
+					points: 20,
+					reward:40f
 					]	
 				}	
 				))])
@@ -142,7 +145,7 @@ builder.scene("todh.scenes.scene1") {
 			fillColor:utils.color(0.0f, 0.0f, 0.0f, 0.0f),
 			color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
 			template:"towerofdefense.entities.bullet",
-			reloadTime:1000,
+			reloadTime:800,
 			cost: 50f,
 			instanceParameters: utils.custom.genericprovider.provide{
 				[
@@ -160,26 +163,27 @@ builder.scene("todh.scenes.scene1") {
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		def reward = message.critter.reward
+		def points = message.critter.points
 		scene.money+=reward
-		println "Money: $scene.money"
+		scene.points+=points
 	}
-
-	
-	
-//	component(new ReflectionComponent("rendermoney"){
-//		public void handleMessage(SlickRenderMessage message){
-//			Graphics g = message.getGraphics()
-//			g.
-//		}
-//	})
 	
 	component(new LabelComponent("moneylabel")){
-		property("position",utils.vector(700,100))
+		property("position",utils.vector(680,40))
 		property("message","Money: {0}")
 		propertyRef("value","money")
 	}
 	
+	component(new LabelComponent("pointslabel")){
+		property("position",utils.vector(680,60))
+		property("message","Points: {0}")
+		propertyRef("value","points")
+	}
 	
+	component(new OutOfBoundsRemover("outofboundsremover")) {
+		property("tags", ["bullet"] as String[] );
+		property("bounds", utils.rectangle(0,0, 800, 600));
+	}
 	
 	input("inputmapping"){
 		keyboard {
