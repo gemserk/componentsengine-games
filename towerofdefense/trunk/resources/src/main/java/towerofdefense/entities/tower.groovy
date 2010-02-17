@@ -7,6 +7,7 @@ builder.entity("tower-${Math.random()}") {
 	property("position", parameters.position)
 	property("direction", parameters.direction)
 	property("radius", parameters.radius)
+	property("cost",parameters.cost)
 	
 	property("targetEntity", null)
 	

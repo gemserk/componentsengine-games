@@ -5,6 +5,7 @@ import com.gemserk.componentsengine.entities.Entity
 import com.gemserk.componentsengine.messages.AddEntityMessage 
 import com.gemserk.componentsengine.messages.GenericMessage 
 import com.gemserk.componentsengine.messages.MessageQueue 
+import com.gemserk.componentsengine.scene.Scene;
 import com.gemserk.componentsengine.templates.EntityTemplate 
 import com.gemserk.componentsengine.templates.TemplateProvider 
 import com.google.inject.Inject 
@@ -17,6 +18,7 @@ class TowerDeployer extends ReflectionComponent{
 	@Inject Input input;
 	@Inject MessageQueue messageQueue;
 	
+	
 	public TowerDeployer(String id) {
 		super(id);
 	}
@@ -27,6 +29,9 @@ class TowerDeployer extends ReflectionComponent{
 		if(message.id != "deployturret")
 			return;
 		
+
+		
+		
 		def instanceParameters = message.entity.instanceParameters.get()
 		def template = message.entity.template
 		
@@ -35,6 +40,18 @@ class TowerDeployer extends ReflectionComponent{
 		EntityTemplate bulletTemplate = templateProvider.getTemplate(template);
 		
 		Entity tower = bulletTemplate.instantiate("tower-${Math.random()}", instanceParameters);
+		
+		def scene = message.scene
+		
+		def cost = tower.cost
+		if(scene.money < cost){
+			println "Not enough money"
+			return
+		}
+			
+		scene.money -= cost
+		
+		println "Deployed: $scene.money"
 		
 		messageQueue.enqueue(new AddEntityMessage(tower));
 	}

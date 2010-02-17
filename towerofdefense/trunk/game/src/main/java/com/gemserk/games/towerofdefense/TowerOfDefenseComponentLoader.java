@@ -23,11 +23,11 @@ import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.resources.ResourceLoader;
+import com.gemserk.componentsengine.scene.BuilderUtils;
 import com.gemserk.componentsengine.world.World;
 import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
 import com.gemserk.games.towerofdefense.components.RemoveWhenNearComponent;
 import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
-import com.gemserk.games.towerofdefense.components.SpawnerComponent;
 import com.gemserk.games.towerofdefense.components.WavesSpawnerComponent;
 import com.gemserk.games.towerofdefense.components.WeaponComponent;
 import com.google.common.base.Predicates;
@@ -111,6 +111,30 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 		}
 
 	}
+	
+	public static class GroovyConsoleExecutorComponent extends ReflectionComponent{
+		@Inject GroovyClosureRunner closureRunner;
+
+		@Inject World world;
+		@Inject BuilderUtils utils;
+		
+		
+		
+		public GroovyConsoleExecutorComponent(String id) {
+			super(id);
+		}
+		
+		public void handleMessage(UpdateMessage message) {
+			
+			utils.addCustomUtil("world", world);
+			utils.addCustomUtil("entitypredicates", new EntityPredicates());
+			
+			
+			
+			closureRunner.process();
+		}
+	}
+	
 
 	@Override
 	public void load() {
@@ -126,7 +150,8 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 				new SelectTargetWithinRangeComponent("selectTarget"),//
 				new WeaponComponent("shooter"),//
 				new HitComponent("bullethit"),//
-				new InstructionRenderComponent("instructions")
+				new InstructionRenderComponent("instructions"),//
+				new GroovyConsoleExecutorComponent("groovyconsole")
 		};
 
 		for (com.gemserk.componentsengine.components.Component component : components) {

@@ -1,7 +1,9 @@
 package com.gemserk.games.towerofdefense;
 
+import groovy.lang.Binding;
 import groovy.lang.Closure;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.newdawn.slick.AppGameContainer;
@@ -16,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.components.MessageHandler;
 import com.gemserk.componentsengine.game.Game;
+import com.gemserk.componentsengine.groovydebugconsole.GroovyConsoleService;
+import com.gemserk.componentsengine.groovydebugconsole.GroovyShellService;
 import com.gemserk.componentsengine.input.MonitorFactory;
 import com.gemserk.componentsengine.input.SlickMonitorFactory;
 import com.gemserk.componentsengine.messages.Message;
@@ -72,7 +76,7 @@ public class TowerOfDefenseGame extends BasicGame {
 
 		gameContainer = container;
 
-		Injector injector = Guice.createInjector(new AbstractModule() {
+		final Injector injector = Guice.createInjector(new AbstractModule() {
 			@Override
 			protected void configure() {
 				bind(Input.class).toInstance(container.getInput());
@@ -86,12 +90,13 @@ public class TowerOfDefenseGame extends BasicGame {
 				bind(MessageQueue.class).to(MessageQueueImpl.class).in(Singleton.class);
 
 				bind(BuilderUtils.class).in(Singleton.class);
+				bind(GroovyClosureRunner.class).in(Singleton.class);
 			}
 		});
 
 		messageQueue = injector.getInstance(MessageQueue.class);
 
-		BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
+		final BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
 		builderUtils.addCustomUtil("messageBuilderFactory", new Object() {
 			
 			public MessageBuilder messageBuilder(String messageId, Closure closure) {
@@ -109,6 +114,14 @@ public class TowerOfDefenseGame extends BasicGame {
 
 		game = injector.getInstance(Game.class);
 		game.loadScene("towerofdefense.scenes.scene1");
+		
+		GroovyShellService groovyShellService = new GroovyShellService(9999);
+		groovyShellService.setBindings(new HashMap<String, Object>(){{
+			put("executor",injector.getInstance(GroovyClosureRunner.class));
+			put("utils",builderUtils);
+		}});
+		
+		groovyShellService.launchInBackground();
 	}
 
 	@Override

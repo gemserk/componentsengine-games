@@ -1,4 +1,9 @@
 package towerofdefense.scenes;
+import org.newdawn.slick.Graphics;
+
+
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
+
 import towerofdefense.GroovyBootstrapper;
 import towerofdefense.components.TowerDeployer;
 
@@ -26,6 +31,7 @@ import com.gemserk.componentsengine.messages.GenericMessage;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
+import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
 import com.gemserk.games.towerofdefense.waves.Wave;
 import com.gemserk.games.towerofdefense.waves.Waves;
@@ -40,6 +46,11 @@ builder.scene("todh.scenes.scene1") {
 	
 	components(com.gemserk.games.towerofdefense.TowerOfDefenseComponentLoader.class);
 	component("instructions")
+	component("groovyconsole")
+	
+	property("money",100f)
+	
+	
 	
 	entity(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
@@ -74,7 +85,8 @@ builder.scene("todh.scenes.scene1") {
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-					health:utils.container(100,100)
+					health:utils.container(100,100),
+					reward:15f					
 					]	
 				}	
 				)), new Wave(1200,5,new InstantiationTemplateImpl(
@@ -86,7 +98,8 @@ builder.scene("todh.scenes.scene1") {
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-					health:utils.container(125,125)
+					health:utils.container(125,125),
+					reward:15f
 					]	
 				}	
 				)), new Wave(2500,5,new InstantiationTemplateImpl(
@@ -98,7 +111,8 @@ builder.scene("todh.scenes.scene1") {
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
-					health:utils.container(350,350)
+					health:utils.container(350,350),
+					reward:15f
 					]	
 				}	
 				)), new Wave(1200,25,new InstantiationTemplateImpl(
@@ -110,7 +124,8 @@ builder.scene("todh.scenes.scene1") {
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
-					health:utils.container(235,235)
+					health:utils.container(235,235),
+					reward:15f
 					]	
 				}	
 				))])
@@ -128,6 +143,7 @@ builder.scene("todh.scenes.scene1") {
 			color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:1000,
+			cost: 50f,
 			instanceParameters: utils.custom.genericprovider.provide{
 				[
 				damage:25.0f,
@@ -140,6 +156,27 @@ builder.scene("todh.scenes.scene1") {
 		}
 		
 		component_towerdeployer=new TowerDeployer("towerdeployer")
+	}
+	
+	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
+		def reward = message.critter.reward
+		scene.money+=reward
+		println "Money: $scene.money"
+	}
+
+	
+	
+//	component(new ReflectionComponent("rendermoney"){
+//		public void handleMessage(SlickRenderMessage message){
+//			Graphics g = message.getGraphics()
+//			g.
+//		}
+//	})
+	
+	component(new LabelComponent("moneylabel")){
+		property("position",utils.vector(700,100))
+		property("message","Money: {0}")
+		propertyRef("value","money")
 	}
 	
 	

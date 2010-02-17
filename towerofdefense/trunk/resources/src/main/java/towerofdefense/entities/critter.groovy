@@ -1,5 +1,6 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.messages.RemoveEntityMessage 
 
 builder.entity("critter-${Math.random()}") {
@@ -8,6 +9,7 @@ builder.entity("critter-${Math.random()}") {
 	
 	property("position", parameters.position)
 	property("health", parameters.health)
+	property("reward",parameters.reward)
 	propertyRef("direction", "movement.velocity")
 	
 	component("movement"){
@@ -31,13 +33,22 @@ builder.entity("critter-${Math.random()}") {
 		def entity = message.entity
 		if (message.targets.contains(entity)) {
 			entity.health.remove(message.damage)
-			if (entity.health.isEmpty())
-				messageQueue.enqueue(new RemoveEntityMessage(entity))
+			if (entity.health.isEmpty()){
+				messageQueue.enqueue(utils.genericMessage("critterdead"){ deadMessage ->
+					deadMessage.critter = entity
+				})
+			}
 
 			entity.color.a = entity.health.percentage
 			println "health: $entity.health"
 		}
 		
+	}
+	
+	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
+		def entity = message.entity
+		if(message.critter == entity)
+			messageQueue.enqueue(new RemoveEntityMessage(entity))
 	}
 	
 }
