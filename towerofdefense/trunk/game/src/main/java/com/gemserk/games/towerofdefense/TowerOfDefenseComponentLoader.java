@@ -1,8 +1,6 @@
 package com.gemserk.games.towerofdefense;
 
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
@@ -11,7 +9,6 @@ import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.components.ComponentManager;
 import com.gemserk.componentsengine.components.ReflectionComponent;
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.resources.ResourceLoader;
@@ -35,21 +32,6 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 	@Inject
 	Input input;
 
-	public static  class InstructionRenderComponent extends ReflectionComponent {
-		private InstructionRenderComponent(String id) {
-			super(id);
-		}
-
-		public void handleMessage(SlickRenderMessage message) {
-			Graphics g = message.getGraphics();
-			g.pushTransform();
-			{
-			g.setColor(Color.black);
-			g.drawString("Press 'w' to send the next wave", 100,50);
-			}
-			g.popTransform();
-		}
-	}
 
 	public static class GroovyConsoleExecutorComponent extends ReflectionComponent{
 		@Inject GroovyClosureRunner closureRunner;
@@ -88,7 +70,6 @@ public class TowerOfDefenseComponentLoader implements ResourceLoader {
 				new SelectTargetWithinRangeComponent("selectTarget"),//
 				new WeaponComponent("shooter"),//
 				new HitComponent("bullethit"),//
-				new InstructionRenderComponent("instructions"),//
 				new GroovyConsoleExecutorComponent("groovyconsole")
 		};
 

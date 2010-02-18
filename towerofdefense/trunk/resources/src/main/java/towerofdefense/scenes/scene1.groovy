@@ -34,6 +34,8 @@ import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
 import com.gemserk.games.towerofdefense.components.OutOfBoundsRemover;
+import com.gemserk.games.towerofdefense.components.TimerComponent;
+import com.gemserk.games.towerofdefense.timers.PeriodicTimer;
 import com.gemserk.games.towerofdefense.waves.Wave;
 import com.gemserk.games.towerofdefense.waves.Waves;
 
@@ -43,15 +45,13 @@ builder.scene("todh.scenes.scene1") {
 	
 	images("assets/images.properties")
 	
-	input("playerInputMapping","towerofdefense.input.inputmapping")
-	
 	components(com.gemserk.games.towerofdefense.TowerOfDefenseComponentLoader.class);
-	component("instructions")
 	component("groovyconsole")
 	
 	property("money",250f)
 	property("points",0)
 	property("lives",15)
+	property("wavesTimer", new PeriodicTimer(15000))
 	
 	entity(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
@@ -174,12 +174,28 @@ builder.scene("todh.scenes.scene1") {
 		scene.lives--;
 		
 		if(scene.lives <= 0)
+			messageQueue.enqueue(utils.genericMessage("reloadScene",{}))
+	}
+	
+
+	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
 			utils.custom.game.loadScene("towerofdefense.scenes.scene1");
 	}
 	
-//	genericComponent(id:"endscenehandler", messageId:"endscene"){ message ->
-//		
-//	}
+	component(new LabelComponent("nextWaveInstructionsLabel")){
+		property("position",utils.vector(100,50))
+		property("message","Press 'w' to send the next wave")
+	}
+	
+	component(new LabelComponent("resetInstructionsLabel")){
+		property("position",utils.vector(100,70))
+		property("message","Press 'r' to restart the game")
+	}
+	
+	component(new LabelComponent("exitInstructionsLabel")){
+		property("position",utils.vector(100,90))
+		property("message","Press 'esc' to exit the game")
+	}
 	
 	component(new LabelComponent("moneylabel")){
 		property("position",utils.vector(680,40))
@@ -204,9 +220,28 @@ builder.scene("todh.scenes.scene1") {
 		property("bounds", utils.rectangle(0,0, 800, 600));
 	}
 	
+	
+	component(new TimerComponent("wavesTimerComponent")){
+		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("nextWave") { })
+		propertyRef("timer","wavesTimer")
+	}
+	
+	genericComponent(id:"nextWaveMessageHandler", messageId:"nextWave"){ message ->
+		message.scene.wavesTimer.reset()
+	}
+	
+	
+	component(new LabelComponent("timerlabel")){
+		property("position",utils.vector(660,100))
+		property("message","Timer: {0}")
+		propertyRef("value","wavesTimer")
+	}
+	
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"w", eventId:"nextWave")
+			press(button:"r", eventId:"reloadScene")
 		}
 		mouse {
 			
