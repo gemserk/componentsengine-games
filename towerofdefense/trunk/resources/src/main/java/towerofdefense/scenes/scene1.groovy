@@ -51,7 +51,8 @@ builder.scene("todh.scenes.scene1") {
 	
 	property("money",250f)
 	property("points",0)
-		
+	property("lives",15)
+	
 	entity(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
 		utils.vector(0, 300), 		      
@@ -168,6 +169,18 @@ builder.scene("todh.scenes.scene1") {
 		scene.points+=points
 	}
 	
+	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
+		def scene = message.scene
+		scene.lives--;
+		
+		if(scene.lives <= 0)
+			utils.custom.game.loadScene("towerofdefense.scenes.scene1");
+	}
+	
+//	genericComponent(id:"endscenehandler", messageId:"endscene"){ message ->
+//		
+//	}
+	
 	component(new LabelComponent("moneylabel")){
 		property("position",utils.vector(680,40))
 		property("message","Money: {0}")
@@ -178,6 +191,12 @@ builder.scene("todh.scenes.scene1") {
 		property("position",utils.vector(680,60))
 		property("message","Points: {0}")
 		propertyRef("value","points")
+	}
+	
+	component(new LabelComponent("liveslabel")){
+		property("position",utils.vector(680,80))
+		property("message","Lives: {0}")
+		propertyRef("value","lives")
 	}
 	
 	component(new OutOfBoundsRemover("outofboundsremover")) {

@@ -1,5 +1,8 @@
 package towerofdefense.entities;
 
+import com.gemserk.games.towerofdefense.HitComponent;
+
+
 builder.entity {
 	
 	tags("base")
@@ -15,9 +18,29 @@ builder.entity {
 		propertyRef("radius", "radius")
 	}
 	
-	component("remover"){
+	
+	component(new HitComponent("remover")) {
+		property("targetTag", "critter")
 		propertyRef("position", "position")
-		propertyRef("range", "radius")
+		propertyRef("radius", "radius")
+		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") {   def source = message.source  })
+	}
+	
+	genericComponent(id:"hithandler", messageId:"hit"){ message ->
+		def entity = message.entity
+		def sourceEntity = message.source
+		
+		if (entity != sourceEntity)
+			return;
+		
+		message.targets.each { critter -> 
+			messageQueue.enqueue(utils.genericMessage("critterReachBase"){ deadMessage ->
+				deadMessage.critter = critter
+			})
+		}
+		
+		println "hit base"
+		
 	}
 	
 }

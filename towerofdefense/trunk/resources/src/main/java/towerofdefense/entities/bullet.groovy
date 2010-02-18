@@ -32,7 +32,6 @@ builder.entity("bullet-${Math.random()}") {
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def entity = message.entity		
-		println message.damage;
 		if (message.getProperty("source").get() == entity)
 			messageQueue.enqueue(new RemoveEntityMessage(entity))
 	}
