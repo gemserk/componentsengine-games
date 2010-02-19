@@ -7,16 +7,16 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.componentsengine.world.World;
 import com.google.inject.Inject;
 
 public class FollowPathComponent extends ReflectionComponent {
 
-	@Inject
-	World world;
+	@Inject	@Root 
+	Entity rootEntity;
 
 	PropertyLocator<String> pathEntityIdProperty = Properties.property("followpath", "pathEntityId");
 
@@ -55,7 +55,7 @@ public class FollowPathComponent extends ReflectionComponent {
 
 	private Path getPath(Entity entity) {
 		String pathEntityId = pathEntityIdProperty.getValue(entity);
-		Entity pathEntity = world.getEntityById(pathEntityId);
+		Entity pathEntity = rootEntity.getEntityById(pathEntityId);
 
 		String pathPropertyString = pathProperty.getValue(entity);
 		Path path = (Path) Properties.property(pathPropertyString).getValue(pathEntity);

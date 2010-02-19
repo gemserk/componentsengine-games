@@ -1,4 +1,6 @@
 package towerofdefense.entities;
+import com.gemserk.games.towerofdefense.PathRendererComponent;
+
 
 builder.entity {
 	
@@ -6,7 +8,7 @@ builder.entity {
 	
 	property("path", parameters.path)
 	
-	component("pathrenderer"){
+	component(new PathRendererComponent("pathrenderer")){
 		property("lineColor", parameters.lineColor)
 		propertyRef("path", "path")		
 	}

@@ -9,7 +9,6 @@ import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.componentsengine.scene.Scene;
 import com.gemserk.games.towerofdefense.MessageBuilder;
 import com.gemserk.games.towerofdefense.timers.Timer;
 import com.google.inject.Inject;
@@ -29,13 +28,13 @@ public class TimerComponent extends ReflectionComponent {
 	}
 
 	public void handleMessage(UpdateMessage message) {
-		Scene scene = message.getScene();
-		Timer timer = timerProperty.getValue(scene);
+		Entity entity = message.getEntity();
+		Timer timer = timerProperty.getValue(entity);
 		boolean fired = timer.update(message.getDelta());
 		if (!fired)
 			return;
 
-		MessageBuilder messageBuilder = messageBuilderProperty.getValue(scene);
+		MessageBuilder messageBuilder = messageBuilderProperty.getValue(entity);
 		Message newMessage = messageBuilder.build(new HashMap<String, Object>());
 		
 		messageQueue.enqueue(newMessage);

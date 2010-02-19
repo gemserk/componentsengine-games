@@ -8,12 +8,13 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.componentsengine.world.World;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
@@ -27,8 +28,11 @@ public class HitComponent extends ReflectionComponent {
 
 	private PropertyLocator<String> targetTagProperty;
 
+	@Inject	@Root 
+	Entity  rootEntity;
+	
 	@Inject
-	World world;
+	MessageQueue messageQueue;
 
 	public HitComponent(String id) {
 		super(id);
@@ -48,7 +52,7 @@ public class HitComponent extends ReflectionComponent {
 		Float radius = radiusProperty.getValue(entity);
 		String targetTags = targetTagProperty.getValue(entity);
 
-		final Collection<Entity> candidates = world.getEntities(Predicates.and(EntityPredicates.withAllTags(targetTags), EntityPredicates.isNear(position, radius)));
+		final Collection<Entity> candidates = rootEntity.getEntities(Predicates.and(EntityPredicates.withAllTags(targetTags), EntityPredicates.isNear(position, radius)));
 
 		if (candidates.size() == 0)
 			return;
@@ -62,7 +66,7 @@ public class HitComponent extends ReflectionComponent {
 			}
 		});
 
-		world.handleMessage(hitMessage);
+		messageQueue.enqueue(hitMessage);
 	}
 
 }

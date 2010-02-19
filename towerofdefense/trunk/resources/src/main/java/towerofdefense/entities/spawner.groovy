@@ -1,5 +1,7 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
+import com.gemserk.games.towerofdefense.components.WavesSpawnerComponent;
 import com.gemserk.games.towerofdefense.waves.Waves;
 
 builder.entity {
@@ -8,12 +10,12 @@ builder.entity {
 	
 	property("position", parameters.position)
 	
-	component("circlerenderer"){
+	component(new CircleRenderableComponent("circlerenderer")){
 		property("radius", 10.0f)
 		propertyRef("position", "position")
 	}
 	
-	component("creator"){
+	component(new WavesSpawnerComponent("creator")){
 		property("waves", parameters.waves)
 		propertyRef("position", "position")
 	}

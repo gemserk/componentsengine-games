@@ -1,5 +1,14 @@
 package towerofdefense.entities;
-import com.gemserk.componentsengine.messages.RemoveEntityMessage;
+import com.gemserk.games.towerofdefense.HitComponent;
+
+
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
+
+
+import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
+
+import com.gemserk.componentsengine.messages.ChildMessage;
+
 builder.entity("bullet-${Math.random()}") {
 	
 	tags("bullet", "nofriction")
@@ -9,17 +18,17 @@ builder.entity("bullet-${Math.random()}") {
 	property("damage", parameters.damage);
 	property("radius", parameters.radius);
 	
-	component("movement"){
+	component(new SuperMovementComponent("movement")){
 		property("velocity", parameters.direction.scale(parameters.maxVelocity))
 		property("maxVelocity", parameters.maxVelocity)
 		propertyRef("position", "position")
 	}
 	
-	component("imagerenderer")
-	property("image", image("towerofdefense.images.bullet"))
+	component(new ImageRenderableComponent("imagerenderer"))
+	property("image", utils.resources.image("towerofdefense.images.bullet"))
 	property("color", parameters.color)
 	
-	component("bullethit"){
+	component(new HitComponent("bullethit")){
 		property("targetTag", "critter")
 		propertyRef("position", "position")
 		propertyRef("radius", "radius")
@@ -33,7 +42,7 @@ builder.entity("bullet-${Math.random()}") {
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def entity = message.entity		
 		if (message.getProperty("source").get() == entity)
-			messageQueue.enqueue(new RemoveEntityMessage(entity))
+			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
 	}
 	
 	

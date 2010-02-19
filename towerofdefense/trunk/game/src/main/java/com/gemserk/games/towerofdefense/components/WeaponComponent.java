@@ -8,7 +8,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.messages.AddEntityMessage;
+import com.gemserk.componentsengine.messages.ChildMessage;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.properties.Properties;
@@ -90,7 +90,7 @@ public class WeaponComponent extends ReflectionComponent {
 		
 		Entity bullet = bulletTemplate.instantiate("", instanceParameters);
 		
-		messageQueue.enqueue(new AddEntityMessage(bullet));
+		messageQueue.enqueue(ChildMessage.addEntity(bullet,"world"));
 		
 		currentReloadTime = reloadTimeProperty.getValue(entity);
 		currentReloadTimeProperty.setValue(entity, currentReloadTime);

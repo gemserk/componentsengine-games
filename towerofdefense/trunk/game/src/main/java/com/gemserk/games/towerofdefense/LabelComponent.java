@@ -6,10 +6,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
+import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.componentsengine.scene.Scene;
 
 public class LabelComponent extends ReflectionComponent {
 	
@@ -26,15 +26,15 @@ public class LabelComponent extends ReflectionComponent {
 	}
 
 	public void handleMessage(SlickRenderMessage message) {
-		Scene scene = message.getScene();
+		Entity entity = message.getEntity();
 		Graphics graphics = message.getGraphics();
 		graphics.pushTransform();
 		{
-			Vector2f position = positionProperty.getValue(scene);
+			Vector2f position = positionProperty.getValue(entity);
 			graphics.translate(position.x, position.y);
 			
-			String formatMessage = messageProperty.getValue(scene);
-			String text = MessageFormat.format(formatMessage, valueProperty.getValue(scene));
+			String formatMessage = messageProperty.getValue(entity);
+			String text = MessageFormat.format(formatMessage, valueProperty.getValue(entity));
 			
 			graphics.drawString(text, 0, 0);
 		}

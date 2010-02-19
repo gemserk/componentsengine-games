@@ -1,7 +1,12 @@
 package towerofdefense.entities;
+import com.gemserk.games.towerofdefense.FollowPathComponent;
 
+
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
+
+import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
+import com.gemserk.componentsengine.messages.ChildMessage;
 import com.gemserk.componentsengine.messages.GenericMessage;
-import com.gemserk.componentsengine.messages.RemoveEntityMessage 
 
 builder.entity("critter-${Math.random()}") {
 	
@@ -13,12 +18,12 @@ builder.entity("critter-${Math.random()}") {
 	property("points",parameters.points)
 	propertyRef("direction", "movement.velocity")
 	
-	component("movement"){
+	component(new SuperMovementComponent("movement")){
 		property("maxVelocity", parameters.maxVelocity)
 		propertyRef("position", "position")
 	}
 	
-	component("followpath"){
+	component(new FollowPathComponent("followpath")){
 		property("pathEntityId", parameters.pathEntityId);
 		property("path", parameters.pathProperty);
 		property("pathindex", 0);
@@ -26,8 +31,8 @@ builder.entity("critter-${Math.random()}") {
 		propertyRef("position", "position");
 	}
 	
-	component("imagerenderer")
-	property("image", image("towerofdefense.images.critter1"))
+	component(new ImageRenderableComponent("imagerenderer"))
+	property("image", utils.resources.image("towerofdefense.images.critter1"))
 	property("color", parameters.color)
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
@@ -35,6 +40,9 @@ builder.entity("critter-${Math.random()}") {
 		def sourceEntity = message.source
 		
 		if (!sourceEntity.tags.contains("bullet"))
+			return;
+		
+		if (entity.health.isEmpty())
 			return;
 		
 		if (message.targets.contains(entity)) {
@@ -54,13 +62,13 @@ builder.entity("critter-${Math.random()}") {
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		def entity = message.entity
 		if(message.critter == entity)
-			messageQueue.enqueue(new RemoveEntityMessage(entity))
+			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
 		def entity = message.entity
 		if(message.critter == entity)
-			messageQueue.enqueue(new RemoveEntityMessage(entity))
+			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
 	}
 	
 }

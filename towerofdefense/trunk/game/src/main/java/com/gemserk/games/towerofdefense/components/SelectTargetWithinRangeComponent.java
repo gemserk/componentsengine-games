@@ -5,17 +5,17 @@ import java.util.Collection;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.componentsengine.world.World;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
 public class SelectTargetWithinRangeComponent extends TodComponent {
 
-	@Inject
-	World world;
+	@Inject	@Root 
+	Entity  rootEntity;
 
 	private PropertyLocator<String> targetTagProperty;
 
@@ -42,7 +42,7 @@ public class SelectTargetWithinRangeComponent extends TodComponent {
 
 		float radius = radiusProperty.getValue(entity);
 
-		Collection<Entity> targetEntities = world.getEntities(Predicates.and(EntityPredicates.withAllTags(targetTag), EntityPredicates.isNear(position, radius)));
+		Collection<Entity> targetEntities = rootEntity.getEntities(Predicates.and(EntityPredicates.withAllTags(targetTag), EntityPredicates.isNear(position, radius)));
 
 		if (targetEntities.size() == 0) {
 			targetEntityProperty.setValue(entity, null);

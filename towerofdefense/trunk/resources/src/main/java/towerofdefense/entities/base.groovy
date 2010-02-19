@@ -1,5 +1,6 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.games.towerofdefense.HitComponent;
 
 
@@ -11,7 +12,7 @@ builder.entity {
 	property("radius", parameters.radius)
 	property("direction", parameters.direction)
 	
-	component("circlerenderer"){
+	component(new CircleRenderableComponent("circlerenderer")){
 		property("lineColor", parameters.lineColor)
 		property("fillColor", parameters.fillColor)
 		propertyRef("position", "position")

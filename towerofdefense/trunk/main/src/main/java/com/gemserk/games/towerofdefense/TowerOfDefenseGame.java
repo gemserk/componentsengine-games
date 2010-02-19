@@ -1,10 +1,8 @@
 package com.gemserk.games.towerofdefense;
 
-import groovy.lang.Binding;
 import groovy.lang.Closure;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -17,22 +15,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.components.MessageHandler;
+import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.game.Game;
-import com.gemserk.componentsengine.groovydebugconsole.GroovyConsoleService;
 import com.gemserk.componentsengine.groovydebugconsole.GroovyShellService;
 import com.gemserk.componentsengine.input.MonitorFactory;
 import com.gemserk.componentsengine.input.SlickMonitorFactory;
-import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.MessageQueueImpl;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.resources.AnimationManager;
+import com.gemserk.componentsengine.resources.AnimationManagerImpl;
+import com.gemserk.componentsengine.resources.ImageManager;
+import com.gemserk.componentsengine.resources.ImageManagerImpl;
+import com.gemserk.componentsengine.resources.PropertiesImageLoader;
 import com.gemserk.componentsengine.scene.BuilderUtils;
-import com.gemserk.componentsengine.scene.GroovySceneProvider;
-import com.gemserk.componentsengine.scene.SceneProvider;
 import com.gemserk.componentsengine.templates.CachedScriptProvider;
 import com.gemserk.componentsengine.templates.GroovyScriptProvider;
 import com.gemserk.componentsengine.templates.GroovyScriptProviderImpl;
+import com.gemserk.componentsengine.templates.GroovyTemplateProvider;
+import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -71,6 +74,8 @@ public class TowerOfDefenseGame extends BasicGame {
 	private GameContainer gameContainer;
 	private MessageQueue messageQueue;
 
+	
+	
 	@Override
 	public void init(final GameContainer container) throws SlickException {
 
@@ -81,7 +86,6 @@ public class TowerOfDefenseGame extends BasicGame {
 			protected void configure() {
 				bind(Input.class).toInstance(container.getInput());
 				bind(Game.class).in(Singleton.class);
-				bind(SceneProvider.class).to(GroovySceneProvider.class).in(Singleton.class);
 				bind(GameContainer.class).toInstance(container);
 
 				bind(GroovyScriptProvider.class).toInstance(new CachedScriptProvider(new GroovyScriptProviderImpl()));
@@ -91,12 +95,24 @@ public class TowerOfDefenseGame extends BasicGame {
 
 				bind(BuilderUtils.class).in(Singleton.class);
 				bind(GroovyClosureRunner.class).in(Singleton.class);
+				bind(Entity.class).annotatedWith(Root.class).toInstance(new Entity("root"));
+				
+				
+				bind(ImageManager.class).to(ImageManagerImpl.class).in(Singleton.class);
+				bind(AnimationManager.class).to(AnimationManagerImpl.class).in(Singleton.class);
+
+				bind(TemplateProvider.class).toInstance(new GroovyTemplateProvider());				
+				
 			}
 		});
 
 		messageQueue = injector.getInstance(MessageQueue.class);
-
+		game = injector.getInstance(Game.class);
 		final BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
+		
+		builderUtils.addCustomUtil("templateProvider", injector.getInstance(TemplateProvider.class));
+		builderUtils.addCustomUtil("game", injector.getInstance(Game.class));	
+		
 		builderUtils.addCustomUtil("messageBuilderFactory", new Object() {
 			
 			public MessageBuilder messageBuilder(String messageId, Closure closure) {
@@ -111,8 +127,12 @@ public class TowerOfDefenseGame extends BasicGame {
 			}
 			
 		});
+		
+		
+		images(injector,"assets/images.properties");
+		
 
-		game = injector.getInstance(Game.class);
+		
 		game.loadScene("towerofdefense.scenes.scene1");
 		
 		GroovyShellService groovyShellService = new GroovyShellService(9999);
@@ -150,6 +170,13 @@ public class TowerOfDefenseGame extends BasicGame {
 
 		if (key == Input.KEY_ESCAPE)
 			gameContainer.exit();
+
+	}
+	
+	public void images(Injector injector, String imagePropertiesFile) {
+		PropertiesImageLoader propertiesImageLoader = new PropertiesImageLoader(imagePropertiesFile);
+		injector.injectMembers(propertiesImageLoader);
+		propertiesImageLoader.load();
 
 	}
 

@@ -2,7 +2,6 @@ package com.gemserk.games.towerofdefense.components;
 
 import static com.gemserk.componentsengine.properties.Properties.property;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -10,7 +9,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.messages.AddEntityMessage;
+import com.gemserk.componentsengine.messages.ChildMessage;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
@@ -65,7 +64,7 @@ public class SpawnerComponent extends Component {
 
 			String templateName = templateNameProperty.getValue(entity);
 			Entity newEntity = templateProvider.getTemplate(templateName).instantiate("", instanceProperties);
-			messageQueue.enqueue(new AddEntityMessage(newEntity));
+			messageQueue.enqueue(ChildMessage.addEntity(newEntity,"world"));
 
 			Interval interval = this.spawnDelayProperty.getValue(entity);
 			Integer delay = interval.getMin() + random.nextInt(interval.getLength() + 1);

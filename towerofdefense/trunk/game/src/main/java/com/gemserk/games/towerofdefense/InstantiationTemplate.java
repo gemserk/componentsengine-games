@@ -4,8 +4,8 @@ import com.gemserk.componentsengine.entities.Entity;
 
 public interface InstantiationTemplate {
 
-	public abstract Entity get();
+	Entity get();
 
-	public abstract Entity get(Object... parameters);
+	Entity get(Object... parameters);
 
 }
