@@ -6,11 +6,13 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.utils.Container;
 
-public class BarRendererComponent extends TodComponent {
+public class BarRendererComponent extends ReflectionComponent {
 
 	PropertyLocator<Vector2f> positionProperty;
 
@@ -22,7 +24,10 @@ public class BarRendererComponent extends TodComponent {
 		containerProperty = property(id, "container");
 	}
 
-	@Override
+	public void handleMessage(SlickRenderMessage message) {
+		render(message.getGraphics(), message.getEntity());
+	}
+
 	public void render(Graphics g, Entity entity) {
 
 		Vector2f position = positionProperty.getValue(entity);

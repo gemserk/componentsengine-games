@@ -6,10 +6,12 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
-public class EntityRendererComponent extends TodComponent {
+public class EntityRendererComponent extends ReflectionComponent {
 
 	PropertyLocator<Vector2f> positionProperty = property("position");
 
@@ -25,7 +27,10 @@ public class EntityRendererComponent extends TodComponent {
 		super(name);
 	}
 
-	@Override
+	public void handleMessage(SlickRenderMessage message) {
+		render(message.getGraphics(), message.getEntity());
+	}
+
 	public void render(Graphics g, Entity entity) {
 
 		float size = this.sizeProperty.getValue(entity);

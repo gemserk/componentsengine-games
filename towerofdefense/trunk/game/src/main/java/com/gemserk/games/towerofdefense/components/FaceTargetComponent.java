@@ -2,11 +2,13 @@ package com.gemserk.games.towerofdefense.components;
 
 import org.newdawn.slick.geom.Vector2f;
 
+import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
-public class FaceTargetComponent extends TodComponent {
+public class FaceTargetComponent extends ReflectionComponent {
 
 	private PropertyLocator<Vector2f> directionProperty;
 
@@ -21,7 +23,10 @@ public class FaceTargetComponent extends TodComponent {
 		targetEntityProperty = Properties.property(id, "targetEntity");
 	}
 
-	@Override
+	public void handleMessage(UpdateMessage message) {
+		update(message.getEntity(), message.getDelta());
+	}
+
 	public void update(Entity entity, int delta) {
 
 		Entity targetEntity = targetEntityProperty.getValue(entity, null);

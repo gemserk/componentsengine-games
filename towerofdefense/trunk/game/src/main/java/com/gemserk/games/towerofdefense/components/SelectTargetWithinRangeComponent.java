@@ -4,15 +4,17 @@ import java.util.Collection;
 
 import org.newdawn.slick.geom.Vector2f;
 
+import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
+import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
-public class SelectTargetWithinRangeComponent extends TodComponent {
+public class SelectTargetWithinRangeComponent extends ReflectionComponent {
 
 	@Inject	@Root 
 	Entity  rootEntity;
@@ -33,7 +35,10 @@ public class SelectTargetWithinRangeComponent extends TodComponent {
 		targetEntityProperty = Properties.property(id, "targetEntity");
 	}
 
-	@Override
+	public void handleMessage(UpdateMessage message) {
+		update(message.getEntity(), message.getDelta());
+	}
+	
 	public void update(Entity entity, int delta) {
 
 		String targetTag = targetTagProperty.getValue(entity);

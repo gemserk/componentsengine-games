@@ -1,12 +1,10 @@
 package towerofdefense.entities;
 import com.gemserk.games.towerofdefense.FollowPathComponent;
 
-
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 import com.gemserk.componentsengine.messages.ChildMessage;
-import com.gemserk.componentsengine.messages.GenericMessage;
 
 builder.entity("critter-${Math.random()}") {
 	

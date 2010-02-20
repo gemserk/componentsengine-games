@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.gemserk.games.towerofdefense;
 
 import org.newdawn.slick.geom.Vector2f;
@@ -15,21 +12,26 @@ import com.google.inject.Inject;
 
 public class FollowPathComponent extends ReflectionComponent {
 
-	@Inject	@Root 
-	Entity rootEntity;
-
-	PropertyLocator<String> pathEntityIdProperty = Properties.property("followpath", "pathEntityId");
-
-	PropertyLocator<String> pathProperty = Properties.property("followpath", "path");
-
-	PropertyLocator<Integer> pathIndexProperty = Properties.property("followpath", "pathindex");
-
-	PropertyLocator<Vector2f> forceProperty = Properties.property("followpath", "force");
-
-	PropertyLocator<Vector2f> positionProperty = Properties.property("followpath", "position");
+	@Inject
+	@Root	Entity rootEntity;
+	
+	PropertyLocator<String> pathEntityIdProperty;
+	
+	PropertyLocator<String> pathProperty;
+	
+	PropertyLocator<Integer> pathIndexProperty;
+	
+	PropertyLocator<Vector2f> forceProperty;
+	
+	PropertyLocator<Vector2f> positionProperty;
 
 	public FollowPathComponent(String id) {
 		super(id);
+		pathEntityIdProperty = Properties.property(id, "pathEntityId");
+		pathProperty = Properties.property(id, "path");
+		pathIndexProperty = Properties.property(id, "pathindex");
+		forceProperty = Properties.property(id, "force");
+		positionProperty = Properties.property(id, "position");
 	}
 
 	public void handleMessage(UpdateMessage updateMessage) {
