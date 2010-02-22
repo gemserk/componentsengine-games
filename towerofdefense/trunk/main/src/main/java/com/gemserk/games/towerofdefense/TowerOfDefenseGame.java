@@ -2,7 +2,10 @@ package com.gemserk.games.towerofdefense;
 
 import groovy.lang.Closure;
 
-import java.util.HashMap;
+import java.lang.management.ManagementFactory;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -14,11 +17,14 @@ import org.newdawn.slick.SlickException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.jmx.JMXConfigurator;
+import ch.qos.logback.classic.jmx.JMXConfiguratorMBean;
+
 import com.gemserk.componentsengine.components.MessageHandler;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.game.Game;
-import com.gemserk.componentsengine.groovydebugconsole.GroovyShellService;
 import com.gemserk.componentsengine.input.MonitorFactory;
 import com.gemserk.componentsengine.input.SlickMonitorFactory;
 import com.gemserk.componentsengine.messages.MessageQueue;
@@ -56,10 +62,11 @@ public class TowerOfDefenseGame extends BasicGame {
 
 			app.setDisplayMode(800, 600, false);
 			app.setAlwaysRender(true);
-			// app.setMinimumLogicUpdateInterval(10);
 			app.setShowFPS(true);
 
-			app.setTargetFrameRate(60);
+			app.setMinimumLogicUpdateInterval(1);
+			// app.setTargetFrameRate(60);
+
 			app.start();
 
 		} catch (SlickException e) {
@@ -74,8 +81,6 @@ public class TowerOfDefenseGame extends BasicGame {
 	private GameContainer gameContainer;
 	private MessageQueue messageQueue;
 
-	
-	
 	@Override
 	public void init(final GameContainer container) throws SlickException {
 
@@ -96,52 +101,40 @@ public class TowerOfDefenseGame extends BasicGame {
 				bind(BuilderUtils.class).in(Singleton.class);
 				bind(GroovyClosureRunner.class).in(Singleton.class);
 				bind(Entity.class).annotatedWith(Root.class).toInstance(new Entity("root"));
-				
-				
+
 				bind(ImageManager.class).to(ImageManagerImpl.class).in(Singleton.class);
 				bind(AnimationManager.class).to(AnimationManagerImpl.class).in(Singleton.class);
 
-				bind(TemplateProvider.class).toInstance(new GroovyTemplateProvider());				
-				
+				bind(TemplateProvider.class).toInstance(new GroovyTemplateProvider());
+
 			}
 		});
 
 		messageQueue = injector.getInstance(MessageQueue.class);
 		game = injector.getInstance(Game.class);
 		final BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
-		
+
 		builderUtils.addCustomUtil("templateProvider", injector.getInstance(TemplateProvider.class));
-		builderUtils.addCustomUtil("game", injector.getInstance(Game.class));	
-		
+		builderUtils.addCustomUtil("game", injector.getInstance(Game.class));
+
 		builderUtils.addCustomUtil("messageBuilderFactory", new Object() {
-			
+
 			public MessageBuilder messageBuilder(String messageId, Closure closure) {
 				return new GroovyMessageBuilder(messageId, closure);
 			}
 		});
-		
-		builderUtils.addCustomUtil("genericprovider", new Object(){
-			
-			public GenericProvider provide(Closure closure){
+
+		builderUtils.addCustomUtil("genericprovider", new Object() {
+
+			public GenericProvider provide(Closure closure) {
 				return new ValueFromClosure(closure);
 			}
-			
-		});
-		
-		
-		images(injector,"assets/images.properties");
-		
 
-		
+		});
+
+		images(injector, "assets/images.properties");
+
 		game.loadScene("towerofdefense.scenes.scene1");
-		
-		GroovyShellService groovyShellService = new GroovyShellService(9999);
-		groovyShellService.setBindings(new HashMap<String, Object>(){{
-			put("executor",injector.getInstance(GroovyClosureRunner.class));
-			put("utils",builderUtils);
-		}});
-		
-		groovyShellService.launchInBackground();
 	}
 
 	@Override
@@ -172,7 +165,7 @@ public class TowerOfDefenseGame extends BasicGame {
 			gameContainer.exit();
 
 	}
-	
+
 	public void images(Injector injector, String imagePropertiesFile) {
 		PropertiesImageLoader propertiesImageLoader = new PropertiesImageLoader(imagePropertiesFile);
 		injector.injectMembers(propertiesImageLoader);

@@ -7,7 +7,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
-import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
@@ -28,14 +27,10 @@ public class EntityRendererComponent extends ReflectionComponent {
 	}
 
 	public void handleMessage(SlickRenderMessage message) {
-		render(message.getGraphics(), message.getEntity());
-	}
-
-	public void render(Graphics g, Entity entity) {
-
+		Graphics g = message.getGraphics();
 		float size = this.sizeProperty.getValue(entity);
 		Color color = this.colorProperty.getValue(entity);
-
+		
 		g.setColor(color);
 		g.pushTransform();
 		Vector2f entityPosition = positionProperty.getValue(entity);
@@ -43,5 +38,7 @@ public class EntityRendererComponent extends ReflectionComponent {
 		g.fillOval(0.0f, 0.0f, size, size, 10);
 		g.popTransform();
 	}
+
+	
 
 }

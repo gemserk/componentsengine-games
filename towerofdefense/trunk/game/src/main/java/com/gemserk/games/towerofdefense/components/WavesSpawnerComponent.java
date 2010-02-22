@@ -7,6 +7,7 @@ import java.util.List;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.Component;
+import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.ChildMessage;
 import com.gemserk.componentsengine.messages.Message;
@@ -17,7 +18,7 @@ import com.gemserk.games.towerofdefense.InstantiationTemplate;
 import com.gemserk.games.towerofdefense.waves.Waves;
 import com.google.inject.Inject;
 
-public class WavesSpawnerComponent extends Component {
+public class WavesSpawnerComponent extends ReflectionComponent {
 
 	PropertyLocator<Vector2f> spawnPositionProperty;
 	PropertyLocator<Waves> wavesProperty;
@@ -36,22 +37,13 @@ public class WavesSpawnerComponent extends Component {
 	}
 
 
-	private void update(final Entity entity, int delta) {
-		
+	public void handleMessage(UpdateMessage message) {
+		int delta = message.getDelta();
 		Waves waves = wavesProperty.getValue(entity);
 		List<InstantiationTemplate> templates = waves.generateTemplates(delta);
 		for (InstantiationTemplate instantiationTemplate : templates) {
 			Entity newEntity = instantiationTemplate.get(entity);
 			messageQueue.enqueue(ChildMessage.addEntity(newEntity,"world"));
-		}
-	}
-
-	@Override
-	public void handleMessage(Message message) {
-		if (message instanceof UpdateMessage) {
-			UpdateMessage update = (UpdateMessage) message;
-			this.update(message.getEntity(), update.getDelta());
-
 		}
 	}
 

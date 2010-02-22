@@ -36,11 +36,6 @@ public class SelectTargetWithinRangeComponent extends ReflectionComponent {
 	}
 
 	public void handleMessage(UpdateMessage message) {
-		update(message.getEntity(), message.getDelta());
-	}
-	
-	public void update(Entity entity, int delta) {
-
 		String targetTag = targetTagProperty.getValue(entity);
 
 		Vector2f position = positionProperty.getValue(entity);

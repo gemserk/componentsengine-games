@@ -10,7 +10,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
-import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
@@ -31,7 +30,6 @@ public class PathRendererComponent extends ReflectionComponent {
 
 	public void handleMessage(SlickRenderMessage slickRenderMessage) {
 		Graphics g = slickRenderMessage.getGraphics();
-		Entity entity = slickRenderMessage.getEntity();
 
 		List<Vector2f> points = pathProperty.getValue(entity).getPoints();
 		Color lineColor = lineColorProperty.getValue(entity, Color.white);

@@ -40,7 +40,6 @@ builder.entity("bullet-${Math.random()}") {
 	}
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
-		def entity = message.entity		
 		if (message.getProperty("source").get() == entity)
 			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
 	}

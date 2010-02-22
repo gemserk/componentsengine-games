@@ -24,11 +24,6 @@ public class FaceTargetComponent extends ReflectionComponent {
 	}
 
 	public void handleMessage(UpdateMessage message) {
-		update(message.getEntity(), message.getDelta());
-	}
-
-	public void update(Entity entity, int delta) {
-
 		Entity targetEntity = targetEntityProperty.getValue(entity, null);
 
 		if (targetEntity == null)

@@ -46,7 +46,6 @@ public class HitComponent extends ReflectionComponent {
 
 	public void handleMessage(UpdateMessage message) {
 
-		final Entity entity = message.getEntity();
 
 		Vector2f position = positionProperty.getValue(entity);
 		Float radius = radiusProperty.getValue(entity);

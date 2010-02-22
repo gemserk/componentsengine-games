@@ -39,7 +39,7 @@ public class OutOfBoundsRemover extends Component {
 	public void handleMessage(Message message) {
 		if (message instanceof UpdateMessage) {
 
-			Entity entity = message.getEntity();
+			
 			String[] tags = tagsProperties.getValue(entity);
 
 			Rectangle worldBounds = boundsProperty.getValue(entity);

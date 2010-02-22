@@ -21,7 +21,7 @@ builder.entity {
 	}
 	
 	genericComponent(id:"nextWaveHandler", messageId:"nextWave"){ message ->	
-		Waves waves = message.entity."creator.waves"
+		Waves waves = entity."creator.waves"
 		if(!waves.isLastWaveStarted())
 			waves.nextWave()	
 	}

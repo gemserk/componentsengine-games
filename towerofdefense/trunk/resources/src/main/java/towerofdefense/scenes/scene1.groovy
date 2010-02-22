@@ -141,15 +141,14 @@ builder.entity("world") {
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		def reward = message.critter.reward
 		def points = message.critter.points
-		message.entity.money+=reward
-		message.entity.points+=points
+		entity.money+=reward
+		entity.points+=points
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
-		def scene = message.entity
-		scene.lives--;
+		entity.lives--;
 		
-		if(scene.lives <= 0)
+		if(entity.lives <= 0)
 			messageQueue.enqueue(utils.genericMessage("reloadScene",{}))
 	}
 	
@@ -203,7 +202,7 @@ builder.entity("world") {
 	}
 	
 	genericComponent(id:"nextWaveMessageHandler", messageId:"nextWave"){ message ->
-		message.entity.wavesTimer.reset()
+		entity.wavesTimer.reset()
 	}
 	
 	

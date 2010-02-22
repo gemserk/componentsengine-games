@@ -35,7 +35,6 @@ public class FollowPathComponent extends ReflectionComponent {
 	}
 
 	public void handleMessage(UpdateMessage updateMessage) {
-		Entity entity = updateMessage.getEntity();
 
 		Path path = getPath(entity);
 

@@ -28,7 +28,7 @@ class TowerDeployer extends ReflectionComponent{
 
 		
 		
-		def instantiationTemplate = message.entity."${id}.instantiationTemplate"
+		def instantiationTemplate = entity."${id}.instantiationTemplate"
 		
 		def position = new Vector2f(input.getMouseX(), input.getMouseY())
 		
@@ -36,7 +36,6 @@ class TowerDeployer extends ReflectionComponent{
 		
 		Entity tower = instantiationTemplate.get(position)
 		
-		def entity = message.entity
 		
 		def cost = tower.cost
 		if(entity.money < cost){
@@ -46,7 +45,7 @@ class TowerDeployer extends ReflectionComponent{
 			
 		entity.money -= cost
 		
-		message.entity."${id}.towerCount" = message.entity."${id}.towerCount" + 1
+		entity."${id}.towerCount" = entity."${id}.towerCount" + 1
 		messageQueue.enqueue(ChildMessage.addEntity(tower, "world"));
 	}
 

@@ -28,7 +28,6 @@ builder.entity {
 	}
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
-		def entity = message.entity
 		def sourceEntity = message.source
 		
 		if (entity != sourceEntity)
@@ -39,9 +38,6 @@ builder.entity {
 				deadMessage.critter = critter
 			})
 		}
-		
-		println "hit base"
-		
 	}
 	
 }

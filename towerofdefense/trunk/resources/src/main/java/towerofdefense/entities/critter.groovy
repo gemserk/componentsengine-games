@@ -34,7 +34,6 @@ builder.entity("critter-${Math.random()}") {
 	property("color", parameters.color)
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
-		def entity = message.entity
 		def sourceEntity = message.source
 		
 		if (!sourceEntity.tags.contains("bullet"))
@@ -52,19 +51,16 @@ builder.entity("critter-${Math.random()}") {
 			}
 			
 			entity.color.a = entity.health.percentage
-			println "health: $entity.health"
 		}
 		
 	}
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
-		def entity = message.entity
 		if(message.critter == entity)
 			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
-		def entity = message.entity
 		if(message.critter == entity)
 			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
 	}

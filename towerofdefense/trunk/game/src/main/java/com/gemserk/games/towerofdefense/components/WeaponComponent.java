@@ -63,7 +63,6 @@ public class WeaponComponent extends ReflectionComponent {
 	}
 
 	public void handleMessage(UpdateMessage message) {
-		Entity entity = message.getEntity();
 		int delta = message.getDelta();
 		Integer currentReloadTime = currentReloadTimeProperty.getValue(entity);
 		
