@@ -2,6 +2,9 @@ package towerofdefense.scenes;
 
 import towerofdefense.GroovyBootstrapper;
 import towerofdefense.components.TowerDeployer;
+
+import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
+import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent 
 import com.gemserk.componentsengine.entities.Entity 
 import com.gemserk.componentsengine.messages.GenericMessage 
@@ -12,6 +15,7 @@ import org.newdawn.slick.Input
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
+import com.gemserk.games.towerofdefense.components.GuiLogicComponent;
 import com.gemserk.games.towerofdefense.components.OutOfBoundsRemover;
 import com.gemserk.games.towerofdefense.components.TimerComponent;
 import com.gemserk.games.towerofdefense.timers.PeriodicTimer;
@@ -27,7 +31,6 @@ builder.entity("world") {
 	property("lives",15000)
 	property("wavesTimer", new PeriodicTimer(15000))
 	property("towerCount",0)
-	
 	
 	child(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
@@ -57,11 +60,11 @@ builder.entity("world") {
 				utils.custom.genericprovider.provide{ entity ->
 					[
 					position:entity.position.copy(),
-					maxVelocity:0.06f,
+					maxVelocity:0.05f,
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-					health:utils.container(100,100),
+					health:utils.container(8,8),
 					points: 5,
 					reward:25			
 					]	
@@ -75,7 +78,7 @@ builder.entity("world") {
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-					health:utils.container(125,125),
+					health:utils.container(12,12),
 					points: 10,
 					reward:30
 					]	
@@ -89,7 +92,7 @@ builder.entity("world") {
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
-					health:utils.container(350,350),
+					health:utils.container(20,20),
 					points: 15,
 					reward:35
 					]	
@@ -103,7 +106,7 @@ builder.entity("world") {
 					pathEntityId:"path",
 					pathProperty:"path",
 					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
-					health:utils.container(335,335),
+					health:utils.container(15,15),
 					points: 20,
 					reward:40
 					]	
@@ -118,18 +121,18 @@ builder.entity("world") {
 			[
 			position:position,
 			direction:utils.vector(-1,0),
-			radius:100f,
-			lineColor:utils.color(0.0f, 0.0f, 0.0f, 0.2f),
-			fillColor:utils.color(0.0f, 0.0f, 0.0f, 0.0f),
+			radius:52f,
+			lineColor:utils.color(0.0f, 0.1f, 0.0f, 0.8f),
+			fillColor:utils.color(0.0f, 0.2f, 0.0f, 0.1f),
 			color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
 			template:"towerofdefense.entities.bullet",
-			reloadTime:800,
+			reloadTime:250,
 			cost: 50f,
 			instanceParameters: utils.custom.genericprovider.provide{
 				[
-				damage:25.0f,
+				damage:1.0f,
 				radius:10.0f,
-				maxVelocity:0.5f,
+				maxVelocity:0.6f,
 				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
 				]
 			}	
@@ -205,7 +208,6 @@ builder.entity("world") {
 		entity.wavesTimer.reset()
 	}
 	
-	
 	component(new LabelComponent("timerlabel")){
 		property("position",utils.vector(660,100))
 		property("message","Timer: {0}")
@@ -216,8 +218,34 @@ builder.entity("world") {
 		property("position",utils.vector(660,120))
 		property("message","Towers: {0}")
 		propertyRef("value","towerCount")
+	}	
+
+	component(new LabelComponent("guiStateLabel")){
+		property("position",utils.vector(660,140))
+		property("message","GuiState: {0}")
+		propertyRef("value", "guiComponent.state")
+	}	
+
+	property("deployTower", "deployState")
+	
+	component(new GuiLogicComponent("guiComponent")){
+		property("state", "deployState")
+		propertyRef("mousePosition", "mousePosition")
+		propertyRef("deployCursorColor", "deployCursorColor")
+		propertyRef("deployTowerEnabled", "deployTowerEnabled")
 	}
 	
+	property("deployTowerEnabled", false)
+	property("deployCursorColor", utils.color(0f, 0f, 0f, 0f))
+	property("mousePosition", utils.vector(0f, 0f))
+	
+	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
+		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
+		property("radius", 52.0f)
+		propertyRef("fillColor", "deployCursorColor")
+		propertyRef("position", "mousePosition")
+		propertyRef("enabled", "deployTowerEnabled")
+	}
 	
 	input("inputmapping"){
 		keyboard {
@@ -226,11 +254,16 @@ builder.entity("world") {
 		}
 		mouse {
 			
-			press(button:"left", eventId:"deployturret");
+			press(button:"left", eventId:"click");
+			press(button:"right", eventId:"changeState");
+
+			move(eventId:"move") { message ->
+				message.x = position.x
+				message.y = position.y
+			}
 			
-			hold(button:"right", eventId:"deployturret");
-			
-			
+			// hold(button:"right", eventId:"deployturret");
+						
 		}
 	}
 	

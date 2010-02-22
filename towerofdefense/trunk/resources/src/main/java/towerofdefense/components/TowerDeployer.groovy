@@ -14,39 +14,31 @@ class TowerDeployer extends ReflectionComponent{
 	@Inject Input input;
 	@Inject MessageQueue messageQueue;
 	
-	
 	public TowerDeployer(String id) {
 		super(id);
 	}
-	
 	
 	public void handleMessage(GenericMessage message){
 		
 		if(message.id != "deployturret")
 			return;
 		
-
-		
-		
 		def instantiationTemplate = entity."${id}.instantiationTemplate"
 		
 		def position = new Vector2f(input.getMouseX(), input.getMouseY())
 		
-	
-		
 		Entity tower = instantiationTemplate.get(position)
-		
 		
 		def cost = tower.cost
 		if(entity.money < cost){
 			println "Not enough money"
 			return
 		}
-			
+		
 		entity.money -= cost
 		
 		entity."${id}.towerCount" = entity."${id}.towerCount" + 1
 		messageQueue.enqueue(ChildMessage.addEntity(tower, "world"));
 	}
-
+	
 }
