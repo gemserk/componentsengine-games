@@ -5,13 +5,6 @@ import towerofdefense.components.TowerDeployer;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
-import com.gemserk.componentsengine.components.ReflectionComponent 
-import com.gemserk.componentsengine.entities.Entity 
-import com.gemserk.componentsengine.messages.GenericMessage 
-import com.gemserk.componentsengine.messages.MessageQueue 
-import com.gemserk.componentsengine.templates.EntityTemplate 
-import com.gemserk.componentsengine.templates.TemplateProvider 
-import org.newdawn.slick.Input 
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
@@ -26,9 +19,9 @@ builder.entity("world") {
 	
 	new GroovyBootstrapper();
 	
-	property("money",252220)
+	property("money", 15)
 	property("points",0)
-	property("lives",15000)
+	property("lives",15)
 	property("wavesTimer", new PeriodicTimer(15000))
 	property("towerCount",0)
 	
@@ -66,7 +59,7 @@ builder.entity("world") {
 					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
 					health:utils.container(8,8),
 					points: 5,
-					reward:25			
+					reward:1			
 					]	
 				}	
 				)), new Wave(1200,5,new InstantiationTemplateImpl(
@@ -80,7 +73,7 @@ builder.entity("world") {
 					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 					health:utils.container(12,12),
 					points: 10,
-					reward:30
+					reward:2
 					]	
 				}	
 				)), new Wave(2500,5,new InstantiationTemplateImpl(
@@ -94,7 +87,7 @@ builder.entity("world") {
 					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
 					health:utils.container(20,20),
 					points: 15,
-					reward:35
+					reward:3
 					]	
 				}	
 				)), new Wave(1200,1000,new InstantiationTemplateImpl(
@@ -108,7 +101,7 @@ builder.entity("world") {
 					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
 					health:utils.container(15,15),
 					points: 20,
-					reward:40
+					reward:4
 					]	
 				}	
 				))])
@@ -127,7 +120,7 @@ builder.entity("world") {
 			color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:250,
-			cost: 50f,
+			cost: 5f,
 			instanceParameters: utils.custom.genericprovider.provide{
 				[
 				damage:1.0f,
@@ -220,11 +213,11 @@ builder.entity("world") {
 		propertyRef("value","towerCount")
 	}	
 
-	component(new LabelComponent("guiStateLabel")){
-		property("position",utils.vector(660,140))
-		property("message","GuiState: {0}")
-		propertyRef("value", "guiComponent.state")
-	}	
+//	component(new LabelComponent("guiStateLabel")){
+//		property("position",utils.vector(660,140))
+//		property("message","GuiState: {0}")
+//		propertyRef("value", "guiComponent.state")
+//	}	
 
 	property("deployTower", "deployState")
 	
@@ -263,7 +256,7 @@ builder.entity("world") {
 		mouse {
 			
 			press(button:"left", eventId:"click");
-			press(button:"right", eventId:"changeState");
+			// press(button:"right", eventId:"changeState");
 
 			move(eventId:"move") { message ->
 				message.x = position.x
