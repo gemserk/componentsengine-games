@@ -12,6 +12,7 @@ import org.newdawn.slick.SlickException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.builders.BuilderUtils;
 import com.gemserk.componentsengine.components.MessageHandler;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -27,7 +28,6 @@ import com.gemserk.componentsengine.resources.AnimationManagerImpl;
 import com.gemserk.componentsengine.resources.ImageManager;
 import com.gemserk.componentsengine.resources.ImageManagerImpl;
 import com.gemserk.componentsengine.resources.PropertiesImageLoader;
-import com.gemserk.componentsengine.scene.BuilderUtils;
 import com.gemserk.componentsengine.templates.CachedScriptProvider;
 import com.gemserk.componentsengine.templates.GroovyScriptProvider;
 import com.gemserk.componentsengine.templates.GroovyScriptProviderImpl;

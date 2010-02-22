@@ -1,9 +1,10 @@
 package com.gemserk.games.towerofdefense.components;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
@@ -15,9 +16,8 @@ import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
+import com.gemserk.games.towerofdefense.Path;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 
 public class GuiLogicComponent extends ReflectionComponent {
@@ -38,48 +38,75 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 	private PropertyLocator<Entity> selectedTowerProperty;
 
-	private PropertyLocator<Color> deployCursorColorProperty;
+	private PropertyLocator<String> deployCursorStateProperty;
 
 	private PropertyLocator<Boolean> deployTowerEnabledProperty;
+
+	private PropertyLocator<Path> pathProperty;
 
 	public GuiLogicComponent(String id) {
 		super(id);
 		stateProperty = Properties.property(id, "state");
 		mousePositionProperty = Properties.property(id, "mousePosition");
 		selectedTowerProperty = Properties.property(id, "selectedTower");
-		deployCursorColorProperty = Properties.property(id, "deployCursorColor");
+		deployCursorStateProperty = Properties.property(id, "deployCursorState");
 		deployTowerEnabledProperty = Properties.property(id, "deployTowerEnabled");
+		pathProperty = Properties.property(id, "path");
 	}
 
 	public void handleMessage(UpdateMessage message) {
 
 		String state = stateProperty.getValue(entity);
-		
+
 		if (state.equals("deployState")) {
 			Vector2f mousePosition = mousePositionProperty.getValue(entity);
 			Entity nearTowerEntity = getTowerNear(mousePosition);
-			
+
 			deployTowerEnabledProperty.setValue(entity, true);
-			
-			if (nearTowerEntity != null)
-			{
-				deployCursorColorProperty.setValue(entity, new Color(0.3f, 0.0f, 0.0f,0.1f));
-				
+
+			boolean candeploy = true;
+
+			if (nearTowerEntity == null) {
+
+				Path path = pathProperty.getValue(entity);
+				List<Vector2f> points = path.getPoints();
+
+				for (int i = 0; i < points.size(); i++) {
+					Vector2f source = points.get(i).copy();
+
+					int j = i + 1;
+
+					if (j >= points.size())
+						continue;
+
+					Vector2f target = points.get(j);
+
+					Line line = new Line(source, target);
+
+					float pathWidth = 23.0f;
+					if (line.distance(mousePosition) < pathWidth) {
+						candeploy = false;
+						break;
+					}
+
+				}
 			} else {
-				deployCursorColorProperty.setValue(entity, new Color(0.0f, 0.3f, 0.0f,0.1f));
-			}				
-			
+				candeploy = false;
+			}
+
+			deployCursorStateProperty.setValue(entity, candeploy ? "candeploy" : "cantdeploy");
+
 		} else {
 			deployTowerEnabledProperty.setValue(entity, false);
 		}
-		
+
 	}
 
 	public void handleMessage(GenericMessage message) {
 
 		String state = stateProperty.getValue(entity);
 
-		Vector2f mousePosition = mousePositionProperty.getValue(entity);			
+		Vector2f mousePosition = mousePositionProperty.getValue(entity);
 
 		if (message.getId().equals("move")) {
 			float x = Properties.getValue(message, "x");
@@ -91,8 +118,8 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 			if (state.equals("deployState")) {
 
-				Entity nearTowerEntity = getTowerNear(mousePosition);
-				if (nearTowerEntity == null)
+				String cursorState = deployCursorStateProperty.getValue(entity);
+				if (cursorState.equals("candeploy"))
 					messageQueue.enqueue(new GenericMessage("deployturret"));
 
 			} else {
@@ -123,13 +150,14 @@ public class GuiLogicComponent extends ReflectionComponent {
 	}
 
 	private Entity getTowerNear(Vector2f mousePosition) {
-		Collection<Entity> towers = rootEntity.getEntities(Predicates.and(EntityPredicates.withAnyTag("tower"), EntityPredicates.isNear(mousePosition, 50.0f)));
+		float currentTowerSize = 25.0f;
+		Collection<Entity> towers = rootEntity.getEntities(Predicates.and(EntityPredicates.withAnyTag("tower"), EntityPredicates.isNear(mousePosition, currentTowerSize)));
 
 		Entity entity = null;
 		if (towers.size() > 0) {
 			entity = towers.iterator().next();
 		}
-		
+
 		return entity;
 	}
 

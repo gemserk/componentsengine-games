@@ -32,4 +32,8 @@ public class PeriodicTimer implements Timer{
 		return String.valueOf(timeLeft);
 	}
 	
+	public int getTimeLeft() {
+		return timeLeft;
+	}
+	
 }

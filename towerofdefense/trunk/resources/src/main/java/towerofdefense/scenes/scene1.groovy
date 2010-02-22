@@ -211,7 +211,7 @@ builder.entity("world") {
 	component(new LabelComponent("timerlabel")){
 		property("position",utils.vector(660,100))
 		property("message","Timer: {0}")
-		propertyRef("value","wavesTimer")
+		property("value",{entity.wavesTimer.timeLeft})
 	}
 	
 	component(new LabelComponent("towerCountlabel")){
@@ -231,18 +231,26 @@ builder.entity("world") {
 	component(new GuiLogicComponent("guiComponent")){
 		property("state", "deployState")
 		propertyRef("mousePosition", "mousePosition")
-		propertyRef("deployCursorColor", "deployCursorColor")
+		propertyRef("deployCursorState", "deployCursorState")
 		propertyRef("deployTowerEnabled", "deployTowerEnabled")
+		property("path",{entity.getEntityById("path").path})
 	}
 	
 	property("deployTowerEnabled", false)
-	property("deployCursorColor", utils.color(0f, 0f, 0f, 0f))
+	property("deployCursorState", "candeploy")
 	property("mousePosition", utils.vector(0f, 0f))
+	
+	
+	def mapeo = [
+	             "candeploy":utils.color(0.0f, 0.3f, 0.0f,0.1f),
+	             "cantdeploy":utils.color(0.3f, 0.0f, 0.0f,0.1f)
+	             ]
+	     	
 	
 	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
 		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
 		property("radius", 52.0f)
-		propertyRef("fillColor", "deployCursorColor")
+		property("fillColor", {mapeo[(entity.deployCursorState)]})
 		propertyRef("position", "mousePosition")
 		propertyRef("enabled", "deployTowerEnabled")
 	}
