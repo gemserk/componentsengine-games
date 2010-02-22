@@ -2,11 +2,6 @@ package com.gemserk.games.towerofdefense;
 
 import groovy.lang.Closure;
 
-import java.lang.management.ManagementFactory;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -16,10 +11,6 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.jmx.JMXConfigurator;
-import ch.qos.logback.classic.jmx.JMXConfiguratorMBean;
 
 import com.gemserk.componentsengine.components.MessageHandler;
 import com.gemserk.componentsengine.entities.Entity;
