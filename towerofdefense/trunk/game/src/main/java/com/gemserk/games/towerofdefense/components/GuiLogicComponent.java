@@ -109,8 +109,8 @@ public class GuiLogicComponent extends ReflectionComponent {
 		Vector2f mousePosition = mousePositionProperty.getValue(entity);
 
 		if (message.getId().equals("move")) {
-			float x = (Float) Properties.getValue(message, "x");
-			float y = (Float) Properties.getValue(message, "y");
+			float x = Properties.getValue(message, "x");
+			float y = Properties.getValue(message, "y");
 			mousePosition.set(x, y);
 		}
 
