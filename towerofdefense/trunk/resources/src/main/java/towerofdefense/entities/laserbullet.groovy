@@ -5,19 +5,22 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Line;
 
+import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.games.towerofdefense.GenericHitComponent;
 
 
-builder.entity("laserbullet-${Math.random()}") {
+builder.entity() {
 	
 	tags("bullet")
 	
 	property("position",{entity.parent.position})
 	property("direction",{entity.parent.direction})
 	property("damage",(Float)3f/1000f)
+	
+	property("enabled",false)
 	
 	property("line",{
 		Vector2f position = entity.position
@@ -39,11 +42,12 @@ builder.entity("laserbullet-${Math.random()}") {
 		}
 	}
 	
-	component(laserrenderer){
+	component(new DisablerComponent(laserrenderer)){
+		propertyRef("enabled","enabled")
 	}
 	
 	
-	component(new GenericHitComponent("hitcomponent")){
+	component(new DisablerComponent(new GenericHitComponent("hitcomponent"))){
 		property("targetTag", "critter")
 		property("predicate",{EntityPredicates.isNear(entity.line,5f)})
 		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") { 
@@ -51,6 +55,7 @@ builder.entity("laserbullet-${Math.random()}") {
 			def damagePerTime = source.damage
 			message.damage = (Float)(damagePerTime*message.delta);
 		})
+		propertyRef("enabled","enabled")
 	}
 	
 	
