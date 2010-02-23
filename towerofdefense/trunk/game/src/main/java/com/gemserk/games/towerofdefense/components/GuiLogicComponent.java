@@ -83,7 +83,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 					Line line = new Line(source, target);
 
-					float pathWidth = 23.0f;
+					float pathWidth = 30.0f;
 					if (line.distance(mousePosition) < pathWidth) {
 						candeploy = false;
 						break;

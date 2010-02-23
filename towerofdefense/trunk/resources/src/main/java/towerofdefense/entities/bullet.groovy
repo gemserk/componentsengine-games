@@ -24,9 +24,12 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("position", "position")
 	}
 	
-	component(new ImageRenderableComponent("imagerenderer"))
-	property("image", utils.resources.image("towerofdefense.images.bullet"))
-	property("color", parameters.color)
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image("towerofdefense.images.blasterbullet"))
+		property("color", parameters.color)
+		propertyRef("position", "position")
+		propertyRef("direction", "direction")
+	}
 	
 	component(new HitComponent("bullethit")){
 		property("targetTag", "critter")

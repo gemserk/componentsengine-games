@@ -46,10 +46,20 @@ builder.entity("tower-${Math.random()}") {
 		propertyRef("position", "position")
 	}
 	
-	component(new ImageRenderableComponent("imagerenderer"))
-	property("image", utils.resources.image("towerofdefense.images.tower1"))
-	property("color", parameters.color)
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image("towerofdefense.images.blastertower"))
+		property("color", parameters.color)
+		propertyRef("position", "position")
+		property("direction", utils.vector(1f,0f))
+	}
 	
+	component(new ImageRenderableComponent("lasercannonImageRenderer")) {
+		property("image", utils.resources.image("towerofdefense.images.blastercannon"))
+		property("color", parameters.color)
+		propertyRef("position", "position")
+		propertyRef("direction", "direction")
+	}
+
 	component(new WeaponComponent("shooter")){
 		property("template", parameters.template)
 		property("reloadTime", parameters.reloadTime)

@@ -14,6 +14,7 @@ builder.entity("critter-${Math.random()}") {
 	property("health", parameters.health)
 	property("reward",parameters.reward)
 	property("points",parameters.points)
+	property("color",parameters.color)
 	propertyRef("direction", "movement.velocity")
 	
 	component(new SuperMovementComponent("movement")){
@@ -29,9 +30,12 @@ builder.entity("critter-${Math.random()}") {
 		propertyRef("position", "position");
 	}
 	
-	component(new ImageRenderableComponent("imagerenderer"))
-	property("image", utils.resources.image("towerofdefense.images.critter1"))
-	property("color", parameters.color)
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image("towerofdefense.images.critter1"))
+		propertyRef("color", "color")
+		propertyRef("position", "position")
+		propertyRef("direction", "direction")
+	}
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def sourceEntity = message.source

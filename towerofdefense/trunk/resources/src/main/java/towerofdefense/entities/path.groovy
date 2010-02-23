@@ -9,7 +9,7 @@ builder.entity {
 	property("path", parameters.path)
 	
 	component(new PathRendererComponent("pathrenderer")){
-		property("lineColor", utils.color(0.4f, 0.4f, 0.4f, 1.0f))
+		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
 		property("lineWidth", 20.0f)
 		propertyRef("path", "path")		
 	}

@@ -130,7 +130,7 @@ public class TowerOfDefenseGame extends BasicGame {
 
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
-		g.setBackground(new Color(0.8f, 0.8f, 1.0f));
+		g.setBackground(new Color(0.0f, 0.0f, 0.0f));
 
 		SlickRenderMessage message = new SlickRenderMessage(g);
 		messageQueue.enqueue(message);

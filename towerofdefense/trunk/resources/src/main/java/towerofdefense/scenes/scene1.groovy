@@ -41,8 +41,8 @@ builder.entity("world") {
 		direction=utils.vector(-1,0)
 		radius=30f
 		
-		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
-		fillColor=utils.color(0.0f, 0.0f, 0.0f, 0.2f)
+		lineColor=utils.color(0.0f, 0.0f, 0.0f, 0.0f)
+		fillColor=utils.color(0.2f, 0.2f, 0.7f, 1.0f)
 	}
 	
 	child(template:"towerofdefense.entities.spawner", id:"spawner")	{
@@ -115,9 +115,9 @@ builder.entity("world") {
 			position:position,
 			direction:utils.vector(-1,0),
 			radius:52f,
-			lineColor:utils.color(0.0f, 0.1f, 0.0f, 0.8f),
-			fillColor:utils.color(0.0f, 0.2f, 0.0f, 0.1f),
-			color:utils.color(0.0f, 0.2f, 0.0f, 1.0f),
+			lineColor:utils.color(0.0f, 0.7f, 0.0f, 1.0f),
+			fillColor:utils.color(0.0f, 0.7f, 0.0f, 1.0f),
+			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:250,
 			cost: 5f,
@@ -235,10 +235,9 @@ builder.entity("world") {
 	
 	
 	def mapeo = [
-	             "candeploy":utils.color(0.0f, 0.3f, 0.0f,0.1f),
-	             "cantdeploy":utils.color(0.3f, 0.0f, 0.0f,0.1f)
+	             "candeploy":utils.color(0.0f, 0.8f, 0.0f,0.25f),
+	             "cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
 	             ]
-	     	
 	
 	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
 		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
