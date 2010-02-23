@@ -1,5 +1,5 @@
 package towerofdefense.entities;
-import com.gemserk.games.towerofdefense.HitComponent;
+import com.gemserk.games.towerofdefense.GenericHitComponent;
 
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
@@ -8,6 +8,7 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 
 import com.gemserk.componentsengine.messages.ChildMessage;
+import com.gemserk.componentsengine.predicates.EntityPredicates 
 
 builder.entity("bullet-${Math.random()}") {
 	
@@ -31,10 +32,9 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("direction", "direction")
 	}
 	
-	component(new HitComponent("bullethit")){
+	component(new GenericHitComponent("bullethit")){
 		property("targetTag", "critter")
-		propertyRef("position", "position")
-		propertyRef("radius", "radius")
+		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
 		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") { 
 			def source = message.source
 			def damage = source.damage

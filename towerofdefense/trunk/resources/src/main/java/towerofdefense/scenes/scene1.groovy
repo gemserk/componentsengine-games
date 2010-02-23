@@ -1,5 +1,7 @@
 package towerofdefense.scenes;
 
+
+import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import towerofdefense.GroovyBootstrapper;
 import towerofdefense.components.TowerDeployer;
 
@@ -107,32 +109,62 @@ builder.entity("world") {
 				))])
 	}
 	
-	component(new TowerDeployer("towerdeployer")){
-		property("instantiationTemplate",new InstantiationTemplateImpl(
-		utils.custom.templateProvider.getTemplate("towerofdefense.entities.tower"),
-		utils.custom.genericprovider.provide{ position ->
-			[
-			position:position,
-			direction:utils.vector(-1,0),
-			radius:52f,
-			lineColor:utils.color(0.0f, 0.7f, 0.0f, 1.0f),
-			fillColor:utils.color(0.0f, 0.7f, 0.0f, 1.0f),
-			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
-			template:"towerofdefense.entities.bullet",
-			reloadTime:250,
-			cost: 5f,
-			instanceParameters: utils.custom.genericprovider.provide{
+	
+	def blastTower = new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("towerofdefense.entities.tower"),
+			utils.custom.genericprovider.provide{ position ->
 				[
-				damage:1.0f,
-				radius:10.0f,
-				maxVelocity:0.6f,
-				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
+				position:position,
+				direction:utils.vector(-1,0),
+				radius:52f,
+				lineColor:utils.color(0.0f, 0.1f, 0.0f, 0.8f),
+				fillColor:utils.color(0.0f, 0.2f, 0.0f, 0.1f),
+				color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
+				template:"towerofdefense.entities.bullet",
+				reloadTime:250,
+				cost: 5f,
+				instanceParameters: utils.custom.genericprovider.provide{
+					[
+					damage:1.0f,
+					radius:10.0f,
+					maxVelocity:0.6f,
+					color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
+					]
+				}	
 				]
-			}	
+			})
+	
+	def laserTower = new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("towerofdefense.entities.lasertower"),
+			utils.custom.genericprovider.provide{ position ->
+				[
+				position:position,
+				direction:utils.vector(-1,0),
+				radius:200f,
+				lineColor:utils.color(0.0f, 0.1f, 0.0f, 0.8f),
+				fillColor:utils.color(0.0f, 0.2f, 0.0f, 0.1f),
+				color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
+				reloadTime:250,
+				cost: 5f
+				]
+			})
+	
+	def towers = ["blast":blastTower,
+			"laser": laserTower
 			]
-		}))
+	
+	property("towertype","blast")
+	
+	
+	component(new TowerDeployer("towerdeployer")){
+		property("instantiationTemplate",{towers[(entity.towertype)]})
 		propertyRef("towerCount","towerCount")
 	}
+	
+	genericComponent(id:"towerTypeHandler", messageId:"changeTowerType"){ message ->
+		entity.towertype = ["blast":"laser","laser":"blast"][entity.towertype]
+	}
+	
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		def reward = message.critter.reward
@@ -171,19 +203,22 @@ builder.entity("world") {
 	component(new LabelComponent("moneylabel")){
 		property("position",utils.vector(680,40))
 		property("message","Money: {0}")
-		propertyRef("value","money")
+//		propertyRef("value","money")
+			property("value",{entity.money})
 	}
 	
 	component(new LabelComponent("pointslabel")){
 		property("position",utils.vector(680,60))
 		property("message","Points: {0}")
-		propertyRef("value","points")
+//		propertyRef("value","points")
+			property("value",{entity.points})
 	}
 	
 	component(new LabelComponent("liveslabel")){
 		property("position",utils.vector(680,80))
 		property("message","Lives: {0}")
-		propertyRef("value","lives")
+//		propertyRef("value","lives")
+		property("value",{entity.lives})
 	}
 	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
@@ -201,24 +236,32 @@ builder.entity("world") {
 		entity.wavesTimer.reset()
 	}
 	
+	
+	
 	component(new LabelComponent("timerlabel")){
-		property("position",utils.vector(660,100))
+		property("position",utils.vector(640,100))
 		property("message","Timer: {0}")
 		property("value",{entity.wavesTimer.timeLeft})
 	}
 	
 	component(new LabelComponent("towerCountlabel")){
-		property("position",utils.vector(660,120))
+		property("position",utils.vector(640,120))
 		property("message","Towers: {0}")
 		propertyRef("value","towerCount")
 	}	
-
-//	component(new LabelComponent("guiStateLabel")){
-//		property("position",utils.vector(660,140))
-//		property("message","GuiState: {0}")
-//		propertyRef("value", "guiComponent.state")
-//	}	
-
+	
+	//	component(new LabelComponent("guiStateLabel")){
+	//		property("position",utils.vector(660,140))
+	//		property("message","GuiState: {0}")
+	//		propertyRef("value", "guiComponent.state")
+	//	}	
+	
+	component(new LabelComponent("towertypelabel")){
+		property("position",utils.vector(640,140))
+		property("message","TowerType: {0}")
+		propertyRef("value", "towertype")
+	}	
+	
 	property("deployTower", "deployState")
 	
 	component(new GuiLogicComponent("guiComponent")){
@@ -255,8 +298,9 @@ builder.entity("world") {
 		mouse {
 			
 			press(button:"left", eventId:"click");
-			// press(button:"right", eventId:"changeState");
-
+			//press(button:"right", eventId:"changeState");
+			press(button:"right", eventId:"changeTowerType");
+			
 			move(eventId:"move") { message ->
 				message.x = position.x
 				message.y = position.y

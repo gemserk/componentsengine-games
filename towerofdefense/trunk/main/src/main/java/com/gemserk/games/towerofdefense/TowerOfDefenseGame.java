@@ -56,7 +56,7 @@ public class TowerOfDefenseGame extends BasicGame {
 			app.setShowFPS(true);
 
 			app.setMinimumLogicUpdateInterval(1);
-			// app.setTargetFrameRate(60);
+			//app.setTargetFrameRate(60);
 
 			app.start();
 

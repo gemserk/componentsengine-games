@@ -1,4 +1,6 @@
 package towerofdefense.entities;
+import towerofdefense.components.CritterHitHandler;
+
 import com.gemserk.games.towerofdefense.FollowPathComponent;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
@@ -37,27 +39,8 @@ builder.entity("critter-${Math.random()}") {
 		propertyRef("direction", "direction")
 	}
 	
-	genericComponent(id:"hithandler", messageId:"hit"){ message ->
-		def sourceEntity = message.source
-		
-		if (!sourceEntity.tags.contains("bullet"))
-			return;
-		
-		if (entity.health.isEmpty())
-			return;
-		
-		if (message.targets.contains(entity)) {
-			entity.health.remove(message.damage)
-			if (entity.health.isEmpty()){
-				messageQueue.enqueue(utils.genericMessage("critterdead"){ deadMessage ->
-					deadMessage.critter = entity
-				})
-			}
-			
-			entity.color.a = entity.health.percentage
-		}
-		
-	}
+
+	component(new CritterHitHandler("hithandler"))
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		if(message.critter == entity)

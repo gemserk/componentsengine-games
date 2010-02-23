@@ -11,9 +11,9 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 
-builder.entity("tower-${Math.random()}") {
+builder.entity("lasertower-${Math.random()}") {
 	
-	tags("tower","blaster")
+	tags("tower","lasertower")
 	
 	property("position", parameters.position)
 	property("direction", parameters.direction)
@@ -32,7 +32,7 @@ builder.entity("tower-${Math.random()}") {
 		
 		propertyRef("enabled", "selected")
 	}
-
+	
 	component(new FaceTargetComponent("faceTarget")){
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
@@ -47,25 +47,32 @@ builder.entity("tower-${Math.random()}") {
 	}
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.blastertower"))
+		property("image", utils.resources.image("towerofdefense.images.lasertower"))
 		property("color", parameters.color)
 		propertyRef("position", "position")
 		property("direction", utils.vector(1f,0f))
 	}
 	
 	component(new ImageRenderableComponent("lasercannonImageRenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.blastercannon"))
+		property("image", utils.resources.image("towerofdefense.images.lasercannon"))
 		property("color", parameters.color)
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
 	}
-
-	component(new WeaponComponent("shooter")){
-		property("template", parameters.template)
-		property("reloadTime", parameters.reloadTime)
-		property("instanceParameters", parameters.instanceParameters)
-		propertyRef("position", "position")
-		propertyRef("targetEntity", "targetEntity")
+	
+//	component(new WeaponComponent("shooter")){
+//		property("template", parameters.template)
+//		property("reloadTime", parameters.reloadTime)
+//		property("instanceParameters", parameters.instanceParameters)
+//		propertyRef("position", "position")
+//		propertyRef("targetEntity", "targetEntity")
+//	}
+	
+	
+	child(template:"towerofdefense.entities.laserbullet", id:"laserbullet")	{
+		
 	}
+	
+	
 	
 }
