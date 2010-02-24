@@ -173,8 +173,8 @@ builder.entity("world") {
 				]
 			})
 	
-	def towerDescriptions = [blaster:[icon:"towerofdefense.images.blastercannon", cost:5, instantiationTemplate:blastTower], 
-			laser:[icon:"towerofdefense.images.lasercannon", cost:7, instantiationTemplate:laserTower]]
+	def towerDescriptions = [blaster:[icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower], 
+			laser:[icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]]
 	property("towerDescriptions", towerDescriptions )
 	
 	def towers = ["blaster":blastTower,
@@ -206,21 +206,6 @@ builder.entity("world") {
 	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
 		utils.custom.game.loadScene("towerofdefense.scenes.scene1");
 	}
-	
-//	component(new LabelComponent("nextWaveInstructionsLabel")){
-//		property("position",utils.vector(30,50))
-//		property("message","Press 'w' to send the next wave")
-//	}
-	
-//	component(new LabelComponent("resetInstructionsLabel")){
-//		property("position",utils.vector(30,70))
-//		property("message","Press 'r' to restart the game")
-//	}
-	
-//	component(new LabelComponent("exitInstructionsLabel")){
-//		property("position",utils.vector(30,90))
-//		property("message","Press 'esc' to exit the game")
-//	}
 	
 	def labelX = 300;
 	def labelY = 20;
@@ -301,24 +286,34 @@ builder.entity("world") {
 		propertyRef("enabled", "deployTowerEnabled")
 	}
 	
-	child(template:"towerofdefense.entities.towerbutton", id:"button-blaster")	{
-		position=utils.vector(40, 40)
-		icon=utils.resources.image("towerofdefense.images.blastertower_icon")
-		mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
-		mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "blaster" }
-	}
+	component(new LabelComponent("towersLabel")){
+		property("position",utils.vector(40,20))
+		property("message", "Towers")
+	}	
 	
-	child(template:"towerofdefense.entities.towerbutton", id:"button-laser")	{
-		position=utils.vector(100, 40)
-		icon=utils.resources.image("towerofdefense.images.lasertower_icon")
-		mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
-		mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "laser" }
+	def towerButtonsX = 40
+	def towerButtonsY = 70
+	
+	towerDescriptions.each { key, value -> 
+	
+		child(template:"towerofdefense.entities.towerbutton", id:"button-${key}".toString())	{
+			position=utils.vector(towerButtonsX, towerButtonsY)
+			icon=utils.resources.image(value.icon)
+			mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
+			mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
+			messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "${key}".toString() }
+		}
+		
+		component(new LabelComponent("towerCostLabel-${key}".toString())){
+			property("position",utils.vector(towerButtonsX-10,towerButtonsY+25))
+			property("message", "\$${value.cost}".toString())
+		}	
+
+		towerButtonsX+=60
 	}
 	
 	def commandButtonX = 660
-	def commandButtonY = 40
+	def commandButtonY = towerButtonsY
 
 	child(template:"towerofdefense.entities.towerbutton", id:"button-nextWave")	{
 		position=utils.vector(commandButtonX, commandButtonY)
