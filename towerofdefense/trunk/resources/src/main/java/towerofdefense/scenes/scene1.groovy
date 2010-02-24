@@ -297,15 +297,17 @@ builder.entity("world") {
 	
 	child(template:"towerofdefense.entities.towerbutton", id:"button-blaster")	{
 		position=utils.vector(40, 40)
-		towerImage=utils.resources.image("towerofdefense.images.blastertower")
-		cannonImage=utils.resources.image("towerofdefense.images.blastercannon")
+		icon=utils.resources.image("towerofdefense.images.blastertower_icon")
+		mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
+		mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "blaster" }
 	}
 	
 	child(template:"towerofdefense.entities.towerbutton", id:"button-laser")	{
 		position=utils.vector(100, 40)
-		towerImage=utils.resources.image("towerofdefense.images.lasertower")
-		cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+		icon=utils.resources.image("towerofdefense.images.lasertower_icon")
+		mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
+		mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "laser" }
 	}
 	
@@ -314,15 +316,17 @@ builder.entity("world") {
 
 	child(template:"towerofdefense.entities.towerbutton", id:"button-nextWave")	{
 		position=utils.vector(commandButtonX, commandButtonY)
-		towerImage=utils.resources.image("towerofdefense.images.lasertower")
-		cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
+		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
+		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("nextWave") {  }
 	}
 
 	child(template:"towerofdefense.entities.towerbutton", id:"button-restart")	{
 		position=utils.vector(commandButtonX + 60, commandButtonY)
-		towerImage=utils.resources.image("towerofdefense.images.lasertower")
-		cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+		icon=utils.resources.image("towerofdefense.images.restart_icon")
+		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
+		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("reloadScene") {  }
 	}
 
@@ -349,16 +353,12 @@ builder.entity("world") {
 			
 			press(button:"left", eventId:"click")
 			
-			//press(button:"right", eventId:"changeState");
-			//press(button:"right", eventId:"changeTowerType");
 			press(button:"right", eventId:"rightClick");
 			
 			move(eventId:"move") { message ->
 				message.x = position.x
 				message.y = position.y
 			}
-			
-			// hold(button:"right", eventId:"deployturret");
 			
 		}
 	}

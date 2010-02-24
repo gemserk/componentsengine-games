@@ -12,9 +12,9 @@ builder.entity {
 	
 	property("position", parameters.position)
 	property("direction", utils.vector(1f,0f))
-	property("fillColor", utils.color(0.0f, 1.0f, 0.0f, 0.2f))
-	property("mouseNotOverFillColor", utils.color(0.0f, 1.0f, 0.0f, 0.4f))
-	property("mouseOverFillColor", utils.color(0.0f, 1.0f, 0.0f, 0.7f))
+	property("fillColor", parameters.mouseNotOverFillColor)
+	property("mouseNotOverFillColor", parameters.mouseNotOverFillColor)
+	property("mouseOverFillColor", parameters.mouseOverFillColor)
 	property("bounding", utils.rectangle(-25, -25, 50, 50))
 	
 	property("enabled", true)
@@ -63,16 +63,10 @@ builder.entity {
 	}]))
 	
 	component(new ImageRenderableComponent("towerRenderer")) {
-		property("image", parameters.towerImage)
+		property("image", parameters.icon)
 		property("color", utils.color(1f,1f,1f,1f))
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
 	}
 	
-	component(new ImageRenderableComponent("cannonRenderer")) {
-		property("image", parameters.cannonImage)
-		property("color", utils.color(1f,1f,1f,1f))
-		propertyRef("position", "position")
-		propertyRef("direction", "direction")
-	}
 }
