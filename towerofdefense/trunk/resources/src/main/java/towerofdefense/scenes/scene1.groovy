@@ -2,7 +2,6 @@ package towerofdefense.scenes;
 import com.gemserk.componentsengine.messages.GenericMessage;
 
 
-
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import towerofdefense.GroovyBootstrapper;
 import towerofdefense.components.TowerDeployer;
@@ -32,17 +31,19 @@ builder.entity("world") {
 	
 	child(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
-		utils.vector(0, 300), 		      
+		utils.vector(100, 600), 		      
 		utils.vector(100, 300), 
-		utils.vector(200, 400), 		      
-		utils.vector(400, 400), 		      
-		utils.vector(400, 300), 		      
-		utils.vector(675, 300)])		
+		utils.vector(300, 100), 		      
+		utils.vector(500, 100), 		      
+		utils.vector(700, 300), 		      
+		utils.vector(500, 500), 		      
+		utils.vector(500, 500), 		      
+		utils.vector(350, 450)])		
 		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
 	}
 	
 	child(template:"towerofdefense.entities.base", id:"base")	{
-		position=utils.vector(700,300)
+		position=utils.vector(350, 450)
 		direction=utils.vector(-1,0)
 		radius=30f
 		
@@ -51,7 +52,7 @@ builder.entity("world") {
 	}
 	
 	child(template:"towerofdefense.entities.spawner", id:"spawner")	{
-		position=utils.vector(-10,300)
+		position={entity.parent.children["path"].path.getPoint(0)}
 		spawnDelay=utils.interval(400,1000)
 		waves=new Waves().setWaves([new Wave(1000,10,new InstantiationTemplateImpl(
 				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
@@ -215,18 +216,10 @@ builder.entity("world") {
 		property("value",{entity.points})
 	}
 	
-	component(new LabelComponent("liveslabel")){
-		property("position",utils.vector(680,80))
-		property("message","Lives: {0}")
-		//		propertyRef("value","lives")
-		property("value",{entity.lives})
-	}
-	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
 		property("tags", ["bullet"] as String[] );
 		property("bounds", utils.rectangle(0,0, 800, 600));
 	}
-	
 	
 	component(new TimerComponent("wavesTimerComponent")){
 		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("nextWave") { })
@@ -248,12 +241,6 @@ builder.entity("world") {
 		property("message","Towers: {0}")
 		propertyRef("value","towerCount")
 	}	
-	
-	//	component(new LabelComponent("guiStateLabel")){
-	//		property("position",utils.vector(660,140))
-	//		property("message","GuiState: {0}")
-	//		propertyRef("value", "guiComponent.state")
-	//	}	
 	
 	component(new LabelComponent("towertypelabel")){
 		property("position",utils.vector(640,140))

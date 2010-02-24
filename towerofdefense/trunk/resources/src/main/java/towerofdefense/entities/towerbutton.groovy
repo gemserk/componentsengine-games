@@ -13,8 +13,8 @@ builder.entity {
 	property("position", parameters.position)
 	property("direction", utils.vector(1f,0f))
 	property("fillColor", utils.color(0.0f, 1.0f, 0.0f, 0.2f))
-	property("mouseNotOverFillColor", utils.color(0.0f, 1.0f, 0.0f, 0.2f))
-	property("mouseOverFillColor", utils.color(0.0f, 1.0f, 0.0f, 0.5f))
+	property("mouseNotOverFillColor", utils.color(0.0f, 1.0f, 0.0f, 0.1f))
+	property("mouseOverFillColor", utils.color(0.0f, 1.0f, 0.0f, 0.3f))
 	property("bounding", utils.rectangle(-25, -25, 50, 50))
 	
 	property("mouseOver", false)

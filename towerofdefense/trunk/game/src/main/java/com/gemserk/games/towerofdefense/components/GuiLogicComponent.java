@@ -60,14 +60,17 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 		if (isDeployState(state)) {
 			Vector2f mousePosition = mousePositionProperty.getValue(entity);
-			Entity nearTowerEntity = getTowerNear(mousePosition);
+			Entity nearestBlockingEntity = getNearestEntity(mousePosition, "tower", 25.0f);
+			
+			if (nearestBlockingEntity == null)
+				nearestBlockingEntity = getNearestEntity(mousePosition, "base", 45.0f);
 
 			deployTowerEnabledProperty.setValue(entity, true);
 
 			boolean candeploy = true;
 
-			if (nearTowerEntity == null) {
-
+			if (nearestBlockingEntity == null) {
+				
 				Path path = pathProperty.getValue(entity);
 				List<Vector2f> points = path.getPoints();
 
@@ -90,6 +93,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 					}
 
 				}
+				
 			} else {
 				candeploy = false;
 			}
@@ -130,7 +134,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 				unselectCurrentTower();
 
 				Vector2f position = mousePositionProperty.getValue(entity);
-				Entity newSelectedTower = getTowerNear(position);
+				Entity newSelectedTower = getNearestEntity(position, "tower", 25.0f);
 
 				if (newSelectedTower != null) {
 					Properties.setValue(newSelectedTower, "selected", true);
@@ -179,14 +183,13 @@ public class GuiLogicComponent extends ReflectionComponent {
 		return state.equals("deployState");
 	}
 
-	private Entity getTowerNear(Vector2f mousePosition) {
-		float currentTowerSize = 25.0f;
-		Collection<Entity> towers = rootEntity.getEntities(Predicates.and(EntityPredicates.withAnyTag("tower"), EntityPredicates.isNear(mousePosition, currentTowerSize)));
+	private Entity getNearestEntity(Vector2f position, String tag, float distance) {
+		Collection<Entity> entities = rootEntity.getEntities(Predicates.and(EntityPredicates.withAnyTag(tag), EntityPredicates.isNear(position, distance)));
 
 		Entity entity = null;
-		if (towers.size() > 0) {
-			entity = towers.iterator().next();
-		}
+
+		if (entities.size() > 0) 
+			entity = entities.iterator().next();
 
 		return entity;
 	}
