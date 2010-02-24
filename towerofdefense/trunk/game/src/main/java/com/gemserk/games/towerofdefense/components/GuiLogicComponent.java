@@ -58,7 +58,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 		String state = stateProperty.getValue(entity);
 
-		if (state.equals("deployState")) {
+		if (isDeployState(state)) {
 			Vector2f mousePosition = mousePositionProperty.getValue(entity);
 			Entity nearTowerEntity = getTowerNear(mousePosition);
 
@@ -116,18 +116,18 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 		if (message.getId().equals("click")) {
 
-			if (state.equals("deployState")) {
+			if (isDeployState(state)) {
 
 				String cursorState = deployCursorStateProperty.getValue(entity);
 				if (cursorState.equals("candeploy"))
+				{
 					messageQueue.enqueue(new GenericMessage("deployturret"));
+					// changeToSelectTowerState();
+				}
 
 			} else {
 
-				Entity selectedTower = selectedTowerProperty.getValue(entity);
-				if (selectedTower != null) {
-					Properties.setValue(selectedTower, "selected", false);
-				}
+				unselectCurrentTower();
 
 				Vector2f position = mousePositionProperty.getValue(entity);
 				Entity newSelectedTower = getTowerNear(position);
@@ -141,12 +141,42 @@ public class GuiLogicComponent extends ReflectionComponent {
 		}
 
 		if (message.getId().equals("changeState")) {
-			if (state.equals("deployState"))
+			if (isDeployState(state))
 				state = "selectTowerState";
 			else
 				state = "deployState";
 			stateProperty.setValue(entity, state);
 		}
+		
+		if (message.getId().equals("rightClick")) {
+			
+			if (isDeployState(state)){
+				changeToSelectTowerState();
+			}
+			
+			if (isSelectTowerState(state)) {
+				unselectCurrentTower();
+			} 
+			
+		}
+	}
+
+	private void changeToSelectTowerState() {
+		stateProperty.setValue(entity, "selectTowerState");
+	}
+
+	private void unselectCurrentTower() {
+		Entity selectedTower = selectedTowerProperty.getValue(entity);
+		if (selectedTower != null)
+			Properties.setValue(selectedTower, "selected", false);
+	}
+
+	private boolean isSelectTowerState(String state) {
+		return state.equals("selectTowerState");
+	}
+
+	private boolean isDeployState(String state) {
+		return state.equals("deployState");
 	}
 
 	private Entity getTowerNear(Vector2f mousePosition) {

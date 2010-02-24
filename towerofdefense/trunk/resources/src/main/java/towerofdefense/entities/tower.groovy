@@ -29,7 +29,14 @@ builder.entity("tower-${Math.random()}") {
 		property("fillColor", parameters.fillColor)
 		propertyRef("position", "position")
 		propertyRef("radius", "radius")
-		
+		propertyRef("enabled", "selected")
+	}
+	
+	component(new DisablerComponent(new ImageRenderableComponent("selectedAuraRenderer"))){
+		property("image", utils.resources.image("towerofdefense.images.blasterbullet"))
+		property("color", utils.color(1f, 1f, 1f, 1.0f))
+		property("direction", utils.vector(1f,0f))
+		propertyRef("position", "position")
 		propertyRef("enabled", "selected")
 	}
 
