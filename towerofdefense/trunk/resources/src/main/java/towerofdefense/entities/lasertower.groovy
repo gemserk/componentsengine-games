@@ -2,22 +2,18 @@ package towerofdefense.entities;
 import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
 import com.gemserk.games.towerofdefense.CountDownTimer;
 
-import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 
 import com.gemserk.games.towerofdefense.components.TimerComponent;
-import com.gemserk.games.towerofdefense.components.WeaponComponent;
 
 import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
 
 import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
-import com.gemserk.games.towerofdefense.timers.PeriodicTimer;
 
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
-import com.gemserk.componentsengine.components.ReflectionComponent;
 
 builder.entity("lasertower-${Math.random()}") {
 	
@@ -121,7 +117,6 @@ builder.entity("lasertower-${Math.random()}") {
 		propertyRef("timer","canFireTimer")
 	}
 	
-	
 	genericComponent(id:"enableFireHandler", messageId:"enableFire"){ message ->
 		println "EnableFire"
 		entity.canFire = true
@@ -132,17 +127,13 @@ builder.entity("lasertower-${Math.random()}") {
 		propertyRef("timer","fireDurationTimer")
 	}
 	
-	
 	genericComponent(id:"fireStopHandler", messageId:"fireStop"){ message ->
 		println "FireStop"
 		entity.children[(bulletId)].enabled = false
 	}
-	
-	
+
 	child(template:"towerofdefense.entities.laserbullet", id:bulletId)	{
 		
 	}
-	
-	
 	
 }

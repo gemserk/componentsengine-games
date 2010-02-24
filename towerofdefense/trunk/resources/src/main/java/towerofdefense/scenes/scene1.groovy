@@ -34,7 +34,7 @@ builder.entity("world") {
 		utils.vector(200, 400), 		      
 		utils.vector(400, 400), 		      
 		utils.vector(400, 300), 		      
-		utils.vector(670, 300)])		
+		utils.vector(675, 300)])		
 		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
 	}
 	
@@ -290,6 +290,18 @@ builder.entity("world") {
 		propertyRef("enabled", "deployTowerEnabled")
 	}
 	
+	child(template:"towerofdefense.entities.towerbutton", id:"blasterTowerButton")	{
+		position=utils.vector(100,560)
+		towerImage=utils.resources.image("towerofdefense.images.blastertower")
+		cannonImage=utils.resources.image("towerofdefense.images.blastercannon")
+	}
+
+	child(template:"towerofdefense.entities.towerbutton", id:"laserTowerButton")	{
+		position=utils.vector(140,560)
+		towerImage=utils.resources.image("towerofdefense.images.lasertower")
+		cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+	}
+
 	input("inputmapping"){
 		keyboard {
 			press(button:"w", eventId:"nextWave")

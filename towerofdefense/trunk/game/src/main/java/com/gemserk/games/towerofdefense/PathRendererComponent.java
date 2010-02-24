@@ -45,7 +45,7 @@ public class PathRendererComponent extends ReflectionComponent {
 		{
 			SlickCallable.enterSafeBlock();
 
-			GL11.glDepthMask(false);
+			// GL11.glDepthMask(false);
 			GL11.glEnable(GL11.GL_POINT_SMOOTH);
 			
 			for (int i = 0; i < points.size(); i++) {
@@ -73,7 +73,7 @@ public class PathRendererComponent extends ReflectionComponent {
 			}
 
 			GL11.glDisable(GL11.GL_POINT_SMOOTH);
-			GL11.glDepthMask(true);
+			// GL11.glDepthMask(true);
 
 			SlickCallable.leaveSafeBlock();
 		}

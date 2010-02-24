@@ -2,7 +2,7 @@ package towerofdefense.entities;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.games.towerofdefense.HitComponent;
-
+import com.gemserk.games.towerofdefense.LabelComponent;
 
 builder.entity {
 	
@@ -19,14 +19,19 @@ builder.entity {
 		propertyRef("radius", "radius")
 	}
 	
-	
 	component(new HitComponent("remover")) {
 		property("targetTag", "critter")
 		propertyRef("position", "position")
 		propertyRef("radius", "radius")
 		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") {   def source = message.source  })
 	}
-	
+
+	component(new LabelComponent("alabel")){
+		property("message", "{0}")
+		property("position", {entity.position.copy().sub(utils.vector(10f,10f))})
+		property("value", {entity.parent.lives})
+	}
+
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def sourceEntity = message.source
 		
