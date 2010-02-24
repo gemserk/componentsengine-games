@@ -11,9 +11,9 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 
-builder.entity("tower-${Math.random()}") {
+builder.entity {
 	
-	tags("tower","blaster")
+	tags("tower")
 	
 	property("position", parameters.position)
 	property("direction", parameters.direction)
@@ -54,25 +54,17 @@ builder.entity("tower-${Math.random()}") {
 	}
 	
 	component(new ImageRenderableComponent("towerRenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.blastertower"))
+		property("image", parameters.towerImage)
 		property("color", parameters.color)
 		propertyRef("position", "position")
 		property("direction", utils.vector(1f,0f))
 	}
 	
 	component(new ImageRenderableComponent("cannonRenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.blastercannon"))
+		property("image", parameters.cannonImage)
 		property("color", parameters.color)
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
 	}
 
-	component(new WeaponComponent("shooter")){
-		property("template", parameters.template)
-		property("reloadTime", parameters.reloadTime)
-		property("instanceParameters", parameters.instanceParameters)
-		propertyRef("position", "position")
-		propertyRef("targetEntity", "targetEntity")
-	}
-	
 }

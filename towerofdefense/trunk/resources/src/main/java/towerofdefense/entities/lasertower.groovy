@@ -17,59 +17,12 @@ import com.gemserk.componentsengine.commons.components.CircleRenderableComponent
 
 builder.entity("lasertower-${Math.random()}") {
 	
-	tags("tower","lasertower")
+	parameters.towerImage=utils.resources.image("towerofdefense.images.lasertower")
+	parameters.cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
 	
-	property("position", parameters.position)
-	property("direction", parameters.direction)
-	property("radius", parameters.radius)
-	property("cost",parameters.cost)
+	parent("towerofdefense.entities.tower")
 	
-	property("targetEntity", null)
-	
-	property("selected", false)
-	
-	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
-		property("lineColor", parameters.lineColor)
-		property("fillColor", parameters.fillColor)
-		propertyRef("position", "position")
-		propertyRef("radius", "radius")
-		propertyRef("enabled", "selected")
-	}
-	
-	component(new DisablerComponent(new ImageRenderableComponent("selectedAuraRenderer"))){
-		property("image", utils.resources.image("towerofdefense.images.blasterbullet"))
-		property("color", utils.color(1f, 1f, 1f, 1.0f))
-		property("direction", utils.vector(1f,0f))
-		propertyRef("position", "position")
-		propertyRef("enabled", "selected")
-	}
-	
-	component(new FaceTargetComponent("faceTarget")){
-		propertyRef("position", "position")
-		propertyRef("direction", "direction")
-		propertyRef("targetEntity", "targetEntity")
-	}
-	
-	component(new SelectTargetWithinRangeComponent("selectTarget"))	{
-		property("targetTag", "critter")
-		propertyRef("targetEntity", "targetEntity")
-		propertyRef("radius", "radius")
-		propertyRef("position", "position")
-	}
-	
-	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.lasertower"))
-		property("color", parameters.color)
-		propertyRef("position", "position")
-		property("direction", utils.vector(1f,0f))
-	}
-	
-	component(new ImageRenderableComponent("lasercannonImageRenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.lasercannon"))
-		property("color", parameters.color)
-		propertyRef("position", "position")
-		propertyRef("direction", "direction")
-	}
+	tags("lasertower")
 	
 	def bulletId ="laserbullet-$entity.id".toString();
 	

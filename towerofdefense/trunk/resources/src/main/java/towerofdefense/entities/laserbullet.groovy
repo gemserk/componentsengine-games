@@ -44,7 +44,7 @@ builder.entity() {
 			
 			def backupColor = g.getColor()
 			
-			def randomColor = random.nextFloat()
+			def randomColor = (float)((random.nextFloat() * 0.5f) + 0.3f)
 			
 			g.setColor(utils.color(randomColor,randomColor,1f,1))
 			g.draw(line)

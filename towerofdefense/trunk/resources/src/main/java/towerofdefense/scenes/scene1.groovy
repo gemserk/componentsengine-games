@@ -14,6 +14,7 @@ import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
 import com.gemserk.games.towerofdefense.components.GuiLogicComponent;
 import com.gemserk.games.towerofdefense.components.OutOfBoundsRemover;
+import com.gemserk.games.towerofdefense.components.RectangleRendererComponent;
 import com.gemserk.games.towerofdefense.components.TimerComponent;
 import com.gemserk.games.towerofdefense.timers.PeriodicTimer;
 import com.gemserk.games.towerofdefense.waves.Wave;
@@ -29,21 +30,35 @@ builder.entity("world") {
 	property("wavesTimer", new PeriodicTimer(15000))
 	property("towerCount",0)
 	
+	def defx = 0
+	def defy = 30
+	
+	property("gameBounds", utils.rectangle(0, 120, 800, 480))
+	
+	component(new RectangleRendererComponent("gameBoundsRenderer")) {
+		property("position", utils.vector(0, 0))
+		propertyRef("rectangle", "gameBounds")
+		property("cornerRadius", 5)
+		property("fillColor", utils.color(0.0f, 0.0f, 0.0f, 1.0f))
+		property("lineColor", utils.color(0f, 0f, 0f, 0f))
+	}
+	
 	child(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
-		utils.vector(100, 600), 		      
-		utils.vector(100, 300), 
-		utils.vector(300, 100), 		      
-		utils.vector(500, 100), 		      
-		utils.vector(700, 300), 		      
-		utils.vector(500, 500), 		      
-		utils.vector(500, 500), 		      
-		utils.vector(350, 450)])		
+    	utils.vector(0, 450 + defy), 		      
+		utils.vector(100, 450 + defy), 		      
+		utils.vector(100, 300 + defy), 
+		utils.vector(300, 150 + defy), 		      
+		utils.vector(500, 150 + defy), 		      
+		utils.vector(620, 300 + defy), 		      
+		utils.vector(500, 500 + defy), 		      
+		utils.vector(500, 500 + defy), 		      
+		utils.vector(350, 450 + defy)])		
 		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
 	}
 	
 	child(template:"towerofdefense.entities.base", id:"base")	{
-		position=utils.vector(350, 450)
+		position=utils.vector(350, 450 + defy)
 		direction=utils.vector(-1,0)
 		radius=30f
 		
@@ -115,7 +130,7 @@ builder.entity("world") {
 	
 	
 	def blastTower = new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.tower"),
+			utils.custom.templateProvider.getTemplate("towerofdefense.entities.blastertower"),
 			utils.custom.genericprovider.provide{ position ->
 				[
 				position:position,
@@ -126,7 +141,7 @@ builder.entity("world") {
 				color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
 				template:"towerofdefense.entities.bullet",
 				reloadTime:250,
-				cost: 5f,
+				cost:5,
 				instanceParameters: utils.custom.genericprovider.provide{
 					[
 					damage:1.0f,
@@ -149,24 +164,24 @@ builder.entity("world") {
 				fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
 				color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
 				reloadTime:250,
-				cost: 5f
+				cost:7
 				]
 			})
+	
+	def towerDescriptions = [blaster:[icon:"towerofdefense.images.blastercannon", cost:5, instantiationTemplate:blastTower], 
+			laser:[icon:"towerofdefense.images.lasercannon", cost:7, instantiationTemplate:laserTower]]
+	property("towerDescriptions", towerDescriptions )
 	
 	def towers = ["blaster":blastTower,
 			"laser": laserTower
 			]
 	
-	property("towertype","blaster")
+	property("towerType","blaster")
 	
 	component(new TowerDeployer("towerdeployer")){
-		property("instantiationTemplate",{towers[(entity.towertype)]})
+		property("instantiationTemplate",{towers[(entity.towerType)]})
 		propertyRef("towerCount","towerCount")
 	}
-	
-	//	genericComponent(id:"towerTypeHandler", messageId:"changeTowerType"){ message ->
-	//		entity.towertype = ["blaster":"laser","laser":"blaster"][entity.towertype]
-	//	}
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		def reward = message.critter.reward
@@ -187,34 +202,53 @@ builder.entity("world") {
 		utils.custom.game.loadScene("towerofdefense.scenes.scene1");
 	}
 	
-	component(new LabelComponent("nextWaveInstructionsLabel")){
-		property("position",utils.vector(100,50))
-		property("message","Press 'w' to send the next wave")
-	}
+//	component(new LabelComponent("nextWaveInstructionsLabel")){
+//		property("position",utils.vector(30,50))
+//		property("message","Press 'w' to send the next wave")
+//	}
 	
-	component(new LabelComponent("resetInstructionsLabel")){
-		property("position",utils.vector(100,70))
-		property("message","Press 'r' to restart the game")
-	}
+//	component(new LabelComponent("resetInstructionsLabel")){
+//		property("position",utils.vector(30,70))
+//		property("message","Press 'r' to restart the game")
+//	}
 	
-	component(new LabelComponent("exitInstructionsLabel")){
-		property("position",utils.vector(100,90))
-		property("message","Press 'esc' to exit the game")
-	}
+//	component(new LabelComponent("exitInstructionsLabel")){
+//		property("position",utils.vector(30,90))
+//		property("message","Press 'esc' to exit the game")
+//	}
+	
+	def labelX = 300;
+	def labelY = 20;
 	
 	component(new LabelComponent("moneylabel")){
-		property("position",utils.vector(680,40))
+		property("position",utils.vector(labelX,labelY + 0))
 		property("message","Money: {0}")
-		//		propertyRef("value","money")
 		property("value",{entity.money})
 	}
 	
 	component(new LabelComponent("pointslabel")){
-		property("position",utils.vector(680,60))
+		property("position",utils.vector(labelX,labelY + 20))
 		property("message","Points: {0}")
-		//		propertyRef("value","points")
 		property("value",{entity.points})
 	}
+	
+	component(new LabelComponent("timerlabel")){
+		property("position",utils.vector(labelX,labelY + 40))
+		property("message","Timer: {0}")
+		property("value",{entity.wavesTimer.timeLeft})
+	}
+	
+	component(new LabelComponent("towerCountlabel")){
+		property("position",utils.vector(labelX,labelY + 60))
+		property("message","Towers: {0}")
+		propertyRef("value","towerCount")
+	}	
+	
+	component(new LabelComponent("towertypelabel")){
+		property("position",utils.vector(labelX,labelY + 80))
+		property("message","TowerType: {0}")
+		propertyRef("value", "towerType")
+	}	
 	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
 		property("tags", ["bullet"] as String[] );
@@ -230,33 +264,18 @@ builder.entity("world") {
 		entity.wavesTimer.reset()
 	}
 	
-	component(new LabelComponent("timerlabel")){
-		property("position",utils.vector(640,100))
-		property("message","Timer: {0}")
-		property("value",{entity.wavesTimer.timeLeft})
-	}
-	
-	component(new LabelComponent("towerCountlabel")){
-		property("position",utils.vector(640,120))
-		property("message","Towers: {0}")
-		propertyRef("value","towerCount")
-	}	
-	
-	component(new LabelComponent("towertypelabel")){
-		property("position",utils.vector(640,140))
-		property("message","TowerType: {0}")
-		propertyRef("value", "towertype")
-	}	
-	
+
 	property("deployTower", "deployState")
-	property("guiState", "selectTowerState")
+
 	
 	component(new GuiLogicComponent("guiComponent")){
-		propertyRef("state", "guiState")
+		// propertyRef("state", "guiState")
 		propertyRef("mousePosition", "mousePosition")
 		propertyRef("deployCursorState", "deployCursorState")
 		propertyRef("deployTowerEnabled", "deployTowerEnabled")
 		property("path",{entity.getEntityById("path").path})
+		
+		property("towerDescriptions", towerDescriptions)
 	}
 	
 	property("deployTowerEnabled", false)
@@ -276,46 +295,48 @@ builder.entity("world") {
 		propertyRef("enabled", "deployTowerEnabled")
 	}
 	
-	genericComponent(id:"towerTypeHandler", messageId:"deployTowerSelected"){ message ->
-		entity.towertype = message.towerType
-		entity.guiState = "deployState"
-	}
-	
-	child(template:"towerofdefense.entities.towerbutton", id:"blasterTowerButton")	{
-		position=utils.vector(100,560)
+	child(template:"towerofdefense.entities.towerbutton", id:"button-blaster")	{
+		position=utils.vector(40, 40)
 		towerImage=utils.resources.image("towerofdefense.images.blastertower")
 		cannonImage=utils.resources.image("towerofdefense.images.blastercannon")
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") { 
-			message.towerType = "blaster"
-		}
+		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "blaster" }
 	}
 	
-	child(template:"towerofdefense.entities.towerbutton", id:"laserTowerButton")	{
-		position=utils.vector(160,560)
+	child(template:"towerofdefense.entities.towerbutton", id:"button-laser")	{
+		position=utils.vector(100, 40)
 		towerImage=utils.resources.image("towerofdefense.images.lasertower")
 		cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") { 
-			message.towerType = "laser"
-		}
+		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "laser" }
 	}
 	
-	
-	
-	component(new ComponentFromListOfClosures("cheats",[
-	                                                    {GenericMessage message ->
-	                                                    	switch(message.id){
-	                                                    	case "cheatMoney":
-	                                                    		entity.money+=10
-	                                                    		break;
-	                                                    	case "cheatLives":
-	                                                    		entity.lives+=10
-	                                                    		break;
-	                                                    	
-	                                                    	}
-	                                                    }
-	                                                    ]))
-	
-	
+	def commandButtonX = 660
+	def commandButtonY = 40
+
+	child(template:"towerofdefense.entities.towerbutton", id:"button-nextWave")	{
+		position=utils.vector(commandButtonX, commandButtonY)
+		towerImage=utils.resources.image("towerofdefense.images.lasertower")
+		cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("nextWave") {  }
+	}
+
+	child(template:"towerofdefense.entities.towerbutton", id:"button-restart")	{
+		position=utils.vector(commandButtonX + 60, commandButtonY)
+		towerImage=utils.resources.image("towerofdefense.images.lasertower")
+		cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("reloadScene") {  }
+	}
+
+	component(new ComponentFromListOfClosures("cheats",[ {GenericMessage message ->
+		switch(message.id){
+			case "cheatMoney":
+			entity.money+=10
+			break;
+			case "cheatLives":
+			entity.lives+=10
+			break;
+		}
+	}
+	]))
 	
 	input("inputmapping"){
 		keyboard {
