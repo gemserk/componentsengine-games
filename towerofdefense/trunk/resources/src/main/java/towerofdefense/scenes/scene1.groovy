@@ -33,15 +33,20 @@ builder.entity("world") {
 	def defx = 0
 	def defy = 30
 	
-	property("gameBounds", utils.rectangle(0, 120, 800, 480))
+	def gameBoundsToRender = utils.rectangle(0, 120, 800, 480)
+	def borderSize = 20
+	def gameBounds = utils.rectangle((float)gameBoundsToRender.x+borderSize,(float)gameBoundsToRender.y+borderSize,(float)gameBoundsToRender.width-2*borderSize,(float)gameBoundsToRender.height-2*borderSize)
+
+	property("gameBoundsToRender", gameBoundsToRender)
+	property("gameBounds",gameBounds)
 	
-	component(new RectangleRendererComponent("gameBoundsRenderer")) {
+	component(new RectangleRendererComponent("gameBoundsToRenderRenderer")) {
 		property("position", utils.vector(0, 0))
-		propertyRef("rectangle", "gameBounds")
-		property("cornerRadius", 5)
+		propertyRef("rectangle", "gameBoundsToRender")
 		property("fillColor", utils.color(0.0f, 0.0f, 0.0f, 1.0f))
 		property("lineColor", utils.color(0f, 0f, 0f, 0f))
 	}
+	
 	
 	child(template:"towerofdefense.entities.path", id:"path")	{
 		path=new Path([
@@ -276,6 +281,7 @@ builder.entity("world") {
 		property("path",{entity.getEntityById("path").path})
 		
 		property("towerDescriptions", towerDescriptions)
+		propertyRef("gameBounds","gameBounds")
 	}
 	
 	property("deployTowerEnabled", false)
