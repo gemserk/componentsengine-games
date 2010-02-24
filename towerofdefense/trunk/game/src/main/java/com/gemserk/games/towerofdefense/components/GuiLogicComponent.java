@@ -184,6 +184,16 @@ public class GuiLogicComponent extends ReflectionComponent {
 				messageQueue.enqueue(new GenericMessage("deployturret"));
 			}
 		}
+		
+		@Override
+		protected void handleMessage(GenericMessage message) {
+			if (message.getId().equals("deployTowerSelected")) {
+				String towerType = Properties.getValue(message, "towerType");
+
+				Properties.setValue(entity, "towerType", towerType);
+				changeToDeployState();
+			}
+		}
 	}
 
 	public class SelectTowerState extends InternalState {
