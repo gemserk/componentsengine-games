@@ -2,6 +2,7 @@ package towerofdefense.entities;
 import org.newdawn.slick.geom.Vector2f;
 
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Line;
 
@@ -9,6 +10,7 @@ import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
+import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
 import com.gemserk.games.towerofdefense.GenericHitComponent;
 
 
@@ -33,14 +35,22 @@ builder.entity() {
 		Line line = new Line(start.x,start.y,segment.x,segment.y,true)
 	})
 	
-	def laserrenderer = new ReflectionComponent("laserrenderer"){
-		void handleMessage(SlickRenderMessage message){
+	Random random = new Random();
+	
+	def laserrenderer = new ComponentFromListOfClosures("laserrenderer",[
+	     {SlickRenderMessage message -> 
 			Line line = entity.line
 			Graphics g = message.graphics;
 			
+			def backupColor = g.getColor()
+			
+			def randomColor = random.nextFloat()
+			
+			g.setColor(utils.color(randomColor,randomColor,1f,1))
 			g.draw(line)
-		}
-	}
+			g.setColor(backupColor)
+		}])
+	
 	
 	component(new DisablerComponent(laserrenderer)){
 		propertyRef("enabled","enabled")

@@ -18,13 +18,16 @@ public class ComponentFromListOfClosures extends Component{
 		for (Closure closure : closuresList) {
 			Class[] parameterTypes = closure.getParameterTypes();
 			if(parameterTypes.length != 1)
-				throw new RuntimeException("Wrong number of parameters");
+				throw new RuntimeException("Wrong number of parameters: " + parameterTypes);
 			
 			Class messageClassCandidate = parameterTypes[0];
 			if(!Message.class.isAssignableFrom(messageClassCandidate))
 				throw new RuntimeException("Wrong type of parameter: " + messageClassCandidate);
 			
-			closures.put(messageClassCandidate, closure);
+			
+			Closure previous = closures.put(messageClassCandidate, closure);
+			if(previous != null)
+				throw new RuntimeException("Multiple assignments to same Message Type: (" + closure.getParameterTypes()[0] +")");
 		}
 	}
 	

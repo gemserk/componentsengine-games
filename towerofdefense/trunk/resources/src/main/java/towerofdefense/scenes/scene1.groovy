@@ -1,4 +1,6 @@
 package towerofdefense.scenes;
+import com.gemserk.componentsengine.messages.GenericMessage;
+
 
 
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
@@ -7,6 +9,7 @@ import towerofdefense.components.TowerDeployer;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
+import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
@@ -309,10 +312,30 @@ builder.entity("world") {
 		}
 	}
 	
+	
+	
+	component(new ComponentFromListOfClosures("cheats",[
+	                                                    {GenericMessage message ->
+	                                                    	switch(message.id){
+	                                                    	case "cheatMoney":
+	                                                    		entity.money+=10
+	                                                    		break;
+	                                                    	case "cheatLives":
+	                                                    		entity.lives+=10
+	                                                    		break;
+	                                                    	
+	                                                    	}
+	                                                    }
+	                                                    ]))
+	
+	
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"w", eventId:"nextWave")
 			press(button:"r", eventId:"reloadScene")
+			press(button:"m",eventId:"cheatMoney")
+			press(button:"l",eventId:"cheatLives")
 		}
 		mouse {
 			

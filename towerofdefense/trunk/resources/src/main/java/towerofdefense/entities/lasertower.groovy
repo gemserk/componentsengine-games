@@ -71,74 +71,46 @@ builder.entity("lasertower-${Math.random()}") {
 		propertyRef("direction", "direction")
 	}
 	
-	//	component(new WeaponComponent("shooter")){
-	//		property("template", parameters.template)
-	//		property("reloadTime", parameters.reloadTime)
-	//		property("instanceParameters", parameters.instanceParameters)
-	//		propertyRef("position", "position")
-	//		propertyRef("targetEntity", "targetEntity")
-	//	}
-	
 	def bulletId ="laserbullet-$entity.id".toString();
 	
 	property("canFire",true)
 	property("canFireTimer",new CountDownTimer(5000))
 	property("fireDurationTimer",new CountDownTimer(2000))
 	
-	//	component(new ReflectionComponent("shooter"){
-	//				
-	//				def handleMessage(UpdateMessage message){
-	//					if(!entity.canFire || !entity.targetEntity )
-	//						return
-	//					
-	//					println "StartFire"
-	//						
-	//					entity.children[(bulletId)].enabled = true
-	//					entity.canFireTimer.reset();
-	//					entity.fireDurationTimer.reset();
-	//					entity.canFire = false
-	//					
-	//				}
-	//			})
-	
-	component(new ComponentFromListOfClosures("shooter",[
-			
-			{UpdateMessage message ->
-				if(!entity.canFire || !entity.targetEntity )
-					return
-				
-				println "StartFire"
-				
-				entity.children[(bulletId)].enabled = true
-				entity.canFireTimer.reset();
-				entity.fireDurationTimer.reset();
-				entity.canFire = false
-				
-			}
-			]))
-	
-	
+	component(new ComponentFromListOfClosures("shooter",[ {UpdateMessage message ->
+		if(!entity.canFire || !entity.targetEntity )
+			return
+		
+		entity.children[(bulletId)].enabled = true
+		entity.canFireTimer.reset();
+		entity.fireDurationTimer.reset();
+		entity.canFire = false
+	}]))
 	
 	component(new TimerComponent("canFireTimerComponent")){
-		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("enableFire") { })
+		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("enableFire") {message.source = entity })
 		propertyRef("timer","canFireTimer")
 	}
 	
 	genericComponent(id:"enableFireHandler", messageId:"enableFire"){ message ->
-		println "EnableFire"
+		if(message.source != entity)
+			return
+		
 		entity.canFire = true
 	}
 	
 	component(new TimerComponent("fireDurationTimerComponent")){
-		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("fireStop") { })
+		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("fireStop") {message.source = entity })
 		propertyRef("timer","fireDurationTimer")
 	}
 	
 	genericComponent(id:"fireStopHandler", messageId:"fireStop"){ message ->
-		println "FireStop"
+		if(message.source != entity)
+			return
+		
 		entity.children[(bulletId)].enabled = false
 	}
-
+	
 	child(template:"towerofdefense.entities.laserbullet", id:bulletId)	{
 		
 	}

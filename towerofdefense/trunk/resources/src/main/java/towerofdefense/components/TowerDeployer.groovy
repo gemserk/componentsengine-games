@@ -31,7 +31,6 @@ class TowerDeployer extends ReflectionComponent{
 		
 		def cost = tower.cost
 		if(entity.money < cost){
-			println "Not enough money"
 			return
 		}
 		
