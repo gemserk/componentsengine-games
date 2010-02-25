@@ -14,7 +14,7 @@ import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.Path;
 import com.gemserk.games.towerofdefense.components.GuiLogicComponent;
 import com.gemserk.games.towerofdefense.components.OutOfBoundsRemover;
-import com.gemserk.games.towerofdefense.components.RectangleRendererComponent;
+import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
 import com.gemserk.games.towerofdefense.components.TimerComponent;
 import com.gemserk.games.towerofdefense.timers.PeriodicTimer;
 import com.gemserk.games.towerofdefense.waves.Wave;

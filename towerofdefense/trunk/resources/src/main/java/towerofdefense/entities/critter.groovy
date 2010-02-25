@@ -2,6 +2,7 @@ package towerofdefense.entities;
 import towerofdefense.components.CritterHitHandler;
 
 import com.gemserk.games.towerofdefense.FollowPathComponent;
+import com.gemserk.games.towerofdefense.components.render.BarRendererComponent;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
@@ -39,6 +40,11 @@ builder.entity("critter-${Math.random()}") {
 		propertyRef("direction", "direction")
 	}
 	
+	component(new BarRendererComponent("healthRenderer")) {
+		property("position", {entity.position.copy().sub(utils.vector(5f,5f))})
+		property("emptyColor", utils.color(1.0f, 0.0f, 0.0f, 0.5f))
+		propertyRef("container", "health")
+	}
 
 	component(new CritterHitHandler("hithandler"))
 	
