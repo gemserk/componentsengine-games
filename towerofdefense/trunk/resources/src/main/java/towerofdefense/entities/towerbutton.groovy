@@ -1,10 +1,9 @@
 package towerofdefense.entities;
 
-import org.newdawn.slick.Graphics;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
+import com.gemserk.games.towerofdefense.LabelComponent;
+import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
 
 builder.entity {
 	
@@ -15,7 +14,7 @@ builder.entity {
 	property("fillColor", parameters.mouseNotOverFillColor)
 	property("mouseNotOverFillColor", parameters.mouseNotOverFillColor)
 	property("mouseOverFillColor", parameters.mouseOverFillColor)
-	property("bounding", utils.rectangle(-25, -25, 50, 50))
+	property("bounding", parameters.rectangle)
 	
 	property("enabled", true)
 	property("disabledFillColor", utils.color(1.0f, 1.0f, 1.0f, 0.4f))
@@ -41,7 +40,7 @@ builder.entity {
 	genericComponent(id:"mouseClickHandler", messageId:"click"){ message ->
 		if (!entity.enabled)
 			return
-	
+		
 		if (! entity.mouseOver )
 			return
 		
@@ -49,24 +48,42 @@ builder.entity {
 		messageQueue.enqueue(clickedMessage)
 	}
 	
-	component(new ComponentFromListOfClosures("background", [{ SlickRenderMessage m ->
-		Graphics g = m.getGraphics()
-		g.pushTransform();
-
-		g.setColor(entity.enabled ? entity.fillColor : entity.disabledFillColor)
-		def width = entity.bounding.width
-		def height = entity.bounding.height
-		g.translate((float)(entity.position.x -width/2), (float)(entity.position.y -height/2))
-		g.fillRoundRect(0, 0, width, height, 5)
-		
-		g.popTransform();
-	}]))
-	
-	component(new ImageRenderableComponent("towerRenderer")) {
-		property("image", parameters.icon)
-		property("color", utils.color(1f,1f,1f,1f))
+	component(new RectangleRendererComponent("background")) {
 		propertyRef("position", "position")
-		propertyRef("direction", "direction")
+		propertyRef("rectangle", "bounding")
+		property("cornerRadius", 3)
+		property("lineColor", utils.color(0f,0f,0f,0f))
+		property("fillColor", {entity.enabled ? entity.fillColor : entity.disabledFillColor})
 	}
 	
+//	component(new ComponentFromListOfClosures("background", [{ SlickRenderMessage m ->
+//		Graphics g = m.getGraphics()
+//		g.pushTransform();
+//		
+//		g.setColor()
+//		def width = entity.bounding.width
+//		def height = entity.bounding.height
+//		g.translate(entity.position.x, entity.position.y -height/2)
+//		g.fillRoundRect(rectangle.x, rectangle.y, width, height, 5)
+//		
+//		g.popTransform();
+//	}]))
+	
+	if (parameters.icon != null) {
+		component(new ImageRenderableComponent("iconRenderer")) {
+			property("image", parameters.icon)
+			property("color", utils.color(1f,1f,1f,1f))
+			propertyRef("position", "position")
+			propertyRef("direction", "direction")
+		}
+	}
+
+	if (parameters.label != null) {
+		component(new LabelComponent("textComponent")) {
+			propertyRef("position","position")
+			property("message","{0}")
+			property("value", parameters.label)
+		}
+	}
+
 }
