@@ -118,11 +118,6 @@ public class GemserkGameState extends BasicGameState {
 		});
 		images(injector, "assets/images.properties");
 
-		Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
-		TrueTypeFont trueTypeFont = new TrueTypeFont(font, true);
-
-		container.getGraphics().setFont(trueTypeFont);
-
 		initGame();
 	}
 
@@ -144,9 +139,12 @@ public class GemserkGameState extends BasicGameState {
 	}
 
 	public void images(Injector injector, String imagePropertiesFile) {
+		long loadIni = System.currentTimeMillis();
 		PropertiesImageLoader propertiesImageLoader = new PropertiesImageLoader(imagePropertiesFile);
 		injector.injectMembers(propertiesImageLoader);
 		propertiesImageLoader.load();
+		long loadTime = System.currentTimeMillis() - loadIni;
+		System.out.println("Loaded images (" + imagePropertiesFile + "): " + loadTime);
 	}
 
 	@Override
