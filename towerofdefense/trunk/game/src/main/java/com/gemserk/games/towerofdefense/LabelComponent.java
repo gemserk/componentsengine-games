@@ -3,6 +3,7 @@ package com.gemserk.games.towerofdefense;
 import java.text.MessageFormat;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -12,11 +13,16 @@ import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 
 public class LabelComponent extends ReflectionComponent {
-	
-	private PropertyLocator<Vector2f> positionProperty;
-	private PropertyLocator<String> messageProperty;
-	private PropertyLocator<Object> valueProperty;
-	private PropertyLocator<Color> colorProperty;
+
+	PropertyLocator<Vector2f> positionProperty;
+
+	PropertyLocator<String> messageProperty;
+
+	PropertyLocator<Object> valueProperty;
+
+	PropertyLocator<Color> colorProperty;
+
+	PropertyLocator<Font> fontProperty;
 
 	public LabelComponent(String id) {
 		super(id);
@@ -24,21 +30,42 @@ public class LabelComponent extends ReflectionComponent {
 		messageProperty = Properties.property(id, "message");
 		valueProperty = Properties.property(id, "value");
 		colorProperty = Properties.property(id, "color");
+		fontProperty = Properties.property(id, "font");
 	}
 
 	public void handleMessage(SlickRenderMessage message) {
-		Graphics graphics = message.getGraphics();
-		graphics.pushTransform();
-		{
-			Color color = colorProperty.getValue(entity, Color.white);
-			Vector2f position = positionProperty.getValue(entity);
-			String formatMessage = messageProperty.getValue(entity);
-			String text = MessageFormat.format(formatMessage, valueProperty.getValue(entity));
+		Graphics g = message.getGraphics();
 
-			graphics.setColor(color);
-			graphics.translate(position.x, position.y);
-			graphics.drawString(text, 0, 0);
+		Color color = colorProperty.getValue(entity, Color.white);
+		Vector2f translation = positionProperty.getValue(entity);
+
+		Font font = fontProperty.getValue(entity, g.getFont());
+
+		String formatMessage = messageProperty.getValue(entity);
+		String text = MessageFormat.format(formatMessage, valueProperty.getValue(entity));
+
+		Color currentColor = g.getColor();
+
+		Font currentFont = g.getFont();
+
+		int textWidth = font.getWidth(text);
+		int textHeight = font.getLineHeight();
+		
+//		int textWidth = font != null ? font.getWidth(text) : 0;
+//		int textHeight = font != null ? font.getLineHeight() : 0;
+
+		if (font != null)
+			g.setFont(font);
+
+		g.pushTransform();
+		{
+			g.setColor(color);
+			g.translate(translation.x, translation.y);
+			g.drawString(text, -textWidth / 2, -textHeight / 2);
 		}
-		graphics.popTransform();
+		g.popTransform();
+
+		g.setColor(currentColor);
+		g.setFont(currentFont);
 	}
 }

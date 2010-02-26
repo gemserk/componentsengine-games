@@ -1,6 +1,5 @@
 package towerofdefense.entities;
 
-
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.games.towerofdefense.LabelComponent;
 import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
@@ -52,22 +51,9 @@ builder.entity {
 		propertyRef("position", "position")
 		propertyRef("rectangle", "bounding")
 		property("cornerRadius", 3)
-		property("lineColor", utils.color(0f,0f,0f,0f))
+		property("lineColor", parameters.lineColor != null ? parameters.lineColor : utils.color(0f,0f,0f,0f))
 		property("fillColor", {entity.enabled ? entity.fillColor : entity.disabledFillColor})
 	}
-	
-//	component(new ComponentFromListOfClosures("background", [{ SlickRenderMessage m ->
-//		Graphics g = m.getGraphics()
-//		g.pushTransform();
-//		
-//		g.setColor()
-//		def width = entity.bounding.width
-//		def height = entity.bounding.height
-//		g.translate(entity.position.x, entity.position.y -height/2)
-//		g.fillRoundRect(rectangle.x, rectangle.y, width, height, 5)
-//		
-//		g.popTransform();
-//	}]))
 	
 	if (parameters.icon != null) {
 		component(new ImageRenderableComponent("iconRenderer")) {
@@ -83,6 +69,7 @@ builder.entity {
 			propertyRef("position","position")
 			property("message","{0}")
 			property("value", parameters.label)
+			property("font", parameters.font)
 		}
 	}
 

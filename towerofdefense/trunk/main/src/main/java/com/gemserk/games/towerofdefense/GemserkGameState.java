@@ -2,10 +2,14 @@ package com.gemserk.games.towerofdefense;
 
 import groovy.lang.Closure;
 
+import java.awt.Font;
+
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -16,6 +20,7 @@ import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.game.Game;
 import com.gemserk.componentsengine.input.MonitorFactory;
 import com.gemserk.componentsengine.input.SlickMonitorFactory;
+import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.MessageQueueImpl;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
@@ -35,77 +40,99 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-public abstract class GemserkGameState extends BasicGameState {
+public class GemserkGameState extends BasicGameState {
 
 	protected StateBasedGame stateBasedGame;
-	
+
 	protected MessageQueue messageQueue;
-	
+
 	protected Game game;
 
-	public GemserkGameState() {
+	private final int id;
+
+	private String groovyScript;
+
+	public GemserkGameState(int id, String groovyScript) {
 		super();
+		this.id = id;
+		this.groovyScript = groovyScript;
+	}
+
+	@Override
+	public int getID() {
+		return id;
 	}
 
 	@Override
 	public void init(final GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
-	
+
 		this.stateBasedGame = stateBasedGame;
-	
+
 		final Injector injector = Guice.createInjector(new AbstractModule() {
 			@Override
 			protected void configure() {
 				bind(Input.class).toInstance(container.getInput());
 				bind(Game.class).in(Singleton.class);
 				bind(GameContainer.class).toInstance(container);
-	
+
 				bind(GroovyScriptProvider.class).toInstance(new CachedScriptProvider(new GroovyScriptProviderImpl()));
 				bind(MonitorFactory.class).to(SlickMonitorFactory.class).in(Singleton.class);
 				bind(MessageHandler.class).to(Game.class).in(Singleton.class);
 				bind(MessageQueue.class).to(MessageQueueImpl.class).in(Singleton.class);
-	
+
 				bind(BuilderUtils.class).in(Singleton.class);
 				bind(GroovyClosureRunner.class).in(Singleton.class);
 				bind(Entity.class).annotatedWith(Root.class).toInstance(new Entity("root"));
-	
+
 				bind(ImageManager.class).to(ImageManagerImpl.class).in(Singleton.class);
 				bind(AnimationManager.class).to(AnimationManagerImpl.class).in(Singleton.class);
-	
+
 				bind(TemplateProvider.class).toInstance(new GroovyTemplateProvider());
 			}
 		});
-	
+
 		messageQueue = injector.getInstance(MessageQueue.class);
 		game = injector.getInstance(Game.class);
 		final BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
-	
+
 		builderUtils.addCustomUtil("templateProvider", injector.getInstance(TemplateProvider.class));
 		builderUtils.addCustomUtil("game", injector.getInstance(Game.class));
 
 		// slick utils
 		builderUtils.addCustomUtil("gameStateManager", stateBasedGame);
 		builderUtils.addCustomUtil("gameContainer", container);
-	
+
 		builderUtils.addCustomUtil("messageBuilderFactory", new Object() {
-	
+
 			public MessageBuilder messageBuilder(String messageId, Closure closure) {
 				return new GroovyMessageBuilder(messageId, closure);
 			}
 		});
-	
+
 		builderUtils.addCustomUtil("genericprovider", new Object() {
-	
+
 			public GenericProvider provide(Closure closure) {
 				return new ValueFromClosure(closure);
 			}
-	
+
 		});
 		images(injector, "assets/images.properties");
+
+		Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+		TrueTypeFont trueTypeFont = new TrueTypeFont(font, true);
+
+		container.getGraphics().setFont(trueTypeFont);
+
+		initGame();
+	}
+
+	private void initGame() {
+		game.loadScene(groovyScript);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		// g.setBackground(new Color(0.15f, 0.15f, 0.15f));
+		g.setBackground(new Color(0.15f, 0.15f, 0.15f));
 		messageQueue.enqueue(new SlickRenderMessage(g));
 		messageQueue.processMessages();
 	}
@@ -120,6 +147,18 @@ public abstract class GemserkGameState extends BasicGameState {
 		PropertiesImageLoader propertiesImageLoader = new PropertiesImageLoader(imagePropertiesFile);
 		injector.injectMembers(propertiesImageLoader);
 		propertiesImageLoader.load();
+	}
+
+	@Override
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+		messageQueue.enqueue(new GenericMessage("enterState"));
+		messageQueue.processMessages();
+	}
+
+	@Override
+	public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+		messageQueue.enqueue(new GenericMessage("leaveState"));
+		messageQueue.processMessages();
 	}
 
 }

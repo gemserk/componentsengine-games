@@ -28,7 +28,7 @@ builder.entity {
 
 	component(new LabelComponent("alabel")){
 		property("message", "{0}")
-		property("position", {entity.position.copy().sub(utils.vector(10f,10f))})
+		propertyRef("position", "position")
 		property("value", {entity.parent.lives})
 	}
 

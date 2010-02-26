@@ -212,7 +212,7 @@ builder.entity("world") {
 	
 	
 	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
-		utils.custom.game.loadScene("towerofdefense.scenes.scene1");
+		utils.custom.game.loadScene("towerofdefense.scenes.game");
 	}
 	
 	def labelX = 300;
@@ -301,7 +301,7 @@ builder.entity("world") {
 	}
 	
 	component(new LabelComponent("towersLabel")){
-		property("position",utils.vector(40,20))
+		property("position",utils.vector(40,40))
 		property("message", "Towers")
 	}	
 	
@@ -312,7 +312,7 @@ builder.entity("world") {
 	
 	towerDescriptions.each { key, value -> 
 		
-		child(template:"towerofdefense.entities.towerbutton", id:"button-${key}".toString())	{
+		child(template:"towerofdefense.entities.button", id:"button-${key}".toString())	{
 			position=utils.vector(towerButtonsX, towerButtonsY)
 			rectangle=buttonRectangle
 			icon=utils.resources.image(value.icon)
@@ -323,7 +323,7 @@ builder.entity("world") {
 		}
 		
 		component(new LabelComponent("towerCostLabel-${key}".toString())){
-			property("position",utils.vector(towerButtonsX-10,towerButtonsY+25))
+			property("position",utils.vector(towerButtonsX,towerButtonsY+35))
 			property("message", "\$${value.cost}".toString())
 		}	
 		
@@ -333,7 +333,7 @@ builder.entity("world") {
 	def commandButtonX = 660
 	def commandButtonY = towerButtonsY
 	
-	child(template:"towerofdefense.entities.towerbutton", id:"button-nextWave")	{
+	child(template:"towerofdefense.entities.button", id:"button-nextWave")	{
 		position=utils.vector(commandButtonX, commandButtonY)
 		rectangle=buttonRectangle
 		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
@@ -343,7 +343,7 @@ builder.entity("world") {
 		}
 	}
 	
-	child(template:"towerofdefense.entities.towerbutton", id:"button-restart")	{
+	child(template:"towerofdefense.entities.button", id:"button-restart")	{
 		position=utils.vector(commandButtonX + 60, commandButtonY)
 		rectangle=buttonRectangle
 		icon=utils.resources.image("towerofdefense.images.restart_icon")
@@ -367,7 +367,7 @@ builder.entity("world") {
 	
 	genericComponent(id:"gotoMenuHandler", messageId:"gotoMenu"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager;
-		stateBasedGame.enterState(1, new FadeOutTransition(), new FadeInTransition());
+		stateBasedGame.enterState(0, new FadeOutTransition(), new FadeInTransition());
 	}
 	
 	input("inputmapping"){
