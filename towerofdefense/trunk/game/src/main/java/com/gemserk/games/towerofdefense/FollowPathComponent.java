@@ -15,9 +15,7 @@ public class FollowPathComponent extends ReflectionComponent {
 	@Inject
 	@Root	Entity rootEntity;
 	
-	PropertyLocator<String> pathEntityIdProperty;
-	
-	PropertyLocator<String> pathProperty;
+	PropertyLocator<Path> pathProperty;
 	
 	PropertyLocator<Integer> pathIndexProperty;
 	
@@ -27,7 +25,6 @@ public class FollowPathComponent extends ReflectionComponent {
 
 	public FollowPathComponent(String id) {
 		super(id);
-		pathEntityIdProperty = Properties.property(id, "pathEntityId");
 		pathProperty = Properties.property(id, "path");
 		pathIndexProperty = Properties.property(id, "pathindex");
 		forceProperty = Properties.property(id, "force");
@@ -36,7 +33,7 @@ public class FollowPathComponent extends ReflectionComponent {
 
 	public void handleMessage(UpdateMessage updateMessage) {
 
-		Path path = getPath(entity);
+		Path path = pathProperty.getValue(entity);
 
 		Vector2f position = positionProperty.getValue(entity);
 		Integer pathIndex = pathIndexProperty.getValue(entity);
@@ -53,14 +50,4 @@ public class FollowPathComponent extends ReflectionComponent {
 
 		forceProperty.setValue(entity, currentForce);
 	}
-
-	private Path getPath(Entity entity) {
-		String pathEntityId = pathEntityIdProperty.getValue(entity);
-		Entity pathEntity = rootEntity.getEntityById(pathEntityId);
-
-		String pathPropertyString = pathProperty.getValue(entity);
-		Path path = (Path) Properties.property(pathPropertyString).getValue(pathEntity);
-		return path;
-	}
-
 }

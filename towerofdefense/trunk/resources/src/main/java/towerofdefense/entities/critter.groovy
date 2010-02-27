@@ -26,8 +26,7 @@ builder.entity("critter-${Math.random()}") {
 	}
 	
 	component(new FollowPathComponent("followpath")){
-		property("pathEntityId", parameters.pathEntityId);
-		property("path", parameters.pathProperty);
+		property("path", parameters.path);
 		property("pathindex", 0);
 		propertyRef("force", "movement.force");
 		propertyRef("position", "position");

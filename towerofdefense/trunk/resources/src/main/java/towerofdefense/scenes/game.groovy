@@ -1,4 +1,8 @@
 package towerofdefense.scenes;
+import com.gemserk.games.towerofdefense.Path;
+
+import com.gemserk.games.towerofdefense.PathRendererComponent;
+
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 
 import com.gemserk.componentsengine.messages.UpdateMessage;
@@ -60,20 +64,24 @@ builder.entity("world") {
 		property("lineColor", utils.color(0f, 0f, 0f, 0f))
 	}
 	
-	
-	child(template:"towerofdefense.entities.path", id:"path")	{
-		path=new Path([
-		utils.vector(0, 450 + defy), 		      
-		utils.vector(100, 450 + defy), 		      
-		utils.vector(100, 300 + defy), 
-		utils.vector(300, 150 + defy), 		      
-		utils.vector(500, 150 + defy), 		      
-		utils.vector(620, 300 + defy), 		      
-		utils.vector(500, 500 + defy), 		      
-		utils.vector(500, 500 + defy), 		      
-		utils.vector(350, 450 + defy)])		
-		lineColor=utils.color(0.0f, 0.0f, 0.0f, 1.0f)
-	}
+	property("path",new Path([
+	                  		utils.vector(0, 450 + defy), 		      
+	                		utils.vector(100, 450 + defy), 		      
+	                		utils.vector(100, 300 + defy), 
+	                		utils.vector(300, 150 + defy), 		      
+	                		utils.vector(500, 150 + defy), 		      
+	                		utils.vector(620, 300 + defy), 		      
+	                		utils.vector(500, 500 + defy), 		      
+	                		utils.vector(500, 500 + defy), 		      
+	                		utils.vector(350, 450 + defy)
+	                		])
+	)		
+	                		
+	component(new PathRendererComponent("pathrenderer")){
+		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
+		property("lineWidth", 20.0f)
+		propertyRef("path", "path")		
+	}                		
 	
 	child(template:"towerofdefense.entities.base", id:"base")	{
 		position=utils.vector(350, 450 + defy)
@@ -85,18 +93,14 @@ builder.entity("world") {
 	}
 	
 	child(template:"towerofdefense.entities.spawner", id:"spawner")	{
-		position={
-			entity.parent.children["path"].path.getPoint(0)
-		}
-		spawnDelay=utils.interval(400,1000)
+		position={entity.parent.path.getPoint(0)}
 		waves=new Waves().setWaves([new Wave(1000,10,new InstantiationTemplateImpl(
 				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 				utils.custom.genericprovider.provide{ entity ->
 					[
 					position:entity.position.copy(),
 					maxVelocity:0.05f,
-					pathEntityId:"path",
-					pathProperty:"path",
+					path:{entity.parent.path},
 					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
 					health:utils.container(8,8),
 					points: 5,
@@ -109,8 +113,7 @@ builder.entity("world") {
 					[
 					position:entity.position.copy(),
 					maxVelocity:0.07f,
-					pathEntityId:"path",
-					pathProperty:"path",
+					path:{entity.parent.path},
 					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 					health:utils.container(12,12),
 					points: 10,
@@ -123,8 +126,7 @@ builder.entity("world") {
 					[
 					position:entity.position.copy(),
 					maxVelocity:0.02f,
-					pathEntityId:"path",
-					pathProperty:"path",
+					path:{entity.parent.path},
 					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
 					health:utils.container(20,20),
 					points: 15,
@@ -137,8 +139,7 @@ builder.entity("world") {
 					[
 					position:entity.position.copy(),
 					maxVelocity:0.09f,
-					pathEntityId:"path",
-					pathProperty:"path",
+					path:{entity.parent.path},
 					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
 					health:utils.container(15,15),
 					points: 20,
