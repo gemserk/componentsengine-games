@@ -25,6 +25,7 @@ builder.entity() {
 	property("enabled",false)
 	
 	property("line",{
+		def entity = entity
 		Vector2f position = entity.position
 		Vector2f direction = entity.direction
 		

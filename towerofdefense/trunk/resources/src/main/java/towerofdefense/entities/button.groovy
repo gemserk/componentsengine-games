@@ -51,6 +51,7 @@ builder.entity {
 		propertyRef("position", "position")
 		propertyRef("rectangle", "bounding")
 		//property("cornerRadius", 3)
+		def entity = entity
 		property("lineColor", parameters.lineColor != null ? parameters.lineColor : utils.color(0f,0f,0f,0f))
 		property("fillColor", {entity.enabled ? entity.fillColor : entity.disabledFillColor})
 	}

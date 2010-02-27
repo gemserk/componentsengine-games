@@ -34,7 +34,7 @@ import com.gemserk.games.towerofdefense.waves.Wave;
 import com.gemserk.games.towerofdefense.waves.Waves;
 
 builder.entity("world") {
-	
+	def utils = utils
 	new GroovyBootstrapper();
 	
 	property("money", 15)
@@ -131,7 +131,7 @@ builder.entity("world") {
 					reward:3
 					]	
 				}	
-				)), new Wave(1200,1000,new InstantiationTemplateImpl(
+				)), new Wave(200,1000,new InstantiationTemplateImpl(
 				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 				utils.custom.genericprovider.provide{ entity ->
 					[
@@ -150,6 +150,7 @@ builder.entity("world") {
 	
 	
 	def blastTower = new InstantiationTemplateImpl(
+			
 			utils.custom.templateProvider.getTemplate("towerofdefense.entities.blastertower"),
 			utils.custom.genericprovider.provide{ position ->
 				[
