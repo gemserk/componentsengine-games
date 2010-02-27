@@ -26,29 +26,23 @@ import com.gemserk.componentsengine.commons.components.CircleRenderableComponent
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
-import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.LabelComponent;
-import com.gemserk.games.towerofdefense.Path;
 import com.gemserk.games.towerofdefense.components.GuiLogicComponent;
 import com.gemserk.games.towerofdefense.components.OutOfBoundsRemover;
 import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
 import com.gemserk.games.towerofdefense.components.TimerComponent;
 import com.gemserk.games.towerofdefense.timers.PeriodicTimer;
-import com.gemserk.games.towerofdefense.waves.Wave;
 import com.gemserk.games.towerofdefense.waves.Waves;
 
 builder.entity("world") {
 	def utils = utils
 	new GroovyBootstrapper();
 	
-	property("money", 15)
+	property("money", parameters.money)
 	property("points",0)
-	property("lives",15)
-	property("wavesTimer", new PeriodicTimer(15000))
+	property("lives",parameters.lives)
+	property("wavesTimer", new PeriodicTimer(parameters.wavePeriod))
 	property("towerCount",0)
-	
-	def defx = 0
-	def defy = 30
 	
 	def gameBoundsToRender = utils.rectangle(0, 120, 800, 480)
 	def borderSize = 20
@@ -64,18 +58,7 @@ builder.entity("world") {
 		property("lineColor", utils.color(0f, 0f, 0f, 0f))
 	}
 	
-	property("path",new Path([
-	                  		utils.vector(0, 450 + defy), 		      
-	                		utils.vector(100, 450 + defy), 		      
-	                		utils.vector(100, 300 + defy), 
-	                		utils.vector(300, 150 + defy), 		      
-	                		utils.vector(500, 150 + defy), 		      
-	                		utils.vector(620, 300 + defy), 		      
-	                		utils.vector(500, 500 + defy), 		      
-	                		utils.vector(500, 500 + defy), 		      
-	                		utils.vector(350, 450 + defy)
-	                		])
-	)		
+	property("path",parameters.path)
 	                		
 	component(new PathRendererComponent("pathrenderer")){
 		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
@@ -84,126 +67,27 @@ builder.entity("world") {
 	}                		
 	
 	child(template:"towerofdefense.entities.base", id:"base")	{
-		position=utils.vector(350, 450 + defy)
+		position=parameters.basePosition
 		direction=utils.vector(-1,0)
-		radius=30f
-		
+		radius=parameters.baseRadius
 		lineColor=utils.color(0.0f, 0.0f, 0.0f, 0.0f)
 		fillColor=utils.color(0.2f, 0.2f, 0.7f, 1.0f)
 	}
 	
 	child(template:"towerofdefense.entities.spawner", id:"spawner")	{
 		position={entity.parent.path.getPoint(0)}
-		waves=new Waves().setWaves([new Wave(1000,10,new InstantiationTemplateImpl(
-				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-				utils.custom.genericprovider.provide{ entity ->
-					[
-					position:entity.position.copy(),
-					maxVelocity:0.05f,
-					path:{entity.parent.path},
-					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-					health:utils.container(8,8),
-					points: 5,
-					reward:1			
-					]	
-				}	
-				)), new Wave(1200,5,new InstantiationTemplateImpl(
-				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-				utils.custom.genericprovider.provide{ entity ->
-					[
-					position:entity.position.copy(),
-					maxVelocity:0.07f,
-					path:{entity.parent.path},
-					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-					health:utils.container(12,12),
-					points: 10,
-					reward:2
-					]	
-				}	
-				)), new Wave(2500,5,new InstantiationTemplateImpl(
-				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-				utils.custom.genericprovider.provide{ entity ->
-					[
-					position:entity.position.copy(),
-					maxVelocity:0.02f,
-					path:{entity.parent.path},
-					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
-					health:utils.container(20,20),
-					points: 15,
-					reward:3
-					]	
-				}	
-				)), new Wave(200,1000,new InstantiationTemplateImpl(
-				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-				utils.custom.genericprovider.provide{ entity ->
-					[
-					position:entity.position.copy(),
-					maxVelocity:0.09f,
-					path:{entity.parent.path},
-					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
-					health:utils.container(15,15),
-					points: 20,
-					reward:4
-					]	
-				}	
-				))])
+		waves=new Waves().setWaves(parameters.waves)
 	}
 	
+	property("towerDescriptions", parameters.towerDescriptions )
 	
-	def blastTower = new InstantiationTemplateImpl(
-			
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.blastertower"),
-			utils.custom.genericprovider.provide{ position ->
-				[
-				position:position,
-				direction:utils.vector(-1,0),
-				radius:52f,
-				lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
-				fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
-				color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
-				template:"towerofdefense.entities.bullet",
-				reloadTime:250,
-				cost:5,
-				instanceParameters: utils.custom.genericprovider.provide{
-					[
-					damage:1.0f,
-					radius:10.0f,
-					maxVelocity:0.6f,
-					color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
-					]
-				}	
-				]
-			})
 	
-	def laserTower = new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.lasertower"),
-			utils.custom.genericprovider.provide{ position ->
-				[
-				position:position,
-				direction:utils.vector(-1,0),
-				radius:200f,
-				lineColor:utils.color(0.0f, 0.0f, 0.8f,0.5f),
-				fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
-				color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
-				reloadTime:250,
-				cost:7
-				]
-			})
-	
-	def towerDescriptions = [blaster:[icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower], 
-			laser:[icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]]
-	property("towerDescriptions", towerDescriptions )
-	
-	def towers = ["blaster":blastTower,
-			"laser": laserTower
-			]
+
 	
 	property("towerType","blaster")
 	
 	component(new TowerDeployer("towerdeployer")){
-		property("instantiationTemplate",{
-			towers[(entity.towerType)]
-		})
+		property("instantiationTemplate",{entity.towerDescriptions[(entity.towerType)].instantiationTemplate})
 		propertyRef("towerCount","towerCount")
 	}
 	
@@ -232,7 +116,7 @@ builder.entity("world") {
 	
 	
 	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
-		utils.custom.game.loadScene("towerofdefense.scenes.game");
+		utils.custom.game.loadScene("towerofdefense.scenes.scene1");
 	}
 	
 	def labelX = 300;
@@ -292,11 +176,9 @@ builder.entity("world") {
 		propertyRef("mousePosition", "mousePosition")
 		propertyRef("deployCursorState", "deployCursorState")
 		propertyRef("deployTowerEnabled", "deployTowerEnabled")
-		property("path",{
-			entity.getEntityById("path").path
-		})
+		propertyRef("path","path")
 		
-		property("towerDescriptions", towerDescriptions)
+		propertyRef("towerDescriptions", "towerDescriptions")
 		propertyRef("gameBounds","gameBounds")
 	}
 	
@@ -329,7 +211,7 @@ builder.entity("world") {
 	
 	def buttonRectangle = utils.rectangle(-25, -25, 50, 50)
 	
-	towerDescriptions.each { key, value -> 
+	parameters.towerDescriptions.each { key, value -> 
 		
 		child(template:"towerofdefense.entities.button", id:"button-${key}".toString())	{
 			position=utils.vector(towerButtonsX, towerButtonsY)
