@@ -50,7 +50,7 @@ builder.entity {
 	component(new RectangleRendererComponent("background")) {
 		propertyRef("position", "position")
 		propertyRef("rectangle", "bounding")
-		property("cornerRadius", 3)
+		//property("cornerRadius", 3)
 		property("lineColor", parameters.lineColor != null ? parameters.lineColor : utils.color(0f,0f,0f,0f))
 		property("fillColor", {entity.enabled ? entity.fillColor : entity.disabledFillColor})
 	}

@@ -20,6 +20,7 @@ import towerofdefense.components.TowerDeployer;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
+import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.LabelComponent;
@@ -84,120 +85,122 @@ builder.entity("world") {
 	}
 	
 	child(template:"towerofdefense.entities.spawner", id:"spawner")	{
-		position={entity.parent.children["path"].path.getPoint(0)
+		position={
+			entity.parent.children["path"].path.getPoint(0)
 		}
 		spawnDelay=utils.interval(400,1000)
 		waves=new Waves().setWaves([new Wave(1000,10,new InstantiationTemplateImpl(
-		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-		utils.custom.genericprovider.provide{ entity ->
-			[
-			position:entity.position.copy(),
-			maxVelocity:0.05f,
-			pathEntityId:"path",
-			pathProperty:"path",
-			color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-			health:utils.container(8,8),
-			points: 5,
-			reward:1			
-			]	
-		}	
-		)), new Wave(1200,5,new InstantiationTemplateImpl(
-		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-		utils.custom.genericprovider.provide{ entity ->
-			[
-			position:entity.position.copy(),
-			maxVelocity:0.07f,
-			pathEntityId:"path",
-			pathProperty:"path",
-			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-			health:utils.container(12,12),
-			points: 10,
-			reward:2
-			]	
-		}	
-		)), new Wave(2500,5,new InstantiationTemplateImpl(
-		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-		utils.custom.genericprovider.provide{ entity ->
-			[
-			position:entity.position.copy(),
-			maxVelocity:0.02f,
-			pathEntityId:"path",
-			pathProperty:"path",
-			color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
-			health:utils.container(20,20),
-			points: 15,
-			reward:3
-			]	
-		}	
-		)), new Wave(1200,1000,new InstantiationTemplateImpl(
-		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-		utils.custom.genericprovider.provide{ entity ->
-			[
-			position:entity.position.copy(),
-			maxVelocity:0.09f,
-			pathEntityId:"path",
-			pathProperty:"path",
-			color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
-			health:utils.container(15,15),
-			points: 20,
-			reward:4
-			]	
-		}	
-		))])
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.05f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
+					health:utils.container(8,8),
+					points: 5,
+					reward:1			
+					]	
+				}	
+				)), new Wave(1200,5,new InstantiationTemplateImpl(
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.07f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
+					health:utils.container(12,12),
+					points: 10,
+					reward:2
+					]	
+				}	
+				)), new Wave(2500,5,new InstantiationTemplateImpl(
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.02f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
+					health:utils.container(20,20),
+					points: 15,
+					reward:3
+					]	
+				}	
+				)), new Wave(1200,1000,new InstantiationTemplateImpl(
+				utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+				utils.custom.genericprovider.provide{ entity ->
+					[
+					position:entity.position.copy(),
+					maxVelocity:0.09f,
+					pathEntityId:"path",
+					pathProperty:"path",
+					color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
+					health:utils.container(15,15),
+					points: 20,
+					reward:4
+					]	
+				}	
+				))])
 	}
 	
 	
 	def blastTower = new InstantiationTemplateImpl(
-	utils.custom.templateProvider.getTemplate("towerofdefense.entities.blastertower"),
-	utils.custom.genericprovider.provide{ position ->
-		[
-		position:position,
-		direction:utils.vector(-1,0),
-		radius:52f,
-		lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
-		fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
-		color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
-		template:"towerofdefense.entities.bullet",
-		reloadTime:250,
-		cost:5,
-		instanceParameters: utils.custom.genericprovider.provide{
-			[
-			damage:1.0f,
-			radius:10.0f,
-			maxVelocity:0.6f,
-			color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
-			]
-		}	
-		]
-	})
+			utils.custom.templateProvider.getTemplate("towerofdefense.entities.blastertower"),
+			utils.custom.genericprovider.provide{ position ->
+				[
+				position:position,
+				direction:utils.vector(-1,0),
+				radius:52f,
+				lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
+				fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
+				color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
+				template:"towerofdefense.entities.bullet",
+				reloadTime:250,
+				cost:5,
+				instanceParameters: utils.custom.genericprovider.provide{
+					[
+					damage:1.0f,
+					radius:10.0f,
+					maxVelocity:0.6f,
+					color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
+					]
+				}	
+				]
+			})
 	
 	def laserTower = new InstantiationTemplateImpl(
-	utils.custom.templateProvider.getTemplate("towerofdefense.entities.lasertower"),
-	utils.custom.genericprovider.provide{ position ->
-		[
-		position:position,
-		direction:utils.vector(-1,0),
-		radius:200f,
-		lineColor:utils.color(0.0f, 0.0f, 0.8f,0.5f),
-		fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
-		color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
-		reloadTime:250,
-		cost:7
-		]
-	})
+			utils.custom.templateProvider.getTemplate("towerofdefense.entities.lasertower"),
+			utils.custom.genericprovider.provide{ position ->
+				[
+				position:position,
+				direction:utils.vector(-1,0),
+				radius:200f,
+				lineColor:utils.color(0.0f, 0.0f, 0.8f,0.5f),
+				fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
+				color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
+				reloadTime:250,
+				cost:7
+				]
+			})
 	
 	def towerDescriptions = [blaster:[icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower], 
-	laser:[icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]]
+			laser:[icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]]
 	property("towerDescriptions", towerDescriptions )
 	
 	def towers = ["blaster":blastTower,
-	"laser": laserTower
-	]
+			"laser": laserTower
+			]
 	
 	property("towerType","blaster")
 	
 	component(new TowerDeployer("towerdeployer")){
-		property("instantiationTemplate",{towers[(entity.towerType)]
+		property("instantiationTemplate",{
+			towers[(entity.towerType)]
 		})
 		propertyRef("towerCount","towerCount")
 	}
@@ -221,8 +224,8 @@ builder.entity("world") {
 		entity.lives--;
 		
 		if(entity.lives <= 0)
-		messageQueue.enqueue(utils.genericMessage("reloadScene",{
-		}))
+			messageQueue.enqueue(utils.genericMessage("reloadScene",{
+			}))
 	}
 	
 	
@@ -236,22 +239,19 @@ builder.entity("world") {
 	component(new LabelComponent("moneylabel")){
 		property("position",utils.vector(labelX,labelY + 0))
 		property("message","Money: {0}")
-		property("value",{entity.money
-		})
+		property("value",{entity.money })
 	}
 	
 	component(new LabelComponent("pointslabel")){
 		property("position",utils.vector(labelX,labelY + 20))
 		property("message","Points: {0}")
-		property("value",{entity.points
-		})
+		property("value",{entity.points })
 	}
 	
 	component(new LabelComponent("timerlabel")){
 		property("position",utils.vector(labelX,labelY + 40))
 		property("message","Timer: {0}")
-		property("value",{entity.wavesTimer.timeLeft
-		})
+		property("value",{entity.wavesTimer.timeLeft })
 	}
 	
 	component(new LabelComponent("towerCountlabel")){
@@ -290,7 +290,8 @@ builder.entity("world") {
 		propertyRef("mousePosition", "mousePosition")
 		propertyRef("deployCursorState", "deployCursorState")
 		propertyRef("deployTowerEnabled", "deployTowerEnabled")
-		property("path",{entity.getEntityById("path").path
+		property("path",{
+			entity.getEntityById("path").path
 		})
 		
 		property("towerDescriptions", towerDescriptions)
@@ -302,14 +303,15 @@ builder.entity("world") {
 	property("mousePosition", utils.vector(0f, 0f))
 	
 	def mapeo = [
-	"candeploy":utils.color(0.0f, 0.8f, 0.0f,0.25f),
-	"cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
-	]
+			"candeploy":utils.color(0.0f, 0.8f, 0.0f,0.25f),
+			"cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
+			]
 	
 	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
 		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
 		property("radius", 52.0f)
-		property("fillColor", {mapeo[(entity.deployCursorState)]
+		property("fillColor", {
+			mapeo[(entity.deployCursorState)]
 		})
 		propertyRef("position", "mousePosition")
 		propertyRef("enabled", "deployTowerEnabled")
@@ -333,7 +335,8 @@ builder.entity("world") {
 			icon=utils.resources.image(value.icon)
 			mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
 			mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
-			messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {  message.towerType = "${key}".toString()
+			messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {
+				message.towerType = "${key}".toString()
 			}
 		}
 		
@@ -387,11 +390,19 @@ builder.entity("world") {
 	
 	property("particlesEnabled",false)
 	property("particleSystem", new ParticleSystem("org/newdawn/slick/data/particle.tga", 2000))
-	component(new ComponentFromListOfClosures("particleManagerComponent",[
-	                                                                      {UpdateMessage message -> entity.particleSystem.update(message.delta)},
-	                                                                      {SlickRenderMessage message -> entity.particleSystem.render()}
-	                                                                      ]))
+	component(new ComponentFromListOfClosures("particleManagerComponent",[ {UpdateMessage message -> entity.particleSystem.update(message.delta)}, {SlickRenderMessage message ->
+		entity.particleSystem.render()
+	}
+	]))
 	
+	
+	
+	
+	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
+		Entity.times.entrySet().sort({it.count }).each { entry -> 
+			println "$entry.element - $entry.count"
+		}
+	}                                                                     
 	
 	input("inputmapping"){
 		keyboard {
@@ -399,6 +410,7 @@ builder.entity("world") {
 			press(button:"r", eventId:"reloadScene")
 			press(button:"m",eventId:"cheatMoney")
 			press(button:"l",eventId:"cheatLives")
+			press(button:"d",eventId:"dumpDebug")
 			
 			press(button:"escape", eventId:"gotoMenu")
 		}
