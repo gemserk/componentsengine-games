@@ -69,10 +69,14 @@ builder.entity("menu") {
 	genericComponent(id:"leaveStateHandler", messageId:"leaveState"){ message ->
 		entity.playing=true
 	}
-	
+		
+	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
+		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
+	}   
 	input("inputmapping"){
 		keyboard {
 			press(button:"escape", eventId:"resume")
+			press(button:"d",eventId:"dumpDebug")
 		}
 		mouse {
 			
