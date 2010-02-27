@@ -1,5 +1,12 @@
 package towerofdefense.scenes;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 
+import com.gemserk.componentsengine.messages.UpdateMessage;
+
+
+import org.newdawn.slick.particles.ConfigurableEmitter;
+import org.newdawn.slick.particles.ParticleIO;
+import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
@@ -200,6 +207,14 @@ builder.entity("world") {
 		def points = message.critter.points
 		entity.money+=reward
 		entity.points+=points
+		
+		if(entity.particlesEnabled){
+			def particleSystem = entity.particleSystem
+			ConfigurableEmitter explosion = ParticleIO.loadEmitter(this.getClass().getClassLoader().getResourceAsStream("assets/particles/creepexplosionemitter.xml"));
+			particleSystem.addEmitter(explosion);	
+			def critterPos = message.critter.position
+			explosion.setPosition(critterPos.x, critterPos.y);
+		}
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
@@ -369,6 +384,14 @@ builder.entity("world") {
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager;
 		stateBasedGame.enterState(0, new FadeOutTransition(), new FadeInTransition());
 	}
+	
+	property("particlesEnabled",false)
+	property("particleSystem", new ParticleSystem("org/newdawn/slick/data/particle.tga", 2000))
+	component(new ComponentFromListOfClosures("particleManagerComponent",[
+	                                                                      {UpdateMessage message -> entity.particleSystem.update(message.delta)},
+	                                                                      {SlickRenderMessage message -> entity.particleSystem.render()}
+	                                                                      ]))
+	
 	
 	input("inputmapping"){
 		keyboard {
