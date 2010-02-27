@@ -51,9 +51,6 @@ public class LabelComponent extends ReflectionComponent {
 		int textWidth = font.getWidth(text);
 		int textHeight = font.getLineHeight();
 		
-//		int textWidth = font != null ? font.getWidth(text) : 0;
-//		int textHeight = font != null ? font.getLineHeight() : 0;
-
 		if (font != null)
 			g.setFont(font);
 

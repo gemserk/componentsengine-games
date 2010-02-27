@@ -14,6 +14,7 @@ builder.entity("menu") {
 	new GroovyBootstrapper();
 	
 	property("playing", false)
+	property("resumeSound", utils.resources.sounds.sound("assets/sounds/button.wav"))
 	
 	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.2f)
 	def buttonMouseNotOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.8f)
@@ -28,14 +29,6 @@ builder.entity("menu") {
 		property("image", utils.resources.image("towerofdefense.images.logo"))
 		property("direction", utils.vector(1,0))
 	}
-	
-//	component(new RectangleRendererComponent("menuRectangle")) {
-//		property("position", utils.vector(menuX, menuY + 60))		
-//		property("rectangle", utils.rectangle(-200, -160, 400, 320))
-//		property("cornerRadius", 5)
-//		property("lineColor", utils.color(0f, 0f, 0f, 1f))
-//		property("fillColor", utils.color(0f, 0f, 0f, 1f))
-//	}
 	
 	child(template:"towerofdefense.entities.button", id:"buttonResume")	{
 		position=utils.vector(menuX, menuY + 340)
@@ -64,6 +57,8 @@ builder.entity("menu") {
 	genericComponent(id:"resumeHandler", messageId:"resume"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
 		stateBasedGame.enterState(1, new FadeOutTransition(), new FadeInTransition())
+		
+		entity.resumeSound.play()
 	}
 	
 	genericComponent(id:"exitHandler", messageId:"exit"){ message ->
