@@ -73,10 +73,19 @@ builder.entity("menu") {
 	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
 	}   
+	
+	
+	genericComponent(id:"testSceneHandler", messageId:"goToTestScene"){ message ->
+		def game = utils.custom.game
+		game.loadScene("towerofdefense.scenes.testScene")
+	}
+	
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"escape", eventId:"resume")
 			press(button:"d",eventId:"dumpDebug")
+			press(button:"t",eventId:"goToTestScene")
 		}
 		mouse {
 			
