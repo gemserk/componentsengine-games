@@ -136,5 +136,5 @@ builder.entity("world") {
 	//	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
 	//		utils.custom.game.loadScene("towerofdefense.scenes.game");
 	//	}
-	parent("towerofdefense.scenes.game")
+	parent("towerofdefense.scenes.game", parameters)
 }

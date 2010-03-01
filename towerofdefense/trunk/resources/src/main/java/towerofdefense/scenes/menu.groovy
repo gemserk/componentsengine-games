@@ -1,22 +1,19 @@
 package towerofdefense.scenes;
 
-import org.newdawn.slick.GameContainer;
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
+import org.newdawn.slick.GameContainer 
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
 import org.newdawn.slick.state.transition.FadeOutTransition 
-
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
-
-import towerofdefense.GroovyBootstrapper;
+import towerofdefense.GroovyBootstrapper 
 
 builder.entity("menu") {
 	
 	new GroovyBootstrapper();
 	
 	property("playing", false)
-	property("resumeSound", utils.resources.sounds.sound("assets/sounds/button.wav"))
 	
-	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.2f)
+	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 1.0f)
 	def buttonMouseNotOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.8f)
 	
 	def buttonFont = utils.resources.fonts.font([italic:false, bold:false, size:48])
@@ -34,9 +31,12 @@ builder.entity("menu") {
 		position=utils.vector(menuX, menuY + 340)
 		rectangle=utils.rectangle(-160, -50, 320, 100)
 		label={entity.parent.playing?"Resume":"Play"}
-		lineColor=utils.color(0f, 0f, 1f, 0.5f)
-		mouseNotOverFillColor=buttonMouseOverFillColor
-		mouseOverFillColor=buttonMouseNotOverFillColor
+		
+		color=buttonMouseOverFillColor
+		
+		mouseNotOverImage=utils.resources.image("towerofdefense.images.menubutton")
+		mouseOverImage=utils.resources.image("towerofdefense.images.menubutton_over")
+		
 		font=buttonFont
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("resume") {
 		}
@@ -46,19 +46,24 @@ builder.entity("menu") {
 		position=utils.vector(menuX, menuY + 460)
 		rectangle=utils.rectangle(-160, -50, 320, 100)
 		label="Exit"
-		lineColor=utils.color(0f, 0f, 1f, 0.5f)
-		mouseNotOverFillColor=buttonMouseOverFillColor
-		mouseOverFillColor=buttonMouseNotOverFillColor
+		
+		color=buttonMouseOverFillColor
+		
+		mouseNotOverImage=utils.resources.image("towerofdefense.images.menubutton")
+		mouseOverImage=utils.resources.image("towerofdefense.images.menubutton_over")
+		
 		font=buttonFont
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("exit") {
 		}
 	}
 	
+	//	property("resumeSound", utils.resources.sounds.sound("assets/sounds/button.wav"))
+	
 	genericComponent(id:"resumeHandler", messageId:"resume"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
 		stateBasedGame.enterState(1, new FadeOutTransition(), new FadeInTransition())
 		
-		entity.resumeSound.play()
+		//		entity.resumeSound.play()
 	}
 	
 	genericComponent(id:"exitHandler", messageId:"exit"){ message ->
@@ -69,7 +74,7 @@ builder.entity("menu") {
 	genericComponent(id:"leaveStateHandler", messageId:"leaveState"){ message ->
 		entity.playing=true
 	}
-		
+	
 	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
 	}   

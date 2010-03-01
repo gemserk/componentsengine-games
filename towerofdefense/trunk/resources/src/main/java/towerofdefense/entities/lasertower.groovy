@@ -6,21 +6,16 @@ import com.gemserk.componentsengine.messages.UpdateMessage;
 
 import com.gemserk.games.towerofdefense.components.TimerComponent;
 
-import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
 
-import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
 
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 
 builder.entity("lasertower-${Math.random()}") {
 	
 	parameters.towerImage=utils.resources.image("towerofdefense.images.lasertower")
 	parameters.cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
 	
-	parent("towerofdefense.entities.tower")
+	parent("towerofdefense.entities.tower", parameters)
 	
 	tags("lasertower")
 	
