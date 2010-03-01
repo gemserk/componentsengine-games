@@ -13,7 +13,7 @@ builder.entity("menu") {
 	
 	property("playing", false)
 	
-	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 1.0f)
+	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.2f)
 	def buttonMouseNotOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.8f)
 	
 	def buttonFont = utils.resources.fonts.font([italic:false, bold:false, size:48])
@@ -31,12 +31,9 @@ builder.entity("menu") {
 		position=utils.vector(menuX, menuY + 340)
 		rectangle=utils.rectangle(-160, -50, 320, 100)
 		label={entity.parent.playing?"Resume":"Play"}
-		
-		color=buttonMouseOverFillColor
-		
-		mouseNotOverImage=utils.resources.image("towerofdefense.images.menubutton")
-		mouseOverImage=utils.resources.image("towerofdefense.images.menubutton_over")
-		
+		lineColor=utils.color(0f, 0f, 1f, 0.5f)
+		mouseNotOverFillColor=buttonMouseOverFillColor
+		mouseOverFillColor=buttonMouseNotOverFillColor
 		font=buttonFont
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("resume") {
 		}
@@ -46,12 +43,9 @@ builder.entity("menu") {
 		position=utils.vector(menuX, menuY + 460)
 		rectangle=utils.rectangle(-160, -50, 320, 100)
 		label="Exit"
-		
-		color=buttonMouseOverFillColor
-		
-		mouseNotOverImage=utils.resources.image("towerofdefense.images.menubutton")
-		mouseOverImage=utils.resources.image("towerofdefense.images.menubutton_over")
-		
+		lineColor=utils.color(0f, 0f, 1f, 0.5f)
+		mouseNotOverFillColor=buttonMouseOverFillColor
+		mouseOverFillColor=buttonMouseNotOverFillColor
 		font=buttonFont
 		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("exit") {
 		}
