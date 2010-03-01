@@ -93,14 +93,6 @@ builder.entity("world") {
 		def points = message.critter.points
 		entity.money+=reward
 		entity.points+=points
-		
-		if(entity.particlesEnabled){
-			def particleSystem = entity.particleSystem
-			ConfigurableEmitter explosion = ParticleIO.loadEmitter(this.getClass().getClassLoader().getResourceAsStream("assets/particles/creepexplosionemitter.xml"));
-			particleSystem.addEmitter(explosion);	
-			def critterPos = message.critter.position
-			explosion.setPosition(critterPos.x, critterPos.y);
-		}
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
@@ -280,15 +272,6 @@ builder.entity("world") {
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager;
 		stateBasedGame.enterState(0, new FadeOutTransition(), new FadeInTransition());
 	}
-	
-	property("particlesEnabled",false)
-	property("particleSystem", new ParticleSystem("org/newdawn/slick/data/particle.tga", 2000))
-	component(new ComponentFromListOfClosures("particleManagerComponent",[ {UpdateMessage message -> entity.particleSystem.update(message.delta)}, {SlickRenderMessage message ->
-		entity.particleSystem.render()
-	}
-	]))
-	
-	
 	
 	
 	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->

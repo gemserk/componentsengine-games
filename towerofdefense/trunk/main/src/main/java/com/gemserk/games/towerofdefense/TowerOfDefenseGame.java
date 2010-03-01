@@ -2,6 +2,7 @@ package com.gemserk.games.towerofdefense;
 
 
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.AppletGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 public class TowerOfDefenseGame extends StateBasedGame {
 
+	
+	
 	protected static final Logger logger = LoggerFactory.getLogger(TowerOfDefenseGame.class);
 
 	public static void main(String[] arguments) {
@@ -39,8 +42,12 @@ public class TowerOfDefenseGame extends StateBasedGame {
 		super("Tower of defense");
 	}
 
+	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
+		if(container instanceof AppletGameContainer.Container){
+			container.setVSync(true);
+		}
 		addState(new GemserkGameState(0, "towerofdefense.scenes.menu"));
 		addState(new GemserkGameState(1, "towerofdefense.scenes.scene1"));
 	}
