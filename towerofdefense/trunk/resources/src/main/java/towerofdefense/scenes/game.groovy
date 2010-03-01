@@ -1,27 +1,18 @@
 package towerofdefense.scenes;
-import com.gemserk.games.towerofdefense.Path;
-
-import com.gemserk.games.towerofdefense.PathRendererComponent;
-
+import towerofdefense.components.GridRenderer;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
-
+import com.gemserk.games.towerofdefense.PathRendererComponent;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
-
-
 import org.newdawn.slick.particles.ConfigurableEmitter;
 import org.newdawn.slick.particles.ParticleIO;
 import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
-
 import com.gemserk.componentsengine.messages.GenericMessage;
-
-
-import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import towerofdefense.GroovyBootstrapper;
 import towerofdefense.components.TowerDeployer;
-
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.entities.Entity;
@@ -58,11 +49,17 @@ builder.entity("world") {
 		property("lineColor", utils.color(0f, 0f, 0f, 0f))
 	}
 	
+	component(new GridRenderer("grid")){
+		propertyRef("bounds","gameBoundsToRender")
+		property("distance",15)
+	}
+	
+	
 	property("path",parameters.path)
 	                		
 	component(new PathRendererComponent("pathrenderer")){
-		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
-		property("lineWidth", 20.0f)
+		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1f))
+		property("lineWidth", 15.0f)
 		propertyRef("path", "path")		
 	}                		
 	
@@ -180,6 +177,8 @@ builder.entity("world") {
 		
 		propertyRef("towerDescriptions", "towerDescriptions")
 		propertyRef("gameBounds","gameBounds")
+		propertyRef("towerType","towerType")
+		propertyRef("money","money")
 	}
 	
 	property("deployTowerEnabled", false)
@@ -193,7 +192,7 @@ builder.entity("world") {
 	
 	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
 		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
-		property("radius", 52.0f)
+		property("radius", {entity.towers[(entity.towerType)].radius})
 		property("fillColor", {
 			mapeo[(entity.deployCursorState)]
 		})
@@ -210,6 +209,16 @@ builder.entity("world") {
 	def towerButtonsY = 70
 	
 	def buttonRectangle = utils.rectangle(-25, -25, 50, 50)
+	
+	
+	def towerGuiInstantiation = [:]
+	parameters.towerDescriptions.each { key, value -> 
+		towerGuiInstantiation[(key)]=value.instantiationTemplate.get()
+	}
+	
+	property("towers",towerGuiInstantiation)
+	
+	
 	
 	parameters.towerDescriptions.each { key, value -> 
 		

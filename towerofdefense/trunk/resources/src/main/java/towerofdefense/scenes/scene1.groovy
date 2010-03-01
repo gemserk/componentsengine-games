@@ -95,13 +95,12 @@ builder.entity("world") {
 				[
 				position:position,
 				direction:utils.vector(-1,0),
-				radius:52f,
+				radius:45f,
 				lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
 				fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
 				color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
 				template:"towerofdefense.entities.bullet",
 				reloadTime:250,
-				cost:5,
 				instanceParameters: utils.custom.genericprovider.provide{
 					[
 					damage:1.0f,
@@ -119,12 +118,11 @@ builder.entity("world") {
 				[
 				position:position,
 				direction:utils.vector(-1,0),
-				radius:200f,
 				lineColor:utils.color(0.0f, 0.0f, 0.8f,0.5f),
 				fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
 				color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
+				radius:90f,
 				reloadTime:250,
-				cost:7
 				]
 			})
 	

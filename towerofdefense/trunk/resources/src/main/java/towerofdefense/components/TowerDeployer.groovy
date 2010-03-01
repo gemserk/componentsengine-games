@@ -29,13 +29,6 @@ class TowerDeployer extends ReflectionComponent{
 		
 		Entity tower = instantiationTemplate.get(position)
 		
-		def cost = tower.cost
-		if(entity.money < cost){
-			return
-		}
-		
-		entity.money -= cost
-		
 		entity."${id}.towerCount" = entity."${id}.towerCount" + 1
 		messageQueue.enqueue(ChildMessage.addEntity(tower, "world"));
 	}

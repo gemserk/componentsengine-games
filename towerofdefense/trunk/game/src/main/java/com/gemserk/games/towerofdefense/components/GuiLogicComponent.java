@@ -36,16 +36,15 @@ public class GuiLogicComponent extends ReflectionComponent {
 	@Inject
 	Input input;
 
-	PropertyLocator<Vector2f> mousePositionProperty;
-
+	private PropertyLocator<Vector2f> mousePositionProperty;
 	private PropertyLocator<Entity> selectedTowerProperty;
-
 	private PropertyLocator<String> deployCursorStateProperty;
-
 	private PropertyLocator<Boolean> deployTowerEnabledProperty;
-
 	private PropertyLocator<Path> pathProperty;
 	private PropertyLocator<Rectangle> gameBoundsProperty;
+	private PropertyLocator<String> towerTypeProperty;
+	private PropertyLocator<Integer> moneyProperty;
+	private PropertyLocator<Map<String, Map<String, Object>>> towersDescriptionProperty;
 
 	public GuiLogicComponent(String id) {
 		super(id);
@@ -55,7 +54,10 @@ public class GuiLogicComponent extends ReflectionComponent {
 		deployTowerEnabledProperty = Properties.property(id, "deployTowerEnabled");
 		pathProperty = Properties.property(id, "path");
 		gameBoundsProperty = Properties.property(id, "gameBounds");
-
+		towerTypeProperty = Properties.property(id, "towerType");
+		
+		moneyProperty = Properties.property(id,"money");
+		towersDescriptionProperty = Properties.property(id,"towerDescriptions");
 		internalState = new SelectTowerState();
 	}
 
@@ -64,6 +66,8 @@ public class GuiLogicComponent extends ReflectionComponent {
 	}
 
 	InternalState internalState;
+
+
 
 	public abstract class InternalState {
 
@@ -84,8 +88,8 @@ public class GuiLogicComponent extends ReflectionComponent {
 			if (message instanceof UpdateMessage) {
 				UpdateMessage updateMessage = (UpdateMessage) message;
 
-				int money = (Integer) Properties.getValue(entity, "money");
-				Map<String, Map<String, Object>> towerDescriptions = Properties.getValue(entity, "towerDescriptions");
+				int money = (Integer) moneyProperty.getValue(entity);
+				Map<String, Map<String, Object>> towerDescriptions = towersDescriptionProperty.getValue(entity);
 
 				for (Entry<String, Map<String, Object>> entry : towerDescriptions.entrySet()) {
 					String key = entry.getKey();
@@ -124,54 +128,71 @@ public class GuiLogicComponent extends ReflectionComponent {
 		protected void handleMessage(UpdateMessage message) {
 			Vector2f mousePosition = mousePositionProperty.getValue(entity);
 
-			boolean candeploy = true;
+			setCanDeploy(true);
+
 			deployTowerEnabledProperty.setValue(entity, true);
 			Rectangle gameBounds = gameBoundsProperty.getValue(entity);
-			
-			if (gameBounds.contains(mousePosition.x, mousePosition.y)) {
 
-				Entity nearestBlockingEntity = getNearestEntity(mousePosition, "tower", 25.0f);
+			int money = (Integer) Properties.getValue(entity, "money");
+			Map<String, Map<String, Object>> towerDescriptions = Properties.getValue(entity, "towerDescriptions");
+			String towerType = towerTypeProperty.getValue(entity);
+			int cost = (Integer) towerDescriptions.get(towerType).get("cost");
 
-				if (nearestBlockingEntity == null)
-					nearestBlockingEntity = getNearestEntity(mousePosition, "base", 45.0f);
-
-				
-				
-				
-			
-				if (nearestBlockingEntity == null) {
-
-					Path path = pathProperty.getValue(entity);
-					List<Vector2f> points = path.getPoints();
-
-					for (int i = 0; i < points.size(); i++) {
-						Vector2f source = points.get(i).copy();
-
-						int j = i + 1;
-
-						if (j >= points.size())
-							continue;
-
-						Vector2f target = points.get(j);
-
-						Line line = new Line(source, target);
-
-						float pathWidth = 30.0f;
-						if (line.distance(mousePosition) < pathWidth) {
-							candeploy = false;
-							break;
-						}
-
-					}
-
-				} else {
-					candeploy = false;
-				}
-			} else {
-				candeploy = false;
+			if (money < cost) {
+				cantDeploy();
+				return;
 			}
 
-			deployCursorStateProperty.setValue(entity, candeploy ? "candeploy" : "cantdeploy");
+			if (!gameBounds.contains(mousePosition.x, mousePosition.y)) {
+				cantDeploy();
+				return;
+			}
+
+			Entity nearestBlockingEntity = getNearestEntity(mousePosition, "tower", 25.0f);
+
+			if (nearestBlockingEntity != null) {
+				cantDeploy();
+				return;
+			}
+
+			nearestBlockingEntity = getNearestEntity(mousePosition, "base", 45.0f);
+
+			if (nearestBlockingEntity != null) {
+				cantDeploy();
+				return;
+			}
+
+			Path path = pathProperty.getValue(entity);
+			List<Vector2f> points = path.getPoints();
+
+			for (int i = 0; i < points.size(); i++) {
+				Vector2f source = points.get(i).copy();
+
+				int j = i + 1;
+
+				if (j >= points.size())
+					continue;
+
+				Vector2f target = points.get(j);
+
+				Line line = new Line(source, target);
+
+				float pathWidth = 30.0f;
+				if (line.distance(mousePosition) < pathWidth) {
+					cantDeploy();
+					return;
+				}
+
+			}
+
+		}
+
+		private void cantDeploy() {
+			setCanDeploy(false);
+		}
+
+		private void setCanDeploy(boolean can) {
+			deployCursorStateProperty.setValue(entity, can ? "candeploy" : "cantdeploy");
 		}
 
 		protected void handleRightClick(GenericMessage message) {
@@ -182,15 +203,21 @@ public class GuiLogicComponent extends ReflectionComponent {
 			String cursorState = deployCursorStateProperty.getValue(entity);
 			if (cursorState.equals("candeploy")) {
 				messageQueue.enqueue(new GenericMessage("deployturret"));
+				
+				int money = (Integer) moneyProperty.getValue(entity);
+				Map<String, Map<String, Object>> towerDescriptions = towersDescriptionProperty.getValue(entity);
+				String towerType = towerTypeProperty.getValue(entity);
+				int cost = (Integer) towerDescriptions.get(towerType).get("cost");
+				moneyProperty.setValue(entity, money - cost);
 			}
 		}
-		
+
 		@Override
 		protected void handleMessage(GenericMessage message) {
 			if (message.getId().equals("deployTowerSelected")) {
 				String towerType = Properties.getValue(message, "towerType");
 
-				Properties.setValue(entity, "towerType", towerType);
+				towerTypeProperty.setValue(entity, towerType);
 				changeToDeployState();
 			}
 		}
@@ -203,7 +230,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 			if (message.getId().equals("deployTowerSelected")) {
 				String towerType = Properties.getValue(message, "towerType");
 
-				Properties.setValue(entity, "towerType", towerType);
+				towerTypeProperty.setValue(entity, towerType);
 				changeToDeployState();
 			}
 		}
