@@ -13,7 +13,8 @@ builder.entity("menu") {
 	
 	new GroovyBootstrapper();
 	
-	property("playing", false)
+	property("playing", {utils.custom.gameStateManager.gameProperties.inGame})
+	property("playingNextValue",false)
 	
 	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.2f)
 	def buttonMouseNotOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.8f)
@@ -32,48 +33,52 @@ builder.entity("menu") {
 	child(template:"towerofdefense.entities.button", id:"buttonResume")	{
 		position=utils.vector(menuX, menuY + 340)
 		rectangle=utils.rectangle(-160, -50, 320, 100)
-		label={entity.parent.playing?"Resume":"Play"}
+		label={entity.parent.playing?"Resume":"Select Scene"}
 		lineColor=utils.color(0f, 0f, 1f, 0.5f)
 		mouseNotOverFillColor=buttonMouseOverFillColor
 		mouseOverFillColor=buttonMouseNotOverFillColor
 		font=buttonFont
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("resume") {
+		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("playOrResume") {
 		}
 	}
 	
 	child(template:"towerofdefense.entities.button", id:"buttonExit")	{
 		position=utils.vector(menuX, menuY + 460)
 		rectangle=utils.rectangle(-160, -50, 320, 100)
-		label="Exit"
+		label={entity.parent.playing?"End Scene":"Exit"}
 		lineColor=utils.color(0f, 0f, 1f, 0.5f)
 		mouseNotOverFillColor=buttonMouseOverFillColor
 		mouseOverFillColor=buttonMouseNotOverFillColor
 		font=buttonFont
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("exit") {
+		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("exitOrEndScene") {
 		}
 	}
 	
 	//	property("resumeSound", utils.resources.sounds.sound("assets/sounds/button.wav"))
 	
-	genericComponent(id:"resumeHandler", messageId:"resume"){ message ->
+	genericComponent(id:"playOrResumeHandler", messageId:"playOrResume"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
-		GemserkGameState inGameState = stateBasedGame.getState(1)
-		if(!entity.playing){
-			inGameState.loadScene("towerofdefense.scenes.scene1")
-		}
 	
-		stateBasedGame.enterState(inGameState.id, new FadeOutTransition(), new FadeInTransition())
-		
+		stateBasedGame.enterState(entity.playing ? 1 : 2, new FadeOutTransition(), new FadeInTransition())
+		if(entity.playing){
+			entity.playingNextValue = true
+		}
 		//		entity.resumeSound.play()
 	}
 	
-	genericComponent(id:"exitHandler", messageId:"exit"){ message ->
-		GameContainer gameContainer = utils.custom.gameContainer;
-		gameContainer.exit();
+	genericComponent(id:"exitOrEndSceneHandler", messageId:"exitOrEndScene"){ message ->
+		if(entity.playing){
+			entity.playingNextValue = false;
+			StateBasedGame stateBasedGame = utils.custom.gameStateManager
+			stateBasedGame.enterState(0, new FadeOutTransition(), new FadeInTransition())
+		}else {	
+			GameContainer gameContainer = utils.custom.gameContainer;
+			gameContainer.exit();
+		}
 	}
 	
 	genericComponent(id:"leaveStateHandler", messageId:"leaveState"){ message ->
-		entity.playing=true
+		utils.custom.gameStateManager.gameProperties.inGame=entity.playingNextValue
 	}
 	
 	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
@@ -86,12 +91,18 @@ builder.entity("menu") {
 		game.loadScene("towerofdefense.scenes.testScene")
 	}
 	
+	genericComponent(id:"goToSelectionSceneHandler", messageId:"goToSelectionScene"){ message ->
+		StateBasedGame stateBasedGame = utils.custom.gameStateManager
+		stateBasedGame.enterState(2, new FadeOutTransition(), new FadeInTransition())
+		
+	}
 	
 	input("inputmapping"){
 		keyboard {
 			press(button:"escape", eventId:"resume")
 			press(button:"d",eventId:"dumpDebug")
 			press(button:"t",eventId:"goToTestScene")
+			press(button:"b",eventId:"goToSelectionScene")
 		}
 		mouse {
 			

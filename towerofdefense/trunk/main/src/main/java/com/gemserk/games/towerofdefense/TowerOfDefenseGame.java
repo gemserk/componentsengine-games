@@ -1,6 +1,9 @@
 package com.gemserk.games.towerofdefense;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.AppletGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -11,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class TowerOfDefenseGame extends StateBasedGame {
 
-	
+	Map<String,Object> gameProperties = new HashMap<String, Object>();
 	
 	protected static final Logger logger = LoggerFactory.getLogger(TowerOfDefenseGame.class);
 
@@ -52,6 +55,8 @@ public class TowerOfDefenseGame extends StateBasedGame {
 		addState(menuState);
 		GemserkGameState inGameState = new GemserkGameState(1);
 		addState(inGameState);
+		GemserkGameState sceneSelection = new GemserkGameState(2,"towerofdefense.scenes.chooseScene");
+		addState(sceneSelection);
 	}
 
 }
