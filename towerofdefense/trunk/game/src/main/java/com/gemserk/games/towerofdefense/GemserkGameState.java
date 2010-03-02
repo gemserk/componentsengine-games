@@ -47,12 +47,16 @@ public class GemserkGameState extends BasicGameState {
 
 	private final int id;
 
-	private String groovyScript;
+	private final String iniScene;
 
-	public GemserkGameState(int id, String groovyScript) {
+	public GemserkGameState(int id) {
+		this(id,null);
+	}
+	
+	public GemserkGameState(int id, String iniScene) {
 		super();
 		this.id = id;
-		this.groovyScript = groovyScript;
+		this.iniScene = iniScene;
 	}
 
 	@Override
@@ -119,7 +123,8 @@ public class GemserkGameState extends BasicGameState {
 	}
 
 	private void initGame() {
-		game.loadScene(groovyScript);
+		if(this.iniScene!=null)
+			loadScene(this.iniScene);
 	}
 
 	@Override
@@ -154,6 +159,10 @@ public class GemserkGameState extends BasicGameState {
 	public void leave(GameContainer container, StateBasedGame game) throws SlickException {
 		messageQueue.enqueue(new GenericMessage("leaveState"));
 		messageQueue.processMessages();
+	}
+	
+	public void loadScene(String sceneName){
+		game.loadScene(sceneName);
 	}
 
 }

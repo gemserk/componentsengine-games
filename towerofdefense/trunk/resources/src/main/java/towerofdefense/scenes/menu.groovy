@@ -1,7 +1,9 @@
 package towerofdefense.scenes;
 
+import com.gemserk.games.towerofdefense.GemserkGameState;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import org.newdawn.slick.GameContainer 
+import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
 import org.newdawn.slick.state.transition.FadeOutTransition 
@@ -55,7 +57,12 @@ builder.entity("menu") {
 	
 	genericComponent(id:"resumeHandler", messageId:"resume"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
-		stateBasedGame.enterState(1, new FadeOutTransition(), new FadeInTransition())
+		GemserkGameState inGameState = stateBasedGame.getState(1)
+		if(!entity.playing){
+			inGameState.loadScene("towerofdefense.scenes.scene1")
+		}
+	
+		stateBasedGame.enterState(inGameState.id, new FadeOutTransition(), new FadeInTransition())
 		
 		//		entity.resumeSound.play()
 	}

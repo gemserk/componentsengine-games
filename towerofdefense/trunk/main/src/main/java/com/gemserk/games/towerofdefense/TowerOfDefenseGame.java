@@ -48,8 +48,10 @@ public class TowerOfDefenseGame extends StateBasedGame {
 		if(container instanceof AppletGameContainer.Container){
 			container.setVSync(true);
 		}
-		addState(new GemserkGameState(0, "towerofdefense.scenes.menu"));
-		addState(new GemserkGameState(1, "towerofdefense.scenes.scene1"));
+		GemserkGameState menuState = new GemserkGameState(0,"towerofdefense.scenes.menu");
+		addState(menuState);
+		GemserkGameState inGameState = new GemserkGameState(1);
+		addState(inGameState);
 	}
 
 }

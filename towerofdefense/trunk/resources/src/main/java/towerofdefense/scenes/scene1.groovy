@@ -1,12 +1,8 @@
 package towerofdefense.scenes;
 
-import com.gemserk.games.towerofdefense.waves.CompositeWave 
-import com.gemserk.games.towerofdefense.waves.SimpleWave;
 
 import com.gemserk.games.towerofdefense.Path;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
-import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
-import com.gemserk.games.towerofdefense.Path;
 
 builder.entity("world") {
 	
