@@ -1,26 +1,18 @@
 package towerofdefense.scenes
 
-
 import groovy.lang.Closure;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.codehaus.groovy.runtime.metaclass.MissingPropertyExceptionNoStack;
 import org.newdawn.slick.geom.Vector2f;
-
 import com.gemserk.componentsengine.builders.BuilderUtils;
-import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.games.towerofdefense.ChainedValueFromClosure;
 import com.gemserk.games.towerofdefense.InstantiationTemplate;
 import com.gemserk.games.towerofdefense.Path 
-import com.gemserk.games.towerofdefense.TunnerInstantiationTemplate;
 import com.gemserk.games.towerofdefense.waves.CompositeWave;
 import com.gemserk.games.towerofdefense.waves.SimpleWave;
 import com.gemserk.games.towerofdefense.waves.Wave;
-import com.gemserk.games.towerofdefense.waves.Waves;
 
 public class TowerOfDefenseSceneBuilder {
 	
