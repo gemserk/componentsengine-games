@@ -32,13 +32,6 @@ builder.entity("world") {
 			])
 	
 	
-	
-	
-	parameters.basePosition=utils.vector(350, 450 + defy)
-	parameters.baseRadius=30f
-	
-	
-	
 	def critters = new CrittersDefinition(utils)
 	
 	parameters.waves=[new CompositeWave([new SimpleWave(1000,2,critters.critter("chomper")), new SimpleWave(1200,2,critters.critter("spinner"))]), 
@@ -58,4 +51,39 @@ builder.entity("world") {
 	
 	
 	parent("towerofdefense.scenes.game", parameters)
+	
+	
+	/* Scene definition proposal*/
+	/*
+	scene(){
+		path(minX,minY) {
+			point(0, 450)		      
+			point(100, 450) 		      
+			point(100, 300)
+			point(300, 150)		      
+			point(500, 150)		      
+			point(620, 300) 		      
+			point(500, 500)  		      
+			point(500, 500) 		      
+			point(350, 450)
+		}
+		critters {
+			chomper(health:12, speed:10)
+			spinner(health:15, speed:20)
+		}
+		waves{
+			wave(timeBetween:1000, quantity:2, type:"chomper")
+			wave(timeBetween:1200){
+				wave(timeBetween:1000, quantity:2, type:"chomper")
+				wave(timeBetween:1000, quantity:2, type:"spinner")
+				wave(timeBetween:1000, quantity:2, type:"chomper")
+			}
+		}
+		towers{
+			blaster(cost:5)
+			laser(cost:8)
+		}
+		
+	}
+	*/
 }

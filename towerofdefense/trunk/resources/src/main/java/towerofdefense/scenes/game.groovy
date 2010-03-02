@@ -64,9 +64,9 @@ builder.entity("world") {
 	}                		
 	
 	child(template:"towerofdefense.entities.base", id:"base")	{
-		position=parameters.basePosition
+		position=parameters.path.points[-1]//last point in path
 		direction=utils.vector(-1,0)
-		radius=parameters.baseRadius
+		radius=30f
 		lineColor=utils.color(0.0f, 0.0f, 0.0f, 0.0f)
 		fillColor=utils.color(0.2f, 0.2f, 0.7f, 1.0f)
 	}
