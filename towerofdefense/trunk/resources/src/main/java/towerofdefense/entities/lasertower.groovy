@@ -60,7 +60,7 @@ builder.entity("lasertower-${Math.random()}") {
 	}
 	
 	child(template:"towerofdefense.entities.laserbullet", id:bulletId)	{
-		
+		damage = parameters.damage
 	}
 	
 }

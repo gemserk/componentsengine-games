@@ -2,6 +2,7 @@ package towerofdefense.entities;
 import towerofdefense.components.CritterHitHandler;
 
 import com.gemserk.games.towerofdefense.FollowPathComponent;
+import com.gemserk.games.towerofdefense.components.IncrementValueComponent;
 import com.gemserk.games.towerofdefense.components.render.BarRendererComponent;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
@@ -20,8 +21,10 @@ builder.entity("critter-${Math.random()}") {
 	property("color",parameters.color)
 	propertyRef("direction", "movement.velocity")
 	
+	property("speed", (Float)(parameters.speed / 1000f))
+	
 	component(new SuperMovementComponent("movement")){
-		property("maxVelocity", (Float)(parameters.speed / 1000f))
+		propertyRef("maxVelocity", "speed")
 		propertyRef("position", "position")
 	}
 	
@@ -32,19 +35,44 @@ builder.entity("critter-${Math.random()}") {
 		propertyRef("position", "position");
 	}
 	
-	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.critter1"))
-		propertyRef("color", "color")
-		propertyRef("position", "position")
-		propertyRef("direction", "direction")
+	if (parameters.image) {
+		component(new ImageRenderableComponent("imagerenderer")) {
+			property("image", parameters.image)
+			propertyRef("color", "color")
+			propertyRef("position", "position")
+			propertyRef("direction", "direction")
+			property("size", utils.vector(0.7f, 0.7f))
+		}
 	}
 	
 	component(new BarRendererComponent("healthRenderer")) {
-		property("position", {entity.position.copy().sub(utils.vector(5f,5f))})
+		property("position", {entity.position.copy().sub(utils.vector(5f,15f))})
 		property("emptyColor", utils.color(1.0f, 0.0f, 0.0f, 0.5f))
 		propertyRef("container", "health")
+		property("width", 15.0f)
+		property("height", 2.0f)
 	}
-
+	
+	if (parameters.rotationImage) {
+		
+		property("rotationValue", 0f)
+		
+		component(new IncrementValueComponent("rotator")) {
+			propertyRef("value", "rotationValue")
+			property("maxValue", 360f)
+			property("increment", parameters.rotationSpeed ? (float)(parameters.rotationSpeed / 10f) : 0.2f)
+		}
+		
+		component(new ImageRenderableComponent("rotationImageRender")) {
+			property("image", parameters.rotationImage)
+			propertyRef("color", "color")
+			propertyRef("position", "position")
+			property("direction", {utils.vector(1,0).add(entity.rotationValue)})
+			property("size", utils.vector(0.7f, 0.7f))
+		}
+		
+	}
+	
 	component(new CritterHitHandler("hithandler"))
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->

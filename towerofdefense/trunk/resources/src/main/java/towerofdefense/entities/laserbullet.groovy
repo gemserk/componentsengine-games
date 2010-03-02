@@ -2,12 +2,10 @@ package towerofdefense.entities;
 import org.newdawn.slick.geom.Vector2f;
 
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Line;
 
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
-import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
@@ -20,7 +18,7 @@ builder.entity() {
 	
 	property("position",{entity.parent.position})
 	property("direction",{entity.parent.direction})
-	property("damage",(Float)3f/1000f)
+	property("damage", parameters.damage)
 	
 	property("enabled",false)
 	

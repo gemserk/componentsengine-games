@@ -36,10 +36,9 @@ public class BarRendererComponent extends FieldsReflectionComponent {
 	public void handleMessage(SlickRenderMessage message) {
 		Graphics g = message.getGraphics();
 		
+		g.pushTransform();
 		{
-			g.pushTransform();
-		
-			g.translate(position.x, position.y - 10);
+			g.translate(position.x, position.y);
 			g.scale(width, height);
 		
 			g.setColor(emptyColor);
@@ -47,9 +46,8 @@ public class BarRendererComponent extends FieldsReflectionComponent {
 		
 			g.setColor(fullColor);
 			g.fillRect(0, 0, container.getCurrent() / container.getTotal(), 1);
-		
-			g.popTransform();
 		}
+		g.popTransform();
 	}
 
 }

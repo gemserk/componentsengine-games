@@ -40,7 +40,7 @@ public class TowersDefinitions {
 			reloadTime:250,
 			instanceParameters: utils.custom.genericprovider.provide{
 				[
-				damage:1.0f,
+				damage:10.0f,
 				radius:10.0f,
 				maxVelocity:0.6f,
 				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
@@ -64,6 +64,7 @@ public class TowersDefinitions {
 			color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
 			radius:90f,
 			reloadTime:250,
+			damage:0.03f
 			]
 		})
 		return [icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]

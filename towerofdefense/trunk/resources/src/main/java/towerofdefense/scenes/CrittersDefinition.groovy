@@ -1,6 +1,6 @@
 package towerofdefense.scenes;
+
 import com.gemserk.componentsengine.builders.BuilderUtils;
-import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 
 public class CrittersDefinition{
@@ -31,9 +31,10 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
+			image:utils.resources.image("towerofdefense.images.critter1"),
 			position:entity.position.copy(),
-			maxVelocity:0.05f,
-			color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
+			speed:50f,
+			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:8f,
 			points: 5,
 			reward:1			
@@ -46,8 +47,11 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
+			// image:utils.resources.image("towerofdefense.images.critter2"),
+			rotationImage:utils.resources.image("towerofdefense.images.critter2"),
+			rotationSpeed:40f,
 			position:entity.position.copy(),
-			maxVelocity:0.07f,
+			speed:70f,
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:12f,
 			points: 10,
@@ -61,8 +65,9 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
+			 image:utils.resources.image("towerofdefense.images.critter1"),
 			position:entity.position.copy(),
-			maxVelocity:0.02f,
+			speed:20f,
 			color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
 			health:20f,
 			points: 15,
@@ -76,8 +81,9 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
+			 image:utils.resources.image("towerofdefense.images.critter1"),
 			position:entity.position.copy(),
-			maxVelocity:0.09f,
+			speed:90f,
 			color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
 			health:15f,
 			points: 20,

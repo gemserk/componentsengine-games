@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.gemserk.games.towerofdefense;
 
 import java.util.Map;

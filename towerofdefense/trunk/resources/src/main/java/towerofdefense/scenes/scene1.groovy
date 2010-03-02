@@ -1,14 +1,12 @@
 package towerofdefense.scenes;
 
 
-import com.gemserk.games.towerofdefense.Path;
-import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 
 builder.entity("world") {
 	
 	def utils = utils
 	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
-	def builtParameters = sceneBuilder.scene(money:15, lives:15, wavePeriod:15000){
+	def builtParameters = sceneBuilder.scene(money:30, lives:15, wavePeriod:20000){
 		path(minX=0,minY=30) {
 			point(0, 450)		      
 			point(100, 450) 		      
@@ -20,31 +18,47 @@ builder.entity("world") {
 			point(500, 500) 		      
 			point(350, 450)
 		}
+		
 		critters{
-			critter(type:"chomper",health:120f, speed:80f)
-			critter(type:"spinner",health:12f, speed:10f)
-			critter(type:"chomper",id:"chomper2",health:12f, speed:200f)
+			critter(type:"chomper", health:70f, speed:20f)
+			critter(type:"spinner",health:70f, speed:20f)
+			critter(type:"wiggle", health:70f, speed:20f)
+			critter(type:"star", health:70f, speed:20f)
 		}
 		
-		
 		waves{
-			wave(rate:1000, quantity:2, id:"chomper")
+			wave(rate:1000, quantity:6, id:"chomper")
 			wave {
+				wave(rate:1000, quantity:2, id:"spinner")
 				wave(rate:1000, quantity:2, id:"chomper")
 				wave(rate:1000, quantity:2, id:"spinner")
-				wave(rate:1000, quantity:2, id:"chomper2")
 			}
+			wave(rate:1000, quantity:6, id:"wiggle")
+			wave {
+				wave(rate:1000, quantity:2, id:"spinner")
+				wave(rate:1000, quantity:2, id:"star")
+				wave(rate:1000, quantity:2, id:"spinner")
+			}
+			wave {
+				wave(rate:1000, quantity:1, id:"chomper")
+				wave(rate:1000, quantity:1, id:"wiggle")
+				wave(rate:1000, quantity:1, id:"chomper")
+				wave(rate:1000, quantity:1, id:"wiggle")
+				wave(rate:1000, quantity:1, id:"chomper")
+				wave(rate:1000, quantity:1, id:"wiggle")
+			}
+			wave(rate:1000, quantity:6, id:"star")
 		}
 		
 		towers{
-			tower(type:"blaster",cost:5)
-			tower(type:"laser",cost:7)
+			tower(type:"blaster",cost:10)
+			tower(type:"laser",cost:15)
 		}
 		
 	}
-
+	
 	builtParameters.sceneScript = this.getClass().getName()
-
+	
 	
 	parent("towerofdefense.scenes.game", builtParameters)		
 }
