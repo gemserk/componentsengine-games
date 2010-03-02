@@ -11,52 +11,9 @@ import com.gemserk.games.towerofdefense.Path;
 builder.entity("world") {
 	
 	def utils = utils
-	
-	parameters.money = 15
-	parameters.lives = 15
-	parameters.wavePeriod = 15000
-	
-	def defx = 0
-	def defy = 30	
-	
-	parameters.path=new Path([
-			utils.vector(0, 450 + defy), 		      
-			utils.vector(100, 450 + defy), 		      
-			utils.vector(100, 300 + defy), 
-			utils.vector(300, 150 + defy), 		      
-			utils.vector(500, 150 + defy), 		      
-			utils.vector(620, 300 + defy), 		      
-			utils.vector(500, 500 + defy), 		      
-			utils.vector(500, 500 + defy), 		      
-			utils.vector(350, 450 + defy)
-			])
-	
-	
-	def critters = new CrittersDefinition(utils)
-	
-	parameters.waves=[new CompositeWave([new SimpleWave(1000,2,critters.critter("chomper")), new SimpleWave(1200,2,critters.critter("spinner"))]), 
-			new CompositeWave([new SimpleWave(800,4,critters.critter("chomper")), new SimpleWave(1200,4,critters.critter("spinner"))])]
-	
-	
-	def towerDefinitions = new TowersDefinitions(utils)
-	
-	def allTowers = ["blaster":towerDefinitions.tower("blaster"),"laser":towerDefinitions.tower("laser")]
-	
-	allTowers["blaster"].cost = 2
-	
-	parameters.towerDescriptions = allTowers
-	
-	
-	parameters.sceneScript = "towerofdefense.scenes.scene1"
-	
-	
-	parent("towerofdefense.scenes.game", parameters)
-	
-	
-	/* Scene definition proposal*/
-	/*
-	scene(){
-		path(minX,minY) {
+	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
+	def builtParameters = sceneBuilder.scene(money:15, lives:15, wavePeriod:15000){
+		path(minX=0,minY=30) {
 			point(0, 450)		      
 			point(100, 450) 		      
 			point(100, 300)
@@ -67,23 +24,31 @@ builder.entity("world") {
 			point(500, 500) 		      
 			point(350, 450)
 		}
-		critters {
-			chomper(health:12, speed:10)
-			spinner(health:15, speed:20)
+		critters{
+			critter(type:"chomper",health:120f, speed:80f)
+			critter(type:"spinner",health:12f, speed:10f)
+			critter(type:"chomper",id:"chomper2",health:12f, speed:200f)
 		}
+		
+		
 		waves{
-			wave(timeBetween:1000, quantity:2, type:"chomper")
-			wave(timeBetween:1200){
-				wave(timeBetween:1000, quantity:2, type:"chomper")
-				wave(timeBetween:1000, quantity:2, type:"spinner")
-				wave(timeBetween:1000, quantity:2, type:"chomper")
+			wave(rate:1000, quantity:2, id:"chomper")
+			wave {
+				wave(rate:1000, quantity:2, id:"chomper")
+				wave(rate:1000, quantity:2, id:"spinner")
+				wave(rate:1000, quantity:2, id:"chomper2")
 			}
 		}
+		
 		towers{
-			blaster(cost:5)
-			laser(cost:8)
+			tower(type:"blaster",cost:5)
+			tower(type:"laser",cost:7)
 		}
 		
 	}
-	*/
+
+	builtParameters.sceneScript = this.getClass().getName()
+
+	
+	parent("towerofdefense.scenes.game", builtParameters)		
 }

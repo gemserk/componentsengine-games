@@ -34,7 +34,7 @@ public class CrittersDefinition{
 			position:entity.position.copy(),
 			maxVelocity:0.05f,
 			color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-			health:utils.container(8,8),
+			health:8f,
 			points: 5,
 			reward:1			
 			]	
@@ -49,7 +49,7 @@ public class CrittersDefinition{
 			position:entity.position.copy(),
 			maxVelocity:0.07f,
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-			health:utils.container(12,12),
+			health:12f,
 			points: 10,
 			reward:2
 			]	
@@ -64,7 +64,7 @@ public class CrittersDefinition{
 			position:entity.position.copy(),
 			maxVelocity:0.02f,
 			color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
-			health:utils.container(20,20),
+			health:20f,
 			points: 15,
 			reward:3
 			]	
@@ -79,7 +79,7 @@ public class CrittersDefinition{
 			position:entity.position.copy(),
 			maxVelocity:0.09f,
 			color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
-			health:utils.container(15,15),
+			health:15f,
 			points: 20,
 			reward:4
 			]	

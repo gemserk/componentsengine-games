@@ -14,14 +14,14 @@ builder.entity("critter-${Math.random()}") {
 	tags("critter", "nofriction")
 	
 	property("position", parameters.position)
-	property("health", parameters.health)
+	property("health", utils.container(parameters.health,parameters.health))
 	property("reward",parameters.reward)
 	property("points",parameters.points)
 	property("color",parameters.color)
 	propertyRef("direction", "movement.velocity")
 	
 	component(new SuperMovementComponent("movement")){
-		property("maxVelocity", parameters.maxVelocity)
+		property("maxVelocity", (Float)(parameters.speed / 1000f))
 		propertyRef("position", "position")
 	}
 	
