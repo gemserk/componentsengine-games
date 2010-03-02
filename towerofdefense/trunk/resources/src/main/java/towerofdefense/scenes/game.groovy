@@ -56,7 +56,7 @@ builder.entity("world") {
 	
 	
 	property("path",parameters.path)
-	                		
+	
 	component(new PathRendererComponent("pathrenderer")){
 		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1f))
 		property("lineWidth", 15.0f)
@@ -79,7 +79,7 @@ builder.entity("world") {
 	property("towerDescriptions", parameters.towerDescriptions )
 	
 	
-
+	
 	
 	property("towerType","blaster")
 	
@@ -103,10 +103,6 @@ builder.entity("world") {
 			}))
 	}
 	
-	
-	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
-		utils.custom.game.loadScene("towerofdefense.scenes.scene1");
-	}
 	
 	def labelX = 300;
 	def labelY = 20;
@@ -275,10 +271,13 @@ builder.entity("world") {
 	
 	
 	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
-		Entity.times.entrySet().sort({it.count }).each { entry -> 
-			println "$entry.element - $entry.count"
-		}
+		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
 	}                                                                     
+	
+	
+	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
+		utils.custom.game.loadScene(parameters.sceneScript);
+	}
 	
 	input("inputmapping"){
 		keyboard {

@@ -1,9 +1,12 @@
 package towerofdefense.scenes;
+
+import com.gemserk.games.towerofdefense.waves.CompositeWave 
+import com.gemserk.games.towerofdefense.waves.SimpleWave;
+
 import com.gemserk.games.towerofdefense.Path;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 import com.gemserk.games.towerofdefense.Path;
-import com.gemserk.games.towerofdefense.waves.Wave;
 
 builder.entity("world") {
 	
@@ -30,109 +33,29 @@ builder.entity("world") {
 	
 	
 	
+	
 	parameters.basePosition=utils.vector(350, 450 + defy)
 	parameters.baseRadius=30f
 	
-	parameters.waves=[new Wave(1000,10,new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-			utils.custom.genericprovider.provide{ entity ->
-				[
-				position:entity.position.copy(),
-				maxVelocity:0.05f,
-				path:{entity.parent.path},
-				color:utils.color(1.0f, 0.5f, 0.5f, 0.95f),
-				health:utils.container(8,8),
-				points: 5,
-				reward:1			
-				]	
-			}	
-			)), new Wave(1200,5,new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-			utils.custom.genericprovider.provide{ entity ->
-				[
-				position:entity.position.copy(),
-				maxVelocity:0.07f,
-				path:{entity.parent.path},
-				color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-				health:utils.container(12,12),
-				points: 10,
-				reward:2
-				]	
-			}	
-			)), new Wave(2500,5,new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-			utils.custom.genericprovider.provide{ entity ->
-				[
-				position:entity.position.copy(),
-				maxVelocity:0.02f,
-				path:{entity.parent.path},
-				color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
-				health:utils.container(20,20),
-				points: 15,
-				reward:3
-				]	
-			}	
-			)), new Wave(200,1000,new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
-			utils.custom.genericprovider.provide{ entity ->
-				[
-				position:entity.position.copy(),
-				maxVelocity:0.09f,
-				path:{entity.parent.path},
-				color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
-				health:utils.container(15,15),
-				points: 20,
-				reward:4
-				]	
-			}	
-			))]
 	
 	
-	def blastTower = new InstantiationTemplateImpl(
-			
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.blastertower"),
-			utils.custom.genericprovider.provide{ position ->
-				[
-				position:position,
-				direction:utils.vector(-1,0),
-				radius:45f,
-				lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
-				fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
-				color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
-				template:"towerofdefense.entities.bullet",
-				reloadTime:250,
-				instanceParameters: utils.custom.genericprovider.provide{
-					[
-					damage:1.0f,
-					radius:10.0f,
-					maxVelocity:0.6f,
-					color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
-					]
-				}	
-				]
-			})
+	def critters = new CrittersDefinition(utils)
 	
-	def laserTower = new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("towerofdefense.entities.lasertower"),
-			utils.custom.genericprovider.provide{ position ->
-				[
-				position:position,
-				direction:utils.vector(-1,0),
-				lineColor:utils.color(0.0f, 0.0f, 0.8f,0.5f),
-				fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
-				color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
-				radius:90f,
-				reloadTime:250,
-				]
-			})
+	parameters.waves=[new CompositeWave([new SimpleWave(1000,2,critters.critter("chomper")), new SimpleWave(1200,2,critters.critter("spinner"))]), 
+			new CompositeWave([new SimpleWave(800,4,critters.critter("chomper")), new SimpleWave(1200,4,critters.critter("spinner"))])]
 	
 	
-	parameters.towerDescriptions = [blaster:[icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower], 
-			laser:[icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]]
+	def towerDefinitions = new TowersDefinitions(utils)
 	
-	//como mierda hago esto
-	//	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
-	//		utils.custom.game.loadScene("towerofdefense.scenes.game");
-	//	}
+	def allTowers = ["blaster":towerDefinitions.tower("blaster"),"laser":towerDefinitions.tower("laser")]
+	
+	allTowers["blaster"].cost = 2
+	
+	parameters.towerDescriptions = allTowers
+	
+	
+	parameters.sceneScript = "towerofdefense.scenes.scene1"
+	
+	
 	parent("towerofdefense.scenes.game", parameters)
 }

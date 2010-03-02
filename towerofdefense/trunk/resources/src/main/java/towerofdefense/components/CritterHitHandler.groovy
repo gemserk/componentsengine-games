@@ -35,8 +35,6 @@ class CritterHitHandler extends ReflectionComponent{
 				
 				messageQueue.enqueue(deadMessage)
 			}
-			
-			entity.color.a = entity.health.percentage
 		}
 	}
 }

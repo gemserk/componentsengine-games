@@ -33,7 +33,7 @@ public class WaveTest {
 	public void test10(){
 		int rate = 100;
 		int quantity = 10;
-		Wave wave = new Wave(rate,quantity,instantiationTemplate);
+		SimpleWave wave = new SimpleWave(rate,quantity,instantiationTemplate);
 		assertThat(wave.timeToNext, equalTo(rate));
 		InstantiationTemplate returnedTemplate = wave.generateTemplates(1000);
 		assertThat(returnedTemplate,nullValue());
@@ -44,7 +44,7 @@ public class WaveTest {
 	public void test15(){
 		int rate = 100;
 		int quantity = 10;
-		Wave wave = new Wave(rate,quantity,instantiationTemplate);
+		Wave wave = new SimpleWave(rate,quantity,instantiationTemplate);
 		wave.start();
 		InstantiationTemplate returnedTemplate = wave.generateTemplates(20);
 		assertThat(returnedTemplate,nullValue());
@@ -54,7 +54,7 @@ public class WaveTest {
 	public void test17(){
 		int rate = 100;
 		int quantity = 10;
-		Wave wave = new Wave(rate,quantity,instantiationTemplate);
+		SimpleWave wave = new SimpleWave(rate,quantity,instantiationTemplate);
 		wave.start();
 		InstantiationTemplate returnedTemplate = wave.generateTemplates(120);
 		assertThat(returnedTemplate,notNullValue());
@@ -65,7 +65,7 @@ public class WaveTest {
 	public void test19(){
 		int rate = 100;
 		int quantity = 0;
-		Wave wave = new Wave(rate,quantity,instantiationTemplate);
+		Wave wave = new SimpleWave(rate,quantity,instantiationTemplate);
 		wave.start();
 		InstantiationTemplate returnedTemplate = wave.generateTemplates(120);
 		assertThat(returnedTemplate,nullValue());
