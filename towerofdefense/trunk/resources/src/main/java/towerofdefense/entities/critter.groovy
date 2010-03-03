@@ -77,12 +77,12 @@ builder.entity("critter-${Math.random()}") {
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		if(message.critter == entity)
-			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
+			messageQueue.enqueue(ChildMessage.removeEntity(entity))
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
 		if(message.critter == entity)
-			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
+			messageQueue.enqueue(ChildMessage.removeEntity(entity))
 	}
 	
 }

@@ -8,13 +8,9 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.messages.ChildMessage;
-import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.componentsengine.templates.EntityTemplate;
-import com.gemserk.componentsengine.templates.TemplateProvider;
+import com.gemserk.componentsengine.messages.*;
+import com.gemserk.componentsengine.properties.*;
+import com.gemserk.componentsengine.templates.*;
 import com.gemserk.games.towerofdefense.GenericProvider;
 import com.google.inject.Inject;
 
@@ -22,25 +18,27 @@ public class WeaponComponent extends ReflectionComponent {
 
 	PropertyLocator<Entity> targetEntityProperty;
 
-
 	TemplateProvider templateProvider;
 
-	private PropertyLocator<Vector2f> positionProperty;
+	PropertyLocator<Vector2f> positionProperty;
 
-	private PropertyLocator<Integer> reloadTimeProperty;
+	PropertyLocator<Integer> reloadTimeProperty;
 
-	private PropertyLocator<Integer> currentReloadTimeProperty;
+	PropertyLocator<Integer> currentReloadTimeProperty;
 
-	private PropertyLocator<String> templateProperty;
+	PropertyLocator<String> templateProperty;
 
 	PropertyLocator<GenericProvider> instanceParametersProviderProperty;
 
+	PropertyLocator<Entity> entityProperty;
+	
 	MessageQueue messageQueue;
-	@Inject 
+
+	@Inject
 	public void setMessageQueue(MessageQueue messageQueue) {
 		this.messageQueue = messageQueue;
 	}
-	
+
 	@Inject
 	public void setTemplateProvider(TemplateProvider templateProvider) {
 		this.templateProvider = templateProvider;
@@ -54,6 +52,7 @@ public class WeaponComponent extends ReflectionComponent {
 		currentReloadTimeProperty = property(id, "currentReloadTime");
 		templateProperty = property(id, "template");
 		instanceParametersProviderProperty = property(id, "instanceParameters");
+		entityProperty = property(id, "entity");
 	}
 
 	@Override
@@ -65,7 +64,7 @@ public class WeaponComponent extends ReflectionComponent {
 	public void handleMessage(UpdateMessage message) {
 		int delta = message.getDelta();
 		Integer currentReloadTime = currentReloadTimeProperty.getValue(entity);
-		
+
 		if (currentReloadTime > 0) {
 			currentReloadTime -= delta;
 			currentReloadTimeProperty.setValue(entity, currentReloadTime);
@@ -75,22 +74,22 @@ public class WeaponComponent extends ReflectionComponent {
 		Entity targetEntity = targetEntityProperty.getValue(entity);
 		if (targetEntity == null)
 			return;
-		
+
 		final Vector2f position = positionProperty.getValue(entity);
 		String templateName = templateProperty.getValue(entity);
-		
+
 		EntityTemplate bulletTemplate = templateProvider.getTemplate(templateName);
-		
+
 		Vector2f targetPosition = (Vector2f) Properties.property("position").getValue(targetEntity);
-		
+
 		Map<String, Object> instanceParameters = instanceParametersProviderProperty.getValue(entity).get();
 		instanceParameters.put("position", position.copy());
 		instanceParameters.put("direction", targetPosition.copy().sub(position).normalise());
-		
+
 		Entity bullet = bulletTemplate.instantiate("", instanceParameters);
-		
-		messageQueue.enqueue(ChildMessage.addEntity(bullet,"world"));
-		
+
+		messageQueue.enqueue(ChildMessage.addEntity(bullet, entityProperty.getValue(entity).getId()));
+
 		currentReloadTime = reloadTimeProperty.getValue(entity);
 		currentReloadTimeProperty.setValue(entity, currentReloadTime);
 	}

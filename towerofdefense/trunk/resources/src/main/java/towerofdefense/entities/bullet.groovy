@@ -47,7 +47,7 @@ builder.entity("bullet-${Math.random()}") {
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		if (message.getProperty("source").get() == entity)
-			messageQueue.enqueue(ChildMessage.removeEntity(entity,"world"))
+			messageQueue.enqueue(ChildMessage.removeEntity(entity))
 	}
 	
 	

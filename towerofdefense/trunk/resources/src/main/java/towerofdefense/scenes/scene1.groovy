@@ -1,7 +1,5 @@
 package towerofdefense.scenes;
 
-
-
 builder.entity("world") {
 	
 	def utils = utils

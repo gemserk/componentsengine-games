@@ -12,6 +12,7 @@ builder.entity {
 	component(new WavesSpawnerComponent("creator")){
 		property("waves", parameters.waves)
 		propertyRef("position", "position")
+		property("entity", {entity.parent})
 	}
 	
 	genericComponent(id:"nextWaveHandler", messageId:"nextWave"){ message ->	

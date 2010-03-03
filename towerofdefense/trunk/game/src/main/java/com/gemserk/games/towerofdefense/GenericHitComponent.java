@@ -1,20 +1,14 @@
 package com.gemserk.games.towerofdefense;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
-import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.entities.Root;
-import com.gemserk.componentsengine.messages.Message;
-import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.entities.*;
+import com.gemserk.componentsengine.messages.*;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
+import com.gemserk.componentsengine.properties.*;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import com.google.common.base.*;
 import com.google.inject.Inject;
 
 public class GenericHitComponent extends ReflectionComponent {
@@ -30,7 +24,6 @@ public class GenericHitComponent extends ReflectionComponent {
 	
 	@Inject
 	MessageQueue messageQueue;
-
 
 	public GenericHitComponent(String id) {
 		super(id);

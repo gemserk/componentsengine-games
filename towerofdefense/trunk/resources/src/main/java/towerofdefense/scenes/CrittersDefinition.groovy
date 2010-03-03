@@ -21,6 +21,8 @@ public class CrittersDefinition{
 			return wiggle();
 		case "star":
 			return star();
+		case "cubic":
+			return cubic();
 		default:
 			return null;
 		}
@@ -31,7 +33,7 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
-			image:utils.resources.image("towerofdefense.images.critter1"),
+			image:utils.resources.image("towerofdefense.images.cee"),
 			position:entity.position.copy(),
 			speed:50f,
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
@@ -47,8 +49,7 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
-			// image:utils.resources.image("towerofdefense.images.critter2"),
-			rotationImage:utils.resources.image("towerofdefense.images.critter2"),
+			rotationImage:utils.resources.image("towerofdefense.images.rombox"),
 			rotationSpeed:4f,
 			position:entity.position.copy(),
 			speed:70f,
@@ -83,10 +84,12 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
-			 image:utils.resources.image("towerofdefense.images.critter1"),
+		   image:utils.resources.image("towerofdefense.images.dan"),
+			rotationImage:utils.resources.image("towerofdefense.images.dan_balls"),
+			rotationSpeed:1f,
 			position:entity.position.copy(),
 			speed:90f,
-			color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
+			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:15f,
 			points: 20,
 			reward:4f
@@ -95,4 +98,22 @@ public class CrittersDefinition{
 		)
 	}
 	
+	def cubic(){
+		return new InstantiationTemplateImpl(
+		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
+		utils.custom.genericprovider.provide{ entity ->
+			[
+		   image:utils.resources.image("towerofdefense.images.dan"),
+			rotationImage:utils.resources.image("towerofdefense.images.dan_balls"),
+			rotationSpeed:1f,
+			position:entity.position.copy(),
+			speed:90f,
+			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
+			health:15f,
+			points: 20,
+			reward:5f
+			]	
+		}	
+		)
+	}
 }

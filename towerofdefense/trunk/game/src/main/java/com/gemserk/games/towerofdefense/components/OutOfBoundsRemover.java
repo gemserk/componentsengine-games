@@ -5,15 +5,10 @@ import java.util.Collection;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.components.Component;
-import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.entities.Root;
-import com.gemserk.componentsengine.messages.ChildMessage;
-import com.gemserk.componentsengine.messages.Message;
-import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.entities.*;
+import com.gemserk.componentsengine.messages.*;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertyLocator;
+import com.gemserk.componentsengine.properties.*;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
@@ -47,7 +42,7 @@ public class OutOfBoundsRemover extends Component {
 			Collection<Entity> entitiesToRemove = rootEntity.getEntities(Predicates.and(EntityPredicates.withAnyTag(tags), Predicates.not(EntityPredicates.isIn(worldBounds))));
 
 			for (Entity entityToRemove : entitiesToRemove) {
-				messageQueue.enqueue(ChildMessage.removeEntity(entityToRemove,"world"));
+				messageQueue.enqueue(ChildMessage.removeEntity(entityToRemove));
 			}
 
 		}

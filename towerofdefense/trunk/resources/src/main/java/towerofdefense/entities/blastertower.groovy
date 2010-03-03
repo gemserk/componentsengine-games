@@ -17,6 +17,7 @@ builder.entity("tower-${Math.random()}") {
 		property("instanceParameters", parameters.instanceParameters)
 		propertyRef("position", "position")
 		propertyRef("targetEntity", "targetEntity")
+		property("entity", {entity.parent})
 	}
 	
 }
