@@ -23,8 +23,8 @@ public class IncrementValueComponent extends FieldsReflectionComponent {
 		
 		value += increment * updateMessage.getDelta();
 		if (value > maxValue)
-			value = 0f;
+			value -= maxValue;
 		
 	}
-
+	
 }
