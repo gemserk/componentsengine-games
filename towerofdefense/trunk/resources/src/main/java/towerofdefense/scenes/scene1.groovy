@@ -6,7 +6,7 @@ builder.entity("world") {
 	
 	def utils = utils
 	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
-	def builtParameters = sceneBuilder.scene(money:30, lives:15, wavePeriod:20000){
+	def builtParameters = sceneBuilder.scene(money:30, lives:15){
 		path(minX=0,minY=30) {
 			point(0, 450)		      
 			point(100, 450) 		      
@@ -19,34 +19,33 @@ builder.entity("world") {
 			point(350, 450)
 		}
 		
-		critters{
+		critters(speedFactor:[2f],rewardFactor:[1f], healthFactor:[1.7f]){
 			critter(type:"chomper", health:70f, speed:20f)
 			critter(type:"spinner",health:70f, speed:20f)
 			critter(type:"wiggle", health:70f, speed:20f)
 			critter(type:"star", health:70f, speed:20f)
 		}
-		
-		waves{
-			wave(rate:1500, quantity:10, id:"wiggle")
-			wave(rate:1000, quantity:6, id:"chomper")
+		waves(delayBetweenWaves:20000, delayBetweenSpawns:1000){
+			wave(quantity:10, id:"wiggle")
+			wave(quantity:6, id:"chomper")
 			wave {
-				wave(rate:1000, quantity:2, id:"spinner")
-				wave(rate:1000, quantity:2, id:"chomper")
-				wave(rate:1000, quantity:2, id:"spinner")
+				wave(quantity:2, id:"spinner")
+				wave(quantity:2, id:"chomper")
+				wave(quantity:2, id:"spinner")
 			}
-			wave(rate:1000, quantity:6, id:"wiggle")
+			wave(quantity:6, id:"wiggle")
 			wave {
-				wave(rate:1000, quantity:2, id:"spinner")
-				wave(rate:1000, quantity:2, id:"star")
-				wave(rate:1000, quantity:2, id:"spinner")
+				wave(quantity:2, id:"spinner")
+				wave(quantity:2, id:"star")
+				wave(quantity:2, id:"spinner")
 			}
 			wave {
-				wave(rate:1000, quantity:1, id:"chomper")
-				wave(rate:1000, quantity:1, id:"wiggle")
-				wave(rate:1000, quantity:1, id:"chomper")
-				wave(rate:1000, quantity:1, id:"wiggle")
-				wave(rate:1000, quantity:1, id:"chomper")
-				wave(rate:1000, quantity:1, id:"wiggle")
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
 			}
 			wave(rate:1000, quantity:6, id:"star")
 		}
