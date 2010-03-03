@@ -39,6 +39,9 @@ builder.entity("bullet-${Math.random()}") {
 			def source = message.source
 			def damage = source.damage
 			message.damage = damage;
+			
+			def targets = message.targets
+			message.targets = [targets[0]]
 		})
 	}
 	
