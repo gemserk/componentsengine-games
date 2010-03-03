@@ -32,7 +32,7 @@ public class TowersDefinitions {
 			[
 			position:position,
 			direction:utils.vector(-1,0),
-			radius:45f,
+			radius:50f,
 			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
 			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
 			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),

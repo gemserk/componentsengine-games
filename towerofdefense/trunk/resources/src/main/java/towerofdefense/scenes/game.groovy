@@ -29,6 +29,8 @@ builder.entity("world") {
 	def utils = utils
 	new GroovyBootstrapper();
 	
+	def gridDistance = 15f
+	
 	property("money", parameters.money)
 	property("points",0)
 	property("lives",parameters.lives)
@@ -51,7 +53,7 @@ builder.entity("world") {
 	
 	component(new GridRenderer("grid")){
 		propertyRef("bounds","gameBoundsToRender")
-		property("distance",15)
+		property("distance",gridDistance)
 	}
 	
 	
@@ -59,7 +61,7 @@ builder.entity("world") {
 	
 	component(new PathRendererComponent("pathrenderer")){
 		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1f))
-		property("lineWidth", 15.0f)
+		property("lineWidth", gridDistance)
 		propertyRef("path", "path")		
 	}                		
 	
@@ -91,8 +93,8 @@ builder.entity("world") {
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		def reward = message.critter.reward
 		def points = message.critter.points
-		entity.money+=reward
-		entity.points+=points
+		entity.money=(float)(entity.money + reward)
+		entity.points=(int)(entity.points + points)
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
@@ -162,6 +164,7 @@ builder.entity("world") {
 		propertyRef("deployCursorState", "deployCursorState")
 		propertyRef("deployTowerEnabled", "deployTowerEnabled")
 		propertyRef("path","path")
+		property("distanceToPath",(float)(gridDistance*1.5))
 		
 		propertyRef("towerDescriptions", "towerDescriptions")
 		propertyRef("gameBounds","gameBounds")
@@ -255,7 +258,7 @@ builder.entity("world") {
 	component(new ComponentFromListOfClosures("cheats",[ {GenericMessage message ->
 		switch(message.id){
 			case "cheatMoney":
-			entity.money+=10
+				entity.money=(float)(entity.money + 10)
 			break;
 			case "cheatLives":
 			entity.lives+=10

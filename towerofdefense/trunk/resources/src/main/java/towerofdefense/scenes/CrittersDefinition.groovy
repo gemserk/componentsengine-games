@@ -37,7 +37,7 @@ public class CrittersDefinition{
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:8f,
 			points: 5,
-			reward:1			
+			reward:1f			
 			]	
 		})
 	}
@@ -49,13 +49,13 @@ public class CrittersDefinition{
 			[
 			// image:utils.resources.image("towerofdefense.images.critter2"),
 			rotationImage:utils.resources.image("towerofdefense.images.critter2"),
-			rotationSpeed:40f,
+			rotationSpeed:4f,
 			position:entity.position.copy(),
 			speed:70f,
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:12f,
 			points: 10,
-			reward:2
+			reward:2f
 			]	
 		}	)
 	}
@@ -73,7 +73,7 @@ public class CrittersDefinition{
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:20f,
 			points: 15,
-			reward:3
+			reward:3f
 			]	
 		}	)
 	}
@@ -89,7 +89,7 @@ public class CrittersDefinition{
 			color:utils.color(0.0f, 0.0f, 1.0f, 1.0f),
 			health:15f,
 			points: 20,
-			reward:4
+			reward:4f
 			]	
 		}	
 		)

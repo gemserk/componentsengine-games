@@ -39,7 +39,7 @@ builder.entity {
 		propertyRef("position", "position")
 		propertyRef("enabled", "selected")
 	}
-
+	
 	component(new FaceTargetComponent("faceTarget")){
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
@@ -58,6 +58,7 @@ builder.entity {
 		property("color", parameters.color)
 		propertyRef("position", "position")
 		property("direction", utils.vector(1f,0f))
+		property("size",utils.vector(0.75f,0.75f))
 	}
 	
 	component(new ImageRenderableComponent("cannonRenderer")) {
@@ -65,6 +66,7 @@ builder.entity {
 		property("color", parameters.color)
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
+		property("size",utils.vector(0.75f,0.75f))
 	}
-
+	
 }

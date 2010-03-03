@@ -41,9 +41,10 @@ public class GuiLogicComponent extends ReflectionComponent {
 	private PropertyLocator<String> deployCursorStateProperty;
 	private PropertyLocator<Boolean> deployTowerEnabledProperty;
 	private PropertyLocator<Path> pathProperty;
+	private PropertyLocator<Float> distanceToPathProperty;
 	private PropertyLocator<Rectangle> gameBoundsProperty;
 	private PropertyLocator<String> towerTypeProperty;
-	private PropertyLocator<Integer> moneyProperty;
+	private PropertyLocator<Float> moneyProperty;
 	private PropertyLocator<Map<String, Map<String, Object>>> towersDescriptionProperty;
 
 	public GuiLogicComponent(String id) {
@@ -53,6 +54,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 		deployCursorStateProperty = Properties.property(id, "deployCursorState");
 		deployTowerEnabledProperty = Properties.property(id, "deployTowerEnabled");
 		pathProperty = Properties.property(id, "path");
+		distanceToPathProperty = Properties.property(id, "distanceToPath");
 		gameBoundsProperty = Properties.property(id, "gameBounds");
 		towerTypeProperty = Properties.property(id, "towerType");
 		
@@ -88,13 +90,13 @@ public class GuiLogicComponent extends ReflectionComponent {
 			if (message instanceof UpdateMessage) {
 				UpdateMessage updateMessage = (UpdateMessage) message;
 
-				int money = (Integer) moneyProperty.getValue(entity);
+				float money = (Float) moneyProperty.getValue(entity);
 				Map<String, Map<String, Object>> towerDescriptions = towersDescriptionProperty.getValue(entity);
 
 				for (Entry<String, Map<String, Object>> entry : towerDescriptions.entrySet()) {
 					String key = entry.getKey();
 					Map<String, Object> values = entry.getValue();
-					int cost = (Integer) values.get("cost");
+					float cost = (Float) values.get("cost");
 
 					Entity button = entity.getEntityById("button-" + key);
 					Properties.setValue(button, "enabled", money >= cost);
@@ -125,6 +127,8 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 	public class DeployState extends InternalState {
 
+		
+
 		protected void handleMessage(UpdateMessage message) {
 			Vector2f mousePosition = mousePositionProperty.getValue(entity);
 
@@ -133,10 +137,10 @@ public class GuiLogicComponent extends ReflectionComponent {
 			deployTowerEnabledProperty.setValue(entity, true);
 			Rectangle gameBounds = gameBoundsProperty.getValue(entity);
 
-			int money = (Integer) Properties.getValue(entity, "money");
+			float money = (Float) Properties.getValue(entity, "money");
 			Map<String, Map<String, Object>> towerDescriptions = Properties.getValue(entity, "towerDescriptions");
 			String towerType = towerTypeProperty.getValue(entity);
-			int cost = (Integer) towerDescriptions.get(towerType).get("cost");
+			float cost = (Float) towerDescriptions.get(towerType).get("cost");
 
 			if (money < cost) {
 				cantDeploy();
@@ -165,6 +169,9 @@ public class GuiLogicComponent extends ReflectionComponent {
 			Path path = pathProperty.getValue(entity);
 			List<Vector2f> points = path.getPoints();
 
+			
+			float distanceToPath = (Float)distanceToPathProperty.getValue(entity);
+			
 			for (int i = 0; i < points.size(); i++) {
 				Vector2f source = points.get(i).copy();
 
@@ -177,8 +184,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 				Line line = new Line(source, target);
 
-				float pathWidth = 30.0f;
-				if (line.distance(mousePosition) < pathWidth) {
+				if (line.distance(mousePosition) < distanceToPath) {
 					cantDeploy();
 					return;
 				}
@@ -204,10 +210,10 @@ public class GuiLogicComponent extends ReflectionComponent {
 			if (cursorState.equals("candeploy")) {
 				messageQueue.enqueue(new GenericMessage("deployturret"));
 				
-				int money = (Integer) moneyProperty.getValue(entity);
+				float money = (Float) moneyProperty.getValue(entity);
 				Map<String, Map<String, Object>> towerDescriptions = towersDescriptionProperty.getValue(entity);
 				String towerType = towerTypeProperty.getValue(entity);
-				int cost = (Integer) towerDescriptions.get(towerType).get("cost");
+				float cost = (Float) towerDescriptions.get(towerType).get("cost");
 				moneyProperty.setValue(entity, money - cost);
 			}
 		}
