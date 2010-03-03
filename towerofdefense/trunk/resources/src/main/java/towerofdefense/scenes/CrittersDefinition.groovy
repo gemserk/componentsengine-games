@@ -65,10 +65,12 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
-			 image:utils.resources.image("towerofdefense.images.critter1"),
+		   image:utils.resources.image("towerofdefense.images.ralph"),
+			rotationImage:utils.resources.image("towerofdefense.images.ralph_balls"),
+			rotationSpeed:3f,
 			position:entity.position.copy(),
 			speed:20f,
-			color:utils.color(0.0f, 1.0f, 0.0f, 1.0f),
+			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:20f,
 			points: 15,
 			reward:3

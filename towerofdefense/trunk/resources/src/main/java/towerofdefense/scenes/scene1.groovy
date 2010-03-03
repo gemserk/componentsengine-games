@@ -27,6 +27,7 @@ builder.entity("world") {
 		}
 		
 		waves{
+			wave(rate:1500, quantity:10, id:"wiggle")
 			wave(rate:1000, quantity:6, id:"chomper")
 			wave {
 				wave(rate:1000, quantity:2, id:"spinner")
