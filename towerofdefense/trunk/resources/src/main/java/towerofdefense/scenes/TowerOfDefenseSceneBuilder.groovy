@@ -1,6 +1,7 @@
 package towerofdefense.scenes
 
 import groovy.lang.Closure;
+import groovy.util.Expando;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,11 +41,12 @@ public class TowerOfDefenseSceneBuilder {
 	public void path(final float minX, final float minY, Closure closure){
 		final List<Vector2f> points = new ArrayList<Vector2f>();
 		
-		closure.setDelegate(new Object(){
-					public void point(float x, float y){
-						points.add(new Vector2f((float)minX + x, (float)minY + y));
-					}
-				});
+		def pathBuilder = new Expando()
+		pathBuilder.point = {float x, float y ->
+			points.add(new Vector2f((float)minX + x, (float)minY + y));
+		}
+		
+		closure.setDelegate(pathBuilder)
 		closure.call();
 		sceneParameters.path = new Path(points);
 		
@@ -59,22 +61,17 @@ public class TowerOfDefenseSceneBuilder {
 			}
 		}
 		
-		CritterBuilder critterBuilder = new CritterBuilder();
-		critterBuilder.crittersDefinition = crittersDefinition
-		critterBuilder.multipliers = multipliers
+		def critterBuilder = newCritterBuilder(multipliers)
 		closure.setDelegate(critterBuilder);
 		closure.setResolveStrategy(Closure.DELEGATE_FIRST)
 		closure.call();
-		critters = critterBuilder.critters
+		critters = critterBuilder.definedCritters
 	}
 	
-	public class CritterBuilder{
-		CrittersDefinition crittersDefinition
-		def multipliers
-		Map<String,Object> critters = new HashMap<String, Object>();
-		
-		
-		public void critter(Map<String,Object> parameters){
+	def newCritterBuilder(def multipliers){
+		def critterBuilder = new Expando()
+		critterBuilder.definedCritters = [:]
+		critterBuilder.critter = { Map<String,Object> parameters ->
 			def type = parameters.type.toString()
 			parameters.remove("type")
 			def id = parameters.id ?: type
@@ -97,11 +94,10 @@ public class TowerOfDefenseSceneBuilder {
 				});
 				return critter;
 			}
-			critters.put(id, critterProvider)
+			definedCritters.put(id, critterProvider)
 		}
-		
+		return critterBuilder
 	}
-	
 	
 	public void waves(def parameters, Closure closure){
 		def wavePeriod = parameters.delayBetweenWaves
@@ -111,13 +107,7 @@ public class TowerOfDefenseSceneBuilder {
 		sceneParameters.wavePeriod = wavePeriod
 		
 		def delayBetweenSpawns = parameters.delayBetweenSpawns
-		
-		
-		
-		
-		WaveBuilder waveBuilder = new WaveBuilder();
-		waveBuilder.critters = critters
-		waveBuilder.defaultDelayBetweenSpawns = delayBetweenSpawns
+		WaveBuilder waveBuilder = new WaveBuilder(critters, delayBetweenSpawns);
 		closure.setDelegate(waveBuilder);
 		closure.setResolveStrategy(Closure.DELEGATE_FIRST)
 		
@@ -127,82 +117,28 @@ public class TowerOfDefenseSceneBuilder {
 		sceneParameters.waves = waves
 	}
 	
+
 	
-	class WaveBuilder{
-		List<Wave> waves = new ArrayList<Wave>();
-		Map<String,Closure> critters
-		
-		boolean secondLevel = false;
-		def waveNumber = 0
-		def defaultDelayBetweenSpawns
-		
-		public void addWave(Wave wave){
-			waves.add(wave)
-			if(!secondLevel){
-				waveNumber++
-			}
-		}
-		
-		
-		public void wave(Map<String, Object> parameters){
-			def rate = parameters.rate ?: defaultDelayBetweenSpawns
-			if(rate == null)
-				throw new RuntimeException("if there is no delayBetweenSpawns defined you must define rate for every wave")
-			
-			def critterId = parameters.id
-			def critterProvider = critters[(critterId)]
-			def instantiationTemplate = critterProvider(waveNumber)
-			Wave wave = new SimpleWave(rate, parameters.quantity, instantiationTemplate )
-			addWave(wave)
-		}
-		
-		public void wave(Closure closure){
-			if(secondLevel)
-				throw new RuntimeException("Only one level of nested waves")
-			secondLevel = true
-			WaveBuilder waveBuilder = new WaveBuilder()
-			waveBuilder.secondLevel = true
-			waveBuilder.waveNumber = waveNumber
-			waveBuilder.critters = critters
-			waveBuilder.defaultDelayBetweenSpawns = defaultDelayBetweenSpawns
-			closure.setDelegate(waveBuilder);
-			closure.setResolveStrategy(Closure.DELEGATE_FIRST)
-			closure.call();
-			CompositeWave wave = new CompositeWave(waveBuilder.getWaves())
-			secondLevel = false
-			addWave(wave)
-		}
-		
-		public List<Wave> getWaves() {
-			return waves;
-		}
-	}
 	
 	public void towers(Closure closure){
-		def towerBuilder = new TowerBuilder()
-		towerBuilder.towersDefinitions = towersDefinitions
+		def towerBuilder = newTowerBuilder()
 		closure.setDelegate(towerBuilder)
 		closure.setResolveStrategy(Closure.DELEGATE_FIRST)
 		closure.call();
-		sceneParameters.put("towerDescriptions",towerBuilder.towers)
+		sceneParameters.put("towerDescriptions",towerBuilder.towers)	
 	}
 	
-	public class TowerBuilder {
-		TowersDefinitions towersDefinitions
-		Map<String, Map<String,Object>> towers = new HashMap<String, Map<String,Object>>();
-		
-		public void tower(Map<String,Object> parameters){
+	public Expando newTowerBuilder(){
+		Expando towerBuilder = new Expando();
+		towerBuilder.towers = new HashMap<String, Map<String,Object>>();
+		towerBuilder.tower = { Map<String,Object> parameters ->
 			def type = parameters.type.toString()
 			parameters.remove("type")
 			
-			Map<String, Object> towerDefinition = this.towersDefinitions.tower(type);
+			Map<String, Object> towerDefinition = towersDefinitions.tower(type);
 			towerDefinition.putAll(parameters);
 			towers.put(type, towerDefinition);
 		}
-		
+		return towerBuilder
 	}
-	
-	
-	
-	
 }
