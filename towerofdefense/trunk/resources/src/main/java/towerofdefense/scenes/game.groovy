@@ -1,4 +1,5 @@
 package towerofdefense.scenes;
+import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
 import towerofdefense.components.GridRenderer;
 import com.gemserk.games.towerofdefense.PathRendererComponent;
@@ -8,8 +9,7 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import towerofdefense.GroovyBootstrapper;
 import towerofdefense.components.TowerDeployer;
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
+import com.gemserk.componentsengine.commons.components.*;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.games.towerofdefense.*;
 import com.gemserk.games.towerofdefense.components.*;
@@ -49,7 +49,6 @@ builder.entity("world") {
 		property("distance",gridDistance)
 	}
 	
-	
 	property("path",parameters.path)
 	
 	component(new PathRendererComponent("pathrenderer")){
@@ -76,9 +75,6 @@ builder.entity("world") {
 	
 	property("towerDescriptions", parameters.towerDescriptions )
 	
-	
-	
-	
 	property("towerType","blaster")
 	
 	component(new TowerDeployer("towerdeployer")){
@@ -93,14 +89,7 @@ builder.entity("world") {
 		entity.points=(int)(entity.points + points)
 	}
 	
-	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
-		entity.lives--;
-		
-		if(entity.lives <= 0)
-			messageQueue.enqueue(utils.genericMessage("reloadScene",{
-			}))
-	}
-	
+
 	
 	def labelX = 300;
 	def labelY = 20;
@@ -189,7 +178,7 @@ builder.entity("world") {
 		property("position",utils.vector(40,40))
 		property("message", "Towers")
 	}	
-
+	
 	def towerButtonsX = 40
 	def towerButtonsY = 70
 	
@@ -249,7 +238,7 @@ builder.entity("world") {
 	component(new ComponentFromListOfClosures("cheats",[ {GenericMessage message ->
 		switch(message.id){
 			case "cheatMoney":
-				entity.money=(float)(entity.money + 10)
+			entity.money=(float)(entity.money + 10)
 			break;
 			case "cheatLives":
 			entity.lives+=10
@@ -258,19 +247,41 @@ builder.entity("world") {
 	}
 	]))
 	
-	property("winTimer", new CountDownTimer(4000))
+	property("endSceneEnabled", false)
+	property("endSceneMessage", "")
+	property("endSceneTimer", new CountDownTimer(3000))
+	
+	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
+		if (entity.lives == 0)
+			return
+			
+		entity.lives--;
+		
+	}
+
+	component(new DisablerComponent(new LabelComponent("endSceneLabel"))) {
+		propertyRef("enabled", "endSceneEnabled")
+		property("font", utils.resources.fonts.font([italic:false, bold:false, size:48]))
+		property("position", utils.vector(400, 300))
+		propertyRef("message","endSceneMessage")
+	}
+	
 	
 	component(new EndSceneComponent("endSceneTrigger")){
 		propertyRef("waves", "waves")
-		propertyRef("timer", "winTimer")
+		propertyRef("lives", "lives")
+		propertyRef("timer", "endSceneTimer")
 		property("tags", ["critter"] as String[])
+		
+		propertyRef("endSceneEnabled", "endSceneEnabled")
+		propertyRef("message", "endSceneMessage")
 	}
 	
 	component(new TimerComponent("endSceneTimer")) {
-		propertyRef("timer", "winTimer")
+		propertyRef("timer", "endSceneTimer")
 		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("win") { });
 	}
-
+	
 	genericComponent(id:"winHandler", messageId:"win"){ message ->
 		utils.custom.gameStateManager.gameProperties.inGame=false
 		messageQueue.enqueue(utils.genericMessage("gotoMenu") {

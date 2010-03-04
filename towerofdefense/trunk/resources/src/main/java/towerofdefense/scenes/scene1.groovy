@@ -4,7 +4,7 @@ builder.entity("world") {
 	
 	def utils = utils
 	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
-	def builtParameters = sceneBuilder.scene(money:30f, lives:15){
+	def builtParameters = sceneBuilder.scene(money:30f, lives:1){
 		path(minX=0,minY=30) {
 			point(100, 570)		      
 			point(100, 450) 		      
@@ -18,14 +18,13 @@ builder.entity("world") {
 		}
 		
 		critters(speedFactor:[1f],rewardFactor:[1f], healthFactor:[1.7f]){
-			critter(type:"chomper", health:70f, speed:20f)
+			critter(type:"chomper", health:70f, speed:120f)
 			critter(type:"spinner",health:70f, speed:20f)
 			critter(type:"wiggle", health:70f, speed:20f)
 			critter(type:"star", health:70f, speed:20f)
 		}
 		waves(delayBetweenWaves:20000, delayBetweenSpawns:1000){
-			wave(quantity:20, id:"chomper")
-			wave(quantity:1, id:"chomper")
+			wave(quantity:3, id:"chomper")
 //			wave {
 //				wave(quantity:2, id:"spinner")
 //				wave(quantity:2, id:"chomper")
