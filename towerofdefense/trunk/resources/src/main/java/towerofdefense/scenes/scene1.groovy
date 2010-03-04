@@ -4,7 +4,7 @@ builder.entity("world") {
 	
 	def utils = utils
 	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
-	def builtParameters = sceneBuilder.scene(money:30f, lives:1){
+	def builtParameters = sceneBuilder.scene(money:30f, lives:15){
 		path(minX=0,minY=30) {
 			point(100, 570)		      
 			point(100, 450) 		      
@@ -17,34 +17,34 @@ builder.entity("world") {
 			point(350, 450)
 		}
 		
-		critters(speedFactor:[1f],rewardFactor:[1f], healthFactor:[1.7f]){
-			critter(type:"chomper", health:70f, speed:120f)
+		critters(rewardFactor:[1f], healthFactor:[1.7f]){
+			critter(type:"chomper", health:70f, speed:20f)
 			critter(type:"spinner",health:70f, speed:20f)
 			critter(type:"wiggle", health:70f, speed:20f)
 			critter(type:"star", health:70f, speed:20f)
 		}
 		waves(delayBetweenWaves:20000, delayBetweenSpawns:1000){
-			wave(quantity:3, id:"chomper")
-//			wave {
-//				wave(quantity:2, id:"spinner")
-//				wave(quantity:2, id:"chomper")
-//				wave(quantity:2, id:"spinner")
-//			}
-//			wave(quantity:6, id:"wiggle")
-//			wave {
-//				wave(quantity:2, id:"spinner")
-//				wave(quantity:2, id:"star")
-//				wave(quantity:2, id:"spinner")
-//			}
-//			wave {
-//				wave(quantity:1, id:"chomper")
-//				wave(quantity:1, id:"wiggle")
-//				wave(quantity:1, id:"chomper")
-//				wave(quantity:1, id:"wiggle")
-//				wave(quantity:1, id:"chomper")
-//				wave(quantity:1, id:"wiggle")
-//			}
-//			wave(quantity:6, id:"star")
+			wave(quantity:6, id:"chomper")
+			wave {
+				wave(quantity:2, id:"spinner")
+				wave(quantity:2, id:"chomper")
+				wave(quantity:2, id:"spinner")
+			}
+			wave(quantity:6, id:"wiggle")
+			wave {
+				wave(quantity:2, id:"spinner")
+				wave(quantity:2, id:"star")
+				wave(quantity:2, id:"spinner")
+			}
+			wave {
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+			}
+			wave(quantity:6, id:"star")
 		}
 		
 		towers{

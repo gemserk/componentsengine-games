@@ -1,9 +1,6 @@
 package towerofdefense.scenes;
 
 import com.gemserk.games.towerofdefense.GemserkGameState;
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import org.newdawn.slick.GameContainer 
-import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
 import org.newdawn.slick.state.transition.FadeOutTransition 
@@ -15,28 +12,27 @@ builder.entity("sceneselection") {
 	
 	def scenes = [[desc:"First scene",script:"towerofdefense.scenes.scene1"],
 			[desc:"Second scene",script:"towerofdefense.scenes.scene2"],
-			[desc:"Third scene",script:"towerofdefense.scenes.scene3"]
+			[desc:"Third scene",script:"towerofdefense.scenes.scene3"],
+			[desc:"Fourth scene",script:"towerofdefense.scenes.scene4"]
+			// [desc:"Fifth scene",script:"towerofdefense.scenes.scene5"]
 			]
-	
-	
 	
 	property("playing", false)
 	
 	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.2f)
 	def buttonMouseNotOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.8f)
 	
-	def buttonFont = utils.resources.fonts.font([italic:false, bold:false, size:48])
+	def buttonFont = utils.resources.fonts.font([italic:false, bold:false, size:36])
 	
 	def menuX = 400
-	def menuY = 150
-	def buttonHeight = 100
-	def buttonSeparation = 20
-	
+	def menuY = 100
+	def buttonHeight = 80
+	def buttonSeparation = 30
 
 	scenes.eachWithIndex { scene, i ->
 		child(template:"towerofdefense.entities.button", id:"buttonScene-$i".toString())	{
 			position=utils.vector(menuX, (Float)(menuY + i*(buttonHeight+buttonSeparation)))
-			rectangle=utils.rectangle(-160, -50, 320, buttonHeight)
+			rectangle=utils.rectangle(-160, (float)(-buttonHeight/2f), 320, buttonHeight)
 			label=scene.desc
 			lineColor=utils.color(0f, 0f, 1f, 0.5f)
 			mouseNotOverFillColor=buttonMouseOverFillColor
