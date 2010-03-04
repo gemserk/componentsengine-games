@@ -54,7 +54,7 @@ public class TowerOfDefenseSceneBuilder {
 	
 	
 	public void critters(def parameters, Closure closure){
-		def multipliers = [:]
+		def multipliers = [speed:[0f], health:[1f], reward:[1f]]
 		parameters.each {key, value ->
 			if(key.endsWith("Factor")) {
 				multipliers[key.replaceAll("Factor","")] = value
@@ -84,11 +84,10 @@ public class TowerOfDefenseSceneBuilder {
 					params.putAll(parameters)
 					
 					multipliers.each { key, multipliersValues ->
+						def multiplier = multipliersValues[0]
 						def originalValue = (Float)params[(key)]
-						waveNumber.times {
-							originalValue = originalValue * multipliersValues[0]
-						}
-						params[(key)] = (Float)originalValue
+						def newValue = originalValue*(multiplier*waveNumber+1)                                  
+						params[(key)] = (Float)(Math.floor(newValue))
 					}
 					return params
 				});

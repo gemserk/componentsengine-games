@@ -56,7 +56,7 @@ public class CrittersDefinition{
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:12f,
 			points: 10,
-			reward:2f
+			reward:1f
 			]	
 		}	)
 	}
@@ -74,7 +74,7 @@ public class CrittersDefinition{
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:20f,
 			points: 15,
-			reward:3f
+			reward:1f
 			]	
 		}	)
 	}
@@ -92,7 +92,7 @@ public class CrittersDefinition{
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:15f,
 			points: 20,
-			reward:4f
+			reward:1f
 			]	
 		}	
 		)
@@ -111,7 +111,7 @@ public class CrittersDefinition{
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			health:15f,
 			points: 20,
-			reward:5f
+			reward:1f
 			]	
 		}	
 		)

@@ -37,7 +37,7 @@ public class TowersDefinitions {
 			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
 			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
 			template:"towerofdefense.entities.bullet",
-			reloadTime:250,
+			reloadTime:200,
 			instanceParameters: utils.custom.genericprovider.provide{
 				[
 				damage:10.0f,
