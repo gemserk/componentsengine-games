@@ -66,9 +66,12 @@ builder.entity("world") {
 		fillColor=utils.color(0.2f, 0.2f, 0.7f, 1.0f)
 	}
 	
+	property("waves", new Waves().setWaves(parameters.waves))
+	
 	child(template:"towerofdefense.entities.spawner", id:"spawner")	{
 		position={entity.parent.path.getPoint(0)}
-		waves=new Waves().setWaves(parameters.waves)
+		waves={entity.parent.waves}
+		// waves=new Waves().setWaves(parameters.waves)
 	}
 	
 	property("towerDescriptions", parameters.towerDescriptions )
@@ -126,11 +129,10 @@ builder.entity("world") {
 		propertyRef("value","towerCount")
 	}	
 	
-	component(new LabelComponent("towertypelabel")){
+	component(new LabelComponent("wavesLabel")){
 		property("position",utils.vector(labelX,labelY + 80))
-		property("message","TowerType: {0}")
-		propertyRef("value", "towerType")
-	}	
+		property("message", {"Waves: ${entity.waves.current}/${entity.waves.total}".toString()})
+	}		
 	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
 		property("tags", ["bullet"] as String[] );
@@ -152,7 +154,6 @@ builder.entity("world") {
 	
 	
 	component(new GuiLogicComponent("guiComponent")){
-		// propertyRef("state", "guiState")
 		propertyRef("mousePosition", "mousePosition")
 		propertyRef("deployCursorState", "deployCursorState")
 		propertyRef("deployTowerEnabled", "deployTowerEnabled")
@@ -188,12 +189,11 @@ builder.entity("world") {
 		property("position",utils.vector(40,40))
 		property("message", "Towers")
 	}	
-	
+
 	def towerButtonsX = 40
 	def towerButtonsY = 70
 	
 	def buttonRectangle = utils.rectangle(-25, -25, 50, 50)
-	
 	
 	def towerGuiInstantiation = [:]
 	parameters.towerDescriptions.each { key, value -> 
@@ -201,8 +201,6 @@ builder.entity("world") {
 	}
 	
 	property("towers",towerGuiInstantiation)
-	
-	
 	
 	parameters.towerDescriptions.each { key, value -> 
 		
