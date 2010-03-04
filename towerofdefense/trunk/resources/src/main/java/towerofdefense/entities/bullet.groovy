@@ -7,7 +7,7 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 
-import com.gemserk.componentsengine.messages.ChildMessage;
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 
 builder.entity("bullet-${Math.random()}") {
@@ -47,7 +47,7 @@ builder.entity("bullet-${Math.random()}") {
 	
 	genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		if (message.getProperty("source").get() == entity)
-			messageQueue.enqueue(ChildMessage.removeEntity(entity))
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	}
 	
 	

@@ -88,7 +88,7 @@ public class WeaponComponent extends ReflectionComponent {
 
 		Entity bullet = bulletTemplate.instantiate("", instanceParameters);
 
-		messageQueue.enqueue(ChildMessage.addEntity(bullet, entityProperty.getValue(entity).getId()));
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entityProperty.getValue(entity).getId()));
 
 		currentReloadTime = reloadTimeProperty.getValue(entity);
 		currentReloadTimeProperty.setValue(entity, currentReloadTime);

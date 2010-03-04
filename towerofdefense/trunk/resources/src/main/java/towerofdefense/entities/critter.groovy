@@ -8,7 +8,7 @@ import com.gemserk.games.towerofdefense.components.render.BarRendererComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
-import com.gemserk.componentsengine.messages.ChildMessage;
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 
 builder.entity("critter-${Math.random()}") {
 	
@@ -77,12 +77,12 @@ builder.entity("critter-${Math.random()}") {
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		if(message.critter == entity)
-			messageQueue.enqueue(ChildMessage.removeEntity(entity))
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
 		if(message.critter == entity)
-			messageQueue.enqueue(ChildMessage.removeEntity(entity))
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	}
 	
 }

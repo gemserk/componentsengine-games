@@ -2,9 +2,7 @@ package towerofdefense.components
 
 import com.gemserk.componentsengine.components.ReflectionComponent 
 import com.gemserk.componentsengine.entities.Entity 
-import com.gemserk.componentsengine.messages.ChildMessage;
-import com.gemserk.componentsengine.messages.GenericMessage 
-import com.gemserk.componentsengine.messages.MessageQueue 
+import com.gemserk.componentsengine.messages.*;
 import com.google.inject.Inject 
 import org.newdawn.slick.Input 
 import org.newdawn.slick.geom.Vector2f 
@@ -30,7 +28,7 @@ class TowerDeployer extends ReflectionComponent{
 		Entity tower = instantiationTemplate.get(position)
 		
 		entity."${id}.towerCount" = entity."${id}.towerCount" + 1
-		messageQueue.enqueue(ChildMessage.addEntity(tower, "world"));
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(tower, "world"));
 	}
 	
 }

@@ -2,40 +2,18 @@ package com.gemserk.games.towerofdefense;
 
 import groovy.lang.Closure;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.BasicGameState;
-import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.*;
+import org.newdawn.slick.state.*;
 
 import com.gemserk.componentsengine.builders.BuilderUtils;
-import com.gemserk.componentsengine.components.MessageHandler;
-import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.entities.Root;
+import com.gemserk.componentsengine.components.*;
+import com.gemserk.componentsengine.entities.*;
 import com.gemserk.componentsengine.game.Game;
-import com.gemserk.componentsengine.input.MonitorFactory;
-import com.gemserk.componentsengine.input.SlickMonitorFactory;
-import com.gemserk.componentsengine.messages.GenericMessage;
-import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.messages.MessageQueueImpl;
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
-import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.resources.AnimationManager;
-import com.gemserk.componentsengine.resources.AnimationManagerImpl;
-import com.gemserk.componentsengine.resources.ImageManager;
-import com.gemserk.componentsengine.resources.ImageManagerImpl;
-import com.gemserk.componentsengine.resources.PropertiesImageLoader;
-import com.gemserk.componentsengine.templates.CachedScriptProvider;
-import com.gemserk.componentsengine.templates.GroovyScriptProvider;
-import com.gemserk.componentsengine.templates.GroovyScriptProviderImpl;
-import com.gemserk.componentsengine.templates.GroovyTemplateProvider;
-import com.gemserk.componentsengine.templates.TemplateProvider;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
+import com.gemserk.componentsengine.input.*;
+import com.gemserk.componentsengine.messages.*;
+import com.gemserk.componentsengine.resources.*;
+import com.gemserk.componentsengine.templates.*;
+import com.google.inject.*;
 
 public class GemserkGameState extends BasicGameState {
 
@@ -69,7 +47,12 @@ public class GemserkGameState extends BasicGameState {
 
 		this.stateBasedGame = stateBasedGame;
 
+		final Entity rootEntity = new Entity("root");
+		rootEntity.addComponent(new ChildrenManagementComponent("childrenManagementComponent"));
+
 		final Injector injector = Guice.createInjector(new AbstractModule() {
+			
+
 			@Override
 			protected void configure() {
 				bind(Input.class).toInstance(container.getInput());
@@ -83,7 +66,7 @@ public class GemserkGameState extends BasicGameState {
 
 				bind(BuilderUtils.class).in(Singleton.class);
 				bind(GroovyClosureRunner.class).in(Singleton.class);
-				bind(Entity.class).annotatedWith(Root.class).toInstance(new Entity("root"));
+				bind(Entity.class).annotatedWith(Root.class).toInstance(rootEntity);
 
 				bind(ImageManager.class).to(ImageManagerImpl.class).in(Singleton.class);
 				bind(AnimationManager.class).to(AnimationManagerImpl.class).in(Singleton.class);

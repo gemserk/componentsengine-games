@@ -42,7 +42,7 @@ public class OutOfBoundsRemover extends Component {
 			Collection<Entity> entitiesToRemove = rootEntity.getEntities(Predicates.and(EntityPredicates.withAnyTag(tags), Predicates.not(EntityPredicates.isIn(worldBounds))));
 
 			for (Entity entityToRemove : entitiesToRemove) {
-				messageQueue.enqueue(ChildMessage.removeEntity(entityToRemove));
+				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entityToRemove));
 			}
 
 		}

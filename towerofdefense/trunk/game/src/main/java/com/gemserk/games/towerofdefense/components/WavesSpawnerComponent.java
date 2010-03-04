@@ -40,7 +40,7 @@ public class WavesSpawnerComponent extends ReflectionComponent {
 		List<InstantiationTemplate> templates = waves.generateTemplates(delta);
 		for (InstantiationTemplate instantiationTemplate : templates) {
 			Entity newEntity = instantiationTemplate.get(entity);
-			messageQueue.enqueue(ChildMessage.addEntity(newEntity, targetEntity.getId()));
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newEntity, targetEntity.getId()));
 		}
 	}
 
