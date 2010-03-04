@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.gemserk.games.towerofdefense.timers;
 
 public class PeriodicTimer implements Timer{
@@ -35,5 +32,10 @@ public class PeriodicTimer implements Timer{
 	public int getTimeLeft() {
 		return timeLeft;
 	}
-	
+
+	@Override
+	public boolean isRunning() {
+		return true;
+	}
+
 }

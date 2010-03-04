@@ -1,4 +1,5 @@
 package towerofdefense.scenes;
+
 import towerofdefense.components.GridRenderer;
 import com.gemserk.games.towerofdefense.PathRendererComponent;
 import org.newdawn.slick.state.StateBasedGame;
@@ -10,8 +11,7 @@ import towerofdefense.components.TowerDeployer;
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
-import com.gemserk.games.towerofdefense.LabelComponent;
+import com.gemserk.games.towerofdefense.*;
 import com.gemserk.games.towerofdefense.components.*;
 import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
 import com.gemserk.games.towerofdefense.components.TimerComponent;
@@ -258,16 +258,34 @@ builder.entity("world") {
 	}
 	]))
 	
+	property("winTimer", new CountDownTimer(4000))
+	
+	component(new EndSceneComponent("endSceneTrigger")){
+		propertyRef("waves", "waves")
+		propertyRef("timer", "winTimer")
+		property("tags", ["critter"] as String[])
+	}
+	
+	component(new TimerComponent("endSceneTimer")) {
+		propertyRef("timer", "winTimer")
+		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("win") { });
+	}
+
+	genericComponent(id:"winHandler", messageId:"win"){ message ->
+		utils.custom.gameStateManager.gameProperties.inGame=false
+		messageQueue.enqueue(utils.genericMessage("gotoMenu") {
+			
+		})
+	}
+	
 	genericComponent(id:"gotoMenuHandler", messageId:"gotoMenu"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager;
 		stateBasedGame.enterState(0, new FadeOutTransition(), new FadeInTransition());
 	}
 	
-	
 	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
 	}                                                                     
-	
 	
 	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
 		utils.custom.game.loadScene(parameters.sceneScript);

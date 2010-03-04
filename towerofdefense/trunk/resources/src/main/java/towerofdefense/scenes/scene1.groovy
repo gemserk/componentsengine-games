@@ -24,27 +24,28 @@ builder.entity("world") {
 			critter(type:"star", health:70f, speed:20f)
 		}
 		waves(delayBetweenWaves:20000, delayBetweenSpawns:1000){
-			wave(quantity:6, id:"chomper")
-			wave {
-				wave(quantity:2, id:"spinner")
-				wave(quantity:2, id:"chomper")
-				wave(quantity:2, id:"spinner")
-			}
-			wave(quantity:6, id:"wiggle")
-			wave {
-				wave(quantity:2, id:"spinner")
-				wave(quantity:2, id:"star")
-				wave(quantity:2, id:"spinner")
-			}
-			wave {
-				wave(quantity:1, id:"chomper")
-				wave(quantity:1, id:"wiggle")
-				wave(quantity:1, id:"chomper")
-				wave(quantity:1, id:"wiggle")
-				wave(quantity:1, id:"chomper")
-				wave(quantity:1, id:"wiggle")
-			}
-			wave(quantity:6, id:"star")
+			wave(quantity:20, id:"chomper")
+			wave(quantity:1, id:"chomper")
+//			wave {
+//				wave(quantity:2, id:"spinner")
+//				wave(quantity:2, id:"chomper")
+//				wave(quantity:2, id:"spinner")
+//			}
+//			wave(quantity:6, id:"wiggle")
+//			wave {
+//				wave(quantity:2, id:"spinner")
+//				wave(quantity:2, id:"star")
+//				wave(quantity:2, id:"spinner")
+//			}
+//			wave {
+//				wave(quantity:1, id:"chomper")
+//				wave(quantity:1, id:"wiggle")
+//				wave(quantity:1, id:"chomper")
+//				wave(quantity:1, id:"wiggle")
+//				wave(quantity:1, id:"chomper")
+//				wave(quantity:1, id:"wiggle")
+//			}
+//			wave(quantity:6, id:"star")
 		}
 		
 		towers{

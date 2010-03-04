@@ -40,4 +40,10 @@ public class CountDownTimer implements Timer {
 		return timeLeft;
 	}
 
+	@Override
+	public boolean isRunning() {
+		return !fired;
+	}
+
+
 }

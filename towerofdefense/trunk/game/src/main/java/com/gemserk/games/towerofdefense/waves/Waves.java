@@ -1,8 +1,6 @@
 package com.gemserk.games.towerofdefense.waves;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import com.gemserk.games.towerofdefense.InstantiationTemplate;
 
@@ -48,6 +46,14 @@ public class Waves {
 
 	public boolean isLastWaveStarted() {
 		return currentWave == getTotal();
+	}
+
+	public boolean allWavesFinished() {
+		for (Wave wave : waves) {
+			if (!wave.isDone())
+				return false;
+		}
+		return true;
 	}
 
 }

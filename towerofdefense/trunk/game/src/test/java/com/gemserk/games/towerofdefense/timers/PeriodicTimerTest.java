@@ -1,53 +1,47 @@
 package com.gemserk.games.towerofdefense.timers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
-
-
 
 public class PeriodicTimerTest {
 
 	@Test
-	public void shouldNotFireIfNotReachedPeriod(){
+	public void shouldNotFireIfNotReachedPeriod() {
 		int period = 100;
 		PeriodicTimer timer = new PeriodicTimer(period);
 		boolean fired = timer.update(10);
 		assertFalse(fired);
 	}
-	
+
 	@Test
-	public void shouldFireWhenPeriodReached(){
+	public void shouldFireWhenPeriodReached() {
 		int period = 100;
 		PeriodicTimer timer = new PeriodicTimer(period);
 		boolean fired = timer.update(110);
 		assertTrue(fired);
 	}
-	
+
 	@Test
-	public void shouldFireWhenPeriodReachedInMultipleUpdates(){
+	public void shouldFireWhenPeriodReachedInMultipleUpdates() {
 		int period = 100;
 		PeriodicTimer timer = new PeriodicTimer(period);
 		boolean fired = timer.update(90);
 		fired = timer.update(90);
 		assertTrue(fired);
 	}
-	
-	
+
 	@Test
-	public void shouldNotFireWhenPeriodNotReachedInMultipleUpdates(){
+	public void shouldNotFireWhenPeriodNotReachedInMultipleUpdates() {
 		int period = 100;
 		PeriodicTimer timer = new PeriodicTimer(period);
 		boolean fired = timer.update(80);
 		fired = timer.update(10);
 		assertFalse(fired);
 	}
-	
-	
+
 	@Test
-	public void shouldFireWhenPeriodReachedInMultipleUpdates2(){
+	public void shouldFireWhenPeriodReachedInMultipleUpdates2() {
 		int period = 100;
 		PeriodicTimer timer = new PeriodicTimer(period);
 		boolean fired = timer.update(210);
@@ -57,17 +51,16 @@ public class PeriodicTimerTest {
 		fired = timer.update(10);
 		assertFalse(fired);
 	}
-	
+
 	@Test
-	public void whenResetIfUpdateIsLessThanPeriodShouldNotFire(){
+	public void whenResetIfUpdateIsLessThanPeriodShouldNotFire() {
 		testReset(100, false, 50, 99);
 	}
 
 	@Test
-	public void whenResetIfUpdateIsLargerThanPeriosShouldFire(){
+	public void whenResetIfUpdateIsLargerThanPeriosShouldFire() {
 		testReset(100, true, 50, 101);
 	}
-
 
 	private void testReset(int period, boolean expectedFired, int firstUpdate, int secondUpdate) {
 		PeriodicTimer timer = new PeriodicTimer(period);
