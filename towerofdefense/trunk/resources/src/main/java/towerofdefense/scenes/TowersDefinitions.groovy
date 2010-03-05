@@ -16,11 +16,13 @@ public class TowersDefinitions {
 	
 	def tower(def type){
 		switch (type) {
-		case "blaster":
+			case "blaster":
 			return blaster()
-		case "laser":
-			return laser();
-		default:
+			case "laser":
+			return laser()
+			case "missile":
+			return missile()
+			default:
 			return null;
 		}
 	}
@@ -38,13 +40,17 @@ public class TowersDefinitions {
 			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:200,
-			instanceParameters: utils.custom.genericprovider.provide{
+			instanceParameters: utils.custom.genericprovider.provide{ entity ->
+				def newPosition = entity.position.copy()
 				[
-				damage:10.0f,
-				radius:10.0f,
-				maxVelocity:0.6f,
-				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
-				]
+						position:newPosition,
+						direction:(entity.targetEntity.position.copy().sub(newPosition).normalise()),
+						image:utils.resources.image("towerofdefense.images.blasterbullet"),
+						damage:10.0f,
+						radius:10.0f,
+						maxVelocity:0.6f,
+						color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
+						]
 			}	
 			]
 		})
@@ -70,7 +76,37 @@ public class TowersDefinitions {
 		return [icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]
 	}
 	
-
+	def missile(){
+		def missileTower = new InstantiationTemplateImpl(
+		utils.custom.templateProvider.getTemplate("towerofdefense.entities.missiletower"),
+		utils.custom.genericprovider.provide{ position ->
+			[
+			position:position,
+			direction:utils.vector(1,0),
+			radius:250f,
+			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
+			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
+			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
+			template:"towerofdefense.entities.missilebullet",
+			reloadTime:1000,
+			instanceParameters: utils.custom.genericprovider.provide{ entity ->
+				def newPosition = entity.position.copy()
+				def newDirection = entity.direction.copy()
+				[
+						position:newPosition,
+						direction: newDirection,
+						targetEntity:entity.targetEntity,
+						image:utils.resources.image("towerofdefense.images.blasterbullet"),
+						damage:10.0f,
+						radius:10.0f,
+						maxVelocity:0.3f,
+						color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
+						]
+			}	
+			]
+		})
+		return [icon:"towerofdefense.images.lasertower_icon", cost:20, instantiationTemplate:missileTower]
+	}
 	
 	
 }

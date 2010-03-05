@@ -75,16 +75,11 @@ public class WeaponComponent extends ReflectionComponent {
 		if (targetEntity == null)
 			return;
 
-		final Vector2f position = positionProperty.getValue(entity);
 		String templateName = templateProperty.getValue(entity);
 
 		EntityTemplate bulletTemplate = templateProvider.getTemplate(templateName);
 
-		Vector2f targetPosition = (Vector2f) Properties.property("position").getValue(targetEntity);
-
-		Map<String, Object> instanceParameters = instanceParametersProviderProperty.getValue(entity).get();
-		instanceParameters.put("position", position.copy());
-		instanceParameters.put("direction", targetPosition.copy().sub(position).normalise());
+		Map<String, Object> instanceParameters = instanceParametersProviderProperty.getValue(entity).get(entity);
 
 		Entity bullet = bulletTemplate.instantiate("", instanceParameters);
 

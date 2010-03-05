@@ -1,4 +1,10 @@
 package towerofdefense.entities;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics 
+import org.newdawn.slick.geom.Line 
+import org.newdawn.slick.geom.Vector2f 
+
+import com.gemserk.games.towerofdefense.ComponentFromListOfClosures 
 import com.gemserk.games.towerofdefense.GenericHitComponent;
 
 
@@ -8,6 +14,7 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
+import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 
 builder.entity("bullet-${Math.random()}") {
@@ -26,7 +33,7 @@ builder.entity("bullet-${Math.random()}") {
 	}
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image("towerofdefense.images.blasterbullet"))
+		property("image", parameters.image)
 		property("color", parameters.color)
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
@@ -50,5 +57,32 @@ builder.entity("bullet-${Math.random()}") {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	}
 	
+	
+//	component(new ComponentFromListOfClosures("debug",[ {SlickRenderMessage message ->
+//		
+//		def debugVectors = [[vector:entity.direction.copy().scale(50f), color:Color.white]]
+//		
+//		
+//		Graphics g = message.graphics
+//		Vector2f start = entity.position.copy()
+//		
+//		debugVectors.each { vectorContainer ->
+//			
+//			def vector = vectorContainer.vector
+//			def color = vectorContainer.color ?: Color.white
+//			
+//			Vector2f segment = vector.copy()
+//			
+//			Line line = new Line(start.x,start.y,segment.x,segment.y,true)
+//			def origColor = g.getColor()
+//			g.setColor(color)
+//			g.draw(line)
+//			g.setColor(origColor)
+//		}
+//		
+//	}
+//	
+//	]))
+//	
 	
 }

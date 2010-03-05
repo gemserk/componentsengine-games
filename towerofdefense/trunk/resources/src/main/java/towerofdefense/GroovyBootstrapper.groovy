@@ -26,7 +26,7 @@ class GroovyBootstrapper {
 			toEnhance.metaClass {
 				propertyMissing << {String name ->
 					println "Metaresolving: GET $name"
-					def getterMethod = { delegate.properties[name].get()}
+					def getterMethod = { delegate.properties[name]?.get()}
 					
 					def capitalName = Strings.capitalize(name)
 					toEnhance.metaClass."get$capitalName" = getterMethod
@@ -44,7 +44,7 @@ class GroovyBootstrapper {
 					println "Metaresolving: SET $name"
 					Properties.setValue(delegate,name, value)
 					
-					def getterMethod = { delegate.properties[name].get()}
+					def getterMethod = { delegate.properties[name]?.get()}
 					
 					def capitalName = Strings.capitalize(name)
 					toEnhance.metaClass."get$capitalName" = getterMethod
