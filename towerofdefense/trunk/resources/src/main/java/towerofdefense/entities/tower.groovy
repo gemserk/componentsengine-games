@@ -1,6 +1,5 @@
 package towerofdefense.entities;
 
-import com.gemserk.games.towerofdefense.components.WeaponComponent;
 
 import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
 
@@ -18,7 +17,8 @@ builder.entity {
 	property("position", parameters.position)
 	property("direction", parameters.direction)
 	property("radius", parameters.radius)
-	property("cost",parameters.cost)
+	// property("cost", parameters.cost)
+	property("turnRate", parameters.turnRate)
 	
 	property("targetEntity", null)
 	
@@ -44,6 +44,7 @@ builder.entity {
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
 		propertyRef("targetEntity", "targetEntity")
+		propertyRef("turnRate", "turnRate")
 	}
 	
 	component(new SelectTargetWithinRangeComponent("selectTarget"))	{

@@ -40,11 +40,12 @@ public class TowersDefinitions {
 			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:200,
-			instanceParameters: utils.custom.genericprovider.provide{ entity ->
-				def newPosition = entity.position.copy()
+			turnRate:0.1f,
+			instanceParameters: utils.custom.genericprovider.provide{ tower ->
 				[
-						position:newPosition,
-						direction:(entity.targetEntity.position.copy().sub(newPosition).normalise()),
+						position:tower.position.copy(),
+						// direction:(entity.targetEntity.position.copy().sub(newPosition).normalise()),
+						direction:tower.direction.copy(),
 						image:utils.resources.image("towerofdefense.images.blasterbullet"),
 						damage:10.0f,
 						radius:10.0f,
@@ -70,6 +71,7 @@ public class TowersDefinitions {
 			color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
 			radius:90f,
 			reloadTime:250,
+			turnRate:0.05f,
 			damage:0.03f
 			]
 		})
@@ -84,6 +86,7 @@ public class TowersDefinitions {
 			position:position,
 			direction:utils.vector(1,0),
 			radius:250f,
+			turnRate:0.01f,
 			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
 			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
 			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
