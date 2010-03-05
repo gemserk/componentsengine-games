@@ -9,7 +9,7 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.*;
-import com.gemserk.componentsengine.properties.*;
+import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.gemserk.componentsengine.templates.*;
 import com.gemserk.games.towerofdefense.GenericProvider;
 import com.google.inject.Inject;
@@ -31,7 +31,7 @@ public class WeaponComponent extends ReflectionComponent {
 	PropertyLocator<GenericProvider> instanceParametersProviderProperty;
 
 	PropertyLocator<Entity> entityProperty;
-	
+
 	MessageQueue messageQueue;
 
 	@Inject

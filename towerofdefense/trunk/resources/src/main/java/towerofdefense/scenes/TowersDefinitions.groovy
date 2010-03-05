@@ -40,7 +40,7 @@ public class TowersDefinitions {
 			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:200,
-			turnRate:0.1f,
+			turnRate:0.2f,
 			instanceParameters: utils.custom.genericprovider.provide{ tower ->
 				[
 						position:tower.position.copy(),
@@ -71,7 +71,7 @@ public class TowersDefinitions {
 			color:utils.color(0.2f, 0.2f, 1.0f, 1.0f),
 			radius:90f,
 			reloadTime:250,
-			turnRate:0.05f,
+			turnRate:0.1f,
 			damage:0.03f
 			]
 		})

@@ -47,12 +47,7 @@ public class FaceTargetComponent extends FieldsReflectionComponent {
 	double calculateNextAngle(int delta, double currentAngle, double desiredAngle) {
 		double theta = currentAngle;
 		
-		double diffAngle = desiredAngle-currentAngle;
-		
-		if (diffAngle > 180)
-			diffAngle -= 360;
-		else if (diffAngle < -180)
-			diffAngle += 360;
+		double diffAngle = new AngleUtils().angleDifference(currentAngle, desiredAngle);
 		
 		if (diffAngle > 0)
 			// turn left
@@ -69,4 +64,5 @@ public class FaceTargetComponent extends FieldsReflectionComponent {
 		
 		return theta;
 	}
+
 }
