@@ -83,6 +83,29 @@ builder.entity("missilebullet-${Math.random()}") {
 	
 	]))
 	
+
+//	component(new GenericHitComponent("bullethit")){
+//		property("targetTag", "critter")
+//		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
+//		property("trigger", utils.custom.messageBuilderFactory.super() { data -> 
+//			def source = data.source
+//			def targets = data.targets
+//			
+//			def lista = []
+//			             
+//			targets.each { target ->
+//				def distancia = ...addShutdownHook { }
+//				lista << new GenericMessage("hit").with{
+//					damage = entity.damage/distancia
+//					target = target
+//					source = source
+//				}
+//			}
+//			
+//		return lista
+//		})
+//	}
+	
 	
 	
 }

@@ -38,7 +38,7 @@ builder.entity("sceneselection") {
 			mouseNotOverFillColor=buttonMouseOverFillColor
 			mouseOverFillColor=buttonMouseNotOverFillColor
 			font=buttonFont
-			messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("loadScene") {
+			trigger=utils.custom.triggers.genericMessage("loadScene") {
 				message.scene = scene.script
 			}
 		}

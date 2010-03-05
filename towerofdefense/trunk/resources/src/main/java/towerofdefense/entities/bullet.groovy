@@ -42,7 +42,7 @@ builder.entity("bullet-${Math.random()}") {
 	component(new GenericHitComponent("bullethit")){
 		property("targetTag", "critter")
 		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
-		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") { 
+		property("trigger", utils.custom.triggers.genericMessage("hit") { 
 			def source = message.source
 			def damage = source.damage
 			message.damage = damage;

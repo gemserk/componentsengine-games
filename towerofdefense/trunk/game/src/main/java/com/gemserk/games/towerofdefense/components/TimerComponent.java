@@ -8,14 +8,14 @@ import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.games.towerofdefense.MessageBuilder;
+import com.gemserk.games.towerofdefense.Trigger;
 import com.gemserk.games.towerofdefense.timers.Timer;
 import com.google.inject.Inject;
 
 public class TimerComponent extends ReflectionComponent {
 
 	private PropertyLocator<Timer> timerProperty;
-	private PropertyLocator<MessageBuilder> messageBuilderProperty;
+	private PropertyLocator<Trigger> triggerProperty;
 	
 	@Inject 
 	MessageQueue messageQueue;
@@ -23,7 +23,7 @@ public class TimerComponent extends ReflectionComponent {
 	public TimerComponent(String id) {
 		super(id);
 		timerProperty = Properties.property(id, "timer");
-		messageBuilderProperty = Properties.property(id, "messageBuilder");
+		triggerProperty = Properties.property(id, "trigger");
 	}
 
 	public void handleMessage(UpdateMessage message) {
@@ -32,10 +32,7 @@ public class TimerComponent extends ReflectionComponent {
 		if (!fired)
 			return;
 
-		MessageBuilder messageBuilder = messageBuilderProperty.getValue(entity);
-		Message newMessage = messageBuilder.build(new HashMap<String, Object>());
-		
-		messageQueue.enqueue(newMessage);
+		triggerProperty.getValue(entity).trigger(new HashMap<String, Object>());
 
 	}
 

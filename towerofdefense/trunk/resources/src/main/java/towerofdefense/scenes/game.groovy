@@ -129,7 +129,7 @@ builder.entity("world") {
 	}
 	
 	component(new TimerComponent("wavesTimerComponent")){
-		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("nextWave") {
+		property("trigger",utils.custom.triggers.genericMessage("nextWave") {
 		})
 		propertyRef("timer","wavesTimer")
 	}
@@ -199,7 +199,7 @@ builder.entity("world") {
 			icon=utils.resources.image(value.icon)
 			mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
 			mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
-			messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("deployTowerSelected") {
+			trigger=utils.custom.triggers.genericMessage("deployTowerSelected") {
 				message.towerType = "${key}".toString()
 			}
 		}
@@ -221,7 +221,7 @@ builder.entity("world") {
 		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
 		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
 		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("nextWave") {
+		trigger=utils.custom.triggers.genericMessage("nextWave") {
 		}
 	}
 	
@@ -231,7 +231,7 @@ builder.entity("world") {
 		icon=utils.resources.image("towerofdefense.images.restart_icon")
 		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
 		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("reloadScene") {
+		trigger=utils.custom.triggers.genericMessage("reloadScene") {
 		}
 	}
 	
@@ -279,7 +279,7 @@ builder.entity("world") {
 	
 	component(new TimerComponent("endSceneTimer")) {
 		propertyRef("timer", "endSceneTimer")
-		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("win") { });
+		property("trigger", utils.custom.triggers.genericMessage("win") { });
 	}
 	
 	genericComponent(id:"winHandler", messageId:"win"){ message ->

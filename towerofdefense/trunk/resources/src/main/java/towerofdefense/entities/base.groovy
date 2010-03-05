@@ -23,7 +23,7 @@ builder.entity {
 		property("targetTag", "critter")
 		propertyRef("position", "position")
 		propertyRef("radius", "radius")
-		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") {   def source = message.source  })
+		property("trigger", utils.custom.triggers.genericMessage("hit") { source = message.source  })
 	}
 
 	component(new LabelComponent("alabel")){

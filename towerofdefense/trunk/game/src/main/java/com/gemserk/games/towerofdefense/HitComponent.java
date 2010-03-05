@@ -24,7 +24,7 @@ public class HitComponent extends ReflectionComponent {
 
 	private PropertyLocator<Float> radiusProperty;
 
-	private PropertyLocator<MessageBuilder> messageBuilderProperty;
+	private PropertyLocator<Trigger> messageBuilderProperty;
 
 	private PropertyLocator<String> targetTagProperty;
 
@@ -39,7 +39,7 @@ public class HitComponent extends ReflectionComponent {
 
 		positionProperty = Properties.property(id, "position");
 		radiusProperty = Properties.property(id, "radius");
-		messageBuilderProperty = Properties.property(id, "messageBuilder");
+		messageBuilderProperty = Properties.property(id, "trigger");
 		targetTagProperty = Properties.property(id, "targetTag");
 
 	}
@@ -56,16 +56,12 @@ public class HitComponent extends ReflectionComponent {
 		if (candidates.size() == 0)
 			return;
 
-		MessageBuilder messageBuilder = messageBuilderProperty.getValue(entity);
-
-		Message hitMessage = messageBuilder.build(new HashMap<String, Object>() {
+		messageBuilderProperty.getValue(entity).trigger(new HashMap<String, Object>() {
 			{
 				put("source", entity);
 				put("targets", new ArrayList<Entity>(candidates));
 			}
 		});
-
-		messageQueue.enqueue(hitMessage);
 	}
 
 }

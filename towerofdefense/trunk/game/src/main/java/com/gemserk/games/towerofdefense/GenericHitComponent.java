@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 
 public class GenericHitComponent extends ReflectionComponent {
 
-	private PropertyLocator<MessageBuilder> messageBuilderProperty;
+	private PropertyLocator<Trigger> messageBuilderProperty;
 
 	private PropertyLocator<String> targetTagProperty;
 
@@ -28,7 +28,7 @@ public class GenericHitComponent extends ReflectionComponent {
 	public GenericHitComponent(String id) {
 		super(id);
 
-		messageBuilderProperty = Properties.property(id, "messageBuilder");
+		messageBuilderProperty = Properties.property(id, "trigger");
 		targetTagProperty = Properties.property(id, "targetTag");
 		predicateProperty = Properties.property(id,"predicate");
 
@@ -45,17 +45,13 @@ public class GenericHitComponent extends ReflectionComponent {
 		if (candidates.size() == 0)
 			return;
 
-		MessageBuilder messageBuilder = messageBuilderProperty.getValue(entity);
-
-		Message hitMessage = messageBuilder.build(new HashMap<String, Object>() {
+		messageBuilderProperty.getValue(entity).trigger(new HashMap<String, Object>() {
 			{
 				put("source", entity);
 				put("targets", new ArrayList<Entity>(candidates));
 				put("delta",message.getDelta());
 			}
 		});
-
-		messageQueue.enqueue(hitMessage);
 	}
 
 }

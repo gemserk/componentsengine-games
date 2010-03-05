@@ -1,5 +1,4 @@
 package towerofdefense.scenes;
-
 import com.gemserk.games.towerofdefense.GemserkGameState;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import org.newdawn.slick.GameContainer 
@@ -38,7 +37,7 @@ builder.entity("menu") {
 		mouseNotOverFillColor=buttonMouseOverFillColor
 		mouseOverFillColor=buttonMouseNotOverFillColor
 		font=buttonFont
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("playOrResume") {
+		trigger=utils.custom.triggers.genericMessage("playOrResume") {
 		}
 	}
 	
@@ -50,10 +49,9 @@ builder.entity("menu") {
 		mouseNotOverFillColor=buttonMouseOverFillColor
 		mouseOverFillColor=buttonMouseNotOverFillColor
 		font=buttonFont
-		messageBuilder=utils.custom.messageBuilderFactory.messageBuilder("exitOrEndScene") {
+		trigger=utils.custom.triggers.genericMessage("exitOrEndScene") {
 		}
 	}
-	
 	//	property("resumeSound", utils.resources.sounds.sound("assets/sounds/button.wav"))
 	
 	genericComponent(id:"playOrResumeHandler", messageId:"playOrResume"){ message ->

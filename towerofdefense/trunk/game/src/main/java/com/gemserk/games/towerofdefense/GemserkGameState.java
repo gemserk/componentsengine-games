@@ -2,18 +2,41 @@ package com.gemserk.games.towerofdefense;
 
 import groovy.lang.Closure;
 
-import org.newdawn.slick.*;
-import org.newdawn.slick.state.*;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
 
 import com.gemserk.componentsengine.builders.BuilderUtils;
-import com.gemserk.componentsengine.components.*;
-import com.gemserk.componentsengine.entities.*;
+import com.gemserk.componentsengine.components.ChildrenManagementComponent;
+import com.gemserk.componentsengine.components.MessageHandler;
+import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.game.Game;
-import com.gemserk.componentsengine.input.*;
-import com.gemserk.componentsengine.messages.*;
-import com.gemserk.componentsengine.resources.*;
-import com.gemserk.componentsengine.templates.*;
-import com.google.inject.*;
+import com.gemserk.componentsengine.input.MonitorFactory;
+import com.gemserk.componentsengine.input.SlickMonitorFactory;
+import com.gemserk.componentsengine.messages.GenericMessage;
+import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.MessageQueueImpl;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
+import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.resources.AnimationManager;
+import com.gemserk.componentsengine.resources.AnimationManagerImpl;
+import com.gemserk.componentsengine.resources.ImageManager;
+import com.gemserk.componentsengine.resources.ImageManagerImpl;
+import com.gemserk.componentsengine.resources.PropertiesImageLoader;
+import com.gemserk.componentsengine.templates.CachedScriptProvider;
+import com.gemserk.componentsengine.templates.GroovyScriptProvider;
+import com.gemserk.componentsengine.templates.GroovyScriptProviderImpl;
+import com.gemserk.componentsengine.templates.GroovyTemplateProvider;
+import com.gemserk.componentsengine.templates.TemplateProvider;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 public class GemserkGameState extends BasicGameState {
 
@@ -86,10 +109,14 @@ public class GemserkGameState extends BasicGameState {
 		builderUtils.addCustomUtil("gameStateManager", stateBasedGame);
 		builderUtils.addCustomUtil("gameContainer", container);
 
-		builderUtils.addCustomUtil("messageBuilderFactory", new Object() {
+		builderUtils.addCustomUtil("triggers", new Object() {
 
-			public MessageBuilder messageBuilder(String messageId, Closure closure) {
-				return new GroovyMessageBuilder(messageId, closure);
+			public Trigger genericMessage(String messageId, Closure closure) {
+				return new GroovySingleGenericMessageTrigger(messageId, messageQueue, closure);
+			}
+			
+			public Trigger closureTrigger(Closure closure){
+				return new ClosureTrigger(closure);
 			}
 		});
 

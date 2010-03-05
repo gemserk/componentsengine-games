@@ -20,7 +20,7 @@ builder.entity {
 	
 	property("mouseOver", false)
 	
-	property("messageBuilder", parameters.messageBuilder)
+	property("trigger", parameters.trigger)
 	
 	genericComponent(id:"mouseOverHandler", messageId:"move"){ message ->
 		def x = (float)(message.x - entity.position.x)
@@ -43,8 +43,7 @@ builder.entity {
 		if (! entity.mouseOver )
 			return
 		
-		def clickedMessage = entity.messageBuilder.build([:])
-		messageQueue.enqueue(clickedMessage)
+		entity.trigger.trigger([:])
 	}
 	
 	component(new RectangleRendererComponent("background")) {

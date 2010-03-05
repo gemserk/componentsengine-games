@@ -59,7 +59,7 @@ builder.entity() {
 	component(new DisablerComponent(new GenericHitComponent("hitcomponent"))){
 		property("targetTag", "critter")
 		property("predicate",{EntityPredicates.isNear(entity.line,5f)})
-		property("messageBuilder", utils.custom.messageBuilderFactory.messageBuilder("hit") { 
+		property("trigger", utils.custom.triggers.genericMessage("hit") { 
 			def source = message.source
 			def damagePerTime = source.damage
 			message.damage = (Float)(damagePerTime*message.delta);

@@ -36,7 +36,7 @@ builder.entity("lasertower-${Math.random()}") {
 	}]))
 	
 	component(new TimerComponent("canFireTimerComponent")){
-		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("enableFire") {message.source = entity })
+		property("trigger",utils.custom.triggers.genericMessage("enableFire") {message.source = entity })
 		propertyRef("timer","canFireTimer")
 	}
 	
@@ -48,7 +48,7 @@ builder.entity("lasertower-${Math.random()}") {
 	}
 	
 	component(new TimerComponent("fireDurationTimerComponent")){
-		property("messageBuilder",utils.custom.messageBuilderFactory.messageBuilder("fireStop") {message.source = entity })
+		property("trigger",utils.custom.triggers.genericMessage("fireStop") {message.source = entity })
 		propertyRef("timer","fireDurationTimer")
 	}
 	
