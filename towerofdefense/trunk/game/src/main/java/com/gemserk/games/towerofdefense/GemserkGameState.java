@@ -116,6 +116,7 @@ public class GemserkGameState extends BasicGameState {
 			}
 			
 			public Trigger closureTrigger(Closure closure){
+				closure.setProperty("messageQueue", messageQueue);
 				return new ClosureTrigger(closure);
 			}
 		});

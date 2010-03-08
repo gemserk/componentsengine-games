@@ -48,9 +48,9 @@ public class TowerOfDefenseGame extends StateBasedGame {
 	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		if(container instanceof AppletGameContainer.Container){
+		//if(container instanceof AppletGameContainer.Container){
 			container.setVSync(true);
-		}
+		//}
 		GemserkGameState menuState = new GemserkGameState(0,"towerofdefense.scenes.menu");
 		addState(menuState);
 		GemserkGameState inGameState = new GemserkGameState(1);

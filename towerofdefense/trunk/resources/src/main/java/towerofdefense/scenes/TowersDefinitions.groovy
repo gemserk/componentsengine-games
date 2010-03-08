@@ -86,7 +86,7 @@ public class TowersDefinitions {
 			position:position,
 			direction:utils.vector(1,0),
 			radius:250f,
-			turnRate:0.01f,
+			turnRate:0.00f,
 			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
 			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
 			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
@@ -102,7 +102,7 @@ public class TowersDefinitions {
 						image:utils.resources.image("towerofdefense.images.blasterbullet"),
 						damage:10.0f,
 						radius:10.0f,
-						maxVelocity:0.3f,
+						maxVelocity:0.1f,
 						color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
 						]
 			}	

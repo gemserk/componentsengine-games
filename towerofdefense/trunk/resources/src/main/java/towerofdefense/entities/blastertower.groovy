@@ -42,7 +42,7 @@ builder.entity("tower-${Math.random()}") {
 		
 		def desiredDirection = targetPosition.copy().sub(position)
 		
-		double angleDifference = new AngleUtils().angleDifference(direction.getTheta(), desiredDirection.getTheta());
+		double angleDifference = new AngleUtils().minimumDifference(direction.getTheta(), desiredDirection.getTheta());
 		if (Math.abs(angleDifference) > entity.weaponAngle) {
 			entity.weaponEnabled=false;
 		} else {

@@ -5,12 +5,17 @@ import org.newdawn.slick.Graphics;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 
 import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.predicates.EntityPredicates 
 
 
 
 
 
 import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
+import com.gemserk.games.towerofdefense.GenericHitComponent 
+import com.gemserk.games.towerofdefense.components.AngleUtils;
+import com.google.common.base.Predicates;
+
 import org.newdawn.slick.geom.Line 
 import org.newdawn.slick.geom.Vector2f 
 
@@ -21,40 +26,43 @@ builder.entity("missilebullet-${Math.random()}") {
 	tags("missile")
 	
 	property("targetEntity",parameters.targetEntity)
+	property("blastRadius",50)
 	
 	component(new ComponentFromListOfClosures("steering",[ {UpdateMessage message ->
 		def debugVectors = []
 		
-		                       
+		
 		Vector2f position = entity.position
 		Vector2f velocity = entity.direction
 		
 		debugVectors << [vector:velocity.copy().normalise().scale(50f), color:Color.red]
 		
 		Vector2f targetPosition = entity.targetEntity.position
+		//Vector2f targetPosition = new Vector2f(20,300)
+		
 		Vector2f directionToTarget = targetPosition.copy().sub(position)
-		debugVectors << [vector:directionToTarget, color:Color.yellow]
+		debugVectors << [vector:directionToTarget.copy(), color:Color.yellow]
 		
-		def steerDirection = new Vector2f(-velocity.y, velocity.x).normalise()
+		def desiredVelocity = directionToTarget.normalise().scale(entity."movement.maxVelocity")
 		
-		debugVectors << [vector:steerDirection.copy().scale(50f), color:Color.green]
+		debugVectors << [vector:desiredVelocity.copy().scale(50f), color:Color.green]
+		
+		def steerVelocity = desiredVelocity.copy().sub(velocity)
+		debugVectors << [vector:steerVelocity.copy().scale(50f), color:Color.pink]            
+		                
+		                 
+		def nextAngle = new AngleUtils().calculateTruncatedNextAngle((float)((360f/3000)*message.delta),velocity.getTheta(),steerVelocity.getTheta())
+		def steerForceLength = 1f
+		
+		def force = new Vector2f(steerForceLength,0).add(nextAngle)
 		
 		
-		def steerForceLength = steerDirection.dot(directionToTarget)
-		def steerForceSign = steerForceLength > 0 ? 1 : -1	
-		steerForceLength = Math.abs(steerForceLength)
-		def steerMaxForce = Math.min(0.0007f, steerForceLength)
+		                 
+		debugVectors << [vector:force.copy().normalise().scale(50f), color:Color.blue]
 		
+		entity."movement.force".add(force)
 		
-		
-		
-		def steerForceResult = steerDirection.normalise().scale((float)(steerMaxForce*steerForceSign*message.delta))
-		
-		debugVectors << [vector:steerForceResult.copy().normalise().scale(50f), color:Color.blue]
-		
-		entity."movement.force".add(steerForceResult)
-		
-		//entity.debugVectors = debugVectors
+		entity.debugVectors = debugVectors
 		
 	}, {SlickRenderMessage message ->
 		def debugVectors = entity.debugVectors
@@ -83,28 +91,27 @@ builder.entity("missilebullet-${Math.random()}") {
 	
 	]))
 	
-
-//	component(new GenericHitComponent("bullethit")){
-//		property("targetTag", "critter")
-//		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
-//		property("trigger", utils.custom.messageBuilderFactory.super() { data -> 
-//			def source = data.source
-//			def targets = data.targets
-//			
-//			def lista = []
-//			             
-//			targets.each { target ->
-//				def distancia = ...addShutdownHook { }
-//				lista << new GenericMessage("hit").with{
-//					damage = entity.damage/distancia
-//					target = target
-//					source = source
-//				}
-//			}
-//			
-//		return lista
-//		})
-//	}
+	
+	component(new GenericHitComponent("bullethit")){
+		property("targetTag", "critter")
+		property("predicate",{Predicates.and(Predicates.equalTo(entity.targetEntity), EntityPredicates.isNear(entity.position, entity.radius))})
+		property("trigger", utils.custom.triggers.closureTrigger { data -> 
+			def source = data.source
+			def targets = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("critter"),EntityPredicates.isNear(entity.position, entity.blastRadius)))//find targets in range (it is bigger than impact radius)
+			
+			targets.each { target ->
+				def distance = entity.position.copy().sub(target.position).length()
+				messageQueue.enqueue(utils.genericMessage("hit"){ message ->
+					def damage = entity.damage
+					message.damage = (float)(damage - (damage/entity.blastRadius)*distance)
+					message.targets = [target]
+					message.source = source
+				})
+			}
+			
+			
+		})
+	}
 	
 	
 	

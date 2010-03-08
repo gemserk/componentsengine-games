@@ -45,5 +45,11 @@ public class FaceTargetComponentTest {
 		assertEquals(356, calculateNextAngle, 0.01f);
 	}
 	
+	@Test
+	public void should3() {
+		double calculateNextAngle = faceTargetComponent.calculateNextAngle(1, 0, 180);
+		assertEquals(1, calculateNextAngle, 0.01f);
+	}
+	
 	
 }
