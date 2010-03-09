@@ -2,6 +2,7 @@ package towerofdefense.entities;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 
 import com.gemserk.componentsengine.messages.UpdateMessage;
@@ -12,8 +13,10 @@ import com.gemserk.componentsengine.predicates.EntityPredicates
 
 
 import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
+import com.gemserk.games.towerofdefense.CountDownTimer;
 import com.gemserk.games.towerofdefense.GenericHitComponent 
 import com.gemserk.games.towerofdefense.components.AngleUtils;
+import com.gemserk.games.towerofdefense.components.TimerComponent;
 import com.google.common.base.Predicates;
 
 import org.newdawn.slick.geom.Line 
@@ -26,7 +29,8 @@ builder.entity("missilebullet-${Math.random()}") {
 	tags("missile")
 	
 	property("targetEntity",parameters.targetEntity)
-	property("blastRadius",50)
+	property("blastRadius",parameters.blastRadius)
+	property("turnRatio",parameters.turnRatio)
 	
 	component(new ComponentFromListOfClosures("steering",[ {UpdateMessage message ->
 		def debugVectors = []
@@ -49,20 +53,20 @@ builder.entity("missilebullet-${Math.random()}") {
 		
 		def steerVelocity = desiredVelocity.copy().sub(velocity)
 		debugVectors << [vector:steerVelocity.copy().scale(50f), color:Color.pink]            
-		                
-		                 
-		def nextAngle = new AngleUtils().calculateTruncatedNextAngle((float)((360f/3000)*message.delta),velocity.getTheta(),steerVelocity.getTheta())
+		
+		
+		def nextAngle = new AngleUtils().calculateTruncatedNextAngle((float)(entity.turnRatio*message.delta),velocity.getTheta(),steerVelocity.getTheta())
 		def steerForceLength = 1f
 		
 		def force = new Vector2f(steerForceLength,0).add(nextAngle)
 		
 		
-		                 
+		
 		debugVectors << [vector:force.copy().normalise().scale(50f), color:Color.blue]
 		
 		entity."movement.force".add(force)
 		
-		entity.debugVectors = debugVectors
+		//entity.debugVectors = debugVectors
 		
 	}, {SlickRenderMessage message ->
 		def debugVectors = entity.debugVectors
@@ -97,10 +101,10 @@ builder.entity("missilebullet-${Math.random()}") {
 		property("predicate",{Predicates.and(Predicates.equalTo(entity.targetEntity), EntityPredicates.isNear(entity.position, entity.radius))})
 		property("trigger", utils.custom.triggers.closureTrigger { data -> 
 			def source = data.source
-			def targets = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("critter"),EntityPredicates.isNear(entity.position, entity.blastRadius)))//find targets in range (it is bigger than impact radius)
+			def targets = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("critter"),EntityPredicates.isNear(entity.targetEntity.position, entity.blastRadius)))//find targets in range (it is bigger than impact radius)
 			
 			targets.each { target ->
-				def distance = entity.position.copy().sub(target.position).length()
+				def distance = entity.targetEntity.position.copy().sub(target.position).length()
 				messageQueue.enqueue(utils.genericMessage("hit"){ message ->
 					def damage = entity.damage
 					message.damage = (float)(damage - (damage/entity.blastRadius)*distance)
@@ -110,6 +114,27 @@ builder.entity("missilebullet-${Math.random()}") {
 			}
 			
 			
+		})
+	}
+	
+	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
+		if(message.critter == entity.targetEntity)
+			entity.timeoutTimer.reset()
+	}
+	
+	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
+		if(message.critter == entity.targetEntity)
+			entity.timeoutTimer.reset()
+	}
+	
+	
+	
+	property("timeoutTimer", new CountDownTimer(3000))
+	
+	component(new TimerComponent("timeoutComponent")){
+		propertyRef("timer", "timeoutTimer")
+		property("trigger", utils.custom.triggers.closureTrigger {
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 		})
 	}
 	
