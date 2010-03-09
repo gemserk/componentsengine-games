@@ -74,7 +74,7 @@ public class ExplosionComponent extends FieldsReflectionComponent {
 		ArrayList<Entity> targets = Properties.getValue(message, "targets");
 
 		for (Entity target : targets) {
-			float damage = Properties.getValue(source, "damage");
+			Float damage = (Float) Properties.getValue(source, "damage");
 			int count = (int) Math.ceil(damage);
 
 			Vector2f position = Properties.getValue(target, "position");
