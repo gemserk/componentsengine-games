@@ -14,10 +14,9 @@ class CritterHitHandler extends ReflectionComponent{
 		super(id)
 	}
 	
-	
 	public void handleMessage(GenericMessage message) {
 		if(message.id != "hit")
-			return 
+			return
 			
 		def sourceEntity = message.source
 		

@@ -4,8 +4,8 @@ import com.gemserk.games.towerofdefense.components.WeaponComponent;
 
 builder.entity("tower-${Math.random()}") {
 	
-	parameters.towerImage=utils.resources.image("towerofdefense.images.blastertower")
-	parameters.cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+	parameters.towerImage=utils.resources.image("towerofdefense.images.missiletower")
+	parameters.cannonImage=utils.resources.image("towerofdefense.images.missilecannon")
 	
 	parent("towerofdefense.entities.tower", parameters)
 	

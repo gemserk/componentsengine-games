@@ -89,7 +89,7 @@ public class TowersDefinitions {
 			turnRate:(float)(360/14000),
 			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
 			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
-			color:utils.color(0.2f, 1.0f, 0.2f, 1.0f),
+			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			template:"towerofdefense.entities.missilebullet",
 			reloadTime:3500,
 			instanceParameters: utils.custom.genericprovider.provide{ entity ->
@@ -110,7 +110,7 @@ public class TowersDefinitions {
 			}	
 			]
 		})
-		return [icon:"towerofdefense.images.lasertower_icon", cost:20, instantiationTemplate:missileTower]
+		return [icon:"towerofdefense.images.missiletower_icon", cost:20, instantiationTemplate:missileTower]
 	}
 	
 	

@@ -1,7 +1,7 @@
 package towerofdefense.scenes;
 
 builder.entity("world") {
-	
+		
 	def utils = utils
 	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
 	def builtParameters = sceneBuilder.scene(money:30f, lives:15){
@@ -49,14 +49,11 @@ builder.entity("world") {
 		
 		towers{
 			tower(type:"blaster",cost:10f)
-			tower(type:"laser",cost:15f)
-			tower(type:"missile",cost:20f)
 		}
 		
 	}
 	
 	builtParameters.sceneScript = this.getClass().getName()
-	
 	
 	parent("towerofdefense.scenes.game", builtParameters)		
 }
