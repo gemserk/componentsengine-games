@@ -5,6 +5,7 @@ import groovy.util.Expando;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.management.RuntimeErrorException 
@@ -129,7 +130,7 @@ public class TowerOfDefenseSceneBuilder {
 	
 	public Expando newTowerBuilder(){
 		Expando towerBuilder = new Expando();
-		towerBuilder.towers = new HashMap<String, Map<String,Object>>();
+		towerBuilder.towers = new LinkedHashMap<String, Map<String,Object>>();
 		towerBuilder.tower = { Map<String,Object> parameters ->
 			def type = parameters.type.toString()
 			parameters.remove("type")

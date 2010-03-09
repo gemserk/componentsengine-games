@@ -1,4 +1,8 @@
 package towerofdefense.scenes;
+import org.newdawn.slick.Graphics;
+
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
+
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
 import towerofdefense.components.GridRenderer;
@@ -106,11 +110,6 @@ builder.entity("world") {
 		property("value",{entity.points })
 	}
 	
-	component(new LabelComponent("timerlabel")){
-		property("position",utils.vector(labelX,labelY + 40))
-		property("message","Timer: {0}")
-		property("value",{entity.wavesTimer.timeLeft })
-	}
 	
 	component(new LabelComponent("towerCountlabel")){
 		property("position",utils.vector(labelX,labelY + 60))
@@ -206,7 +205,8 @@ builder.entity("world") {
 		
 		component(new LabelComponent("towerCostLabel-${key}".toString())){
 			property("position",utils.vector(towerButtonsX,towerButtonsY+35))
-			property("message", "\$${value.cost}".toString())
+			property("message", "\${0,number,integer}".toString())
+			property("value",value.cost)
 		}	
 		
 		towerButtonsX+=60
@@ -215,25 +215,17 @@ builder.entity("world") {
 	def commandButtonX = 660
 	def commandButtonY = towerButtonsY
 	
-	child(template:"towerofdefense.entities.button", id:"button-nextWave")	{
-		position=utils.vector(commandButtonX, commandButtonY)
+	child(template:"towerofdefense.entities.timerbutton", id:"button-nextWave")	{
+		position=utils.vector(750, 550)
 		rectangle=buttonRectangle
 		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
 		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
 		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
+		timeLeft={entity.parent.wavesTimer.timeLeft/parameters.wavePeriod}
 		trigger=utils.custom.triggers.genericMessage("nextWave") {
 		}
 	}
 	
-	child(template:"towerofdefense.entities.button", id:"button-restart")	{
-		position=utils.vector(commandButtonX + 60, commandButtonY)
-		rectangle=buttonRectangle
-		icon=utils.resources.image("towerofdefense.images.restart_icon")
-		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
-		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
-		trigger=utils.custom.triggers.genericMessage("reloadScene") {
-		}
-	}
 	
 	component(new ComponentFromListOfClosures("cheats",[ {GenericMessage message ->
 		switch(message.id){
@@ -324,5 +316,7 @@ builder.entity("world") {
 			
 		}
 	}
+	
+	                                                 
 	
 }
