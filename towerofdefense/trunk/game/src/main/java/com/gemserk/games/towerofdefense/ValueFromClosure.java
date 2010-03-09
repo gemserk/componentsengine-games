@@ -11,7 +11,8 @@ public class ValueFromClosure implements GenericProvider {
 	}
 		
 	public <T> T get(){
-		return get(new Object[] { });
+		Object t = (Object)get(new Object[] { });
+		return (T) t;
 	}
 
 	@SuppressWarnings("unchecked")
