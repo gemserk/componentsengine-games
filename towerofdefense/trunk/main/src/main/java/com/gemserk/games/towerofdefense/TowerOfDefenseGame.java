@@ -22,6 +22,7 @@ public class TowerOfDefenseGame extends StateBasedGame {
 
 		try {
 			TowerOfDefenseGame game = new TowerOfDefenseGame();
+			game.gameProperties.put("runningFromMain", true);
 
 			AppGameContainer app = new AppGameContainer(game);
 

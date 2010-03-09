@@ -16,6 +16,9 @@ builder.entity("sceneselection") {
 			[desc:"Fourth scene",script:"towerofdefense.scenes.scene4"]
 			// [desc:"Fifth scene",script:"towerofdefense.scenes.scene5"]
 			]
+			
+	if(utils.custom.gameStateManager.gameProperties.runningFromMain)
+		scenes << [desc:"Test scene",script:"towerofdefense.scenes.testScene"]
 	
 	property("playing", false)
 	

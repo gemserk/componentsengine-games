@@ -1,35 +1,62 @@
 package towerofdefense.scenes;
-import com.gemserk.componentsengine.components.Component;
-import com.gemserk.componentsengine.messages.Message;
-import com.gemserk.games.towerofdefense.LabelComponent;
 
-builder.entity("menu") {
+builder.entity("world") {
 	
-	property("value",new Integer(1));
-	property("incrementValue",new Integer(1))
-	
-	def quantity = 10000;
-	
-	quantity.times {
-		println "$it"
-		component(new Component("id+${it}".toString()){
-			void handleMessage(Message message){
-				entity.value = entity.value + entity.incrementValue
+	def utils = utils
+	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
+	def builtParameters = sceneBuilder.scene(money:30f, lives:15){
+		path(minX=0,minY=30) {
+			point(100, 570)		      
+			point(100, 450) 		      
+			point(100, 300)
+			point(300, 150)		      
+			point(500, 150)		      
+			point(620, 300) 		      
+			point(500, 500)  		      
+			point(500, 500) 		      
+			point(350, 450)
+		}
+		
+		critters(rewardFactor:[1f], healthFactor:[1.7f]){
+			critter(type:"chomper", health:150f, speed:10f)
+			critter(type:"spinner",health:150f, speed:10f)
+			critter(type:"wiggle", health:150f, speed:10f)
+			critter(type:"star", health:150f, speed:10f)
+		}
+		waves(delayBetweenWaves:20000, delayBetweenSpawns:1000){
+			wave(quantity:6, id:"chomper")
+			wave {
+				wave(quantity:2, id:"spinner")
+				wave(quantity:2, id:"chomper")
+				wave(quantity:2, id:"spinner")
 			}
-		})
+			wave(quantity:6, id:"wiggle")
+			wave {
+				wave(quantity:2, id:"spinner")
+				wave(quantity:2, id:"star")
+				wave(quantity:2, id:"spinner")
+			}
+			wave {
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+				wave(quantity:1, id:"chomper")
+				wave(quantity:1, id:"wiggle")
+			}
+			wave(quantity:6, id:"star")
+		}
+		
+		towers{
+			tower(type:"blaster",cost:10f)
+			tower(type:"laser",cost:15f)
+			tower(type:"missile",cost:20f)
+		}
+		
 	}
 	
-//	quantity.times {
-//		println "$it"
-//		component(new TestSceneComponent("id+${it}".toString()))
-//	}	
+	builtParameters.sceneScript = this.getClass().getName()
 	
-	component(new LabelComponent("label".toString())){
-		property("position",utils.vector(100,100))
-		property("message", "{0}")
-		//propertyRef("value","value")
-		property("value",{entity.value})
-	}	
 	
-	println entity
+	parent("towerofdefense.scenes.game", builtParameters)		
 }
