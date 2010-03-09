@@ -316,7 +316,8 @@ builder.entity("world") {
 			
 		}
 	}
-	
-	                                                 
-	
+
+	component(new ExplosionComponent("explosions")) {
+		
+	}
 }
