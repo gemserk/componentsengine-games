@@ -1,14 +1,13 @@
-/**
- * 
- */
 package com.gemserk.games.towerofdefense;
+
+import static com.gemserk.games.towerofdefense.OpenGlUtils.renderRectangle;
 
 import java.util.List;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.opengl.SlickCallable;
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
@@ -18,9 +17,9 @@ import com.gemserk.componentsengine.properties.PropertyLocator;
 public class PathRendererComponent extends ReflectionComponent {
 
 	private PropertyLocator<Color> lineColorProperty;
-	
+
 	private PropertyLocator<Float> lineWidthProperty;
-	
+
 	private PropertyLocator<Path> pathProperty;
 
 	public PathRendererComponent(String id) {
@@ -44,48 +43,41 @@ public class PathRendererComponent extends ReflectionComponent {
 		{
 			for (int i = 0; i < points.size(); i++) {
 				Vector2f source = points.get(i).copy();
-				
+
 				int j = i + 1;
 
 				if (j >= points.size())
 					continue;
 
 				Vector2f target = points.get(j);
-				
+
 				renderLine(g, source, target, lineWidth, lineColor);
 			}
 		}
 		g.popTransform();
 	}
-	
+
 	protected void renderLine(Graphics g, Vector2f p0, Vector2f p1, float width, Color color) {
 		Vector2f d = p1.copy().sub(p0);
 		Vector2f m = d.copy().scale(0.5f).add(p0);
 
 		float w = d.length();
 		float h = width;
-		
-		g.pushTransform();
-		g.translate(m.x, m.y);
-		g.rotate(1f, 1f, (float)d.getTheta());
-		g.setColor(color);
-		g.fill(new Rectangle(-w/2, -h/2, w, h));
-		g.popTransform();
-		
+
+		float angle = (float) d.getTheta();
+
+		SlickCallable.enterSafeBlock();
+		renderRectangle(m, w, h, angle, color);
+		SlickCallable.leaveSafeBlock();
+
 		float r = width;
-		
+
 		g.pushTransform();
-		g.setColor(color);
-		g.translate(p0.x, p0.y);
-		// g.rotate(1f, 1f, (float)d.getTheta());
-		g.fillOval(-r/2, -r/2, r, r);
-		g.popTransform();
-		
-		g.pushTransform();
+		g.setColor(new Color(1.2f, 0.0f, 0.0f, 1f));
 		g.setColor(color);
 		g.translate(p1.x, p1.y);
-		// g.rotate(1f, 1f, (float)d.getTheta());
-		g.fillOval(-r/2, -r/2, r, r);
+		g.fillOval(-r / 2, -r / 2, r, r);
+
 		g.popTransform();
 	}
 }
