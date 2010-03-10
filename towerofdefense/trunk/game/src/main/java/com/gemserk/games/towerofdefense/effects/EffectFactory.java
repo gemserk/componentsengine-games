@@ -17,16 +17,16 @@ public class EffectFactory {
 		}
 	}
 
-	public static ExplosionEffect explosionEffect(int count, int x, int y, float minAngle, float maxAngle, int time, float minLength, float maxLength) {
+	public static ExplosionEffect explosionEffect(int count, int x, int y, float minAngle, float maxAngle, int time, float minLength, float maxLength, float width) {
 		ArrayList<LineEffect> particles = new ArrayList<LineEffect>();
 
 		for (int i = 0; i < count; i++)
-			particles.add(lineEffect(x, y, minAngle, maxAngle, time, minLength, maxLength));
+			particles.add(lineEffect(x, y, minAngle, maxAngle, time, minLength, maxLength, width));
 
 		return new ExplosionEffect(particles);
 	}
 
-	public static LineEffect lineEffect(int x, int y, float minAngle, float maxAngle, int expansionTime, float minLength, float maxLength) {
+	public static LineEffect lineEffect(int x, int y, float minAngle, float maxAngle, int expansionTime, float minLength, float maxLength, float width) {
 		Random random = new Random();
 
 		maxAngle = -maxAngle;
@@ -34,8 +34,6 @@ public class EffectFactory {
 
 		float length = random.nextFloat() * maxLength + minLength;
 		int totalTime = expansionTime;
-		float width = 2.0f;
-
 		LineEffectParticle lineParticleEffect = new LineEffectParticle(length, totalTime);
 
 		float r = random.nextFloat() * 0.0f + 1.0f;

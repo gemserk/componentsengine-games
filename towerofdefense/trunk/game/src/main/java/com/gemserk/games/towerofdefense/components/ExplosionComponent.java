@@ -62,7 +62,7 @@ public class ExplosionComponent extends FieldsReflectionComponent {
 	protected void handleCritterDeadMessage(GenericMessage message) {
 		Entity critter = Properties.getValue(message, "critter");
 		Vector2f position = Properties.getValue(critter, "position");
-		explosions.add(EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 300, 30f, 60f));
+		explosions.add(EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 300, 30f, 60f, 1.0f));
 	}
 
 	protected void handleHitMessage(GenericMessage message) {
@@ -78,7 +78,7 @@ public class ExplosionComponent extends FieldsReflectionComponent {
 			int count = (int) Math.ceil(damage);
 
 			Vector2f position = Properties.getValue(target, "position");
-			explosions.add(EffectFactory.explosionEffect(count, (int) position.x, (int) position.y, 0f, 360f, 300, 30f, 60f));
+			explosions.add(EffectFactory.explosionEffect(count, (int) position.x, (int) position.y, 0f, 360f, 300, 30f, 60f, 1.0f));
 		}
 	}
 
