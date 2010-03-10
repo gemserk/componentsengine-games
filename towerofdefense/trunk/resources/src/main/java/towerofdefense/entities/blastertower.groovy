@@ -28,7 +28,7 @@ builder.entity("tower-${Math.random()}") {
 		propertyRef("targetEntity", "targetEntity")
 		property("entity", {entity.parent
 		})
-		property("fireAngle", 180.0f)
+		property("fireAngle", 30.0f)
 	}
 	
 	component(new ComponentFromListOfClosures("weaponEnabler", [{ UpdateMessage message ->
