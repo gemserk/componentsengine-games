@@ -44,7 +44,7 @@ public class EffectFactory {
 		Color color = new Color(r, g, b, 1);
 
 		float angle = random.nextFloat() * maxAngle + minAngle;
-		LineEffectRenderer lineParticleEffectRenderer = new LineEffectRenderer(new Vector2f(x, y), angle, width, color);
+		LineEffectOpenGlRenderer lineParticleEffectRenderer = new LineEffectOpenGlRenderer(new Vector2f(x, y), angle, width, color);
 
 		LineEffect effect = new LineEffect(lineParticleEffect, lineParticleEffectRenderer);
 		return effect;

@@ -1,7 +1,5 @@
 package towerofdefense.scenes;
-import org.newdawn.slick.Graphics;
 
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
 
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
@@ -216,7 +214,7 @@ builder.entity("world") {
 	def commandButtonY = towerButtonsY
 	
 	child(template:"towerofdefense.entities.timerbutton", id:"button-nextWave")	{
-		position=utils.vector(750, 550)
+		position=utils.vector(750, 50)
 		rectangle=buttonRectangle
 		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
 		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
@@ -225,7 +223,6 @@ builder.entity("world") {
 		trigger=utils.custom.triggers.genericMessage("nextWave") {
 		}
 	}
-	
 	
 	component(new ComponentFromListOfClosures("cheats",[ {GenericMessage message ->
 		switch(message.id){

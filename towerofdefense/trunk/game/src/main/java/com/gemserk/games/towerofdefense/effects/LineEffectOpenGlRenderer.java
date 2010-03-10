@@ -5,7 +5,7 @@ import static org.lwjgl.opengl.GL11.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
-public class LineEffectRenderer {
+public class LineEffectOpenGlRenderer {
 
 	Color color;
 
@@ -15,7 +15,7 @@ public class LineEffectRenderer {
 
 	float lineWidth;
 
-	public LineEffectRenderer(Vector2f translation, float angle, float lineWidth, Color color) {
+	public LineEffectOpenGlRenderer(Vector2f translation, float angle, float lineWidth, Color color) {
 		this.translation = translation;
 		this.angle = angle;
 		this.lineWidth = lineWidth;

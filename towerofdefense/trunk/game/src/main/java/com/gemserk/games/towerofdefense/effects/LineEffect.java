@@ -4,9 +4,9 @@ public class LineEffect {
 
 	LineEffectParticle lineParticleEffect;
 
-	LineEffectRenderer lineParticleEffectRenderer;
+	LineEffectOpenGlRenderer lineParticleEffectRenderer;
 
-	public LineEffect(LineEffectParticle lineParticleEffect, LineEffectRenderer lineParticleEffectRenderer) {
+	public LineEffect(LineEffectParticle lineParticleEffect, LineEffectOpenGlRenderer lineParticleEffectRenderer) {
 		this.lineParticleEffect = lineParticleEffect;
 		this.lineParticleEffectRenderer = lineParticleEffectRenderer;
 	}
