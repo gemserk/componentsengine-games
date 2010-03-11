@@ -194,8 +194,8 @@ builder.entity("world") {
 			position=utils.vector(towerButtonsX, towerButtonsY)
 			rectangle=buttonRectangle
 			icon=utils.resources.image(value.icon)
-			mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
-			mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.7f)
+			mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.1f)
+			mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
 			trigger=utils.custom.triggers.genericMessage("deployTowerSelected") {
 				message.towerType = "${key}".toString()
 			}

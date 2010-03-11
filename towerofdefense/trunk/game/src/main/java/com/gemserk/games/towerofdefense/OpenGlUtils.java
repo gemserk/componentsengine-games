@@ -9,7 +9,9 @@ public class OpenGlUtils {
 
 	/**
 	 * Renders a rectangle of width and height centered on position rotated by angle
-	 * @param position the center of the rectangle
+	 * 
+	 * @param position
+	 *            the center of the rectangle
 	 * @param width
 	 * @param height
 	 * @param angle
