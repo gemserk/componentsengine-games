@@ -1,11 +1,11 @@
 package towerofdefense.entities;
 
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures 
-import com.gemserk.games.towerofdefense.components.AngleUtils;
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
+import com.gemserk.componentsengine.commons.components.DisablerComponent 
 import com.gemserk.componentsengine.messages.UpdateMessage 
-import com.gemserk.games.towerofdefense.components.WeaponComponent;
+import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
+import com.gemserk.games.towerofdefense.commoncomponents.WeaponComponent 
+import com.gemserk.games.towerofdefense.utils.AngleUtils 
+
 
 builder.entity("tower-${Math.random()}") {
 	

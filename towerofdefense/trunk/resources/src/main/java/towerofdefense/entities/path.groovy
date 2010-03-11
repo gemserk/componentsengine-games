@@ -1,6 +1,7 @@
 package towerofdefense.entities;
 
-import com.gemserk.games.towerofdefense.PathRendererComponent 
+import com.gemserk.games.towerofdefense.commoncomponents.render.PathRendererComponent 
+
 
 builder.entity {
 	

@@ -1,9 +1,8 @@
 package towerofdefense.components
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.messages.GenericMessage;
-import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
-import com.google.inject.Inject 
+import com.google.inject.Inject;
 
 
 class CritterHitHandler extends ReflectionComponent{

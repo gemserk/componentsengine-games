@@ -1,15 +1,13 @@
 package towerofdefense.entities;
-import org.newdawn.slick.geom.Vector2f;
 
-
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Line;
-
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
-import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
-import com.gemserk.games.towerofdefense.GenericHitComponent;
+import com.gemserk.componentsengine.commons.components.DisablerComponent 
+import com.gemserk.componentsengine.messages.SlickRenderMessage 
+import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
+import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
+import org.newdawn.slick.Graphics 
+import org.newdawn.slick.geom.Line 
+import org.newdawn.slick.geom.Vector2f 
 
 
 builder.entity() {

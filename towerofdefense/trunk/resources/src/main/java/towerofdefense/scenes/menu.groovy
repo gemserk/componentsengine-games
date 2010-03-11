@@ -1,8 +1,8 @@
 package towerofdefense.scenes;
-import com.gemserk.games.towerofdefense.GemserkGameState;
+
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
+import com.gemserk.componentsengine.entities.Entity 
 import org.newdawn.slick.GameContainer 
-import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
 import org.newdawn.slick.state.transition.FadeOutTransition 

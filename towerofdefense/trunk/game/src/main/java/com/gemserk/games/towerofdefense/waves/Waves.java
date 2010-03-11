@@ -2,7 +2,7 @@ package com.gemserk.games.towerofdefense.waves;
 
 import java.util.*;
 
-import com.gemserk.games.towerofdefense.InstantiationTemplate;
+import com.gemserk.games.towerofdefense.instantiationTemplates.InstantiationTemplate;
 
 public class Waves {
 

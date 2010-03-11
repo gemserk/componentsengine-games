@@ -1,7 +1,6 @@
 package towerofdefense.components
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
-import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics 

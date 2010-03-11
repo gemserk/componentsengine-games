@@ -5,7 +5,7 @@ package com.gemserk.games.towerofdefense.waves;
 
 import java.util.List;
 
-import com.gemserk.games.towerofdefense.InstantiationTemplate;
+import com.gemserk.games.towerofdefense.instantiationTemplates.InstantiationTemplate;
 
 public class CompositeWave implements Wave{
 

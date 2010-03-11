@@ -20,7 +20,7 @@ import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.games.towerofdefense.Path;
+import com.gemserk.games.towerofdefense.commoncomponents.Path;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 

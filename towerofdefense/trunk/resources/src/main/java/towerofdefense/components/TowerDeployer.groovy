@@ -1,11 +1,13 @@
 package towerofdefense.components
-
-import com.gemserk.componentsengine.components.ReflectionComponent 
-import com.gemserk.componentsengine.entities.Entity 
-import com.gemserk.componentsengine.messages.*;
-import com.google.inject.Inject 
-import org.newdawn.slick.Input 
+import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Vector2f 
+
+import com.gemserk.componentsengine.components.ReflectionComponent;
+import com.gemserk.componentsengine.entities.Entity 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.messages.GenericMessage;
+import com.gemserk.componentsengine.messages.MessageQueue;
+import com.google.inject.Inject;
 
 class TowerDeployer extends ReflectionComponent{
 	
@@ -32,3 +34,4 @@ class TowerDeployer extends ReflectionComponent{
 	}
 	
 }
+ 

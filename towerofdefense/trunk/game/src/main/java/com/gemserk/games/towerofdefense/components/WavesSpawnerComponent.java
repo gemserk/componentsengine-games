@@ -10,7 +10,7 @@ import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.*;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.games.towerofdefense.InstantiationTemplate;
+import com.gemserk.games.towerofdefense.instantiationTemplates.InstantiationTemplate;
 import com.gemserk.games.towerofdefense.waves.Waves;
 import com.google.inject.Inject;
 

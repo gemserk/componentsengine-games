@@ -1,8 +1,8 @@
 package towerofdefense.entities;
 
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
-import com.gemserk.games.towerofdefense.LabelComponent;
-import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
+import com.gemserk.games.towerofdefense.commoncomponents.render.RectangleRendererComponent 
+import com.gemserk.games.towerofdefense.gui.LabelComponent 
+
 
 builder.entity {
 	

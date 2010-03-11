@@ -1,11 +1,10 @@
 package towerofdefense
 
 import com.gemserk.componentsengine.entities.Entity 
-import com.gemserk.componentsengine.messages.GenericMessage;
-import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.messages.Message 
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertiesHolder;
-import com.google.inject.internal.Strings;
+import com.google.inject.internal.Strings 
+
 
 class GroovyBootstrapper {
 	

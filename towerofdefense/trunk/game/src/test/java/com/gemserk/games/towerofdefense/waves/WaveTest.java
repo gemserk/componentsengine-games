@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.gemserk.games.towerofdefense.InstantiationTemplate;
+import com.gemserk.games.towerofdefense.instantiationTemplates.InstantiationTemplate;
 
 @RunWith(JMock.class)
 public class WaveTest {

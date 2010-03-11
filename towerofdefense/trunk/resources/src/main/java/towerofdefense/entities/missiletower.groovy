@@ -1,6 +1,7 @@
 package towerofdefense.entities;
 
-import com.gemserk.games.towerofdefense.components.WeaponComponent;
+import com.gemserk.games.towerofdefense.commoncomponents.WeaponComponent 
+
 
 builder.entity("tower-${Math.random()}") {
 	

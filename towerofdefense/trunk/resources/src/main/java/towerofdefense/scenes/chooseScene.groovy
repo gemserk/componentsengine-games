@@ -1,10 +1,11 @@
 package towerofdefense.scenes;
 
-import com.gemserk.games.towerofdefense.GemserkGameState;
+import com.gemserk.games.towerofdefense.gamestates.GemserkGameState 
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
 import org.newdawn.slick.state.transition.FadeOutTransition 
 import towerofdefense.GroovyBootstrapper 
+
 
 builder.entity("sceneselection") {
 	
@@ -52,7 +53,7 @@ builder.entity("sceneselection") {
 		GemserkGameState inGameState = stateBasedGame.getState(1)
 		inGameState.loadScene(message.scene)
 		stateBasedGame.gameProperties.inGame=true
-		stateBasedGame.enterState(inGameState.id, new FadeOutTransition(), new FadeInTransition())
+		stateBasedGame.enterState(inGameState.getID(), new FadeOutTransition(), new FadeInTransition())
 	}
 	
 	genericComponent(id:"resumeHandler", messageId:"resume"){ message ->

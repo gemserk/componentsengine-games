@@ -1,9 +1,9 @@
 package towerofdefense.entities;
 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
-import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
+import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
 import org.newdawn.slick.Graphics 
+
 
 builder.entity {
 	parent("towerofdefense.entities.button",parameters)

@@ -1,8 +1,10 @@
 package towerofdefense.entities;
 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
-import com.gemserk.games.towerofdefense.HitComponent;
-import com.gemserk.games.towerofdefense.LabelComponent;
+import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
+import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
+import com.gemserk.games.towerofdefense.gui.LabelComponent 
+
 
 builder.entity {
 	
@@ -19,10 +21,9 @@ builder.entity {
 		propertyRef("radius", "radius")
 	}
 	
-	component(new HitComponent("remover")) {
+	component(new GenericHitComponent("remover")) {
 		property("targetTag", "critter")
-		propertyRef("position", "position")
-		propertyRef("radius", "radius")
+		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
 		property("trigger", utils.custom.triggers.genericMessage("hit") { source = message.source  })
 	}
 

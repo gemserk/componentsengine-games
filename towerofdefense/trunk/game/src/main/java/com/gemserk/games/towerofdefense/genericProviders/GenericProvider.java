@@ -1,0 +1,10 @@
+package com.gemserk.games.towerofdefense.genericProviders;
+
+public interface GenericProvider {
+
+	<T> T get();
+
+	<T> T get(Object ...objects);
+
+
+}

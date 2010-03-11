@@ -1,22 +1,26 @@
 package towerofdefense.scenes;
+import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
+import com.gemserk.games.towerofdefense.commoncomponents.OutOfBoundsRemover;
+import com.gemserk.games.towerofdefense.commoncomponents.TimerComponent 
+import com.gemserk.games.towerofdefense.commoncomponents.render.PathRendererComponent 
+import com.gemserk.games.towerofdefense.commoncomponents.render.RectangleRendererComponent 
 
 
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
 import towerofdefense.components.GridRenderer;
-import com.gemserk.games.towerofdefense.PathRendererComponent;
+import towerofdefense.components.TowerDeployer 
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import towerofdefense.GroovyBootstrapper;
-import towerofdefense.components.TowerDeployer;
 import com.gemserk.componentsengine.commons.components.*;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.games.towerofdefense.*;
 import com.gemserk.games.towerofdefense.components.*;
-import com.gemserk.games.towerofdefense.components.render.RectangleRendererComponent;
-import com.gemserk.games.towerofdefense.components.TimerComponent;
+import com.gemserk.games.towerofdefense.gui.LabelComponent;
+import com.gemserk.games.towerofdefense.timers.CountDownTimer;
 import com.gemserk.games.towerofdefense.timers.PeriodicTimer;
 import com.gemserk.games.towerofdefense.waves.Waves;
 

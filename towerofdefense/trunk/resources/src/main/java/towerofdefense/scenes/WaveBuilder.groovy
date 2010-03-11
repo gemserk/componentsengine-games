@@ -5,7 +5,6 @@ import groovy.lang.Closure;
 import java.util.List;
 import java.util.Map;
 
-
 import com.gemserk.games.towerofdefense.waves.CompositeWave 
 import com.gemserk.games.towerofdefense.waves.SimpleWave 
 import com.gemserk.games.towerofdefense.waves.Wave;

@@ -1,24 +1,17 @@
 package towerofdefense.entities;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
 
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
-
-import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.messages.SlickRenderMessage 
+import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
-
-
-
-
-
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures;
-import com.gemserk.games.towerofdefense.CountDownTimer;
-import com.gemserk.games.towerofdefense.GenericHitComponent 
-import com.gemserk.games.towerofdefense.components.AngleUtils;
-import com.gemserk.games.towerofdefense.components.TimerComponent;
-import com.google.common.base.Predicates;
-
+import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
+import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
+import com.gemserk.games.towerofdefense.commoncomponents.TimerComponent 
+import com.gemserk.games.towerofdefense.timers.CountDownTimer 
+import com.gemserk.games.towerofdefense.utils.AngleUtils 
+import com.google.common.base.Predicates 
+import org.newdawn.slick.Color 
+import org.newdawn.slick.Graphics 
 import org.newdawn.slick.geom.Line 
 import org.newdawn.slick.geom.Vector2f 
 

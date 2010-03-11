@@ -1,8 +1,7 @@
 package towerofdefense.scenes;
 import com.gemserk.componentsengine.builders.BuilderUtils;
+import com.gemserk.games.towerofdefense.instantiationTemplates.InstantiationTemplateImpl 
 
-import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
-import com.gemserk.games.towerofdefense.InstantiationTemplateImpl;
 
 
 

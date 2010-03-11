@@ -1,7 +1,8 @@
 package towerofdefense.entities;
 
-import com.gemserk.games.towerofdefense.components.WavesSpawnerComponent;
-import com.gemserk.games.towerofdefense.waves.Waves;
+import com.gemserk.games.towerofdefense.components.WavesSpawnerComponent 
+import com.gemserk.games.towerofdefense.waves.Waves 
+
 
 builder.entity {
 	

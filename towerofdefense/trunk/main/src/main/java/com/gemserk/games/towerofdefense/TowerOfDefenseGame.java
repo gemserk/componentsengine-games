@@ -12,6 +12,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.games.towerofdefense.gamestates.GemserkGameState;
+
 public class TowerOfDefenseGame extends StateBasedGame {
 
 	Map<String,Object> gameProperties = new HashMap<String, Object>();
@@ -52,12 +54,32 @@ public class TowerOfDefenseGame extends StateBasedGame {
 		//if(container instanceof AppletGameContainer.Container){
 			container.setVSync(true);
 		//}
-		GemserkGameState menuState = new GemserkGameState(0,"towerofdefense.scenes.menu");
+		GemserkGameState menuState = new TowerOfDefenseGameState(0,"towerofdefense.scenes.menu");
 		addState(menuState);
-		GemserkGameState inGameState = new GemserkGameState(1);
+		GemserkGameState inGameState = new TowerOfDefenseGameState(1);
 		addState(inGameState);
-		GemserkGameState sceneSelection = new GemserkGameState(2,"towerofdefense.scenes.chooseScene");
+		GemserkGameState sceneSelection = new TowerOfDefenseGameState(2,"towerofdefense.scenes.chooseScene");
 		addState(sceneSelection);
+	}
+	
+	class TowerOfDefenseGameState extends GemserkGameState {
+
+		@Override
+		public void onInit() {
+			super.onInit();
+			images(injector, "assets/images.properties");
+		}
+		
+		
+		public TowerOfDefenseGameState(int id) {
+			super(id);
+		}
+		
+		public TowerOfDefenseGameState(int id, String defaultScene) {
+			super(id,defaultScene);
+		}
+		
+		
 	}
 
 }

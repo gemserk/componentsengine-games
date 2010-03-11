@@ -3,19 +3,13 @@ package towerofdefense.scenes
 import groovy.lang.Closure;
 import groovy.util.Expando;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.management.RuntimeErrorException 
-import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.geom.Vector2f 
+
 import com.gemserk.componentsengine.builders.BuilderUtils;
-import com.gemserk.games.towerofdefense.ChainedValueFromClosure;
-import com.gemserk.games.towerofdefense.Path 
-import com.gemserk.games.towerofdefense.waves.CompositeWave;
-import com.gemserk.games.towerofdefense.waves.SimpleWave;
-import com.gemserk.games.towerofdefense.waves.Wave;
+import com.gemserk.games.towerofdefense.commoncomponents.Path 
+import com.gemserk.games.towerofdefense.genericProviders.ChainedValueFromClosure 
 
 public class TowerOfDefenseSceneBuilder {
 	

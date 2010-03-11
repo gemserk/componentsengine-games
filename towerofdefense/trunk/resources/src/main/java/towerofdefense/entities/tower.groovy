@@ -1,14 +1,12 @@
 package towerofdefense.entities;
 
-
-import com.gemserk.games.towerofdefense.components.SelectTargetWithinRangeComponent;
-
-import com.gemserk.games.towerofdefense.components.FaceTargetComponent;
-
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
-
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
+import com.gemserk.componentsengine.commons.components.DisablerComponent 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
+import com.gemserk.games.towerofdefense.commoncomponents.FaceTargetComponent 
+import com.gemserk.games.towerofdefense.commoncomponents.SelectTargetWithinRangeComponent 
+
+
 
 builder.entity {
 	

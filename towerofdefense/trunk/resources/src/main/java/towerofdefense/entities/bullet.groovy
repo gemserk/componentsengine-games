@@ -1,21 +1,10 @@
 package towerofdefense.entities;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics 
-import org.newdawn.slick.geom.Line 
-import org.newdawn.slick.geom.Vector2f 
 
-import com.gemserk.games.towerofdefense.ComponentFromListOfClosures 
-import com.gemserk.games.towerofdefense.GenericHitComponent;
-
-
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
-
-
-import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
-
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
-import com.gemserk.componentsengine.messages.SlickRenderMessage 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
+import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
 
 builder.entity("bullet-${Math.random()}") {
 	
