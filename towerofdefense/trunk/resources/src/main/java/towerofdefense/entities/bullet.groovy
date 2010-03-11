@@ -41,37 +41,8 @@ builder.entity("bullet-${Math.random()}") {
 		})
 	}
 	
-	genericComponent(id:"hithandler", messageId:"hit"){ message ->
+	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		if (message.getProperty("source").get() == entity)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
-	}
-	
-	
-//	component(new ComponentFromListOfClosures("debug",[ {SlickRenderMessage message ->
-//		
-//		def debugVectors = [[vector:entity.direction.copy().scale(50f), color:Color.white]]
-//		
-//		
-//		Graphics g = message.graphics
-//		Vector2f start = entity.position.copy()
-//		
-//		debugVectors.each { vectorContainer ->
-//			
-//			def vector = vectorContainer.vector
-//			def color = vectorContainer.color ?: Color.white
-//			
-//			Vector2f segment = vector.copy()
-//			
-//			Line line = new Line(start.x,start.y,segment.x,segment.y,true)
-//			def origColor = g.getColor()
-//			g.setColor(color)
-//			g.draw(line)
-//			g.setColor(origColor)
-//		}
-//		
-//	}
-//	
-//	]))
-//	
-	
+	})
 }

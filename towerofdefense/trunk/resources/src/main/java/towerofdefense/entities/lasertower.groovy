@@ -39,24 +39,24 @@ builder.entity("lasertower-${Math.random()}") {
 		propertyRef("timer","canFireTimer")
 	}
 	
-	genericComponent(id:"enableFireHandler", messageId:"enableFire"){ message ->
+	component(utils.components.genericComponent(id:"enableFireHandler", messageId:"enableFire"){ message ->
 		if(message.source != entity)
 			return
 		
 		entity.canFire = true
-	}
+	})
 	
 	component(new TimerComponent("fireDurationTimerComponent")){
 		property("trigger",utils.custom.triggers.genericMessage("fireStop") {message.source = entity })
 		propertyRef("timer","fireDurationTimer")
 	}
 	
-	genericComponent(id:"fireStopHandler", messageId:"fireStop"){ message ->
+	component(utils.components.genericComponent(id:"fireStopHandler", messageId:"fireStop"){ message ->
 		if(message.source != entity)
 			return
 		
 		entity.children[(bulletId)].enabled = false
-	}
+	})
 	
 	child(template:"towerofdefense.entities.laserbullet", id:bulletId)	{
 		damage = parameters.damage

@@ -48,18 +48,18 @@ builder.entity("sceneselection") {
 		}
 	}
 	
-	genericComponent(id:"loadSceneHandler", messageId:"loadScene"){ message ->
+	component(utils.components.genericComponent(id:"loadSceneHandler", messageId:"loadScene"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
 		GemserkGameState inGameState = stateBasedGame.getState(1)
 		inGameState.loadScene(message.scene)
 		stateBasedGame.gameProperties.inGame=true
 		stateBasedGame.enterState(inGameState.getID(), new FadeOutTransition(), new FadeInTransition())
-	}
+	})
 	
-	genericComponent(id:"resumeHandler", messageId:"resume"){ message ->
+	component(utils.components.genericComponent(id:"resumeHandler", messageId:"resume"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
 		stateBasedGame.enterState(0, new FadeOutTransition(), new FadeInTransition())
-	}
+	})
 	
 	
 	input("inputmapping"){

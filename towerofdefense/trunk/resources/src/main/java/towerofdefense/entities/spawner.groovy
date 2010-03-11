@@ -16,10 +16,10 @@ builder.entity {
 		property("entity", {entity.parent})
 	}
 	
-	genericComponent(id:"nextWaveHandler", messageId:"nextWave"){ message ->	
+	component(utils.components.genericComponent(id:"nextWaveHandler", messageId:"nextWave"){ message ->	
 		Waves waves = entity."creator.waves"
 		if(!waves.isLastWaveStarted())
 			waves.nextWave()	
-	}
+	})
 	
 }

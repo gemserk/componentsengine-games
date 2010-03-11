@@ -73,15 +73,15 @@ builder.entity("critter-${Math.random()}") {
 	
 	component(new CritterHitHandler("hithandler"))
 	
-	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
+	component(utils.components.genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		if(message.critter == entity)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
-	}
+	})
 	
-	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
+	component(utils.components.genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
 		if(message.critter == entity)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
-	}
+	})
 	
 }
 

@@ -33,7 +33,7 @@ builder.entity {
 		property("value", {entity.parent.lives})
 	}
 
-	genericComponent(id:"hithandler", messageId:"hit"){ message ->
+	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def sourceEntity = message.source
 		
 		if (entity != sourceEntity)
@@ -44,6 +44,6 @@ builder.entity {
 				deadMessage.critter = critter
 			})
 		}
-	}
+	})
 	
 }

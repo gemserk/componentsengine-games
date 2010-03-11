@@ -54,7 +54,7 @@ builder.entity("menu") {
 	}
 	//	property("resumeSound", utils.resources.sounds.sound("assets/sounds/button.wav"))
 	
-	genericComponent(id:"playOrResumeHandler", messageId:"playOrResume"){ message ->
+	component(utils.components.genericComponent(id:"playOrResumeHandler", messageId:"playOrResume"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
 	
 		stateBasedGame.enterState(entity.playing ? 1 : 2, new FadeOutTransition(), new FadeInTransition())
@@ -62,9 +62,9 @@ builder.entity("menu") {
 			entity.playingNextValue = true
 		}
 		//		entity.resumeSound.play()
-	}
+	})
 	
-	genericComponent(id:"exitOrEndSceneHandler", messageId:"exitOrEndScene"){ message ->
+	component(utils.components.genericComponent(id:"exitOrEndSceneHandler", messageId:"exitOrEndScene"){ message ->
 		if(entity.playing){
 			entity.playingNextValue = false;
 			StateBasedGame stateBasedGame = utils.custom.gameStateManager
@@ -73,27 +73,26 @@ builder.entity("menu") {
 			GameContainer gameContainer = utils.custom.gameContainer;
 			gameContainer.exit();
 		}
-	}
+	})
 	
-	genericComponent(id:"leaveStateHandler", messageId:"leaveState"){ message ->
+	component(utils.components.genericComponent(id:"leaveStateHandler", messageId:"leaveState"){ message ->
 		utils.custom.gameStateManager.gameProperties.inGame=entity.playingNextValue
-	}
+	})
 	
-	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
+	component(utils.components.genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
-	}   
+	})
 	
-	
-	genericComponent(id:"testSceneHandler", messageId:"goToTestScene"){ message ->
+	component(utils.components.genericComponent(id:"testSceneHandler", messageId:"goToTestScene"){ message ->
 		def game = utils.custom.game
 		game.loadScene("towerofdefense.scenes.testScene")
-	}
+	})
 	
-	genericComponent(id:"goToSelectionSceneHandler", messageId:"goToSelectionScene"){ message ->
+	component(utils.components.genericComponent(id:"goToSelectionSceneHandler", messageId:"goToSelectionScene"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
 		stateBasedGame.enterState(2, new FadeOutTransition(), new FadeInTransition())
 		
-	}
+	})
 	
 	input("inputmapping"){
 		keyboard {

@@ -23,7 +23,7 @@ builder.entity {
 	
 	property("trigger", parameters.trigger)
 	
-	genericComponent(id:"mouseOverHandler", messageId:"move"){ message ->
+	component(utils.components.genericComponent(id:"mouseOverHandler", messageId:"move"){ message ->
 		def x = (float)(message.x - entity.position.x)
 		def y = (float)(message.y - entity.position.y)
 		
@@ -35,9 +35,9 @@ builder.entity {
 			entity.fillColor = entity.mouseNotOverFillColor
 			entity.mouseOver = false
 		}
-	}
+	})
 	
-	genericComponent(id:"mouseClickHandler", messageId:"click"){ message ->
+	component(utils.components.genericComponent(id:"mouseClickHandler", messageId:"click"){ message ->
 		if (!entity.enabled)
 			return
 		
@@ -45,7 +45,7 @@ builder.entity {
 			return
 		
 		entity.trigger.trigger([:])
-	}
+	})
 	
 	component(new RectangleRendererComponent("background")) {
 		propertyRef("position", "position")

@@ -113,12 +113,12 @@ builder.entity("missilebullet-${Math.random()}") {
 		})
 	}
 	
-	genericComponent(id:"critterdeadHandler", messageId:["critterdead","critterReachBase"]){ message ->
+	component(utils.components.genericComponent(id:"critterdeadHandler", messageId:["critterdead","critterReachBase"]){ message ->
 		if(message.critter == entity.targetEntity){
 			entity.timeoutTimer.reset()
 			entity.targetEntity = null
 		}
-	}
+	})
 	
 	
 	property("timeoutTimer", new CountDownTimer(3000))

@@ -82,14 +82,14 @@ builder.entity("world") {
 		propertyRef("towerCount","towerCount")
 	}
 	
-	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
+	component(utils.components.genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		def reward = message.critter.reward
 		def points = message.critter.points
 		entity.money=(float)(entity.money + reward)
 		entity.points=(int)(entity.points + points)
-	}
+	})
 	
-
+	
 	
 	def labelX = 300;
 	def labelY = 20;
@@ -129,9 +129,9 @@ builder.entity("world") {
 		propertyRef("timer","wavesTimer")
 	}
 	
-	genericComponent(id:"nextWaveMessageHandler", messageId:"nextWave"){ message ->
+	component(utils.components.genericComponent(id:"nextWaveMessageHandler", messageId:"nextWave"){ message ->
 		entity.wavesTimer.reset()
-	}
+	})
 	
 	
 	property("deployTower", "deployState")
@@ -238,14 +238,14 @@ builder.entity("world") {
 	property("endSceneMessage", "")
 	property("endSceneTimer", new CountDownTimer(3000))
 	
-	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
+	component(utils.components.genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
 		if (entity.lives == 0)
 			return
-			
+		
 		entity.lives--;
 		
-	}
-
+	})
+	
 	component(new DisablerComponent(new LabelComponent("endSceneLabel"))) {
 		propertyRef("enabled", "endSceneEnabled")
 		property("font", utils.resources.fonts.font([italic:false, bold:false, size:48]))
@@ -269,25 +269,25 @@ builder.entity("world") {
 		property("trigger", utils.custom.triggers.genericMessage("win") { });
 	}
 	
-	genericComponent(id:"winHandler", messageId:"win"){ message ->
+	component(utils.components.genericComponent(id:"winHandler", messageId:"win"){ message ->
 		utils.custom.gameStateManager.gameProperties.inGame=false
 		messageQueue.enqueue(utils.genericMessage("gotoMenu") {
 			
 		})
-	}
+	})
 	
-	genericComponent(id:"gotoMenuHandler", messageId:"gotoMenu"){ message ->
+	component(utils.components.genericComponent(id:"gotoMenuHandler", messageId:"gotoMenu"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager;
 		stateBasedGame.enterState(0, new FadeOutTransition(), new FadeInTransition());
-	}
+	})
 	
-	genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
+	component(utils.components.genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
-	}                                                                     
+	} )                                                                    
 	
-	genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
+	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
 		utils.custom.game.loadScene(parameters.sceneScript);
-	}
+	})
 	
 	input("inputmapping"){
 		keyboard {
@@ -311,7 +311,7 @@ builder.entity("world") {
 			
 		}
 	}
-
+	
 	component(new ExplosionComponent("explosions")) {
 		
 	}
