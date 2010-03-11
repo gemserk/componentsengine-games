@@ -1,10 +1,10 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
-import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
 
 builder.entity("bullet-${Math.random()}") {
 	

@@ -8,8 +8,8 @@ import javax.management.RuntimeErrorException
 import org.newdawn.slick.geom.Vector2f 
 
 import com.gemserk.componentsengine.builders.BuilderUtils;
-import com.gemserk.games.towerofdefense.commoncomponents.Path 
-import com.gemserk.games.towerofdefense.genericProviders.ChainedValueFromClosure 
+import com.gemserk.componentsengine.commons.components.Path 
+import com.gemserk.componentsengine.genericproviders.ChainedValueFromClosure 
 
 public class TowerOfDefenseSceneBuilder {
 	

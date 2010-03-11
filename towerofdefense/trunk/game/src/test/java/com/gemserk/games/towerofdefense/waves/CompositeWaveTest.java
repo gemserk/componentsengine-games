@@ -17,7 +17,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.gemserk.games.towerofdefense.instantiationTemplates.InstantiationTemplate;
+import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplate;
 
 @RunWith(JMock.class)
 public class CompositeWaveTest {

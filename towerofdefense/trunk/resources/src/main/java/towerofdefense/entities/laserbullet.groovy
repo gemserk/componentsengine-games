@@ -1,10 +1,10 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.commons.components.DisablerComponent 
+import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
-import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
-import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
 import org.newdawn.slick.Graphics 
 import org.newdawn.slick.geom.Line 
 import org.newdawn.slick.geom.Vector2f 

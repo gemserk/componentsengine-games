@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.gemserk.componentsengine.timers.PeriodicTimer;
+
 public class PeriodicTimerTest {
 
 	@Test

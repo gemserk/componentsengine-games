@@ -1,9 +1,9 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
+import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.messages.UpdateMessage 
-import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
-import com.gemserk.games.towerofdefense.commoncomponents.TimerComponent 
-import com.gemserk.games.towerofdefense.timers.CountDownTimer 
+import com.gemserk.componentsengine.timers.CountDownTimer 
 
 
 

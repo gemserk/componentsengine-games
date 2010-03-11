@@ -1,9 +1,9 @@
 package towerofdefense.entities;
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
+import com.gemserk.componentsengine.commons.components.GenericHitComponent 
+import com.gemserk.componentsengine.commons.components.LabelComponent 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
-import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
-import com.gemserk.games.towerofdefense.gui.LabelComponent 
 
 
 builder.entity {

@@ -1,11 +1,11 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.BarRendererComponent 
+import com.gemserk.componentsengine.commons.components.FollowPathComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
+import com.gemserk.componentsengine.commons.components.IncrementValueComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.games.towerofdefense.commoncomponents.FollowPathComponent 
-import com.gemserk.games.towerofdefense.commoncomponents.IncrementValueComponent 
-import com.gemserk.games.towerofdefense.commoncomponents.render.BarRendererComponent 
 import towerofdefense.components.CritterHitHandler 
 
 builder.entity("critter-${Math.random()}") {

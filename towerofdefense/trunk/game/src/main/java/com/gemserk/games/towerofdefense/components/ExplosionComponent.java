@@ -6,12 +6,12 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.opengl.SlickCallable;
 
 import com.gemserk.componentsengine.commons.components.FieldsReflectionComponent;
+import com.gemserk.componentsengine.effects.EffectFactory;
+import com.gemserk.componentsengine.effects.ExplosionEffect;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.messages.*;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.games.towerofdefense.effects.EffectFactory;
-import com.gemserk.games.towerofdefense.effects.ExplosionEffect;
 import com.google.inject.Inject;
 
 public class ExplosionComponent extends FieldsReflectionComponent {

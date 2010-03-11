@@ -1,7 +1,7 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
-import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
 import org.newdawn.slick.Graphics 
 
 

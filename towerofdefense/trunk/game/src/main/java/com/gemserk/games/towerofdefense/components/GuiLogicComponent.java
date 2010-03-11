@@ -10,6 +10,7 @@ import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -20,7 +21,6 @@ import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertyLocator;
-import com.gemserk.games.towerofdefense.commoncomponents.Path;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 

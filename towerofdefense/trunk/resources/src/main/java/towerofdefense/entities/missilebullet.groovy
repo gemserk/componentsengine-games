@@ -1,14 +1,14 @@
 package towerofdefense.entities;
 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
+import com.gemserk.componentsengine.commons.components.GenericHitComponent 
+import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
-import com.gemserk.games.towerofdefense.commoncomponents.ComponentFromListOfClosures 
-import com.gemserk.games.towerofdefense.commoncomponents.GenericHitComponent 
-import com.gemserk.games.towerofdefense.commoncomponents.TimerComponent 
-import com.gemserk.games.towerofdefense.timers.CountDownTimer 
-import com.gemserk.games.towerofdefense.utils.AngleUtils 
+import com.gemserk.componentsengine.timers.CountDownTimer 
+import com.gemserk.componentsengine.utils.AngleUtils 
 import com.google.common.base.Predicates 
 import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics 

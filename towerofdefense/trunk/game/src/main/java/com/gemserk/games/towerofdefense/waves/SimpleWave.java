@@ -1,6 +1,6 @@
 package com.gemserk.games.towerofdefense.waves;
 
-import com.gemserk.games.towerofdefense.instantiationTemplates.InstantiationTemplate;
+import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplate;
 
 public class SimpleWave implements Wave {
 

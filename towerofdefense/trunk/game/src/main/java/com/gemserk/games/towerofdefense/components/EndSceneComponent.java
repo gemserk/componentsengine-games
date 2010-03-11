@@ -7,7 +7,7 @@ import com.gemserk.componentsengine.commons.components.FieldsReflectionComponent
 import com.gemserk.componentsengine.entities.*;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.gemserk.games.towerofdefense.timers.Timer;
+import com.gemserk.componentsengine.timers.Timer;
 import com.gemserk.games.towerofdefense.waves.Waves;
 import com.google.inject.Inject;
 

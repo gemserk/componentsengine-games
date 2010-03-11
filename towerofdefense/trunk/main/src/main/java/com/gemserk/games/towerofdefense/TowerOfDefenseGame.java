@@ -12,7 +12,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gemserk.games.towerofdefense.gamestates.GemserkGameState;
+import com.gemserk.componentsengine.gamestates.GemserkGameState;
 
 public class TowerOfDefenseGame extends StateBasedGame {
 
