@@ -73,11 +73,9 @@ public class PathRendererComponent extends ReflectionComponent {
 		float r = width;
 
 		g.pushTransform();
-		g.setColor(new Color(1.2f, 0.0f, 0.0f, 1f));
 		g.setColor(color);
 		g.translate(p1.x, p1.y);
 		g.fillOval(-r / 2, -r / 2, r, r);
-
 		g.popTransform();
 	}
 }

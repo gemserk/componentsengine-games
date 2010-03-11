@@ -122,7 +122,7 @@ builder.entity("world") {
 	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
 		property("tags", ["bullet"] as String[] );
-		property("bounds", utils.rectangle(0,0, 800, 600));
+		propertyRef("bounds", "gameBoundsToRender");
 	}
 	
 	component(new TimerComponent("wavesTimerComponent")){

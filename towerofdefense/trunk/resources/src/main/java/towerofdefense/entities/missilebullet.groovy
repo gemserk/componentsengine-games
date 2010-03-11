@@ -33,6 +33,9 @@ builder.entity("missilebullet-${Math.random()}") {
 	property("turnRatio",parameters.turnRatio)
 	
 	component(new ComponentFromListOfClosures("steering",[ {UpdateMessage message ->
+		if(entity.targetEntity == null)
+			return;
+		
 		def debugVectors = []
 		
 		
@@ -118,13 +121,17 @@ builder.entity("missilebullet-${Math.random()}") {
 	}
 	
 	genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
-		if(message.critter == entity.targetEntity)
+		if(message.critter == entity.targetEntity){
 			entity.timeoutTimer.reset()
+			entity.targetEntity = null
+		}
 	}
 	
 	genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->
-		if(message.critter == entity.targetEntity)
+		if(message.critter == entity.targetEntity){
 			entity.timeoutTimer.reset()
+			entity.targetEntity = null
+		}
 	}
 	
 	
