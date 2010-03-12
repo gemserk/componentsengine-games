@@ -4,8 +4,8 @@ import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.timers.CountDownTimer;
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.TimerComponent;
-import org.newdawn.slick.Graphics 
-import org.newdawn.slick.geom.Line;
+import com.gemserk.componentsengine.effects.EffectFactory 
+import org.newdawn.slick.opengl.SlickCallable 
 
 builder.entity("tower-${Math.random()}") {
 	
@@ -51,16 +51,6 @@ builder.entity("tower-${Math.random()}") {
 			shockFiredTimer.reset()
 		}
 	}
-	, { SlickRenderMessage message ->
-		if(!entity.canFire)
-			return
-		
-		if(entity.targetEntity == null)
-			return
-		
-		Graphics g = message.graphics
-		g.draw(new Line(entity.position,entity.targetEntity.position))
-	}
 	]))
 	
 	
@@ -74,7 +64,33 @@ builder.entity("tower-${Math.random()}") {
 		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = false})
 	}
 	
-	
+	component(new ComponentFromListOfClosures("lighting", [ { UpdateMessage m ->
+		
+		if (!entity.targetEntity) {
+			entity.lightingBolt = null
+			return;
+		}
+		
+		def start = entity.position
+		def end = entity.targetEntity.position
+		
+		if (!entity.lightingBolt || entity.lightingBolt.isDone())
+			entity.lightingBolt = EffectFactory.lightingBoltEffect(start, end, 4, 20f, 20f, 0.3f, 300, 1.0f)
+		
+		entity.lightingBolt.update(m.delta)
+		
+	}, {SlickRenderMessage m ->
+		
+		if (!entity.lightingBolt)
+			return
+		
+		SlickCallable.enterSafeBlock();
+		
+		entity.lightingBolt.render();
+		
+		SlickCallable.leaveSafeBlock();
+		
+	}]))
 	
 	
 }

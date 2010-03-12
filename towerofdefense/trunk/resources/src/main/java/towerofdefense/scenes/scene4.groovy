@@ -5,7 +5,7 @@ builder.entity("world") {
 	def utils = utils
 	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)
 	
-	def builtParameters = sceneBuilder.scene(money:45f, lives:10){
+	def builtParameters = sceneBuilder.scene(money:70f, lives:10){
 		path(minX=0,minY=30) {
 			
 			def invertpoint = { x, y ->
