@@ -21,6 +21,8 @@ public class TowersDefinitions {
 			return laser()
 			case "missile":
 			return missile()
+			case "shock":
+			return shock()
 			default:
 			return null;
 		}
@@ -42,15 +44,15 @@ public class TowersDefinitions {
 			turnRate:0.2f,
 			instanceParameters: utils.custom.genericprovider.provide{ tower ->
 				[
-						position:tower.position.copy(),
-						// direction:(entity.targetEntity.position.copy().sub(newPosition).normalise()),
-						direction:tower.direction.copy(),
-						image:utils.resources.image("towerofdefense.images.blasterbullet"),
-						damage:10.0f,
-						radius:10.0f,
-						maxVelocity:0.6f,
-						color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
-						]
+				position:tower.position.copy(),
+				// direction:(entity.targetEntity.position.copy().sub(newPosition).normalise()),
+				direction:tower.direction.copy(),
+				image:utils.resources.image("towerofdefense.images.blasterbullet"),
+				damage:10.0f,
+				radius:10.0f,
+				maxVelocity:0.6f,
+				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
+				]
 			}	
 			]
 		})
@@ -112,5 +114,24 @@ public class TowersDefinitions {
 		return [icon:"towerofdefense.images.missiletower_icon", cost:20, instantiationTemplate:missileTower]
 	}
 	
-	
+	def shock(){
+		
+		def laserTower = new InstantiationTemplateImpl(
+		utils.custom.templateProvider.getTemplate("towerofdefense.entities.shocktower"),
+		utils.custom.genericprovider.provide{ position ->
+			[
+			position:position,
+			direction:utils.vector(-1,0),
+			lineColor:utils.color(0.0f, 0.0f, 0.8f,0.5f),
+			fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
+			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
+			radius:90f,
+			reloadTime:1000,
+			fireDuration:300,
+			shockFactor:0.5f/300
+			]
+		})
+		return [icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]
+		
+	}
 }

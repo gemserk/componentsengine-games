@@ -90,7 +90,9 @@ builder.entity("critter-${Math.random()}") {
 	component(new ComponentFromListOfClosures("forwardForce",[
 	                                                          {UpdateMessage message ->
 	                                                          	def direction = entity."movement.velocity".copy().normalise()
-	                                                          	entity."movement.force".add(direction.scale(1))
+	                                                          	def maxVelocity = entity."movement.maxVelocity"
+	                                                          	
+	                                                          	entity."movement.force".add(direction.scale((float)(maxVelocity/1500f)))
 	                                                          }
 	                                                          ]))
 	
