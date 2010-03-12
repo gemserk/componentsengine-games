@@ -2,6 +2,7 @@ package com.gemserk.games.towerofdefense.components;
 
 import java.util.*;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.opengl.SlickCallable;
 
@@ -21,6 +22,10 @@ public class ExplosionComponent extends FieldsReflectionComponent {
 	Entity rootEntity;
 
 	Collection<ExplosionEffect> explosions = new ArrayList<ExplosionEffect>();
+
+	Color startColor = new Color(0.8f, 0f, 0f, 1f);
+
+	Color endColor = new Color(1f, 0.5f, 0.5f, 0f);
 
 	public ExplosionComponent(String id) {
 		super(id);
@@ -62,7 +67,7 @@ public class ExplosionComponent extends FieldsReflectionComponent {
 	protected void handleCritterDeadMessage(GenericMessage message) {
 		Entity critter = Properties.getValue(message, "critter");
 		Vector2f position = Properties.getValue(critter, "position");
-		explosions.add(EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 300, 30f, 60f, 1.0f));
+		explosions.add(EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 300, 10.0f, 30f, 80f, 1.0f));
 	}
 
 	protected void handleHitMessage(GenericMessage message) {
@@ -78,7 +83,7 @@ public class ExplosionComponent extends FieldsReflectionComponent {
 			int count = (int) Math.ceil(damage);
 
 			Vector2f position = Properties.getValue(target, "position");
-			explosions.add(EffectFactory.explosionEffect(count, (int) position.x, (int) position.y, 0f, 360f, 300, 30f, 60f, 1.0f));
+			explosions.add(EffectFactory.explosionEffect(count, (int) position.x, (int) position.y, 0f, 360f, 300, 5.0f, 20f, 30f, 1.0f, startColor, endColor));
 		}
 	}
 
