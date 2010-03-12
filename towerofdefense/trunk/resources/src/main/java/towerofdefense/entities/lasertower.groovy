@@ -13,6 +13,7 @@ builder.entity("lasertower-${Math.random()}") {
 	
 	parameters.towerImage=utils.resources.image("towerofdefense.images.lasertower")
 	parameters.cannonImage=utils.resources.image("towerofdefense.images.lasercannon")
+	parameters.fireAngle = 30.0f;
 	
 	parent("towerofdefense.entities.tower", parameters)
 	
@@ -27,6 +28,9 @@ builder.entity("lasertower-${Math.random()}") {
 	component(new ComponentFromListOfClosures("shooter",[ {UpdateMessage message ->
 		if(!entity.canFire || !entity.targetEntity )
 			return
+			
+		if (!entity.weaponEnabled) 
+			return;
 		
 		entity.children[(bulletId)].enabled = true
 		entity.canFireTimer.reset();

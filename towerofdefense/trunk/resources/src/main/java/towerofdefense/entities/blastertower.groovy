@@ -11,13 +11,11 @@ builder.entity("tower-${Math.random()}") {
 	
 	parameters.towerImage=utils.resources.image("towerofdefense.images.blastertower")
 	parameters.cannonImage=utils.resources.image("towerofdefense.images.blastercannon")
+	parameters.fireAngle = 1.0f;
 	
 	parent("towerofdefense.entities.tower", parameters)
 	
 	tags("blaster")
-	
-	property("weaponEnabled", false)
-	property("weaponAngle", 1.0f)
 	
 	component(new DisablerComponent(new WeaponComponent("shooter"))) {
 		propertyRef("enabled", "weaponEnabled")
@@ -26,28 +24,7 @@ builder.entity("tower-${Math.random()}") {
 		property("instanceParameters", parameters.instanceParameters)
 		propertyRef("position", "position")
 		propertyRef("targetEntity", "targetEntity")
-		property("entity", {entity.parent
-		})
-		property("fireAngle", 30.0f)
+		property("entity", {entity.parent})
 	}
-	
-	component(new ComponentFromListOfClosures("weaponEnabler", [{ UpdateMessage message ->
-		if (entity.targetEntity == null)
-			return
-	
-		def position = entity.position
-		def direction = entity.direction
-		
-		def targetPosition = entity.targetEntity.position
-		
-		def desiredDirection = targetPosition.copy().sub(position)
-		
-		double angleDifference = new AngleUtils().minimumDifference(direction.getTheta(), desiredDirection.getTheta());
-		if (Math.abs(angleDifference) > entity.weaponAngle) {
-			entity.weaponEnabled=false;
-		} else {
-			entity.weaponEnabled=true;
-		}
-	}]))
 	
 }

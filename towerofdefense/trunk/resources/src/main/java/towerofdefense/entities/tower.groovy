@@ -1,12 +1,8 @@
 package towerofdefense.entities;
+import com.gemserk.componentsengine.messages.UpdateMessage 
+import com.gemserk.componentsengine.utils.AngleUtils 
 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
-import com.gemserk.componentsengine.commons.components.DisablerComponent 
-import com.gemserk.componentsengine.commons.components.FaceTargetComponent 
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import com.gemserk.componentsengine.commons.components.SelectTargetWithinRangeComponent 
-
-
+import com.gemserk.componentsengine.commons.components.*;
 
 builder.entity {
 	
@@ -51,6 +47,30 @@ builder.entity {
 		propertyRef("radius", "radius")
 		propertyRef("position", "position")
 	}
+	
+	property("weaponEnabled", false)
+	property("weaponAngle", parameters.fireAngle)
+	
+	component(new ComponentFromListOfClosures("weaponEnabler", [{ UpdateMessage message ->
+		if (entity.targetEntity == null)
+			return
+		
+		def position = entity.position
+		def direction = entity.direction
+		
+		def targetPosition = entity.targetEntity.position
+		
+		def desiredDirection = targetPosition.copy().sub(position)
+		
+		double angleDifference = new AngleUtils().minimumDifference(direction.getTheta(), desiredDirection.getTheta());
+		if (Math.abs(angleDifference) > entity.weaponAngle) {
+			entity.weaponEnabled=false;
+		} else {
+			entity.weaponEnabled=true;
+		}
+	}]))
+	
+	// Render components
 	
 	component(new ImageRenderableComponent("towerRenderer")) {
 		property("image", parameters.towerImage)
