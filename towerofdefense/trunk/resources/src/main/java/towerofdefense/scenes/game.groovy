@@ -57,6 +57,8 @@ builder.entity("world") {
 		propertyRef("path", "path")		
 	}                		
 	
+	
+	
 	child(template:"towerofdefense.entities.base", id:"base")	{
 		position=parameters.path.points[-1]//last point in path
 		direction=utils.vector(-1,0)
@@ -67,8 +69,13 @@ builder.entity("world") {
 	
 	property("waves", new Waves().setWaves(parameters.waves))
 	
+	def spawnerDirection = parameters.path.points[0].copy().sub(parameters.path.points[1]).normalise()
+	def spawnerPos = parameters.path.points[0].copy().sub(spawnerDirection.copy().scale(-20))
+	
 	child(template:"towerofdefense.entities.spawner", id:"spawner")	{
-		position={entity.parent.path.getPoint(0)}
+		position = spawnerPos
+		direction = spawnerDirection
+		//position={entity.parent.path.getPoint(0)}
 		waves={entity.parent.waves}
 		// waves=new Waves().setWaves(parameters.waves)
 	}

@@ -9,6 +9,7 @@ builder.entity {
 	tags("spawner")
 	
 	property("position", parameters.position)
+	property("direction",parameters.direction) //it is used as starting direction for spawned critters
 	
 	component(new WavesSpawnerComponent("creator")){
 		property("waves", parameters.waves)

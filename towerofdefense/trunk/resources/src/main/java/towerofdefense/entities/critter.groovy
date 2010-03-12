@@ -1,6 +1,9 @@
 package towerofdefense.entities;
+import com.gemserk.componentsengine.messages.UpdateMessage;
+
 
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.FollowPathComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.IncrementValueComponent 
@@ -22,6 +25,7 @@ builder.entity("critter-${Math.random()}") {
 	property("speed", (Float)(parameters.speed / 1000f))
 	
 	component(new SuperMovementComponent("movement")){
+		property("velocity",parameters.direction.copy().scale(entity.speed))
 		propertyRef("maxVelocity", "speed")
 		propertyRef("position", "position")
 	}
@@ -82,6 +86,13 @@ builder.entity("critter-${Math.random()}") {
 		if(message.critter == entity)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
+	
+	component(new ComponentFromListOfClosures("forwardForce",[
+	                                                          {UpdateMessage message ->
+	                                                          	def direction = entity."movement.velocity".copy().normalise()
+	                                                          	entity."movement.force".add(direction.scale(1))
+	                                                          }
+	                                                          ]))
 	
 }
 
