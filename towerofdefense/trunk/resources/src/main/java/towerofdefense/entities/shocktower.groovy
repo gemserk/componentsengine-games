@@ -8,6 +8,8 @@ import com.gemserk.componentsengine.commons.components.IncrementValueComponent
 import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.effects.EffectFactory 
+
+import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.SlickCallable 
 
 builder.entity("tower-${Math.random()}") {
@@ -23,6 +25,7 @@ builder.entity("tower-${Math.random()}") {
 	
 	property("reloadTimer",new CountDownTimer(parameters.reloadTime))
 	property("canFire",true)
+	property("fireDuration", parameters.fireDuration)
 	property("shockFiredTimer",new CountDownTimer(parameters.fireDuration))
 	property("shockFactor", parameters.shockFactor)
 	
@@ -56,7 +59,6 @@ builder.entity("tower-${Math.random()}") {
 	}
 	]))
 	
-	
 	component(new TimerComponent("reloadTimerTimerComponent")){
 		propertyRef("timer","reloadTimer")
 		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = true})
@@ -67,29 +69,42 @@ builder.entity("tower-${Math.random()}") {
 		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = false})
 	}
 	
-	component(new ComponentFromListOfClosures("lighting", [ { UpdateMessage m ->
+	component(new ComponentFromListOfClosures("effect", [ { UpdateMessage m ->
 		
 		if (!entity.targetEntity) {
-			entity.lightingBolt = null
-			return;
+			entity.effect = null
+			return
 		}
+		
+		if (entity.effect != null && !entity.effect.isDone() ) {
+			entity.effect.start = entity.position
+			entity.effect.end = entity.targetEntity.position
+			entity.effect.update(m.delta)
+			return
+		}
+
+		def shockFiredTimer = entity.shockFiredTimer
+		if (!shockFiredTimer.isRunning())
+			return
 		
 		def start = entity.position
 		def end = entity.targetEntity.position
 		
-		if (!entity.lightingBolt || entity.lightingBolt.isDone())
-			entity.lightingBolt = EffectFactory.lightingBoltEffect(start, end, 4, 20f, 30f, 0.3f, 300, 1.0f)
+		def beamColor = new Color(1.0f, 1.0f, 0.0f, 0.5f);
+		def beamDuration = entity.fireDuration
 		
-		entity.lightingBolt.update(m.delta)
+		entity.effect = EffectFactory.beamEffect(beamDuration, start, end, 1.0f, 16.0f, beamColor)
+			
+		// entity.effect = EffectFactory.lightingBoltEffect(start, end, 4, 20f, 30f, 0.3f, 300, 1.0f)
 		
 	}, {SlickRenderMessage m ->
 		
-		if (!entity.lightingBolt)
+		if (!entity.effect)
 			return
 		
 		SlickCallable.enterSafeBlock();
 		
-		entity.lightingBolt.render();
+		entity.effect.render();
 		
 		SlickCallable.leaveSafeBlock();
 		

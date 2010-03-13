@@ -126,9 +126,9 @@ public class TowersDefinitions {
 			fillColor:utils.color(1.0f, 1.0f, 0.0f,0.2f),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			radius:50f,
-			reloadTime:1000,
-			fireDuration:300,
-			shockFactor:0.5f/300
+			reloadTime:1500,
+			fireDuration:500,
+			shockFactor:0.5f/500
 			]
 		})
 		return [icon:"towerofdefense.images.shocktower_icon", cost:7, instantiationTemplate:laserTower]
