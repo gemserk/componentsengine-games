@@ -41,7 +41,7 @@ public class TowersDefinitions {
 			color:utils.color(1f, 1f, 1f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:200,
-			turnRate:0.2f,
+			turnRate:0.3f,
 			instanceParameters: utils.custom.genericprovider.provide{ tower ->
 				[
 				position:tower.position.copy(),
@@ -88,8 +88,8 @@ public class TowersDefinitions {
 			direction:utils.vector(1,0),
 			radius:72f,
 			turnRate:(float)(360/14000),
-			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
-			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f),
+			lineColor:utils.color(1.0f, 0.0f, 0.0f,0.5f),
+			fillColor:utils.color(1.0f, 0.0f, 0.0f,0.20f),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			template:"towerofdefense.entities.missilebullet",
 			reloadTime:3500,
@@ -122,16 +122,16 @@ public class TowersDefinitions {
 			[
 			position:position,
 			direction:utils.vector(-1,0),
-			lineColor:utils.color(0.0f, 0.0f, 0.8f,0.5f),
-			fillColor:utils.color(0.0f, 0.0f, 0.8f,0.25f),
+			lineColor:utils.color(1.0f, 1.0f, 0.0f,0.5f),
+			fillColor:utils.color(1.0f, 1.0f, 0.0f,0.2f),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-			radius:90f,
+			radius:50f,
 			reloadTime:1000,
 			fireDuration:300,
 			shockFactor:0.5f/300
 			]
 		})
-		return [icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]
+		return [icon:"towerofdefense.images.shocktower_icon", cost:7, instantiationTemplate:laserTower]
 		
 	}
 }
