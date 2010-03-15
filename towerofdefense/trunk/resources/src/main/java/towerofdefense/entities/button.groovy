@@ -16,7 +16,7 @@ builder.entity {
 	property("mouseOverFillColor", parameters.mouseOverFillColor)
 	property("bounding", parameters.rectangle)
 	
-	property("enabled", true)
+	property("enabled", parameters.enabled ?: true)
 	property("disabledFillColor", utils.color(1.0f, 1.0f, 1.0f, 0.4f))
 	
 	property("mouseOver", false)

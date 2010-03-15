@@ -221,7 +221,7 @@ builder.entity("world") {
 	def commandButtonY = towerButtonsY
 	
 	child(template:"towerofdefense.entities.timerbutton", id:"button-nextWave")	{
-		position=utils.vector(750, 50)
+		position=utils.vector(750, towerButtonsY)
 		rectangle=buttonRectangle
 		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
 		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
@@ -229,6 +229,29 @@ builder.entity("world") {
 		timeLeft={entity.parent.wavesTimer.timeLeft/parameters.wavePeriod}
 		trigger=utils.custom.triggers.genericMessage("nextWave") {
 		}
+	}
+	
+	child(template:"towerofdefense.entities.button", id:"button-upgrade")	{
+		position=utils.vector(450, towerButtonsY)
+		rectangle=buttonRectangle
+		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
+		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
+		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
+		trigger=utils.custom.triggers.closureTrigger {
+			def selectedTower = entity.selectedTower
+			if(selectedTower == null)
+				return
+			
+			if(selectedTower.levels.isEmpty()){
+				println "Cant upgrade tower"
+				return
+			}
+			
+			messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
+				upgrademessage.tower = selectedTower
+			})
+		}
+		enabled={def selectedTower = entity.parent.selectedTower; return selectedTower != null && !selectedTower.levels.isEmpty()}
 	}
 	
 	component(new ComponentFromListOfClosures("cheats",[ {GenericMessage message ->
@@ -299,20 +322,20 @@ builder.entity("world") {
 	})
 	
 	
-	component(utils.components.genericComponent(id:"upgradeGUIHandler", messageId:"upgradeGUI"){ message ->
-		def selectedTower = entity.selectedTower
-		if(selectedTower == null)
-			return
-		
-		if(selectedTower.levels.isEmpty()){
-			println "Cant upgrade tower"
-			return
-		}
-		
-		messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
-			upgrademessage.tower = selectedTower
-		})
-	})
+//	component(utils.components.genericComponent(id:"upgradeGUIHandler", messageId:"upgradeGUI"){ message ->
+//		def selectedTower = entity.selectedTower
+//		if(selectedTower == null)
+//			return
+//		
+//		if(selectedTower.levels.isEmpty()){
+//			println "Cant upgrade tower"
+//			return
+//		}
+//		
+//		messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
+//			upgrademessage.tower = selectedTower
+//		})
+//	})
 	
 	input("inputmapping"){
 		keyboard {
@@ -321,7 +344,7 @@ builder.entity("world") {
 			press(button:"m",eventId:"cheatMoney")
 			press(button:"l",eventId:"cheatLives")
 			press(button:"d",eventId:"dumpDebug")
-			press(button:"u",eventId:"upgradeGUI")
+//			press(button:"u",eventId:"upgradeGUI")
 			
 			press(button:"escape", eventId:"gotoMenu")
 		}
