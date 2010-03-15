@@ -18,6 +18,8 @@ builder.entity {
 	
 	property("selected", false)
 	
+	property("levels",parameters.levels ?: [])
+	
 	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
 		property("lineColor", parameters.lineColor)
 		property("fillColor", parameters.fillColor)
@@ -87,5 +89,19 @@ builder.entity {
 		propertyRef("direction", "direction")
 		property("size",utils.vector(0.85f,0.85f))
 	}
+	
+	
+	component(utils.components.genericComponent(id:"upgrader", messageId:"upgrade"){ message ->
+		def tower = message.tower
+		if(tower != entity)
+			return 
+		
+		def changes = entity.levels.remove(0)
+		println "Upgrading $entity.id - $changes"
+		changes.each { propertyId, value ->
+			entity."$propertyId" = value
+		}
+	})
+	
 	
 }

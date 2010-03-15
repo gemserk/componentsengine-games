@@ -113,12 +113,13 @@ builder.entity("world") {
 		property("value",{entity.points })
 	}
 	
-	
-	component(new LabelComponent("towerCountlabel")){
-		property("position",utils.vector(labelX,labelY + 60))
-		property("message","Towers: {0}")
-		propertyRef("value","towerCount")
-	}	
+	if(utils.custom.gameStateManager.gameProperties.runningFromMain){
+		component(new LabelComponent("towerCountlabel")){
+			property("position",utils.vector(labelX,labelY + 60))
+			property("message","Towers: {0}")
+			propertyRef("value","towerCount")
+		}	
+	}
 	
 	component(new LabelComponent("wavesLabel")){
 		property("position",utils.vector(labelX,labelY + 80))
@@ -143,6 +144,7 @@ builder.entity("world") {
 	
 	property("deployTower", "deployState")
 	
+	property("selectedTower",null)
 	
 	component(new GuiLogicComponent("guiComponent")){
 		propertyRef("mousePosition", "mousePosition")
@@ -150,7 +152,7 @@ builder.entity("world") {
 		propertyRef("deployTowerEnabled", "deployTowerEnabled")
 		propertyRef("path","path")
 		property("distanceToPath",(float)(gridDistance*1.5))
-		
+		propertyRef("selectedTower","selectedTower")
 		propertyRef("towerDescriptions", "towerDescriptions")
 		propertyRef("gameBounds","gameBounds")
 		propertyRef("towerType","towerType")
@@ -296,6 +298,22 @@ builder.entity("world") {
 		utils.custom.game.loadScene(parameters.sceneScript);
 	})
 	
+	
+	component(utils.components.genericComponent(id:"upgradeGUIHandler", messageId:"upgradeGUI"){ message ->
+		def selectedTower = entity.selectedTower
+		if(selectedTower == null)
+			return
+		
+		if(selectedTower.levels.isEmpty()){
+			println "Cant upgrade tower"
+			return
+		}
+		
+		messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
+			upgrademessage.tower = selectedTower
+		})
+	})
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"w", eventId:"nextWave")
@@ -303,6 +321,7 @@ builder.entity("world") {
 			press(button:"m",eventId:"cheatMoney")
 			press(button:"l",eventId:"cheatLives")
 			press(button:"d",eventId:"dumpDebug")
+			press(button:"u",eventId:"upgradeGUI")
 			
 			press(button:"escape", eventId:"gotoMenu")
 		}

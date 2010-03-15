@@ -13,7 +13,12 @@ builder.entity("tower-${Math.random()}") {
 	parameters.cannonImage=utils.resources.image("towerofdefense.images.blastercannon")
 	parameters.fireAngle = 1.0f;
 	
+	parameters.levels = [[radius:75f], [radius:100f]]
+	
+	
+	
 	parent("towerofdefense.entities.tower", parameters)
+	property("damage",parameters.damage)
 	
 	tags("blaster")
 	
