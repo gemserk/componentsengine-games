@@ -20,6 +20,7 @@ import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.Properties;
+import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
@@ -57,9 +58,9 @@ public class GuiLogicComponent extends ReflectionComponent {
 		distanceToPathProperty = Properties.property(id, "distanceToPath");
 		gameBoundsProperty = Properties.property(id, "gameBounds");
 		towerTypeProperty = Properties.property(id, "towerType");
-		
-		moneyProperty = Properties.property(id,"money");
-		towersDescriptionProperty = Properties.property(id,"towerDescriptions");
+
+		moneyProperty = Properties.property(id, "money");
+		towersDescriptionProperty = Properties.property(id, "towerDescriptions");
 		internalState = new SelectTowerState();
 	}
 
@@ -68,8 +69,6 @@ public class GuiLogicComponent extends ReflectionComponent {
 	}
 
 	InternalState internalState;
-
-
 
 	public abstract class InternalState {
 
@@ -127,8 +126,6 @@ public class GuiLogicComponent extends ReflectionComponent {
 
 	public class DeployState extends InternalState {
 
-		
-
 		protected void handleMessage(UpdateMessage message) {
 			Vector2f mousePosition = mousePositionProperty.getValue(entity);
 
@@ -169,9 +166,8 @@ public class GuiLogicComponent extends ReflectionComponent {
 			Path path = pathProperty.getValue(entity);
 			List<Vector2f> points = path.getPoints();
 
-			
-			float distanceToPath = (Float)distanceToPathProperty.getValue(entity);
-			
+			float distanceToPath = (Float) distanceToPathProperty.getValue(entity);
+
 			for (int i = 0; i < points.size(); i++) {
 				Vector2f source = points.get(i).copy();
 
@@ -209,7 +205,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 			String cursorState = deployCursorStateProperty.getValue(entity);
 			if (cursorState.equals("candeploy")) {
 				messageQueue.enqueue(new GenericMessage("deployturret"));
-				
+
 				float money = (Float) moneyProperty.getValue(entity);
 				Map<String, Map<String, Object>> towerDescriptions = towersDescriptionProperty.getValue(entity);
 				String towerType = towerTypeProperty.getValue(entity);
@@ -250,14 +246,16 @@ public class GuiLogicComponent extends ReflectionComponent {
 		}
 
 		protected void handleLeftClick(GenericMessage message) {
-			unselectCurrentTower();
 
 			Vector2f position = mousePositionProperty.getValue(entity);
-			Entity newSelectedTower = getNearestEntity(position, "tower", 25.0f);
+			final Entity newSelectedTower = getNearestEntity(position, "tower", 25.0f);
 
 			if (newSelectedTower != null) {
-				Properties.setValue(newSelectedTower, "selected", true);
-				selectedTowerProperty.setValue(entity, newSelectedTower);
+				messageQueue.enqueue(new GenericMessage("towerSelected", new PropertiesMapBuilder() {
+					{
+						property("tower", newSelectedTower);
+					}
+				}.build()));
 			}
 		}
 
@@ -272,9 +270,11 @@ public class GuiLogicComponent extends ReflectionComponent {
 	}
 
 	private void unselectCurrentTower() {
-		Entity selectedTower = selectedTowerProperty.getValue(entity);
-		if (selectedTower != null)
-			Properties.setValue(selectedTower, "selected", false);
+		messageQueue.enqueue(new GenericMessage("towerSelected", new PropertiesMapBuilder() {
+			{
+				property("tower", null);
+			}
+		}.build()));
 	}
 
 	private Entity getNearestEntity(Vector2f position, String tag, float distance) {

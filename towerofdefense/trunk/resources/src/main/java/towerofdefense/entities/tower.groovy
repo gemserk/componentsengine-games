@@ -16,25 +16,7 @@ builder.entity {
 	
 	property("targetEntity", null)
 	
-	property("selected", false)
-	
 	property("levels",parameters.levels ?: [])
-	
-	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
-		property("lineColor", parameters.lineColor)
-		property("fillColor", parameters.fillColor)
-		propertyRef("position", "position")
-		propertyRef("radius", "radius")
-		propertyRef("enabled", "selected")
-	}
-	
-	component(new DisablerComponent(new ImageRenderableComponent("selectedAuraRenderer"))){
-		property("image", utils.resources.image("towerofdefense.images.blasterbullet"))
-		property("color", utils.color(1f, 1f, 1f, 1.0f))
-		property("direction", utils.vector(1f,0f))
-		propertyRef("position", "position")
-		propertyRef("enabled", "selected")
-	}
 	
 	component(new FaceTargetComponent("faceTarget")){
 		propertyRef("position", "position")
@@ -50,8 +32,10 @@ builder.entity {
 		propertyRef("position", "position")
 	}
 	
-	property("weaponEnabled", false)
+	property("weaponEnabled", {entity.weaponInAngle && !entity.upgrading})
+	property("weaponInAngle",false)
 	property("weaponAngle", parameters.fireAngle)
+	property("upgrading",false)
 	
 	component(new ComponentFromListOfClosures("weaponEnabler", [{ UpdateMessage message ->
 		if (entity.targetEntity == null)
@@ -66,9 +50,9 @@ builder.entity {
 		
 		double angleDifference = new AngleUtils().minimumDifference(direction.getTheta(), desiredDirection.getTheta());
 		if (Math.abs(angleDifference) > entity.weaponAngle) {
-			entity.weaponEnabled=false;
+			entity.weaponInAngle=false;
 		} else {
-			entity.weaponEnabled=true;
+			entity.weaponInAngle=true;
 		}
 	}]))
 	

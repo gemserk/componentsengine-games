@@ -8,6 +8,8 @@ import towerofdefense.components.TowerDeployer
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
+
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.timers.CountDownTimer 
 import com.gemserk.componentsengine.timers.PeriodicTimer 
@@ -76,7 +78,7 @@ builder.entity("world") {
 		position = spawnerPos
 		direction = spawnerDirection
 		//position={entity.parent.path.getPoint(0)}
-		waves={entity.parent.waves}
+		waves={entity.parent.waves }
 		// waves=new Waves().setWaves(parameters.waves)
 	}
 	
@@ -85,7 +87,9 @@ builder.entity("world") {
 	property("towerType","blaster")
 	
 	component(new TowerDeployer("towerdeployer")){
-		property("instantiationTemplate",{entity.towerDescriptions[(entity.towerType)].instantiationTemplate})
+		property("instantiationTemplate",{
+			entity.towerDescriptions[(entity.towerType)].instantiationTemplate
+		})
 		propertyRef("towerCount","towerCount")
 	}
 	
@@ -123,7 +127,7 @@ builder.entity("world") {
 	
 	component(new LabelComponent("wavesLabel")){
 		property("position",utils.vector(labelX,labelY + 80))
-		property("message", {"Waves: ${entity.waves.current}/${entity.waves.total}".toString()})
+		property("message", {"Waves: ${entity.waves.current}/${entity.waves.total}".toString() })
 	}		
 	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
@@ -170,7 +174,9 @@ builder.entity("world") {
 	
 	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
 		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
-		property("radius", {entity.towers[(entity.towerType)].radius})
+		property("radius", {
+			entity.towers[(entity.towerType)].radius
+		})
 		property("fillColor", {
 			mapeo[(entity.deployCursorState)]
 		})
@@ -226,33 +232,14 @@ builder.entity("world") {
 		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
 		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
 		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
-		timeLeft={entity.parent.wavesTimer.timeLeft/parameters.wavePeriod}
+		timeLeft={
+			entity.parent.wavesTimer.timeLeft/parameters.wavePeriod
+		}
 		trigger=utils.custom.triggers.genericMessage("nextWave") {
 		}
 	}
 	
-	child(template:"towerofdefense.entities.button", id:"button-upgrade")	{
-		position=utils.vector(450, towerButtonsY)
-		rectangle=buttonRectangle
-		icon=utils.resources.image("towerofdefense.images.nextwave_icon")
-		mouseNotOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.4f)
-		mouseOverFillColor=utils.color(0.0f, 0.0f, 1.0f, 0.7f)
-		trigger=utils.custom.triggers.closureTrigger {
-			def selectedTower = entity.selectedTower
-			if(selectedTower == null)
-				return
-			
-			if(selectedTower.levels.isEmpty()){
-				println "Cant upgrade tower"
-				return
-			}
-			
-			messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
-				upgrademessage.tower = selectedTower
-			})
-		}
-		enabled={def selectedTower = entity.parent.selectedTower; return selectedTower != null && !selectedTower.levels.isEmpty()}
-	}
+	
 	
 	component(new ComponentFromListOfClosures("cheats",[ {GenericMessage message ->
 		switch(message.id){
@@ -298,7 +285,8 @@ builder.entity("world") {
 	
 	component(new TimerComponent("endSceneTimer")) {
 		propertyRef("timer", "endSceneTimer")
-		property("trigger", utils.custom.triggers.genericMessage("win") { });
+		property("trigger", utils.custom.triggers.genericMessage("win") {
+		});
 	}
 	
 	component(utils.components.genericComponent(id:"winHandler", messageId:"win"){ message ->
@@ -322,20 +310,20 @@ builder.entity("world") {
 	})
 	
 	
-//	component(utils.components.genericComponent(id:"upgradeGUIHandler", messageId:"upgradeGUI"){ message ->
-//		def selectedTower = entity.selectedTower
-//		if(selectedTower == null)
-//			return
-//		
-//		if(selectedTower.levels.isEmpty()){
-//			println "Cant upgrade tower"
-//			return
-//		}
-//		
-//		messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
-//			upgrademessage.tower = selectedTower
-//		})
-//	})
+	//	component(utils.components.genericComponent(id:"upgradeGUIHandler", messageId:"upgradeGUI"){ message ->
+	//		def selectedTower = entity.selectedTower
+	//		if(selectedTower == null)
+	//			return
+	//		
+	//		if(selectedTower.levels.isEmpty()){
+	//			println "Cant upgrade tower"
+	//			return
+	//		}
+	//		
+	//		messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
+	//			upgrademessage.tower = selectedTower
+	//		})
+	//	})
 	
 	input("inputmapping"){
 		keyboard {
@@ -344,7 +332,7 @@ builder.entity("world") {
 			press(button:"m",eventId:"cheatMoney")
 			press(button:"l",eventId:"cheatLives")
 			press(button:"d",eventId:"dumpDebug")
-//			press(button:"u",eventId:"upgradeGUI")
+			//			press(button:"u",eventId:"upgradeGUI")
 			
 			press(button:"escape", eventId:"gotoMenu")
 		}
@@ -364,4 +352,100 @@ builder.entity("world") {
 	component(new ExplosionComponent("explosions")) {
 		
 	}
+	
+	
+	
+	
+	
+	def selectedTowerParameters = [
+			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
+			fillColor:utils.color(0.0f, 0.8f, 0.0f,0.25f)
+			]
+	child(entity("selectedTowerEntity"){
+		property("selectedEntity", null)
+		
+		property("position", {entity.selectedEntity.position })
+		property("radius", {entity.selectedEntity.radius })
+		property("enabled", {entity.selectedEntity != null })
+		
+		
+		component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
+			property("lineColor", selectedTowerParameters.lineColor)
+			property("fillColor", selectedTowerParameters.fillColor)
+			propertyRef("position","position")
+			propertyRef("radius","radius")
+			propertyRef("enabled","enabled")
+		}
+		
+		component(new DisablerComponent(new ImageRenderableComponent("selectedAuraRenderer"))){
+			property("image", utils.resources.image("towerofdefense.images.blasterbullet"))
+			property("color", utils.color(1f, 1f, 1f, 1.0f))
+			property("direction", utils.vector(1f,0f))
+			propertyRef("position", "position")
+			propertyRef("enabled", "enabled")
+		}
+		
+		component(utils.components.genericComponent(id:"towerSelectedHandler", messageId:"towerSelected"){ message ->
+			entity.selectedEntity = message.tower
+		})
+	})
+	
+	
+	
+	
+	child(entity("towerControl"){
+		property("selectedEntity", null)
+		
+		
+		
+		
+		component(utils.components.genericComponent(id:"towerSelectedHandler", messageId:"towerSelected"){ message ->
+			def hadSelected = entity.selectedEntity != null
+			entity.selectedEntity = message.tower
+			if(message.tower != null){
+				if(!hadSelected){
+					entity.childrenEntities.each { entityToAdd ->
+						messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entityToAdd,entity))
+					}
+				}
+			} else {
+				if(hadSelected){
+					entity.childrenEntities.each { entityToRemove ->
+						messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entityToRemove))
+					}
+				}
+			}
+			
+		})
+		
+		property("childrenEntities",[entity("button-upgrade"){
+			parent("towerofdefense.entities.button",[
+			position:utils.vector(450, towerButtonsY),
+			rectangle:buttonRectangle,
+			icon:utils.resources.image("towerofdefense.images.nextwave_icon"),
+			mouseNotOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.4f),
+			mouseOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.7f),
+			trigger:utils.custom.triggers.closureTrigger {
+				def selectedTower = entity.selectedEntity
+				if(selectedTower == null)
+					return
+				
+				if(selectedTower.levels.isEmpty()){
+					println "Cant upgrade tower"
+					return
+				}
+				
+				messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
+					upgrademessage.tower = selectedTower
+				})
+			},
+			enabled:{!entity.parent.selectedEntity.levels.isEmpty()}
+			])
+		}
+		])
+		
+		
+	})
+	
+	
 }
