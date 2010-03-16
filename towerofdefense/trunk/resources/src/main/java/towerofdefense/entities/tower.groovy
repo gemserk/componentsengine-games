@@ -1,6 +1,10 @@
 package towerofdefense.entities;
+
+import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage 
+import com.gemserk.componentsengine.timers.CountDownTimer;
 import com.gemserk.componentsengine.utils.AngleUtils 
+import org.newdawn.slick.Graphics 
 
 import com.gemserk.componentsengine.commons.components.*;
 
@@ -75,17 +79,71 @@ builder.entity {
 	}
 	
 	
+	property("upgradeTimer",null)
+	property("upgradeTime",1000)
 	component(utils.components.genericComponent(id:"upgrader", messageId:"upgrade"){ message ->
 		def tower = message.tower
 		if(tower != entity)
 			return 
 		
+		entity.upgrading = true
+		entity.upgradeTimer = new CountDownTimer(entity.upgradeTime)
+		entity.upgradeTimer.reset()
+		
+	})
+	
+	component(new DisablerComponent(new TimerComponent("upgradeDurationTimer"))){
+		property("trigger",utils.custom.triggers.genericMessage("upgradecomplete") {message.tower = entity })
+		propertyRef("timer","upgradeTimer")
+		propertyRef("enabled","upgrading")
+	}
+	
+	
+	def applyLevel = {
 		def changes = entity.levels.remove(0)
 		println "Upgrading $entity.id - $changes"
 		changes.each { propertyId, value ->
 			entity."$propertyId" = value
 		}
+	}
+	
+	component(utils.components.genericComponent(id:"upgradeCompleteHandler", messageId:"upgradecomplete"){ message ->
+		def tower = message.tower
+		if(tower != entity)
+			return 
+		
+		applyLevel()
+		
+		entity.upgrading = false
 	})
 	
 	
+	
+	component(new ComponentFromListOfClosures("background",[ {SlickRenderMessage message -> 
+		if(!entity.upgrading)
+			return 
+		
+		Graphics g = message.graphics
+		
+		def position = entity.position
+		def radius = entity.radius
+		
+		def backupColor = g.color
+		
+		g.pushTransform()
+		
+		g.translate(position.x,position.y)
+		def timeLeftPercent = (entity.upgradeTimer.timeLeft / entity.upgradeTime)
+		def angleLeft =360-  360*timeLeftPercent
+		
+		//g.fillArc(100,100, 100,100,-90,(float)( 90+(float)angleLeft))
+		g.color = utils.color(0.5f,0.5f,0.5f,0.5f)
+		g.fillArc((float)-radius,(float)-radius,(float)2*radius, (float)2*radius,-90,(float)( -90+(float)angleLeft))
+		g.popTransform()
+		g.color = backupColor
+	}
+	]))
+	
+	
+	//applyLevel()
 }

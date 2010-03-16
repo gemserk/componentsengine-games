@@ -426,7 +426,8 @@ builder.entity("world") {
 			mouseNotOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.4f),
 			mouseOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.7f),
 			trigger:utils.custom.triggers.closureTrigger {
-				def selectedTower = entity.selectedEntity
+				def entity = entity
+				def selectedTower = entity.parent.selectedEntity
 				if(selectedTower == null)
 					return
 				
