@@ -16,7 +16,7 @@ builder.entity() {
 	
 	property("position",{entity.parent.position})
 	property("direction",{entity.parent.direction})
-	property("damage", parameters.damage)
+	property("damage", {entity.parent.damage})
 	
 	property("enabled",false)
 	

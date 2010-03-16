@@ -27,7 +27,6 @@ builder.entity("tower-${Math.random()}") {
 	property("canFire",true)
 	property("fireDuration", parameters.fireDuration)
 	property("shockFiredTimer",new CountDownTimer(parameters.fireDuration))
-	property("shockFactor", parameters.shockFactor)
 	
 	component(new ComponentFromListOfClosures("shockWeapon",[ {UpdateMessage message ->
 		if(!entity.canFire)

@@ -35,12 +35,10 @@ public class TowersDefinitions {
 			[
 			position:position,
 			direction:utils.vector(-1,0),
-			radius:50f,
 			color:utils.color(1f, 1f, 1f, 1.0f),
 			template:"towerofdefense.entities.bullet",
 			reloadTime:200,
 			turnRate:0.3f,
-			damage:10f,
 			instanceParameters: utils.custom.genericprovider.provide{ tower ->
 				[
 				position:tower.position.copy(),
@@ -52,8 +50,16 @@ public class TowersDefinitions {
 				maxVelocity:0.6f,
 				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
 				]
-			}	
+			},
+			levels:[[level:1, radius:50f, damage:10f, upgradeCost:5, sellCost:5],
+			[level:2, radius:55f, damage:15f, upgradeCost:10, sellCost:7], 
+			[level:3, radius:60f, damage:20f, upgradeCost:15, sellCost:12],
+			[level:4, radius:65f, damage:25f, upgradeCost:20, sellCost:20],
+			[level:5, radius:75f, damage:30f, upgradeCost:25, sellCost:30],
+			[level:6, radius:80f, damage:35f, upgradeCost:30, sellCost:42],
+			[level:7, radius:150f, damage:350f, sellCost:57]]
 			]
+			
 		})
 		
 		return [icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower]
@@ -67,10 +73,11 @@ public class TowersDefinitions {
 			position:position,
 			direction:utils.vector(-1,0),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-			radius:90f,
 			reloadTime:250,
 			turnRate:0.1f,
-			damage:0.03f
+			levels:[[level:1, radius:90f, damage:0.03f, upgradeCost:7, sellCost:5]
+					]
+					
 			]
 		})
 		return [icon:"towerofdefense.images.lasertower_icon", cost:7, instantiationTemplate:laserTower]
@@ -83,12 +90,10 @@ public class TowersDefinitions {
 			[
 			position:position,
 			direction:utils.vector(1,0),
-			radius:72f,
 			turnRate:(float)(360/14000),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			template:"towerofdefense.entities.missilebullet",
 			reloadTime:3500,
-			damage:150f,
 			instanceParameters: utils.custom.genericprovider.provide{ tower ->
 				def newPosition = tower.position.copy()
 				def newDirection = tower.direction.copy()
@@ -104,7 +109,9 @@ public class TowersDefinitions {
 						turnRatio:0.18f,
 						color:utils.color(1f, 0.1f, 0.1f, 1.0f)
 						]
-			}	
+			},
+			levels:[[level:1, radius:72f, damage:150f, upgradeCost:5, sellCost:5]]
+						
 			]
 		})
 		return [icon:"towerofdefense.images.missiletower_icon", cost:20, instantiationTemplate:missileTower]
@@ -119,10 +126,10 @@ public class TowersDefinitions {
 			position:position,
 			direction:utils.vector(-1,0),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-			radius:50f,
 			reloadTime:1500,
 			fireDuration:500,
-			shockFactor:0.5f/500
+			levels:[[level:1, radius:50f, shockFactor:0.5f/500, upgradeCost:5, sellCost:5]]
+					
 			]
 		})
 		return [icon:"towerofdefense.images.shocktower_icon", cost:7, instantiationTemplate:laserTower]

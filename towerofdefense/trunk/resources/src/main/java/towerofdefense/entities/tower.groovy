@@ -14,8 +14,6 @@ builder.entity {
 	
 	property("position", parameters.position)
 	property("direction", parameters.direction)
-	property("radius", parameters.radius)
-	// property("cost", parameters.cost)
 	property("turnRate", parameters.turnRate)
 	
 	property("targetEntity", null)
@@ -145,5 +143,5 @@ builder.entity {
 	]))
 	
 	
-	//applyLevel()
+	applyLevel()
 }

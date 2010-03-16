@@ -10,7 +10,6 @@ builder.entity("tower-${Math.random()}") {
 	parameters.fireAngle = 360.0f;
 	
 	parent("towerofdefense.entities.tower", parameters)
-	property("damage",parameters.damage)
 	tags("missiletower")
 	
 	component(new DisablerComponent(new WeaponComponent("shooter"))) {

@@ -428,20 +428,37 @@ builder.entity("world") {
 			trigger:utils.custom.triggers.closureTrigger {
 				def entity = entity
 				def selectedTower = entity.parent.selectedEntity
-				if(selectedTower == null)
-					return
 				
-				if(selectedTower.levels.isEmpty()){
-					println "Cant upgrade tower"
-					return
-				}
+				def world = entity.parent.parent
+				world.money = (float)(world.money - selectedTower.upgradeCost)
 				
 				messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
 					upgrademessage.tower = selectedTower
 				})
 			},
-			enabled:{!entity.parent.selectedEntity.levels.isEmpty()}
+			enabled:{
+				def selectedEntity = entity.parent.selectedEntity
+				
+				if(selectedEntity==null)
+					return false
+				
+				def world = entity.parent.parent
+				if(selectedEntity.levels.isEmpty())
+					return false
+				
+				if(selectedEntity.upgradeCost > world.money)
+					return false
+				
+				return true
+			}
 			])
+		},
+		entity("upgradeCostLabel"){
+			component(new LabelComponent("upgradeCostLabelLabel")){
+				property("position",utils.vector(450,towerButtonsY+35))
+				property("message", "\${0,number,integer}".toString())
+				property("value",{entity.parent.selectedEntity.upgradeCost})
+			}	
 		}
 		])
 		
