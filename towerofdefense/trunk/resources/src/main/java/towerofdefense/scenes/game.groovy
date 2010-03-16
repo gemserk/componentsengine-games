@@ -1,7 +1,11 @@
 package towerofdefense.scenes;
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
+import com.gemserk.componentsengine.messages.Message 
+
 
 
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
+import com.gemserk.componentsengine.components.Component 
 
 import towerofdefense.components.GridRenderer;
 import towerofdefense.components.TowerDeployer 
@@ -9,7 +13,6 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.timers.CountDownTimer 
 import com.gemserk.componentsengine.timers.PeriodicTimer 
@@ -394,74 +397,72 @@ builder.entity("world") {
 	
 	
 	child(entity("towerControl"){
+		def towerControl = entity
 		property("selectedEntity", null)
 		
-		
-		
-		
 		component(utils.components.genericComponent(id:"towerSelectedHandler", messageId:"towerSelected"){ message ->
-			def hadSelected = entity.selectedEntity != null
-			entity.selectedEntity = message.tower
-			if(message.tower != null){
-				if(!hadSelected){
-					entity.childrenEntities.each { entityToAdd ->
-						messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entityToAdd,entity))
-					}
-				}
-			} else {
-				if(hadSelected){
-					entity.childrenEntities.each { entityToRemove ->
-						messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entityToRemove))
-					}
-				}
-			}
-			
+			entity.selectedEntity = message.tower		
 		})
 		
-		property("childrenEntities",[entity("button-upgrade"){
-			parent("towerofdefense.entities.button",[
-			position:utils.vector(450, towerButtonsY),
-			rectangle:buttonRectangle,
-			icon:utils.resources.image("towerofdefense.images.upgrade_icon"),
-			mouseNotOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.4f),
-			mouseOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.7f),
-			trigger:utils.custom.triggers.closureTrigger {
-				def entity = entity
-				def selectedTower = entity.parent.selectedEntity
-				
-				def world = entity.parent.parent
-				world.money = (float)(world.money - selectedTower.upgradeCost)
-				
-				messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
-					upgrademessage.tower = selectedTower
+		component(new Component("enabler"){
+					void handleMessage(Message message){
+						if(entity.selectedEntity == null)
+							message.suspendPropagation()
+					}
 				})
-			},
-			enabled:{
-				def selectedEntity = entity.parent.selectedEntity
-				
-				if(selectedEntity==null)
-					return false
-				
-				def world = entity.parent.parent
-				if(selectedEntity.levels.isEmpty())
-					return false
-				
-				if(selectedEntity.upgradeCost > world.money)
-					return false
-				
-				return true
-			}
-			])
-		},
-		entity("upgradeCostLabel"){
-			component(new LabelComponent("upgradeCostLabelLabel")){
-				property("position",utils.vector(450,towerButtonsY+35))
-				property("message", "\${0,number,integer}".toString())
-				property("value",{entity.parent.selectedEntity.upgradeCost})
-			}	
-		}
-		])
 		
+		
+		child(entity("upgradecontrol"){
+						
+			component(new Component("upgradeenabler"){
+				void handleMessage(Message message){
+					if(entity.parent.selectedEntity.levels.isEmpty())
+						message.suspendPropagation()
+				}
+			})
+	
+			child(entity("button-upgrade"){
+				parent("towerofdefense.entities.button",[
+				position:utils.vector(450, towerButtonsY),
+				rectangle:buttonRectangle,
+				icon:utils.resources.image("towerofdefense.images.upgrade_icon"),
+				mouseNotOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.4f),
+				mouseOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.7f),
+				trigger:utils.custom.triggers.closureTrigger {
+					def entity = entity
+					def selectedTower = towerControl.selectedEntity
+					
+					def world = towerControl.parent
+					world.money = (float)(world.money - selectedTower.upgradeCost)
+					
+					messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
+						upgrademessage.tower = selectedTower
+					})
+				},
+				enabled:{
+					def selectedEntity = towerControl.selectedEntity
+					
+					if(selectedEntity==null)
+						return false
+					
+					def world = towerControl.parent
+					
+					if(selectedEntity.upgradeCost > world.money)
+						return false
+					
+					return true
+				}
+				])
+			})
+			
+			child(entity("upgradeCostLabel"){
+				component(new LabelComponent("upgradeCostLabelLabel")){
+					property("position",utils.vector(450,towerButtonsY+35))
+					property("message", "\${0,number,integer}".toString())
+					property("value",{towerControl.selectedEntity?.upgradeCost ?: 0})
+				}	
+			})
+		})
 		
 	})
 	

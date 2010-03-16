@@ -79,7 +79,14 @@ public class TowerOfDefenseGame extends StateBasedGame {
 			super(id,defaultScene);
 		}
 		
-		
+		@Override
+		public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+			int minimumTargetFPS = 30;
+			int maximumDelta = (int) (1000f/minimumTargetFPS);
+			if(delta > maximumDelta)
+				delta = maximumDelta;
+			super.update(container, game, delta);
+		}
 	}
 
 }
