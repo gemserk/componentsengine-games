@@ -444,7 +444,10 @@ builder.entity("world") {
 					
 					if(selectedEntity==null)
 						return false
-					
+
+					if(selectedEntity.upgrading)
+						return false
+
 					def world = towerControl.parent
 					
 					if(selectedEntity.upgradeCost > world.money)
