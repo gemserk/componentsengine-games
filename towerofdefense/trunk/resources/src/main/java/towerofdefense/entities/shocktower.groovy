@@ -1,4 +1,6 @@
 package towerofdefense.entities;
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
+
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.timers.CountDownTimer;
@@ -8,6 +10,7 @@ import com.gemserk.componentsengine.commons.components.IncrementValueComponent
 import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.effects.EffectFactory 
+import com.gemserk.games.towerofdefense.components.SelectTargetsWithinRangeComponent;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.SlickCallable 
@@ -27,27 +30,43 @@ builder.entity("tower-${Math.random()}") {
 	property("canFire", true)
 	property("shockFiredTimer", new CountDownTimer(1000))
 	
+	property("targets", [])
+	
+	component(new SelectTargetsWithinRangeComponent("selectTarget")) {
+		propertyRef("targets", "targets")
+		propertyRef("max", "maxTargets")
+	}
+
 	component(new ComponentFromListOfClosures("shockWeapon",[ {UpdateMessage message ->
 		if(!entity.canFire)
 			return
+
+		if (entity.upgrading) 
+				return;
+
+		def targets = entity.targets
 		
-		def targetEntity = entity.targetEntity
-		if(targetEntity == null)
+		if (targets.isEmpty())
 			return
 		
-		def targetVelocity  = targetEntity."movement.velocity"
-		def targetVelocityLength = targetVelocity.length()
-		def targetMaxVelocity = targetEntity."movement.maxVelocity"
-		def shockFactor = entity.shockFactor
+		def shockCritter = { targetEntity ->
+			
+			def targetVelocity  = targetEntity."movement.velocity"
+			def targetVelocityLength = targetVelocity.length()
+			def targetMaxVelocity = targetEntity."movement.maxVelocity"
+			def shockFactor = entity.shockFactor
+			
+			def velocityReduction = targetVelocityLength*shockFactor*message.delta
+			
+			def newVelocityLenghtCandidate = targetVelocityLength - velocityReduction
+			
+			def newVelocityLength = Math.max(1/1000,newVelocityLenghtCandidate)
+			
+			def newVelocity =targetVelocity.copy().normalise().scale((float)newVelocityLength)
+			targetEntity."movement.velocity"=newVelocity
+		}
 		
-		def velocityReduction = targetVelocityLength*shockFactor*message.delta
-		
-		def newVelocityLenghtCandidate = targetVelocityLength - velocityReduction
-		
-		def newVelocityLength = Math.max(1/1000,newVelocityLenghtCandidate)
-		
-		def newVelocity =targetVelocity.copy().normalise().scale((float)newVelocityLength)
-		targetEntity."movement.velocity"=newVelocity
+		targets.each(shockCritter)
 		
 		def shockFiredTimer = entity.shockFiredTimer
 		if(!shockFiredTimer.isRunning()){
@@ -73,14 +92,18 @@ builder.entity("tower-${Math.random()}") {
 	
 	component(new ComponentFromListOfClosures("effect", [ { UpdateMessage m ->
 		
-		if (!entity.targetEntity) {
+		def targets = entity.targets
+		
+		if (targets.isEmpty()) {
 			entity.effect = null
 			return
 		}
 		
+		def targetEntity = targets[0]
+		
 		if (entity.effect != null && !entity.effect.isDone() ) {
 			entity.effect.start = entity.position
-			entity.effect.end = entity.targetEntity.position
+			entity.effect.end = targetEntity.position
 			entity.effect.update(m.delta)
 			return
 		}
@@ -90,24 +113,28 @@ builder.entity("tower-${Math.random()}") {
 			return
 		
 		def start = entity.position
-		def end = entity.targetEntity.position
+		def end = targetEntity.position
 		
 		def beamColor = new Color(1.0f, 1.0f, 0.0f, 0.5f);
 		def beamDuration = entity.fireDuration
 		
-		entity.effect = EffectFactory.beamEffect(beamDuration, start, end, 1.0f, 16.0f, beamColor)
-		
-		// entity.effect = EffectFactory.lightingBoltEffect(start, end, 4, 20f, 30f, 0.3f, 300, 1.0f)
+		entity.effect = EffectFactory.beamEffect(beamDuration, start, end, 1.0f, 15.0f, beamColor)
 		
 	}, {SlickRenderMessage m ->
-		
+	
+		if (entity.upgrading) 
+			return;
+	
 		if (!entity.effect)
 			return
 		
+		def targets = entity.targets
+		
 		SlickCallable.enterSafeBlock();
-		
-		entity.effect.render();
-		
+		targets.each { targetEntity ->
+			entity.effect.end = targetEntity.position
+			entity.effect.render();
+		}
 		SlickCallable.leaveSafeBlock();
 		
 	}]))
