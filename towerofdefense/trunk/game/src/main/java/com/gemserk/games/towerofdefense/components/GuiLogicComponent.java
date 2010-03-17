@@ -1,27 +1,19 @@
 package com.gemserk.games.towerofdefense.components;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.newdawn.slick.Input;
-import org.newdawn.slick.geom.Line;
-import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.geom.*;
 
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
-import com.gemserk.componentsengine.messages.GenericMessage;
-import com.gemserk.componentsengine.messages.Message;
-import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.messages.*;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
+import com.gemserk.componentsengine.properties.*;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
-import com.gemserk.componentsengine.properties.PropertyLocator;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
@@ -211,6 +203,10 @@ public class GuiLogicComponent extends ReflectionComponent {
 				String towerType = towerTypeProperty.getValue(entity);
 				float cost = (Float) towerDescriptions.get(towerType).get("cost");
 				moneyProperty.setValue(entity, money - cost);
+
+				// change state and select deployed tower.
+				changeToSelectTowerState();
+				// state.handleLeftClick(message);
 			}
 		}
 
@@ -251,22 +247,29 @@ public class GuiLogicComponent extends ReflectionComponent {
 			final Entity newSelectedTower = getNearestEntity(position, "tower", 25.0f);
 
 			if (newSelectedTower != null) {
-				messageQueue.enqueue(new GenericMessage("towerSelected", new PropertiesMapBuilder() {
-					{
-						property("tower", newSelectedTower);
-					}
-				}.build()));
+				selectTower(newSelectedTower);
 			}
 		}
 
 	}
 
-	private void changeToDeployState() {
-		internalState = new DeployState();
+	private void selectTower(final Entity selectedTower) {
+		messageQueue.enqueue(new GenericMessage("towerSelected", new PropertiesMapBuilder() {
+			{
+				property("tower", selectedTower);
+			}
+		}.build()));
 	}
 
-	private void changeToSelectTowerState() {
+	private InternalState changeToDeployState() {
+		internalState = new DeployState();
+		unselectCurrentTower();
+		return internalState;
+	}
+
+	private InternalState changeToSelectTowerState() {
 		internalState = new SelectTowerState();
+		return internalState;
 	}
 
 	private void unselectCurrentTower() {

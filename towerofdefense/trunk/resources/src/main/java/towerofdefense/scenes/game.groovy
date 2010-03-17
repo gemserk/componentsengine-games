@@ -1,5 +1,6 @@
 package towerofdefense.scenes;
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message 
 
 
@@ -413,14 +414,14 @@ builder.entity("world") {
 		
 		
 		child(entity("upgradecontrol"){
-						
-			component(new Component("upgradeenabler"){
+			
+			component(new Component("enabler"){
 				void handleMessage(Message message){
 					if(entity.parent.selectedEntity.levels.isEmpty())
 						message.suspendPropagation()
 				}
 			})
-	
+			
 			child(entity("button-upgrade"){
 				parent("towerofdefense.entities.button",[
 				position:utils.vector(450, towerButtonsY),
@@ -444,10 +445,10 @@ builder.entity("world") {
 					
 					if(selectedEntity==null)
 						return false
-
+					
 					if(selectedEntity.upgrading)
 						return false
-
+					
 					def world = towerControl.parent
 					
 					if(selectedEntity.upgradeCost > world.money)
@@ -463,6 +464,56 @@ builder.entity("world") {
 					property("position",utils.vector(450,towerButtonsY+35))
 					property("message", "\${0,number,integer}".toString())
 					property("value",{towerControl.selectedEntity?.upgradeCost ?: 0})
+				}	
+			})
+		})
+		
+		child(entity("sellcontrol") {
+			
+			child(entity("button-sell"){
+				parent("towerofdefense.entities.button",[
+				position:utils.vector(520, towerButtonsY),
+				rectangle:buttonRectangle,
+				icon:utils.resources.image("towerofdefense.images.upgrade_icon"),
+				mouseNotOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.4f),
+				mouseOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.7f),
+				
+				trigger:utils.custom.triggers.closureTrigger {
+					def player = towerControl.parent
+					def selectedEntity = towerControl.selectedEntity
+					
+					def sellCost = selectedEntity.sellCost
+					
+					player.money = (float) (player.money + sellCost)
+					
+					messageQueue.enqueue(utils.genericMessage("towerSelected") {upgrademessage ->
+						upgrademessage.tower = null
+					})
+					
+					messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(selectedEntity))
+				},
+				enabled:{
+					def selectedEntity = towerControl.selectedEntity
+					
+					if(selectedEntity==null)
+						return false
+					
+					if(selectedEntity.upgrading)
+						return false
+					
+					if(!selectedEntity.sellCost)
+						return false
+					
+					return true
+				}
+				])
+			})
+			
+			child(entity("sellCostLabel"){
+				component(new LabelComponent("label")){
+					property("position",utils.vector(520,towerButtonsY+35))
+					property("message", "\${0,number,integer}".toString())
+					property("value",{towerControl.selectedEntity?.sellCost ?: 0})
 				}	
 			})
 		})

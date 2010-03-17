@@ -1,5 +1,6 @@
 package towerofdefense.components
 import org.newdawn.slick.Input;
+
 import org.newdawn.slick.geom.Vector2f 
 
 import com.gemserk.componentsengine.components.ReflectionComponent;
@@ -31,6 +32,11 @@ class TowerDeployer extends ReflectionComponent{
 		
 		entity."${id}.towerCount" = entity."${id}.towerCount" + 1
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(tower, "world"));
+		
+		def towerSelected = new GenericMessage("towerSelected")
+		towerSelected.tower = tower
+		
+		messageQueue.enqueue(towerSelected);
 	}
 	
 }
