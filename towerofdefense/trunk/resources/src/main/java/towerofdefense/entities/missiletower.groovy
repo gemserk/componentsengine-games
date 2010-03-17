@@ -15,8 +15,8 @@ builder.entity("tower-${Math.random()}") {
 	component(new DisablerComponent(new WeaponComponent("shooter"))) {
 		propertyRef("enabled", "weaponEnabled")
 		property("template", parameters.template)
-		property("reloadTime", parameters.reloadTime)
 		property("instanceParameters", parameters.instanceParameters)
+		propertyRef("reloadTime", "reloadTime")
 		propertyRef("position", "position")
 		propertyRef("targetEntity", "targetEntity")
 		property("entity", {entity.parent})

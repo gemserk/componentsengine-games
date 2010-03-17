@@ -23,10 +23,9 @@ builder.entity("tower-${Math.random()}") {
 	
 	tags("shocktower")
 	
-	property("reloadTimer",new CountDownTimer(parameters.reloadTime))
-	property("canFire",true)
-	property("fireDuration", parameters.fireDuration)
-	property("shockFiredTimer",new CountDownTimer(parameters.fireDuration))
+	property("reloadTimer",new CountDownTimer(1000))
+	property("canFire", true)
+	property("shockFiredTimer", new CountDownTimer(1000))
 	
 	component(new ComponentFromListOfClosures("shockWeapon",[ {UpdateMessage message ->
 		if(!entity.canFire)
@@ -52,13 +51,17 @@ builder.entity("tower-${Math.random()}") {
 		
 		def shockFiredTimer = entity.shockFiredTimer
 		if(!shockFiredTimer.isRunning()){
+			
+			entity.reloadTimer = new CountDownTimer(entity.reloadTime)
+			entity.shockFiredTimer = new CountDownTimer(entity.fireDuration)
+			
 			entity.reloadTimer.reset()
-			shockFiredTimer.reset()
+			entity.shockFiredTimer.reset()
 		}
 	}
 	]))
 	
-	component(new TimerComponent("reloadTimerTimerComponent")){
+	component(new TimerComponent("reloadTimerComponent")){
 		propertyRef("timer","reloadTimer")
 		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = true})
 	}
@@ -81,7 +84,7 @@ builder.entity("tower-${Math.random()}") {
 			entity.effect.update(m.delta)
 			return
 		}
-
+		
 		def shockFiredTimer = entity.shockFiredTimer
 		if (!shockFiredTimer.isRunning())
 			return
@@ -93,7 +96,7 @@ builder.entity("tower-${Math.random()}") {
 		def beamDuration = entity.fireDuration
 		
 		entity.effect = EffectFactory.beamEffect(beamDuration, start, end, 1.0f, 16.0f, beamColor)
-			
+		
 		// entity.effect = EffectFactory.lightingBoltEffect(start, end, 4, 20f, 30f, 0.3f, 300, 1.0f)
 		
 	}, {SlickRenderMessage m ->
