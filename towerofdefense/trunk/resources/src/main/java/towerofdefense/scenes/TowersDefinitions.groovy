@@ -69,6 +69,10 @@ public class TowersDefinitions {
 		return [icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower]
 	}
 	
+	def damageOverTime = { damage, time ->
+		return (float) damage/time
+	}
+	
 	def laser(){
 		def laserTower = new InstantiationTemplateImpl(
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.lasertower"),
@@ -77,9 +81,15 @@ public class TowersDefinitions {
 			position:position,
 			direction:utils.vector(-1,0),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-			reloadTime:250,
-			turnRate:completeTurn(3),
-			levels:[[level:1, radius:90f, damage:0.03f, upgradeCost:7, sellCost:5]
+			turnRate:completeTurn(2),
+			levels:[
+			[level:1, radius:105f, fireDuration:300, reloadTime:1800, damage:damageOverTime(45,300), upgradeCost:7, sellCost:7],
+			[level:2, radius:110f, damage:damageOverTime(75,300), upgradeCost:15, sellCost:11],
+			[level:3, radius:115f, damage:damageOverTime(95,300), upgradeCost:22, sellCost:18],
+			[level:4, radius:120f, damage:damageOverTime(115,300), upgradeCost:30, sellCost:29],
+			[level:5, radius:125f, damage:damageOverTime(145,300), upgradeCost:37, sellCost:44],
+			[level:6, radius:130f, damage:damageOverTime(185,300), upgradeCost:45, sellCost:63],
+			[level:7, radius:200f, damage:damageOverTime(200,300), sellCost:85]
 			]
 			
 			]

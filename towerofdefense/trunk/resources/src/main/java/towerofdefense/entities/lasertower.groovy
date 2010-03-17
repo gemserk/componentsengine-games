@@ -5,10 +5,6 @@ import com.gemserk.componentsengine.commons.components.TimerComponent
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.timers.CountDownTimer 
 
-
-
-
-
 builder.entity("lasertower-${Math.random()}") {
 	
 	parameters.towerImage=utils.resources.image("towerofdefense.images.lasertower")
@@ -33,8 +29,13 @@ builder.entity("lasertower-${Math.random()}") {
 			return;
 		
 		entity.children[(bulletId)].enabled = true
+		
+		entity.canFireTimer = new CountDownTimer(entity.reloadTime)
+		entity.fireDurationTimer = new CountDownTimer(entity.fireDuration)
+		
 		entity.canFireTimer.reset();
 		entity.fireDurationTimer.reset();
+		
 		entity.canFire = false
 	}]))
 	

@@ -474,7 +474,7 @@ builder.entity("world") {
 				parent("towerofdefense.entities.button",[
 				position:utils.vector(520, towerButtonsY),
 				rectangle:buttonRectangle,
-				icon:utils.resources.image("towerofdefense.images.upgrade_icon"),
+				icon:utils.resources.image("towerofdefense.images.sell_icon"),
 				mouseNotOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.4f),
 				mouseOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.7f),
 				
