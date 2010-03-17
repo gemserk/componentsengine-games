@@ -78,14 +78,17 @@ builder.entity {
 	
 	
 	property("upgradeTimer",null)
-	property("upgradeTime",1000)
+	property("upgradeTime", 1000)
+	
 	component(utils.components.genericComponent(id:"upgrader", messageId:"upgrade"){ message ->
 		def tower = message.tower
 		if(tower != entity)
 			return 
+			
+		def upgradeTime = entity.upgradeTime
 		
 		entity.upgrading = true
-		entity.upgradeTimer = new CountDownTimer(entity.upgradeTime)
+		entity.upgradeTimer = new CountDownTimer(upgradeTime)
 		entity.upgradeTimer.reset()
 		
 	})
@@ -113,6 +116,7 @@ builder.entity {
 		applyLevel()
 		
 		entity.upgrading = false
+		entity.upgradeTime += 1000
 	})
 	
 	
