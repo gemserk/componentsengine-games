@@ -56,7 +56,7 @@ builder.entity("tower-${Math.random()}") {
 			def targetMaxVelocity = targetEntity."movement.maxVelocity"
 			def shockFactor = entity.shockFactor
 			
-			def velocityReduction = targetVelocityLength*shockFactor*message.delta
+			def velocityReduction = targetMaxVelocity*shockFactor*message.delta
 			
 			def newVelocityLenghtCandidate = targetVelocityLength - velocityReduction
 			
@@ -64,6 +64,7 @@ builder.entity("tower-${Math.random()}") {
 			
 			def newVelocity =targetVelocity.copy().normalise().scale((float)newVelocityLength)
 			targetEntity."movement.velocity"=newVelocity
+			//println "$targetVelocityLength,$newVelocityLength"
 		}
 		
 		targets.each(shockCritter)

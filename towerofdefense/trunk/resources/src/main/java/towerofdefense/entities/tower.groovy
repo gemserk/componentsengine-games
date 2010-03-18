@@ -140,7 +140,7 @@ builder.entity {
 		
 		//g.fillArc(100,100, 100,100,-90,(float)( 90+(float)angleLeft))
 		g.color = utils.color(0.5f,0.5f,0.5f,0.5f)
-		g.fillArc((float)-radius,(float)-radius,(float)2*radius, (float)2*radius,-90,(float)( -90+(float)angleLeft))
+		g.fillArc((float)-radius,(float)-radius,(float)2*radius, (float)2*radius,(float)( -90+(float)angleLeft),-90)
 		g.popTransform()
 		g.color = backupColor
 	}

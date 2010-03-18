@@ -1,1 +1,1 @@
-java -Djava.library.path="natives" -cp 'libs/*' "${mainClass}" &
+java -Djava.library.path="natives" -cp 'libs/*' "${mainClass}"
