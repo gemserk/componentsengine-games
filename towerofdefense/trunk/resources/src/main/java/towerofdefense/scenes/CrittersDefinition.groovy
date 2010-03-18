@@ -23,6 +23,9 @@ public class CrittersDefinition{
 			return star();
 		case "cubic":
 			return cubic();
+			
+		// pulsar:
+			
 		default:
 			return null;
 		}
@@ -107,9 +110,9 @@ public class CrittersDefinition{
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.critter"),
 		utils.custom.genericprovider.provide{ entity ->
 			[
-		   image:utils.resources.image("towerofdefense.images.dan"),
-			rotationImage:utils.resources.image("towerofdefense.images.dan_balls"),
-			rotationSpeed:1f,
+		    image:utils.resources.image("towerofdefense.images.kuvitto"),
+			rotationImage:utils.resources.image("towerofdefense.images.kuvitto_helix"),
+			rotationSpeed:-2f,
 			position:entity.position.copy(),
 			direction:entity.direction.copy(),
 			speed:90f,
