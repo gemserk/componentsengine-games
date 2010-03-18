@@ -32,6 +32,10 @@ public class TowersDefinitions {
 		return (float) (360 / (seconds*1000))			
 	}
 	
+	def damageOverTime = { damage, time ->
+		return (float) damage/time
+	}
+	
 	def blaster(){
 		def blastTower = new InstantiationTemplateImpl(
 		utils.custom.templateProvider.getTemplate("towerofdefense.entities.blastertower"),
@@ -68,10 +72,7 @@ public class TowersDefinitions {
 		
 		return [icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower]
 	}
-	
-	def damageOverTime = { damage, time ->
-		return (float) damage/time
-	}
+
 	
 	def laser(){
 		def laserTower = new InstantiationTemplateImpl(
@@ -115,15 +116,23 @@ public class TowersDefinitions {
 						direction: newDirection,
 						targetEntity:tower.targetEntity,
 						image:utils.resources.image("towerofdefense.images.blasterbullet"),
-						damage:tower.damage,
 						radius:5.0f,
-						blastRadius: 40f,
-						maxVelocity:0.09f,
+						damage:tower.damage,
+						blastRadius: tower.blastRadius,
+						maxVelocity:tower.missileVelocity,
 						turnRatio:0.18f,
 						color:utils.color(1f, 0.1f, 0.1f, 1.0f)
 						]
 			},
-			levels:[[level:1, radius:72f, damage:150f, upgradeCost:5, sellCost:5, reloadTime:3500]]
+			levels:[
+			[level:1, radius:72f, damage:150f, upgradeCost:10, sellCost:10, blastRadius:30f, missileVelocity: 0.09f, reloadTime:3500],
+			[level:2, radius:77f, damage:160f, upgradeCost:20, sellCost:15, blastRadius:40f, reloadTime:3250],
+			[level:3, radius:80f, damage:170f, upgradeCost:30, sellCost:25, blastRadius:50f, missileVelocity: 0.11f, reloadTime:3000],
+			[level:4, radius:84f, damage:180f, upgradeCost:40, sellCost:40, blastRadius:60f, reloadTime:2750],
+			[level:5, radius:88f, damage:190f, upgradeCost:50, sellCost:60, blastRadius:70f, missileVelocity: 0.13f, reloadTime:2500],
+			[level:6, radius:91f, damage:200f, upgradeCost:60, sellCost:85, blastRadius:80f, reloadTime:2250],
+			[level:7, radius:140f, damage:500f, sellCost:115, blastRadius:90f]
+			]
 			]
 		})
 		return [icon:"towerofdefense.images.missiletower_icon", cost:20, instantiationTemplate:missileTower]
