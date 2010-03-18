@@ -1,6 +1,7 @@
 package towerofdefense.mains
 
 
+import java.io.File;
 import java.io.StringWriter;
 
 import groovy.util.XmlSlurper;
@@ -12,7 +13,9 @@ class GDLoader {
 			try{
 				def scene =  parseScene(path)
 				//println scene
-				println transformScene(scene)
+				def sceneSource =  transformScene(scene)
+				println sceneSource
+				new File("/tmp/scene${it+1}.groovy").text = sceneSource
 			}catch(Exception e){
 				println "Error al parsear $path"
 				e.printStackTrace(System.out)
@@ -34,12 +37,12 @@ builder.entity("world") {
 	def builtParameters = sceneBuilder."""
 		def dsl = new DSLPrinter(stringWriter)
 		
-		dsl.out.setIndentLevel 2
+		//dsl.out.setIndentLevel 0
 		
 		dsl.scene(scene.basicInfo){
 			path(minX:0,minY:30){
 				scene.path.each { 
-					point(it.x,it.y)
+					point((float)it.x,(float)it.y)
 				}
 			}
 			critters(scene.creeps.parameters){
@@ -84,8 +87,8 @@ builder.entity("world") {
 		scene.basicInfo = basicInfo
 		gamelevel.info.with {
 			basicInfo["name"] = it.@name.text()
-			basicInfo["money"] = it.@initCash.text()
-			basicInfo["lives"] = it.@initLives.text()
+			basicInfo["money"] = Float.parseFloat(it.@initCash.text())
+			basicInfo["lives"] = Integer.parseInt(it.@initLives.text())
 		}
 		
 		scene.path = []
@@ -108,6 +111,9 @@ builder.entity("world") {
 					scene.creeps.parameters[(newKey)]=[Float.parseFloat(value)]			
 				}
 			}
+			def speedFactor = scene.creeps.parameters["speedFactor"]
+			if( speedFactor!= null)
+				scene.creeps.parameters["speedFactor"] = [(float)(speedFactor[0]-1)]
 			
 			scene.creeps.creeps = []
 			creeps.children().each {creep ->
@@ -121,14 +127,14 @@ builder.entity("world") {
 			def parameters = scene.waves.parameters = [:]
 			def names = ["delayBetweenWaves","delayBetweenSpawns"]			                                           
 			names.each{ name ->
-				parameters[(name)]=Float.parseFloat(creepWaves."@$name".text())
+				parameters[(name)]=(int)(Integer.parseInt(creepWaves."@$name".text())*1000)
 			}
 			
 			def wavesList = scene.waves.waves = []
 			creepWaves.wave.each {wave ->
 				def spawns = []
 				wave.spawn.each { spawn ->
-					spawns << [id:spawn.@type.text().toLowerCase(),count:Integer.parseInt(spawn.@count.text())]
+					spawns << [id:spawn.@type.text().toLowerCase(),quantity:Integer.parseInt(spawn.@count.text())]
 				}
 				wavesList << spawns
 			}

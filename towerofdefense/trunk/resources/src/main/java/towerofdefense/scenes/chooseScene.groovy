@@ -1,5 +1,7 @@
 package towerofdefense.scenes;
 
+
+
 import com.gemserk.componentsengine.gamestates.GemserkGameState 
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
@@ -14,8 +16,12 @@ builder.entity("sceneselection") {
 	def scenes = [[desc:"First scene",script:"towerofdefense.scenes.scene1"],
 			[desc:"Second scene",script:"towerofdefense.scenes.scene2"],
 			[desc:"Third scene",script:"towerofdefense.scenes.scene3"],
-			[desc:"Fourth scene",script:"towerofdefense.scenes.scene4"]
-			// [desc:"Fifth scene",script:"towerofdefense.scenes.scene5"]
+			[desc:"Fourth scene",script:"towerofdefense.scenes.scene4"],
+			[desc:"Fifth scene",script:"towerofdefense.scenes.scene5"],
+			[desc:"Sixth scene",script:"towerofdefense.scenes.scene6"],
+			[desc:"Seventh scene",script:"towerofdefense.scenes.scene7"],
+			[desc:"Eighth scene",script:"towerofdefense.scenes.scene8"],
+			[desc:"Ninth scene",script:"towerofdefense.scenes.scene9"],
 			]
 			
 	if(utils.custom.gameStateManager.gameProperties.runningFromMain)
@@ -26,17 +32,18 @@ builder.entity("sceneselection") {
 	def buttonMouseOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.2f)
 	def buttonMouseNotOverFillColor = utils.color(0.0f, 0.0f, 1.0f, 0.8f)
 	
-	def buttonFont = utils.resources.fonts.font([italic:false, bold:false, size:36])
+	def buttonFont = utils.resources.fonts.font([italic:false, bold:false, size:32])
 	
 	def menuX = 400
-	def menuY = 100
-	def buttonHeight = 80
-	def buttonSeparation = 30
-
+	def menuY = 50
+	def buttonHeight = 40
+	def buttonSeparation = 15
+	
 	scenes.eachWithIndex { scene, i ->
 		child(template:"towerofdefense.entities.button", id:"buttonScene-$i".toString())	{
 			position=utils.vector(menuX, (Float)(menuY + i*(buttonHeight+buttonSeparation)))
 			rectangle=utils.rectangle(-160, (float)(-buttonHeight/2f), 320, buttonHeight)
+			//label={entity.parent.currentPage[itemNumber]}
 			label=scene.desc
 			lineColor=utils.color(0f, 0f, 1f, 0.5f)
 			mouseNotOverFillColor=buttonMouseOverFillColor

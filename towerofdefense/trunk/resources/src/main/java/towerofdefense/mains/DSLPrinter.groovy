@@ -24,12 +24,33 @@ public class DSLPrinter {
 		
 	}
 	
+	def escapeValue(def value){
+		if(value instanceof String){
+			return "\"$value\""
+		} else if(value instanceof Float){
+			return "${value}f"
+		}else if(value instanceof List){
+			return value.collect { escapeValue(it) }
+		} else if(value instanceof Map){
+			def newMap = [:] as LinkedHashMap
+			value.each { key, innerValue ->
+				newMap[(key)]=escapeValue(innerValue)
+			}
+		}
+		else {
+			return value
+		}
+	}
+	
 	def methodMissing(String name, args) {
+		
+		
+		
 		
 		def printGenericMethodCall = {name2, args2 ->
 			out.printIndent()
 			out.print "$name("
-			out.print (args2.collect({ it.toString() }).join(","))
+			out.print (args2.collect({ escapeValue(it) }).join(","))
 			out.println(")")
 		}
 		
@@ -38,7 +59,7 @@ public class DSLPrinter {
 		if(args.length == 2 && args[0] instanceof Map && args[1] instanceof Closure){
 			out.printIndent()
 			out.print "$name("
-			def attributes = args[0].collect({key, value -> "$key:$value" }).join(",")
+			def attributes = args[0].collect({key, value -> "$key:${escapeValue(value)}" }).join(",")
 			out.println "$attributes){"
 			out.incrementIndent()
 			Closure closure = args[1]
@@ -65,7 +86,7 @@ public class DSLPrinter {
 		else if (args.length == 1 && args[0] instanceof Map){
 			out.printIndent()
 			out.print "$name("
-			def attributes = args[0].collect({key, value -> "$key:$value" }).join(",")
+			def attributes = args[0].collect({key, value -> "$key:${escapeValue(value)}" }).join(",")
 			out.println "$attributes)"                     
 		}
 		else {

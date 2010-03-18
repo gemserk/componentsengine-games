@@ -33,12 +33,20 @@ public class TowerOfDefenseSceneBuilder {
 		return sceneParameters;
 	}
 	
+	public void path(Map<String, Object> parameters, Closure closure){
+		def minX = parameters.minX ?: 0f
+		def minY = parameters.minY ?: 0f
+				
+		path(minX,minY,closure)
+		
+	}
+	
 	public void path(final float minX, final float minY, Closure closure){
 		final List<Vector2f> points = new ArrayList<Vector2f>();
 		
 		def pathBuilder = new Expando()
-		pathBuilder.point = {float x, float y ->
-			points.add(new Vector2f((float)minX + x, (float)minY + y));
+		pathBuilder.point = {x, y ->
+			points.add(new Vector2f((float)(minX + x), (float)(minY + y)));
 		}
 		
 		closure.setDelegate(pathBuilder)
@@ -52,7 +60,7 @@ public class TowerOfDefenseSceneBuilder {
 		def multipliers = [speed:[0f], health:[1f], reward:[1f]]
 		parameters.each {key, value ->
 			if(key.endsWith("Factor")) {
-				multipliers[key.replaceAll("Factor","")] = value
+				multipliers[key.replaceAll("Factor","")] = value.collect { (float)it}
 			}
 		}
 		
