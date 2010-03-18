@@ -48,14 +48,6 @@
 					<groupId>com.googlecode.mavennatives</groupId>
 					<artifactId>maven-nativedependencies-plugin</artifactId>
 					<version>0.0.1</version>
-					<executions>
-						<execution>
-							<id>unpacknatives</id>
-							<goals>
-								<goal>copy</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>

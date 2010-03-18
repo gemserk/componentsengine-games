@@ -1,1 +1,1 @@
-java -jar -Djava.library.path="${release.natives}" "${finalName}.jar" &
+java -Djava.library.path="natives" -cp 'libs/*' "${mainClass}" &
