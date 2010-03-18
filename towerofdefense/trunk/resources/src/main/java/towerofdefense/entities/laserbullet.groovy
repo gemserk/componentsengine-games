@@ -5,9 +5,12 @@ import com.gemserk.componentsengine.commons.components.DisablerComponent
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.componentsengine.utils.OpenGlUtils;
+
 import org.newdawn.slick.Graphics 
 import org.newdawn.slick.geom.Line 
 import org.newdawn.slick.geom.Vector2f 
+import org.newdawn.slick.opengl.SlickCallable;
 
 
 builder.entity() {
@@ -35,17 +38,17 @@ builder.entity() {
 	Random random = new Random();
 	
 	def laserrenderer = new ComponentFromListOfClosures("laserrenderer",[
-	     {SlickRenderMessage message -> 
+	     {SlickRenderMessage message ->
 			Line line = entity.line
 			Graphics g = message.graphics;
 			
-			def backupColor = g.getColor()
-			
 			def randomColor = (float)((random.nextFloat() * 0.5f) + 0.3f)
 			
-			g.setColor(utils.color(randomColor,randomColor,1f,1))
-			g.draw(line)
-			g.setColor(backupColor)
+			def color = utils.color(randomColor,randomColor,1f,1f)
+			
+			SlickCallable.enterSafeBlock();
+			OpenGlUtils.renderLine(line.start, line.end, 1f, color)
+			SlickCallable.leaveSafeBlock();
 		}])
 	
 	
