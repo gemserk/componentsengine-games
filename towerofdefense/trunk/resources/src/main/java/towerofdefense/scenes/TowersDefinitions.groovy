@@ -45,7 +45,7 @@ public class TowersDefinitions {
 			direction:utils.vector(-1,0),
 			color:utils.color(1f, 1f, 1f, 1.0f),
 			template:"towerofdefense.entities.bullet",
-			turnRate:completeTurn(1),
+			turnRate:completeTurn(0.5),
 			instanceParameters: utils.custom.genericprovider.provide{ tower ->
 				[
 				position:tower.position.copy(),

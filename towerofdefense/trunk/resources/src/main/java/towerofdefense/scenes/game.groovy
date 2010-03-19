@@ -1,15 +1,17 @@
 package towerofdefense.scenes;
+
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
-import com.gemserk.componentsengine.messages.Message 
-
-
+import com.gemserk.componentsengine.messages.*;
 
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.components.Component 
 
 import towerofdefense.components.GridRenderer;
 import towerofdefense.components.TowerDeployer 
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.geom.Vector2f 
+import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
@@ -17,6 +19,8 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.timers.CountDownTimer 
 import com.gemserk.componentsengine.timers.PeriodicTimer 
+import com.gemserk.componentsengine.utils.OpenGlUtils;
+
 import towerofdefense.GroovyBootstrapper;
 import com.gemserk.componentsengine.commons.components.*;
 import com.gemserk.componentsengine.entities.Entity;
@@ -175,7 +179,7 @@ builder.entity("world") {
 			"candeploy":utils.color(0.0f, 0.8f, 0.0f,0.25f),
 			"cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
 			]
-	
+			
 	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
 		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
 		property("radius", {
@@ -187,6 +191,23 @@ builder.entity("world") {
 		propertyRef("position", "mousePosition")
 		propertyRef("enabled", "deployTowerEnabled")
 	}
+	
+	component(new ComponentFromListOfClosures("cross",[{ SlickRenderMessage m ->
+		
+		if (!entity.deployTowerEnabled)
+			return
+			
+		color = new Color(mapeo[(entity.deployCursorState)])
+			
+		def position = entity.mousePosition
+		def radius = entity."circlerenderer.radius" 
+		
+		SlickCallable.enterSafeBlock()
+		OpenGlUtils.renderLine (position.copy().add(new Vector2f(-radius, 0f)), position.copy().add(new Vector2f(radius, 0f)), 2f, color)
+		OpenGlUtils.renderLine (position.copy().add(new Vector2f(0f,-radius)), position.copy().add(new Vector2f(0f,radius)), 2f, color)
+		SlickCallable.leaveSafeBlock()
+		
+	}]))
 	
 	component(new LabelComponent("towersLabel")){
 		property("position",utils.vector(40,40))
