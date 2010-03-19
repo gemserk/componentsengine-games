@@ -22,6 +22,7 @@ builder.entity("critter-${Math.random()}") {
 	property("color",parameters.color)
 	propertyRef("direction", "movement.velocity")
 	
+	
 	property("speed", (Float)(parameters.speed / 1000f))
 	
 	component(new SuperMovementComponent("movement")){
@@ -87,12 +88,15 @@ builder.entity("critter-${Math.random()}") {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
 	
+	property("forwardForce",utils.vector(1,0))
 	component(new ComponentFromListOfClosures("forwardForce",[
 	                                                          {UpdateMessage message ->
 	                                                          	def direction = entity."movement.velocity".copy().normalise()
 	                                                          	def maxVelocity = entity."movement.maxVelocity"
 	                                                          	
-	                                                          	entity."movement.force".add(direction.scale((float)(maxVelocity/1500f)))
+	                                                          	def forwardForce = direction.scale((float)(maxVelocity/1500f))
+	                                                          	entity.forwardForce = forwardForce
+	                                                          	entity."movement.force".add(forwardForce)
 	                                                          }
 	                                                          ]))
 	

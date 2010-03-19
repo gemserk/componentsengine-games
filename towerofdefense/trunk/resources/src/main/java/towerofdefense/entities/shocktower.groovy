@@ -10,7 +10,9 @@ import com.gemserk.componentsengine.commons.components.IncrementValueComponent
 import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.effects.EffectFactory 
+import com.gemserk.games.towerofdefense.components.DebugVectorComponent;
 import com.gemserk.games.towerofdefense.components.SelectTargetsWithinRangeComponent;
+import com.gemserk.games.towerofdefense.components.DebugVectorComponent.DebugVector;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.SlickCallable 
@@ -36,35 +38,32 @@ builder.entity("tower-${Math.random()}") {
 		propertyRef("targets", "targets")
 		propertyRef("max", "maxTargets")
 	}
-
+	
 	component(new ComponentFromListOfClosures("shockWeapon",[ {UpdateMessage message ->
 		if(!entity.canFire)
-			return
-
+		return
+		
 		if (entity.upgrading) 
-				return;
-
+		return;
+		
 		def targets = entity.targets
 		
 		if (targets.isEmpty())
-			return
+		return
 		
 		def shockCritter = { targetEntity ->
 			
 			def targetVelocity  = targetEntity."movement.velocity"
-			def targetVelocityLength = targetVelocity.length()
-			def targetMaxVelocity = targetEntity."movement.maxVelocity"
+			
+			
+			
 			def shockFactor = entity.shockFactor
 			
-			def velocityReduction = targetMaxVelocity*shockFactor*message.delta
+			def shockForce = targetVelocity.copy().scale((float)-shockFactor)
 			
-			def newVelocityLenghtCandidate = targetVelocityLength - velocityReduction
-			
-			def newVelocityLength = Math.max(1/1000,newVelocityLenghtCandidate)
-			
-			def newVelocity =targetVelocity.copy().normalise().scale((float)newVelocityLength)
-			targetEntity."movement.velocity"=newVelocity
-			//println "$targetVelocityLength,$newVelocityLength"
+			entity.debugVectors << new DebugVector(targetEntity.position.copy(), targetEntity.forwardForce.copy().add(shockForce).scale(1000000),utils.color(1,1,0,1))
+			targetEntity."movement.force".add(shockForce)
+						
 		}
 		
 		targets.each(shockCritter)
@@ -81,14 +80,24 @@ builder.entity("tower-${Math.random()}") {
 	}
 	]))
 	
+	
+	property("debugVectors",[])
+	component(new DebugVectorComponent("debugVector")){
+		propertyRef("vectors","debugVectors")
+		property("enabled",false)
+	}
+	
+	
 	component(new TimerComponent("reloadTimerComponent")){
 		propertyRef("timer","reloadTimer")
-		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = true})
+		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = true
+		})
 	}
 	
 	component(new TimerComponent("shockFiredTimerComponent")){
 		propertyRef("timer","shockFiredTimer")
-		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = false})
+		property("trigger",utils.custom.triggers.closureTrigger {entity.canFire = false
+		})
 	}
 	
 	component(new ComponentFromListOfClosures("effect", [ { UpdateMessage m ->
@@ -111,7 +120,7 @@ builder.entity("tower-${Math.random()}") {
 		
 		def shockFiredTimer = entity.shockFiredTimer
 		if (!shockFiredTimer.isRunning())
-			return
+		return
 		
 		def start = entity.position
 		def end = targetEntity.position
@@ -122,12 +131,12 @@ builder.entity("tower-${Math.random()}") {
 		entity.effect = EffectFactory.beamEffect(beamDuration, start, end, 1.0f, 15.0f, beamColor)
 		
 	}, {SlickRenderMessage m ->
-	
+		
 		if (entity.upgrading) 
-			return;
-	
+		return;
+		
 		if (!entity.effect)
-			return
+		return
 		
 		def targets = entity.targets
 		
@@ -160,7 +169,8 @@ builder.entity("tower-${Math.random()}") {
 		property("image", parameters.cannonImage)
 		property("color", parameters.color)
 		propertyRef("position", "position")
-		property("direction", {utils.vector(1,0).add(entity.rotationValue)})
+		property("direction", {utils.vector(1,0).add(entity.rotationValue)
+		})
 		property("size",utils.vector(0.85f,0.85f))
 	}
 	
