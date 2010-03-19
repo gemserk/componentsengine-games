@@ -203,10 +203,6 @@ public class GuiLogicComponent extends ReflectionComponent {
 				String towerType = towerTypeProperty.getValue(entity);
 				float cost = (Float) towerDescriptions.get(towerType).get("cost");
 				moneyProperty.setValue(entity, money - cost);
-
-				// change state and select deployed tower.
-				changeToSelectTowerState();
-				// state.handleLeftClick(message);
 			}
 		}
 
