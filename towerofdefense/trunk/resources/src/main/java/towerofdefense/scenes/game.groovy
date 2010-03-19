@@ -1,4 +1,5 @@
 package towerofdefense.scenes;
+import com.gemserk.games.towerofdefense.components.render.CrossRendererComponent;
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.messages.*;
@@ -9,9 +10,6 @@ import com.gemserk.componentsengine.components.Component
 import towerofdefense.components.GridRenderer;
 import towerofdefense.components.TowerDeployer 
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.geom.Vector2f 
-import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
@@ -19,7 +17,6 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.timers.CountDownTimer 
 import com.gemserk.componentsengine.timers.PeriodicTimer 
-import com.gemserk.componentsengine.utils.OpenGlUtils;
 
 import towerofdefense.GroovyBootstrapper;
 import com.gemserk.componentsengine.commons.components.*;
@@ -175,39 +172,47 @@ builder.entity("world") {
 	property("deployCursorState", "candeploy")
 	property("mousePosition", utils.vector(0f, 0f))
 	
-	def mapeo = [
-			"candeploy":utils.color(0.0f, 0.8f, 0.0f,0.25f),
-			"cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
-			]
-			
-	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))){
-		property("lineColor", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
+	
+	child(entity("deploy cursor") {
+		
+		def mapeo = [
+		"candeploy":utils.color(0.0f, 0.8f, 0.0f,0.25f),
+		"cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
+		]
+		
+		property("enabled", {entity.parent.deployTowerEnabled})
+		property("position", {entity.parent.mousePosition})
+		property("cursorState", {entity.parent.deployCursorState})
+		property("towers", {entity.parent.towers})
+		property("towerType", {entity.parent.towerType})
+		
 		property("radius", {
 			entity.towers[(entity.towerType)].radius
 		})
-		property("fillColor", {
-			mapeo[(entity.deployCursorState)]
+		
+		property("border", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
+		property("fill", {
+			mapeo[(entity.cursorState)]
 		})
-		propertyRef("position", "mousePosition")
-		propertyRef("enabled", "deployTowerEnabled")
-	}
+		
+		component(new DisablerComponent(new CircleRenderableComponent("circle"))){
+			propertyRef("lineColor", "border")
+			propertyRef("radius", "radius")
+			propertyRef("fillColor", "fill")
+			propertyRef("position", "position")
+			propertyRef("enabled", "enabled")
+		}
+		
+		component(new DisablerComponent(new CrossRendererComponent("cross"))) {
+			property("width", 1.0f)
+			propertyRef("color", "fill")
+			propertyRef("radius", "radius")
+			propertyRef("position", "position")
+			propertyRef("enabled", "enabled")
+		}
+		
+	})
 	
-	component(new ComponentFromListOfClosures("cross",[{ SlickRenderMessage m ->
-		
-		if (!entity.deployTowerEnabled)
-			return
-			
-		color = new Color(mapeo[(entity.deployCursorState)])
-			
-		def position = entity.mousePosition
-		def radius = entity."circlerenderer.radius" 
-		
-		SlickCallable.enterSafeBlock()
-		OpenGlUtils.renderLine (position.copy().add(new Vector2f(-radius, 0f)), position.copy().add(new Vector2f(radius, 0f)), 2f, color)
-		OpenGlUtils.renderLine (position.copy().add(new Vector2f(0f,-radius)), position.copy().add(new Vector2f(0f,radius)), 2f, color)
-		SlickCallable.leaveSafeBlock()
-		
-	}]))
 	
 	component(new LabelComponent("towersLabel")){
 		property("position",utils.vector(40,40))
