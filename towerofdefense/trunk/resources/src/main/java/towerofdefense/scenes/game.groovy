@@ -1,4 +1,11 @@
 package towerofdefense.scenes;
+
+import com.gemserk.componentsengine.predicates.EntityPredicates;
+
+import com.google.common.base.Predicates;
+
+import com.gemserk.componentsengine.messages.GenericMessage;
+
 import com.gemserk.games.towerofdefense.components.render.CrossRendererComponent;
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
@@ -180,11 +187,11 @@ builder.entity("world") {
 		"cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
 		]
 		
-		property("enabled", {entity.parent.deployTowerEnabled})
-		property("position", {entity.parent.mousePosition})
-		property("cursorState", {entity.parent.deployCursorState})
-		property("towers", {entity.parent.towers})
-		property("towerType", {entity.parent.towerType})
+		property("enabled", {entity.parent.deployTowerEnabled })
+		property("position", {entity.parent.mousePosition })
+		property("cursorState", {entity.parent.deployCursorState })
+		property("towers", {entity.parent.towers })
+		property("towerType", {entity.parent.towerType })
 		
 		property("radius", {
 			entity.towers[(entity.towerType)].radius
@@ -212,6 +219,69 @@ builder.entity("world") {
 		}
 		
 	})
+	
+	child(entity("tower highlighter"){
+		
+		property("enabled", {
+			!(entity.parent.deployTowerEnabled)
+		})
+		property("selectedTower", null)
+		
+		property("visible", false)
+		
+		property("cursorPosition", utils.vector(100f,100f))
+		property("position", utils.vector(-20f,-20f))
+		
+		property("radius", 20f)
+		
+		component(new DisablerComponent(new CircleRenderableComponent("circle"))){
+			property("lineColor", utils.color(0.3f,1f,0.3f,0.0f))
+			property("fillColor", utils.color(0.5f,1f,0.5f,0.2f))
+			propertyRef("radius", "radius")
+			propertyRef("position", "position")
+			propertyRef("enabled", "visible")
+		}
+		
+		component(utils.components.genericComponent([id:"mouse move", messageId:"move"]) { m ->
+			entity.cursorPosition.x = m.x
+			entity.cursorPosition.y = m.y
+		})
+		
+		component(utils.components.genericComponent(id:"tower selected handler", messageId:"towerSelected"){ message ->
+			entity.selectedTower = message.tower		
+		})
+		
+		component(new ComponentFromListOfClosures("toggle", [ {UpdateMessage m ->
+			
+			entity.visible = false
+			
+			if (!entity.enabled)
+				return
+			
+			Entity world = entity.parent
+			
+			def position = entity.cursorPosition
+			def distance = entity.radius
+			
+			def towers = world.getEntities(Predicates.and(EntityPredicates.withAllTags("tower"), EntityPredicates.isNear(position, distance)));
+			
+			if (towers.isEmpty()) 
+				return
+			
+			def tower = towers[0]
+			
+			def selectedTower = entity.selectedTower
+			
+			if (selectedTower != null && selectedTower == tower)
+				return
+			                   
+			entity.position = tower.position
+			entity.visible = true
+			
+			println "tower highlighted"
+		}
+		]))
+	}) 
 	
 	
 	component(new LabelComponent("towersLabel")){
@@ -338,22 +408,6 @@ builder.entity("world") {
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
 		utils.custom.game.loadScene(parameters.sceneScript);
 	})
-	
-	
-	//	component(utils.components.genericComponent(id:"upgradeGUIHandler", messageId:"upgradeGUI"){ message ->
-	//		def selectedTower = entity.selectedTower
-	//		if(selectedTower == null)
-	//			return
-	//		
-	//		if(selectedTower.levels.isEmpty()){
-	//			println "Cant upgrade tower"
-	//			return
-	//		}
-	//		
-	//		messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
-	//			upgrademessage.tower = selectedTower
-	//		})
-	//	})
 	
 	input("inputmapping"){
 		keyboard {
@@ -489,7 +543,7 @@ builder.entity("world") {
 				component(new LabelComponent("upgradeCostLabelLabel")){
 					property("position",utils.vector(450,towerButtonsY+35))
 					property("message", "\${0,number,integer}".toString())
-					property("value",{towerControl.selectedEntity?.upgradeCost ?: 0})
+					property("value",{towerControl.selectedEntity?.upgradeCost ?: 0 })
 				}	
 			})
 		})
@@ -539,7 +593,7 @@ builder.entity("world") {
 				component(new LabelComponent("label")){
 					property("position",utils.vector(520,towerButtonsY+35))
 					property("message", "\${0,number,integer}".toString())
-					property("value",{towerControl.selectedEntity?.sellCost ?: 0})
+					property("value",{towerControl.selectedEntity?.sellCost ?: 0 })
 				}	
 			})
 		})
