@@ -20,7 +20,7 @@
 		</webstart.url>
 
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
-		<finalName>${project.parent.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 
 		<appletGameParameter>com.gemserk.games.towerofdefense.TowerOfDefenseGame</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
@@ -41,7 +41,6 @@
 	</properties>
 
 	<build>
-		<finalName>${finalName}</finalName>
 		<plugins>
 
 
