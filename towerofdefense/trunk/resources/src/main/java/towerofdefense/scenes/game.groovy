@@ -1,4 +1,6 @@
 package towerofdefense.scenes;
+import com.gemserk.componentsengine.commons.components.DisablerComponent;
+
 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 
@@ -183,9 +185,11 @@ builder.entity("world") {
 	child(entity("deploy cursor") {
 		
 		def mapeo = [
-		"candeploy":utils.color(0.0f, 0.8f, 0.0f,0.25f),
-		"cantdeploy":utils.color(0.8f, 0.0f, 0.0f,0.25f)
-		]
+		             "candeploy":[color:utils.color(0.0f, 0.8f, 0.0f,0.25f),image:null],
+		             "cantdeploy":[color:utils.color(0.8f, 0.0f, 0.0f,0.25f),image:null],
+		             "cantdeploy-money":[color:utils.color(0.8f, 0.0f, 0.0f,0.25f),image:utils.resources.image("towerofdefense.images.sell_icon")]
+		             ]
+		             
 		
 		property("enabled", {entity.parent.deployTowerEnabled })
 		property("position", {entity.parent.mousePosition })
@@ -199,8 +203,21 @@ builder.entity("world") {
 		
 		property("border", utils.color(0.5f, 0.5f, 0.5f, 0.1f))
 		property("fill", {
-			mapeo[(entity.cursorState)]
+			mapeo[(entity.cursorState)].color
 		})
+		
+		property("image",{
+			mapeo[(entity.cursorState)].image
+		})
+		
+		component(new DisablerComponent(new ImageRenderableComponent("image"))) {
+			propertyRef("image", "image")
+			propertyRef("position", "position")
+			property("direction", utils.vector(1f,0f))
+			property("size",utils.vector(2f,2f))
+			property("enabled",{entity.image != null})
+		}
+		
 		
 		component(new DisablerComponent(new CircleRenderableComponent("circle"))){
 			propertyRef("lineColor", "border")

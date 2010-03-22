@@ -121,7 +121,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 		protected void handleMessage(UpdateMessage message) {
 			Vector2f mousePosition = mousePositionProperty.getValue(entity);
 
-			setCanDeploy(true);
+			setCanDeploy("candeploy");
 
 			deployTowerEnabledProperty.setValue(entity, true);
 			Rectangle gameBounds = gameBoundsProperty.getValue(entity);
@@ -132,7 +132,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 			float cost = (Float) towerDescriptions.get(towerType).get("cost");
 
 			if (money < cost) {
-				cantDeploy();
+				cantDeployMoney();
 				return;
 			}
 
@@ -182,11 +182,17 @@ public class GuiLogicComponent extends ReflectionComponent {
 		}
 
 		private void cantDeploy() {
-			setCanDeploy(false);
+			setCanDeploy("cantdeploy");
 		}
-
-		private void setCanDeploy(boolean can) {
-			deployCursorStateProperty.setValue(entity, can ? "candeploy" : "cantdeploy");
+		
+		private void cantDeployMoney(){
+			setCanDeploy("cantdeploy-money");
+		}
+		
+		
+		
+		private void setCanDeploy(String state) {
+			deployCursorStateProperty.setValue(entity, state);
 		}
 
 		protected void handleRightClick(GenericMessage message) {
