@@ -239,9 +239,10 @@ builder.entity("world") {
 	
 	child(entity("tower highlighter"){
 		
-		property("enabled", {
-			!(entity.parent.deployTowerEnabled)
-		})
+		property("deployState", {entity.parent.deployTowerEnabled})
+		
+		property("lineColor",{entity.deployState ? utils.color(1f,0.3f,0.3f,0.4f) : utils.color(0.3f,1f,0.3f,0.4f)})
+		property("fillColor",{entity.deployState ? utils.color(1f,0f,0.0f,0.2f) : utils.color(0.5f,1f,0.5f,0.2f)})
 		property("selectedTower", null)
 		
 		property("visible", false)
@@ -249,11 +250,11 @@ builder.entity("world") {
 		property("cursorPosition", utils.vector(100f,100f))
 		property("position", utils.vector(-20f,-20f))
 		
-		property("radius", 20f)
+		property("radius", {entity.deployState ? 25f : 20f})
 		
 		component(new DisablerComponent(new CircleRenderableComponent("circle"))){
-			property("lineColor", utils.color(0.3f,1f,0.3f,0.0f))
-			property("fillColor", utils.color(0.5f,1f,0.5f,0.2f))
+			propertyRef("lineColor", "lineColor")
+			propertyRef("fillColor", "fillColor")
 			propertyRef("radius", "radius")
 			propertyRef("position", "position")
 			propertyRef("enabled", "visible")
@@ -272,8 +273,6 @@ builder.entity("world") {
 			
 			entity.visible = false
 			
-			if (!entity.enabled)
-				return
 			
 			Entity world = entity.parent
 			
