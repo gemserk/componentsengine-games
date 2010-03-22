@@ -11,8 +11,8 @@ builder.entity {
 	
 	property("position", parameters.position)
 	property("direction", utils.vector(1f,0f))
-	property("fillColor", parameters.mouseNotOverFillColor)
 	property("mouseNotOverFillColor", parameters.mouseNotOverFillColor)
+	property("fillColor", {entity.mouseOver ? entity.mouseOverFillColor : entity.mouseNotOverFillColor})
 	property("mouseOverFillColor", parameters.mouseOverFillColor)
 	property("bounding", parameters.rectangle)
 	
@@ -27,14 +27,7 @@ builder.entity {
 		def x = (float)(message.x - entity.position.x)
 		def y = (float)(message.y - entity.position.y)
 		
-		if (entity.bounding.contains(x, y)) {
-			entity.fillColor = entity.mouseOverFillColor
-			entity.mouseOver = true
-		}
-		else {
-			entity.fillColor = entity.mouseNotOverFillColor
-			entity.mouseOver = false
-		}
+		entity.mouseOver = entity.bounding.contains(x, y)
 	})
 	
 	component(utils.components.genericComponent(id:"mouseClickHandler", messageId:"click"){ message ->

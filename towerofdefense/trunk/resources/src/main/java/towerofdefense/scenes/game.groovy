@@ -215,7 +215,7 @@ builder.entity("world") {
 			propertyRef("position", "position")
 			property("direction", utils.vector(1f,0f))
 			property("size",utils.vector(2f,2f))
-			property("enabled",{entity.image != null})
+			property("enabled",{entity.enabled && entity.image != null})
 		}
 		
 		
@@ -322,11 +322,12 @@ builder.entity("world") {
 			position=utils.vector(towerButtonsX, towerButtonsY)
 			rectangle=buttonRectangle
 			icon=utils.resources.image(value.icon)
-			mouseNotOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.1f)
+			mouseNotOverFillColor={entity.canBuy ? utils.color(0.0f, 1.0f, 0.0f, 0.1f) : utils.color(1.0f, 1.0f, 1.0f, 0.4f)}
 			mouseOverFillColor=utils.color(0.0f, 1.0f, 0.0f, 0.4f)
 			trigger=utils.custom.triggers.genericMessage("deployTowerSelected") {
 				message.towerType = "${key}".toString()
 			}
+			
 		}
 		
 		component(new LabelComponent("towerCostLabel-${key}".toString())){

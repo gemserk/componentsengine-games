@@ -90,7 +90,7 @@ public class GuiLogicComponent extends ReflectionComponent {
 					float cost = (Float) values.get("cost");
 
 					Entity button = entity.getEntityById("button-" + key);
-					Properties.setValue(button, "enabled", money >= cost);
+					Properties.setValue(button, "canBuy", money >= cost);
 				}
 
 				handleMessage(updateMessage);
