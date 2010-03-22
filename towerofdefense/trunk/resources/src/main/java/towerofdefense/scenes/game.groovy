@@ -421,7 +421,8 @@ builder.entity("world") {
 	} )                                                                    
 	
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
-		utils.custom.game.loadScene(parameters.sceneScript);
+		if(utils.custom.gameStateManager.gameProperties.runningFromMain)
+			utils.custom.game.loadScene(parameters.sceneScript);
 	})
 	
 	input("inputmapping"){
