@@ -32,10 +32,6 @@ class TowerDeployer extends ReflectionComponent{
 		
 		entity."${id}.towerCount" = entity."${id}.towerCount" + 1
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(tower, "world"));
-		
-		//		def towerSelected = new GenericMessage("towerSelected")
-		//		towerSelected.tower = tower
-		//		messageQueue.enqueue(towerSelected);
 	}
 	
 }

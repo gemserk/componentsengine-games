@@ -277,8 +277,6 @@ builder.entity("world") {
 			                   
 			entity.position = tower.position
 			entity.visible = true
-			
-			println "tower highlighted"
 		}
 		]))
 	}) 
