@@ -497,6 +497,8 @@ builder.entity("world") {
 		def towerControl = entity
 		property("selectedEntity", null)
 		
+		property("position",utils.vector(400,10))
+		
 		component(utils.components.genericComponent(id:"towerSelectedHandler", messageId:"towerSelected"){ message ->
 			entity.selectedEntity = message.tower		
 		})
@@ -508,6 +510,21 @@ builder.entity("world") {
 					}
 				})
 		
+		child(entity("towerinfo"){
+			
+			property("position",{entity.parent.position.copy().add(utils.vector(10,10))})
+			
+			child(entity("levelLabel"){
+				component(new LabelComponent("levellabelcomponent")){
+					property("position",{entity.parent.position.copy().add(utils.vector(75,10))})
+					property("message", "Level: {0}/7")
+					property("value",{towerControl.selectedEntity?.level})
+				}	
+			})
+			
+		})
+				
+				
 		
 		child(entity("upgradecontrol"){
 			
