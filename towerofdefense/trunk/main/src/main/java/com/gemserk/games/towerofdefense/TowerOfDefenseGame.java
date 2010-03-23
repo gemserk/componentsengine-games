@@ -4,10 +4,7 @@ package com.gemserk.games.towerofdefense;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.AppletGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.state.StateBasedGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +65,7 @@ public class TowerOfDefenseGame extends StateBasedGame {
 		public void onInit() {
 			super.onInit();
 			images(injector, "assets/images.properties");
+			sounds("assets/sounds.properties");
 		}
 		
 		

@@ -22,6 +22,7 @@ builder.entity("critter-${Math.random()}") {
 	property("color",parameters.color)
 	propertyRef("direction", "movement.velocity")
 	
+	property("explosionSound", utils.resources.sounds.sound("towerofdefense.sounds.explosion"))
 	
 	property("speed", (Float)(parameters.speed / 1000f))
 	
@@ -79,8 +80,10 @@ builder.entity("critter-${Math.random()}") {
 	component(new CritterHitHandler("hithandler"))
 	
 	component(utils.components.genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
-		if(message.critter == entity)
+		if(message.critter == entity) {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+			entity.explosionSound.play()
+		}
 	})
 	
 	component(utils.components.genericComponent(id:"critterReachBaseHandler", messageId:"critterReachBase"){ message ->

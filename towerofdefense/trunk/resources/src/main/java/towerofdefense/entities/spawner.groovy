@@ -11,6 +11,8 @@ builder.entity {
 	property("position", parameters.position)
 	property("direction",parameters.direction) //it is used as starting direction for spawned critters
 	
+	property("sound", utils.resources.sounds.sound("towerofdefense.sounds.nextwave"))
+	
 	component(new WavesSpawnerComponent("creator")){
 		property("waves", parameters.waves)
 		propertyRef("position", "position")
@@ -19,8 +21,10 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"nextWaveHandler", messageId:"nextWave"){ message ->	
 		Waves waves = entity."creator.waves"
-		if(!waves.isLastWaveStarted())
-			waves.nextWave()	
+		if(!waves.isLastWaveStarted()) {
+			waves.nextWave()
+			entity.sound.play()
+		}
 	})
 	
 }
