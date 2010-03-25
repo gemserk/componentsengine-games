@@ -80,6 +80,8 @@ builder.entity {
 	property("upgradeTimer",null)
 	property("upgradeTime", 1000)
 	
+	property("canUpgrade", {!entity.upgrading && !entity.levels.isEmpty()})
+	
 	component(utils.components.genericComponent(id:"upgrader", messageId:"upgrade"){ message ->
 		def tower = message.tower
 		if(tower != entity)

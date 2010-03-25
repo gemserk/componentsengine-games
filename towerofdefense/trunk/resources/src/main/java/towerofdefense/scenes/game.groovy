@@ -16,7 +16,7 @@ import com.gemserk.componentsengine.messages.*;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.components.Component 
 
-import towerofdefense.components.GridRenderer;
+import towerofdefense.components.GridRenderer 
 import towerofdefense.components.TowerDeployer 
 
 import org.newdawn.slick.state.StateBasedGame;
@@ -67,13 +67,17 @@ builder.entity("world") {
 	
 	property("path",parameters.path)
 	
-	component(new PathRendererComponent("pathrenderer")){
-		property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1f))
-		property("lineWidth", gridDistance)
+	component(new PathRendererComponent("pathrenderer2")){
+		property("lineColor", utils.color(0.3f, 0.3f, 1.0f, 1f))
+		property("lineWidth", (float)(gridDistance + 6f))
 		propertyRef("path", "path")		
 	}                		
 	
-	
+	component(new PathRendererComponent("pathrenderer")){
+		property("lineColor", utils.color(0.2f, 0.2f, 0.8f, 1f))
+		property("lineWidth", gridDistance)
+		propertyRef("path", "path")		
+	}                		
 	
 	child(template:"towerofdefense.entities.base", id:"base")	{
 		position=parameters.path.points[-1]//last point in path
@@ -185,11 +189,11 @@ builder.entity("world") {
 	child(entity("deploy cursor") {
 		
 		def mapeo = [
-		             "candeploy":[color:utils.color(0.0f, 0.8f, 0.0f,0.25f),image:null],
-		             "cantdeploy":[color:utils.color(0.8f, 0.0f, 0.0f,0.25f),image:null],
-		             "cantdeploy-money":[color:utils.color(0.8f, 0.0f, 0.0f,0.25f),image:utils.resources.image("towerofdefense.images.sell_icon")]
-		             ]
-		             
+		"candeploy":[color:utils.color(0.0f, 0.8f, 0.0f,0.25f),image:null],
+		"cantdeploy":[color:utils.color(0.8f, 0.0f, 0.0f,0.25f),image:null],
+		"cantdeploy-money":[color:utils.color(0.8f, 0.0f, 0.0f,0.25f),image:utils.resources.image("towerofdefense.images.sell_icon")]
+		]
+		
 		
 		property("enabled", {entity.parent.deployTowerEnabled })
 		property("position", {entity.parent.mousePosition })
@@ -290,7 +294,7 @@ builder.entity("world") {
 			
 			if (selectedTower != null && selectedTower == tower)
 				return
-			                   
+			
 			entity.position = tower.position
 			entity.visible = true
 		}
@@ -432,7 +436,7 @@ builder.entity("world") {
 			press(button:"m",eventId:"cheatMoney")
 			press(button:"l",eventId:"cheatLives")
 			press(button:"d",eventId:"dumpDebug")
-			//			press(button:"u",eventId:"upgradeGUI")
+			press(button:"u",eventId:"upgradeEvent")
 			
 			press(button:"escape", eventId:"gotoMenu")
 		}
@@ -452,10 +456,6 @@ builder.entity("world") {
 	component(new ExplosionComponent("explosions")) {
 		
 	}
-	
-	
-	
-	
 	
 	def selectedTowerParameters = [
 			lineColor:utils.color(0.0f, 0.8f, 0.0f,0.5f),
@@ -490,9 +490,6 @@ builder.entity("world") {
 		})
 	})
 	
-	
-	
-	
 	child(entity("towerControl"){
 		def towerControl = entity
 		property("selectedEntity", null)
@@ -501,6 +498,27 @@ builder.entity("world") {
 		
 		component(utils.components.genericComponent(id:"towerSelectedHandler", messageId:"towerSelected"){ message ->
 			entity.selectedEntity = message.tower		
+		})
+		
+		component(utils.components.genericComponent(id:"upgradeHandler", messageId:"upgradeEvent") {
+			
+			def selectedEntity = towerControl.selectedEntity
+			def world = towerControl.parent
+			
+			if(selectedEntity==null)
+				return
+			
+			if(!selectedEntity.canUpgrade)
+				return
+			
+			if(selectedEntity.upgradeCost > world.money)
+				return
+							
+			world.money = (float)(world.money - selectedEntity.upgradeCost)
+			
+			messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
+				upgrademessage.tower = selectedEntity
+			})
 		})
 		
 		component(new Component("enabler"){
@@ -523,8 +541,6 @@ builder.entity("world") {
 			})
 			
 		})
-				
-				
 		
 		child(entity("upgradecontrol"){
 			
@@ -542,24 +558,14 @@ builder.entity("world") {
 				icon:utils.resources.image("towerofdefense.images.upgrade_icon"),
 				mouseNotOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.4f),
 				mouseOverFillColor:utils.color(0.0f, 0.0f, 1.0f, 0.7f),
-				trigger:utils.custom.triggers.closureTrigger {
-					def entity = entity
-					def selectedTower = towerControl.selectedEntity
-					
-					def world = towerControl.parent
-					world.money = (float)(world.money - selectedTower.upgradeCost)
-					
-					messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->
-						upgrademessage.tower = selectedTower
-					})
-				},
+				trigger:utils.custom.triggers.genericMessage("upgradeEvent") {},
 				enabled:{
 					def selectedEntity = towerControl.selectedEntity
 					
 					if(selectedEntity==null)
 						return false
 					
-					if(selectedEntity.upgrading)
+					if(!selectedEntity.canUpgrade)
 						return false
 					
 					def world = towerControl.parent
