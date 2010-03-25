@@ -148,13 +148,13 @@ public class TowersDefinitions {
 			direction:utils.vector(-1,0),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
 			levels:[
-			[level:1, maxTargets: 1, radius:50f, fireDuration:500, reloadTime:1500, shockFactor:damageOverTime(0.5f,500), upgradeCost:7, sellCost:5],
-			[level:2, radius:55f, shockFactor:damageOverTime(0.6f,500), upgradeCost:15, sellCost:5],
-			[level:3, maxTargets: 2, radius:60f, fireDuration:500, reloadTime:1400, shockFactor:damageOverTime(0.7f,500), upgradeCost:22, sellCost:5],
-			[level:4, radius:65f, shockFactor:damageOverTime(0.8f,500), upgradeCost:30, sellCost:5],
-			[level:5, maxTargets: 3,radius:70f, fireDuration:500, reloadTime:1300, shockFactor:damageOverTime(0.9f,500), upgradeCost:37, sellCost:5],
-			[level:6, radius:75f, shockFactor:damageOverTime(1f,500), upgradeCost:45, sellCost:5],
-			[level:7, maxTargets: 4,radius:100f, fireDuration:500, reloadTime:1200, shockFactor:damageOverTime(1.2f,500), sellCost:85]]					
+			[level:1, maxTargets: 1, radius:50f, fireDuration:500, reloadTime:1500, shockFactor:damageOverTime(1f,500), upgradeCost:7, sellCost:5],
+			[level:2, radius:55f, shockFactor:damageOverTime(1.5f,500), upgradeCost:15, sellCost:5],
+			[level:3, maxTargets: 2, radius:60f, fireDuration:500, reloadTime:1400, shockFactor:damageOverTime(1.5f,500), upgradeCost:22, sellCost:5],
+			[level:4, radius:65f, shockFactor:damageOverTime(2f,500), upgradeCost:30, sellCost:5],
+			[level:5, maxTargets: 3,radius:70f, fireDuration:500, reloadTime:1300, shockFactor:damageOverTime(2f,500), upgradeCost:37, sellCost:5],
+			[level:6, radius:75f, shockFactor:damageOverTime(2.5f,500), upgradeCost:45, sellCost:5],
+			[level:7, maxTargets: 4,radius:100f, fireDuration:500, reloadTime:1200, shockFactor:damageOverTime(2.5f,500), sellCost:85]]					
 			]
 		})
 		return [icon:"towerofdefense.images.shocktower_icon", cost:7, instantiationTemplate:laserTower]
