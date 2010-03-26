@@ -3,6 +3,7 @@ package towerofdefense.scenes;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.entities.Entity 
 import org.newdawn.slick.GameContainer 
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
 import org.newdawn.slick.state.transition.FadeOutTransition 
@@ -93,6 +94,7 @@ builder.entity("menu") {
 		stateBasedGame.enterState(2, new FadeOutTransition(), new FadeInTransition())
 		
 	})
+	
 	
 	input("inputmapping"){
 		keyboard {
