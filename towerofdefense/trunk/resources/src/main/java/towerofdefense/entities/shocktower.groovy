@@ -33,6 +33,8 @@ builder.entity("tower-${Math.random()}") {
 	property("shockFiredTimer", new CountDownTimer(1000))
 	
 	property("targets", [])
+
+	property("sound", utils.resources.sounds.sound("towerofdefense.sounds.shock"))
 	
 	component(new SelectTargetsWithinRangeComponent("selectTarget")) {
 		propertyRef("targets", "targets")
@@ -52,18 +54,11 @@ builder.entity("tower-${Math.random()}") {
 		return
 		
 		def shockCritter = { targetEntity ->
-			
 			def targetVelocity  = targetEntity."movement.velocity"
-			
-			
-			
 			def shockFactor = entity.shockFactor
-			
 			def shockForce = targetVelocity.copy().scale((float)-shockFactor)
-			
 			entity.debugVectors << new DebugVector(targetEntity.position.copy(), targetEntity.forwardForce.copy().add(shockForce).scale(1000000),utils.color(1,1,0,1))
 			targetEntity."movement.force".add(shockForce)
-						
 		}
 		
 		targets.each(shockCritter)
@@ -76,6 +71,8 @@ builder.entity("tower-${Math.random()}") {
 			
 			entity.reloadTimer.reset()
 			entity.shockFiredTimer.reset()
+			
+			entity.sound.play()
 		}
 	}
 	]))
