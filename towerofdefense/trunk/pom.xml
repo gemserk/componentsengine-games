@@ -149,6 +149,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>jorbis</groupId>
+				<artifactId>jorbis</artifactId>
+				<version>0.0.17</version>
+			</dependency>
+
+			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>resources</artifactId>
 				<version>${project.version}</version>

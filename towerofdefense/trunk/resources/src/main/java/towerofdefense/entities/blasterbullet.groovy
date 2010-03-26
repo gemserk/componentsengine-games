@@ -7,12 +7,4 @@ builder.entity {
 	
 	parent("towerofdefense.entities.bullet", parameters)
 	
-	property("sound", utils.resources.sounds.sound("towerofdefense.sounds.blasterbullet"))
-	property("alreadySounded", false)
-	
-	component(new ComponentFromListOfClosures("sounder when create", [{UpdateMessage message ->
-		if (!entity.alreadySounded)
-			entity.sound.play(1.0f, 0.3f)
-	}]
-	))
 }

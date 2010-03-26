@@ -20,6 +20,8 @@ builder.entity("lasertower-${Math.random()}") {
 	property("canFire",true)
 	property("canFireTimer",new CountDownTimer(5000))
 	property("fireDurationTimer",new CountDownTimer(2000))
+
+	property("laserSound", utils.resources.sounds.sound("towerofdefense.sounds.laserbullet"))
 	
 	component(new ComponentFromListOfClosures("shooter",[ {UpdateMessage message ->
 		if(!entity.canFire || !entity.targetEntity )
@@ -37,6 +39,8 @@ builder.entity("lasertower-${Math.random()}") {
 		entity.fireDurationTimer.reset();
 		
 		entity.canFire = false
+		
+		entity.laserSound.play(1.0f, 0.3f)
 	}]))
 	
 	component(new TimerComponent("canFireTimerComponent")){

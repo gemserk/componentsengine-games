@@ -44,12 +44,12 @@ public class TowersDefinitions {
 			position:position,
 			direction:utils.vector(-1,0),
 			color:utils.color(1f, 1f, 1f, 1.0f),
-			template:"towerofdefense.entities.blasterbullet",
 			turnRate:completeTurn(0.5),
-			instanceParameters: utils.custom.genericprovider.provide{ tower ->
+			bulletTemplate:new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("towerofdefense.entities.blasterbullet"), 
+			utils.custom.genericprovider.provide{ tower ->
 				[
 				position:tower.position.copy(),
-				// direction:(entity.targetEntity.position.copy().sub(newPosition).normalise()),
 				direction:tower.direction.copy(),
 				image:utils.resources.image("towerofdefense.images.blasterbullet"),
 				damage:tower.damage,
@@ -57,7 +57,7 @@ public class TowersDefinitions {
 				maxVelocity:0.6f,
 				color:utils.color(0.4f, 1.0f, 0.4f, 1.0f)
 				]
-			},
+			}),
 			levels:[
 			[level:1, radius:50f, damage:10f, upgradeCost:5, sellCost:5, reloadTime:200],
 			[level:2, radius:55f, damage:15f, upgradeCost:10, sellCost:7], 
@@ -72,7 +72,7 @@ public class TowersDefinitions {
 		
 		return [icon:"towerofdefense.images.blastertower_icon", cost:5, instantiationTemplate:blastTower]
 	}
-
+	
 	
 	def laser(){
 		def laserTower = new InstantiationTemplateImpl(
@@ -107,23 +107,22 @@ public class TowersDefinitions {
 			direction:utils.vector(1,0),
 			turnRate:completeTurn(14),
 			color:utils.color(1.0f, 1.0f, 1.0f, 1.0f),
-			template:"towerofdefense.entities.missilebullet",
-			instanceParameters: utils.custom.genericprovider.provide{ tower ->
-				def newPosition = tower.position.copy()
-				def newDirection = tower.direction.copy()
+			bulletTemplate:new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("towerofdefense.entities.missilebullet"), 
+			utils.custom.genericprovider.provide{ tower ->
 				[
-						position:newPosition,
-						direction: newDirection,
-						targetEntity:tower.targetEntity,
-						image:utils.resources.image("towerofdefense.images.blasterbullet"),
-						radius:5.0f,
-						damage:tower.damage,
-						blastRadius: tower.blastRadius,
-						maxVelocity:tower.missileVelocity,
-						turnRatio:0.18f,
-						color:utils.color(1f, 0.1f, 0.1f, 1.0f)
-						]
-			},
+				position:tower.position.copy(),
+				direction: tower.direction.copy(),
+				targetEntity:tower.targetEntity,
+				image:utils.resources.image("towerofdefense.images.blasterbullet"),
+				radius:5.0f,
+				damage:tower.damage,
+				blastRadius: tower.blastRadius,
+				maxVelocity:tower.missileVelocity,
+				turnRatio:0.18f,
+				color:utils.color(1f, 0.1f, 0.1f, 1.0f)
+				]
+			}),
 			levels:[
 			[level:1, radius:72f, damage:150f, upgradeCost:10, sellCost:10, blastRadius:30f, missileVelocity: 0.09f, reloadTime:3500],
 			[level:2, radius:77f, damage:160f, upgradeCost:20, sellCost:15, blastRadius:40f, reloadTime:3250],
