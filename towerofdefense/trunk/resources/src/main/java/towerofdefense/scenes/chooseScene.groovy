@@ -49,8 +49,6 @@ builder.entity("sceneselection") {
 	
 	itemsPerPage.times { i -> 
 	
-		println i
-		
 		child(entity("button-$i".toString()) { 
 			
 			component(new ChildsDisablerComponent("enabler")) {
