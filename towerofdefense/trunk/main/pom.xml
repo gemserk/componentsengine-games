@@ -59,11 +59,6 @@
 			<artifactId>game</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>jorbis</groupId>
-			<artifactId>jorbis</artifactId>
-		</dependency>
-
 	</dependencies>
 
 	<profiles>
