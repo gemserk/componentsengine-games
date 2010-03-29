@@ -2,6 +2,7 @@ package jylonwars
 
 import com.gemserk.componentsengine.entities.Entity 
 import com.gemserk.componentsengine.messages.Message 
+import com.gemserk.componentsengine.properties.Properties;
 import com.google.inject.internal.Strings 
 
 
