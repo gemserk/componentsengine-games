@@ -7,12 +7,13 @@ import org.newdawn.slick.Graphics
 
 builder.entity {
 	parent("towerofdefense.entities.button",parameters)
+	
 	property("timeLeft",parameters.timeLeft)
 	
 	component(new ComponentFromListOfClosures("background",[ {SlickRenderMessage message -> 
 		Graphics g = message.graphics
 		
-		def rectangle = entity.bounding
+		def rectangle = entity.bounds
 		def position = entity.position
 		def width = rectangle.width
 		def height = rectangle.height

@@ -445,6 +445,9 @@ builder.entity("world") {
 			press(button:"left", eventId:"click")
 			press(button:"right", eventId:"rightClick")
 			
+			press(button:"left", eventId:"mouse.leftpressed")
+			release(button:"left", eventId:"mouse.leftreleased")
+			
 			move(eventId:"move") { message ->
 				message.x = position.x
 				message.y = position.y
@@ -513,7 +516,7 @@ builder.entity("world") {
 			
 			if(selectedEntity.upgradeCost > world.money)
 				return
-							
+			
 			world.money = (float)(world.money - selectedEntity.upgradeCost)
 			
 			messageQueue.enqueue(utils.genericMessage("upgrade") {upgrademessage ->

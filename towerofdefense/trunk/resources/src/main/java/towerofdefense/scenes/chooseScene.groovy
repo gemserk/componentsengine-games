@@ -48,7 +48,7 @@ builder.entity("sceneselection") {
 	property("paging", paging)
 	
 	itemsPerPage.times { i -> 
-	
+		
 		child(entity("button-$i".toString()) { 
 			
 			component(new ChildsDisablerComponent("enabler")) {
@@ -60,24 +60,24 @@ builder.entity("sceneselection") {
 				property("scene", {paging.getItem(i)})
 				
 				parameters = [
-								position:utils.vector(menuX, (Float)(menuY + i*(buttonHeight+buttonSeparation))),
-								rectangle:utils.rectangle(-160, (float)(-buttonHeight/2f), 320, buttonHeight),
-								label:{entity.scene.desc},
-								lineColor:utils.color(0f, 0f, 1f, 0.5f),
-								mouseNotOverFillColor:buttonMouseOverFillColor,
-								mouseOverFillColor:buttonMouseNotOverFillColor,
-								font:buttonFont,
-								trigger:utils.custom.triggers.genericMessage("loadScene") {
-									message.scene = entity.scene.script
-								}
-				  		]
-				  		
+						position:utils.vector(menuX, (Float)(menuY + i*(buttonHeight+buttonSeparation))),
+						rectangle:utils.rectangle(-160, (float)(-buttonHeight/2f), 320, buttonHeight),
+						label:{entity.scene.desc},
+						lineColor:utils.color(0f, 0f, 1f, 0.5f),
+						mouseNotOverFillColor:buttonMouseOverFillColor,
+						mouseOverFillColor:buttonMouseNotOverFillColor,
+						font:buttonFont,
+						trigger:utils.custom.triggers.genericMessage("loadScene") {
+							message.scene = entity.scene.script
+						}
+						]
+				
 				parent("towerofdefense.entities.button", parameters)
 				
 			})
 			
 		})
-	
+		
 	}
 	
 	child(entity("nextPageButton") {
@@ -85,40 +85,40 @@ builder.entity("sceneselection") {
 		property("paging", {entity.parent.paging})
 		
 		parameters = [
-			position:utils.vector(680, 550),
-			rectangle:utils.rectangle(-100, (float)(-buttonHeight/2f), 200, buttonHeight),
-			label:"next",
-			lineColor:utils.color(0f, 0f, 1f, 0.5f),
-			mouseNotOverFillColor:buttonMouseOverFillColor,
-			mouseOverFillColor:buttonMouseNotOverFillColor,
-			font:buttonFont,
-			trigger:utils.custom.triggers.genericMessage("nextPage") {
-				entity.paging.nextPage()
-			},
-			enabled:{!entity.paging.isLastPage()}
-		]
+				position:utils.vector(680, 550),
+				rectangle:utils.rectangle(-100, (float)(-buttonHeight/2f), 200, buttonHeight),
+				label:"next",
+				lineColor:utils.color(0f, 0f, 1f, 0.5f),
+				mouseNotOverFillColor:buttonMouseOverFillColor,
+				mouseOverFillColor:buttonMouseNotOverFillColor,
+				font:buttonFont,
+				trigger:utils.custom.triggers.genericMessage("nextPage") {
+					entity.paging.nextPage()
+				},
+				enabled:{!entity.paging.isLastPage()}
+				]
 		
 		parent("towerofdefense.entities.button", parameters)
 		
 	})
-
+	
 	child(entity("previousPageButton") {
-
+		
 		property("paging", {entity.parent.paging})
 		
 		parameters = [
-			position:utils.vector(120, 550),
-			rectangle:utils.rectangle(-100, (float)(-buttonHeight/2f), 200, buttonHeight),
-			label:"previous",
-			lineColor:utils.color(0f, 0f, 1f, 0.5f),
-			mouseNotOverFillColor:buttonMouseOverFillColor,
-			mouseOverFillColor:buttonMouseNotOverFillColor,
-			font:buttonFont,
-			trigger:utils.custom.triggers.genericMessage("previousPage") {
-				entity.paging.previousPage()
-			},
-			enabled:{!entity.paging.isFirstPage()}
-		]
+				position:utils.vector(120, 550),
+				rectangle:utils.rectangle(-100, (float)(-buttonHeight/2f), 200, buttonHeight),
+				label:"previous",
+				lineColor:utils.color(0f, 0f, 1f, 0.5f),
+				mouseNotOverFillColor:buttonMouseOverFillColor,
+				mouseOverFillColor:buttonMouseNotOverFillColor,
+				font:buttonFont,
+				trigger:utils.custom.triggers.genericMessage("previousPage") {
+					entity.paging.previousPage()
+				},
+				enabled:{!entity.paging.isFirstPage()}
+				]
 		
 		parent("towerofdefense.entities.button", parameters)
 		
@@ -144,6 +144,9 @@ builder.entity("sceneselection") {
 		mouse {
 			
 			press(button:"left", eventId:"click")
+			
+			press(button:"left", eventId:"mouse.leftpressed")
+			release(button:"left", eventId:"mouse.leftreleased")
 			
 			move(eventId:"move") { message ->
 				message.x = position.x

@@ -1,7 +1,6 @@
 package towerofdefense.entities;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import com.gemserk.componentsengine.commons.components.LabelComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
 
@@ -9,40 +8,17 @@ builder.entity {
 	
 	tags("button")
 	
-	property("position", parameters.position)
-	property("direction", utils.vector(1f,0f))
 	property("mouseNotOverFillColor", parameters.mouseNotOverFillColor)
-	property("fillColor", {entity.mouseOver ? entity.mouseOverFillColor : entity.mouseNotOverFillColor})
 	property("mouseOverFillColor", parameters.mouseOverFillColor)
-	property("bounding", parameters.rectangle)
-	
-	property("enabled", parameters.enabled ?: true)
 	property("disabledFillColor", utils.color(1.0f, 1.0f, 1.0f, 0.4f))
+	property("fillColor", {entity.cursorOver ? entity.mouseOverFillColor : entity.mouseNotOverFillColor})
 	
-	property("mouseOver", false)
-	
-	property("trigger", parameters.trigger)
-	
-	component(utils.components.genericComponent(id:"mouseOverHandler", messageId:"move"){ message ->
-		def x = (float)(message.x - entity.position.x)
-		def y = (float)(message.y - entity.position.y)
-		
-		entity.mouseOver = entity.bounding.contains(x, y)
-	})
-	
-	component(utils.components.genericComponent(id:"mouseClickHandler", messageId:"click"){ message ->
-		if (!entity.enabled)
-			return
-		
-		if (! entity.mouseOver )
-			return
-		
-		entity.trigger.trigger([:])
-	})
+	parameters.onReleasedTrigger = parameters.trigger
+	parameters.bounds = parameters.rectangle
 	
 	component(new RectangleRendererComponent("background")) {
 		propertyRef("position", "position")
-		propertyRef("rectangle", "bounding")
+		propertyRef("rectangle", "bounds")
 		//property("cornerRadius", 3)
 		def entity = entity
 		property("lineColor", parameters.lineColor != null ? parameters.lineColor : utils.color(0f,0f,0f,0f))
@@ -57,14 +33,6 @@ builder.entity {
 			propertyRef("direction", "direction")
 		}
 	}
-
-	if (parameters.label != null) {
-		component(new LabelComponent("textComponent")) {
-			propertyRef("position","position")
-			property("message","{0}")
-			property("value", parameters.label)
-			property("font", parameters.font)
-		}
-	}
-
+	
+	parent("gemserk.gui.button", parameters)
 }

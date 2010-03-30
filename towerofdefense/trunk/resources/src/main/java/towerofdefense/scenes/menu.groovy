@@ -3,7 +3,6 @@ package towerofdefense.scenes;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.entities.Entity 
 import org.newdawn.slick.GameContainer 
-import org.newdawn.slick.Sound;
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
 import org.newdawn.slick.state.transition.FadeOutTransition 
@@ -57,7 +56,7 @@ builder.entity("menu") {
 	
 	component(utils.components.genericComponent(id:"playOrResumeHandler", messageId:"playOrResume"){ message ->
 		StateBasedGame stateBasedGame = utils.custom.gameStateManager
-	
+		
 		stateBasedGame.enterState(entity.playing ? 1 : 2, new FadeOutTransition(), new FadeInTransition())
 		if(entity.playing){
 			entity.playingNextValue = true
@@ -107,6 +106,9 @@ builder.entity("menu") {
 			
 			press(button:"left", eventId:"click")
 			press(button:"right", eventId:"rightClick")
+			
+			press(button:"left", eventId:"mouse.leftpressed")
+			release(button:"left", eventId:"mouse.leftreleased")
 			
 			move(eventId:"move") { message ->
 				message.x = position.x
