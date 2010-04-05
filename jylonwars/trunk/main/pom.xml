@@ -8,8 +8,8 @@
 	</parent>
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Game - Loader</name>
-	<description>Game - Loader</description>
+	<name>JylonWars</name>
+	<description>JylonWars</description>
 	
 	<url>${webstart.url}</url>
 
@@ -20,7 +20,7 @@
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
-		<appletGameParameter>Game</appletGameParameter>
+		<appletGameParameter>com.gemserk.games.jylonwars.Game</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
 		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
 
