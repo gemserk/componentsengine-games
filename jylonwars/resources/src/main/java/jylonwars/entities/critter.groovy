@@ -1,7 +1,7 @@
 package jylonwars.entities
+
+import com.gemserk.componentsengine.messages.GenericMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage;
-
-
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.FollowPathComponent 
@@ -40,13 +40,29 @@ builder.entity("critter-${Math.random()}") {
 		def target = entity.parent.getEntities(EntityPredicates.withAllTags("ship")).first();
 		
 		if(target == null)
-			return
+		return
 		
 		def direction = target.position.copy().sub(entity.position).normalise()
 		
 		entity."movement.force".add(direction.scale(1))
 	}
 	]))
+	
+	
+	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
+		def sourceEntity = message.source
+		
+		if (!sourceEntity.tags.contains("bullet"))
+			return;
+		
+		if (message.targets.contains(entity)) {
+			def deadMessage = new GenericMessage("critterdead")
+			deadMessage.critter = entity
+			
+			messageQueue.enqueue(deadMessage)
+		}
+		
+	})
 	
 }
 

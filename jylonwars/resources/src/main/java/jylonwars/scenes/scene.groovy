@@ -25,13 +25,24 @@ builder.entity("game") {
 	child(entity("ship1"){
 		parent("jylonwars.entities.ship",[player:"player1",position:utils.vector(300,300)])
 	})
-//	child(entity("ship2"){
-//		parent("jylonwars.entities.ship",[player:"player2",position:utils.vector(500,300)])
-//	})
+	//	child(entity("ship2"){
+	//		parent("jylonwars.entities.ship",[player:"player2",position:utils.vector(500,300)])
+	//	})
 	
-	child(entity("enemy"){
-		parent("jylonwars.entities.critter",[position:utils.vector(600,550),color:utils.color(0,1,0),speed:0.1f,image:utils.resources.image("ship")])
+	Random random = new Random()
+	
+	10.times {		
+		child(entity("enemy-$it".toString()){
+			parent("jylonwars.entities.critter",[position:utils.vector(random.nextInt(800),random.nextInt(600)),color:utils.color(0,1,0),speed:0.1f,image:utils.resources.image("ship")])
+		})
+	}
+	
+	
+	
+	component(utils.components.genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
+		message.critter.position = utils.vector(random.nextInt(800),random.nextInt(600))
 	})
+	
 	
 	
 	input("inputmapping"){

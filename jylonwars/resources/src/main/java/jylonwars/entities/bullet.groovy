@@ -28,21 +28,21 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("direction", "direction")
 	}
 	
-//	component(new GenericHitComponent("bullethit")){
-//		property("targetTag", "critter")
-//		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
-//		property("trigger", utils.custom.triggers.genericMessage("hit") { 
-//			def source = message.source
-//			def damage = source.damage
-//			message.damage = damage;
-//			
-//			def targets = message.targets
-//			message.targets = [targets[0]]
-//		})
-//	}
-//	
-//	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
-//		if (message.getProperty("source").get() == entity)
-//			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
-//	})
+	component(new GenericHitComponent("bullethit")){
+		property("targetTag", "critter")
+		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
+		property("trigger", utils.custom.triggers.genericMessage("hit") { 
+			def source = message.source
+			def damage = source.damage
+			message.damage = damage;
+			
+			def targets = message.targets
+			message.targets = [targets[0]]
+		})
+	}
+	
+	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
+		if (message.getProperty("source").get() == entity)
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+	})
 }

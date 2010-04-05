@@ -100,7 +100,7 @@ builder.entity("ship") {
 	
 	
 	component(new WeaponComponent("shooter")) {
-		property("reloadTime", 300)
+		property("reloadTime", 100)
 		propertyRef("position", "position")
 		property("shouldFire", true)
 		
