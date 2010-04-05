@@ -51,10 +51,10 @@ builder.entity("game") {
 			hold(button:"right",eventId:"player1.move.right")
 			hold(button:"up",eventId:"player1.move.up")
 			hold(button:"down",eventId:"player1.move.down")
-			hold(button:"a",eventId:"player2.move.left")
-			hold(button:"d",eventId:"player2.move.right")
-			hold(button:"w",eventId:"player2.move.up")
-			hold(button:"s",eventId:"player2.move.down")
+			hold(button:"a",eventId:"player1.move.left")
+			hold(button:"d",eventId:"player1.move.right")
+			hold(button:"w",eventId:"player1.move.up")
+			hold(button:"s",eventId:"player1.move.down")
 		}
 		mouse {
 			move(eventId:"lookAt") { message ->
