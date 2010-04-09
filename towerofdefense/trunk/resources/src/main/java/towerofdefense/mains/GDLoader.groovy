@@ -30,7 +30,7 @@ class GDLoader {
 		stringWriter.print """
 package towerofdefense.scenes;
 
-builder.entity("world") {
+builder.entity {
 		
 	def utils = utils
 	def sceneBuilder = new TowerOfDefenseSceneBuilder(utils)

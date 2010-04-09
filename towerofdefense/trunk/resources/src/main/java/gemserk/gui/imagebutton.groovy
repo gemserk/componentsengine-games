@@ -10,6 +10,9 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 builder.entity {
 	
 	tags("imagebutton")
+
+	def onOverSize = parameters.onOverSize ?: 1.0f
+	def onPressedSize = parameters.onPressedSize ?: 1.0f
 	
 	property("buttonImage", parameters.buttonImage)
 	property("buttonOverImage", parameters.buttonImageOver)
@@ -40,7 +43,7 @@ builder.entity {
 		propertyRef("image", "buttonOverImage");
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
-		property("size", {entity.buttonSize.copy().scale(1.01f)});
+		property("size", {entity.buttonSize.copy().scale(onOverSize)});
 	}
 
 	component(new DisablerComponent(new ImageRenderableComponent("imagePressed"))) {
@@ -48,7 +51,7 @@ builder.entity {
 		propertyRef("image", "buttonPressedImage");
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
-		property("size", {entity.buttonSize.copy().scale(0.99f)});
+		property("size", {entity.buttonSize.copy().scale(onPressedSize)});
 	}
 
 }
