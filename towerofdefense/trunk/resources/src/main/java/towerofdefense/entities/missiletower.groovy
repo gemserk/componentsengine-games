@@ -20,7 +20,7 @@ builder.entity("tower-${Math.random()}") {
 		propertyRef("enabled", "weaponEnabled")
 		propertyRef("reloadTime", "reloadTime")
 		propertyRef("position", "position")
-		propertyRef("targetEntity", "targetEntity")
+		property("shouldFire", {entity.targetEntity!=null})
 		
 		property("trigger", utils.custom.triggers.closureTrigger { tower -> 
 			def bulletTemplate = entity.bulletTemplate
