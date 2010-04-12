@@ -30,7 +30,7 @@ public class Game extends StateBasedGame {
 
 			app.setDisplayMode(800, 600, false);
 			app.setAlwaysRender(true);
-			app.setShowFPS(true);
+			app.setShowFPS(false);
 
 			app.setMinimumLogicUpdateInterval(1);
 			// app.setTargetFrameRate(60);

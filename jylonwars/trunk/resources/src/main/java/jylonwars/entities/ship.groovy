@@ -92,6 +92,8 @@ builder.entity("ship") {
 			case "move.down":
 				moveDirection = utils.vector(0,1)
 				break;
+			default:
+				moveDirection = utils.vector(0,0)
 		}
 		
 		entity.desiredDirection.add(moveDirection)

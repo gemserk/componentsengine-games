@@ -1,6 +1,11 @@
 package jylonwars.scenes;
+import com.gemserk.componentsengine.messages.GenericMessage;
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 
+
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
+import com.gemserk.componentsengine.commons.components.LabelComponent;
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import jylonwars.GroovyBootstrapper 
 
@@ -43,10 +48,21 @@ builder.entity("game") {
 		message.critter.position = utils.vector(random.nextInt(800),random.nextInt(600))
 	})
 	
+	component(new ComponentFromListOfClosures("moveHandler",[{ GenericMessage message ->
+		if(!message.id.startsWith("player1.move"))
+			return
+			
+		println message.id
+	}]))
+	
+	
+	
 	
 	
 	input("inputmapping"){
 		keyboard {
+			press(button:"left",eventId:"player1.move.test.left.press")
+			release(button:"left",eventId:"player1.move.test.left.release")
 			hold(button:"left",eventId:"player1.move.left")
 			hold(button:"right",eventId:"player1.move.right")
 			hold(button:"up",eventId:"player1.move.up")
@@ -63,4 +79,12 @@ builder.entity("game") {
 			}
 		}
 	}
+	
+	component(new LabelComponent("fps")){
+		property("color", utils.color(0f,0f,0f,1f))
+		property("position", utils.vector(50,20))
+		property("message", "FPS: {0}")
+		property("value",{utils.custom.gameContainer.getFPS()})
+	}
+	
 }
