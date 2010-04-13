@@ -1,9 +1,11 @@
 package jylonwars.entities;
 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 
 builder.entity("bullet-${Math.random()}") {
@@ -45,4 +47,5 @@ builder.entity("bullet-${Math.random()}") {
 		if (message.getProperty("source").get() == entity)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
+	
 }

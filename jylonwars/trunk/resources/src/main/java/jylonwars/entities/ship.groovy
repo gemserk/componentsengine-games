@@ -6,12 +6,15 @@ import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosur
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.predicates.EntityPredicates;
 
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
+import com.gemserk.componentsengine.commons.components.GenericHitComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.commons.components.WeaponComponent 
+import com.gemserk.games.jylonwars.WorldBoundsComponent;
 
 
 builder.entity("ship") {
@@ -22,6 +25,13 @@ builder.entity("ship") {
 	property("direction",utils.vector(1,0))
 	property("desiredDirection",utils.vector(0,0))
 	property("player",parameters.player)
+	
+	property("radius",20)
+	
+	property("explosionSound",utils.resources.sounds.sound("explosion"))
+	
+	property("target",utils.vector(1,0))
+	property("bounds",parameters.bounds)
 	
 	property("bulletTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("jylonwars.entities.bullet"), 
@@ -117,5 +127,23 @@ builder.entity("ship") {
 		})
 	}
 	
+	component(new GenericHitComponent("crashandburn")) {
+		property("targetTag", "critter")
+		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
+		property("trigger", utils.custom.triggers.genericMessage("shipcollision") {})
+	}
+	
+	component(utils.components.genericComponent(id:"shipcollision", messageId:"shipcollision"){ message ->
+		//if(entity.id != message.source)
+		//	return
+			
+		entity.explosionSound.play()
+	})
+	
+	
+	component(new WorldBoundsComponent("bounds")){
+		propertyRef("bounds","bounds")
+		propertyRef("position","position")
+	}
 	
 }

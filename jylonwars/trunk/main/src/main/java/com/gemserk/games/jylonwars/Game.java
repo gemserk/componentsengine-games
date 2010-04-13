@@ -62,6 +62,7 @@ public class Game extends StateBasedGame {
 		public void onInit() {
 			super.onInit();
 			images(injector, "assets/images.properties");
+			sounds("assets/sounds.properties");
 		}
 		
 		
