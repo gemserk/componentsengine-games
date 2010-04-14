@@ -1,38 +1,10 @@
 package towerofdefense.scenes;
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
-
-import com.gemserk.componentsengine.predicates.EntityPredicates;
-
-import com.google.common.base.Predicates;
-
-import com.gemserk.componentsengine.messages.GenericMessage;
-
-import com.gemserk.games.towerofdefense.components.render.CrossRendererComponent;
-
-import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.messages.*;
-
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
-import com.gemserk.componentsengine.components.Component 
-
-import towerofdefense.components.GridRenderer 
-import towerofdefense.components.TowerDeployer 
-
-import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeInTransition;
-import org.newdawn.slick.state.transition.FadeOutTransition;
-
-import com.gemserk.componentsengine.messages.GenericMessage;
-import com.gemserk.componentsengine.timers.CountDownTimer 
-import com.gemserk.componentsengine.timers.PeriodicTimer 
-
 import towerofdefense.GroovyBootstrapper;
 import com.gemserk.componentsengine.commons.components.*;
-import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.games.towerofdefense.*;
 import com.gemserk.games.towerofdefense.components.*;
-import com.gemserk.games.towerofdefense.waves.Waves;
 
 builder.entity("game") {
 	

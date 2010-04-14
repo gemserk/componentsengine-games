@@ -1,9 +1,9 @@
 package towerofdefense.scenes;
 
 
+import com.gemserk.componentsengine.commons.components.ChildsDisablerComponent 
 import com.gemserk.componentsengine.gamestates.GemserkGameState 
 import com.gemserk.componentsengine.utils.Paging 
-import com.gemserk.games.towerofdefense.components.ChildsDisablerComponent;
 
 import org.newdawn.slick.state.StateBasedGame 
 import org.newdawn.slick.state.transition.FadeInTransition 
