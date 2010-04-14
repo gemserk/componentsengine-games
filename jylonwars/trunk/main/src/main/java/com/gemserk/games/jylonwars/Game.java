@@ -30,7 +30,6 @@ public class Game extends StateBasedGame {
 
 			app.setDisplayMode(800, 600, false);
 			app.setAlwaysRender(true);
-			app.setShowFPS(false);
 
 			app.setMinimumLogicUpdateInterval(1);
 			// app.setTargetFrameRate(60);
@@ -49,6 +48,7 @@ public class Game extends StateBasedGame {
 	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
+		container.setShowFPS(false);
 		if(container instanceof AppletGameContainer.Container){
 			container.setVSync(true);
 		}
