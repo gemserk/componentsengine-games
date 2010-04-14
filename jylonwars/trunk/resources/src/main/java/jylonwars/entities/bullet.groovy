@@ -1,5 +1,7 @@
 package jylonwars.entities;
 
+import org.newdawn.slick.geom.Line;
+
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
@@ -15,7 +17,7 @@ builder.entity("bullet-${Math.random()}") {
 	property("position", parameters.position);
 	propertyRef("direction", "movement.velocity");
 	property("damage", parameters.damage);
-	property("radius", parameters.radius);
+	property("collisionDistance", parameters.radius);
 	
 	component(new SuperMovementComponent("movement")){
 		property("velocity", parameters.direction.scale(parameters.maxVelocity))
@@ -30,9 +32,22 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("direction", "direction")
 	}
 	
+	
+	component(new ComponentFromListOfClosures("directionToForceComponent",[ {UpdateMessage message ->
+		def origin = entity.position
+		def end = origin.copy().add(entity."movement.velocity".copy().scale(-message.delta))
+		
+		def line = new Line(origin,end)
+		
+		entity.collisionLine = line
+		
+	}
+	]))
+	
+	
 	component(new GenericHitComponent("bullethit")){
 		property("targetTag", "critter")
-		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
+		property("predicate",{EntityPredicates.isNear(entity.collisionLine, entity.collisionDistance)})
 		property("trigger", utils.custom.triggers.genericMessage("hit") { 
 			def source = message.source
 			def damage = source.damage
