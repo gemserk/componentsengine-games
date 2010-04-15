@@ -1,5 +1,4 @@
 package jylonwars.scenes;
-import org.lwjgl.opengl.Display;
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
@@ -104,8 +103,7 @@ builder.entity("game") {
 			}
 			
 			component(utils.components.genericComponent(id:"spawntriggeredhandler", messageId:"spawntriggered"){ message ->
-				println "Timer fired"
-				//entity.timer = new CountDownTimer(entity.interval.)
+
 				entity.timer.reset()
 				
 				def ship = entity.parent.ship
@@ -141,19 +139,37 @@ builder.entity("game") {
 		}
 		
 	
-		component(new LabelComponent("playtimelabel")){
-			property("font",utils.resources.fonts.font([italic:false, bold:false, size:20]))
-			property("color", utils.color(0f,0f,0f,1f))
-			property("position", utils.vector(700,40))
-			property("message", "Time: {0}")
-			property("value",{(float)(entity.parent.playtime/1000f)})
-		}
-		component(new LabelComponent("crittersdeadlabel")){
-			property("color", utils.color(0f,0f,0f,1f))
-			property("position", utils.vector(50,100))
-			property("message", "CrittersDead: {0}")
-			property("value",{entity.crittersdead})
-		}
+		property("playtime", {(float)(entity.parent.playtime/1000f)})
+		
+		child(entity("playTimeLabel"){
+			
+			parent("gemserk.gui.label", [
+				font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
+				position:utils.vector(700f, 40f),
+				fontColor:utils.color(0f,0f,0f,1f),
+				bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+				align:"left",
+				valign:"top"
+			])
+			
+			property("playtime", {entity.parent.playtime})
+			property("message", {"Time: ${entity.playtime}".toString()})
+		})
+		
+		child(entity("crittersDeadLabel"){
+			
+			parent("gemserk.gui.label", [
+				font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
+				position:utils.vector(60f, 40f),
+				fontColor:utils.color(0f,0f,0f,1f),
+				bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+				align:"left",
+				valign:"top"
+			])
+			
+			property("crittersDead", {entity.parent.crittersdead})
+			property("message", {"CrittersDead: ${entity.crittersDead}".toString()})
+		})
 		
 	})
 	
@@ -166,21 +182,30 @@ builder.entity("game") {
 		
 		component(new ProcessingDisablerComponent("gameovercomponent")){ propertyRef("enabled", "dead") }
 		
+		def labelRectangle = utils.rectangle(-240,-50,480,100)
+		
 		component(new RectangleRendererComponent("background")) {
 			property("position",utils.vector(400,300))
-			property("rectangle", utils.rectangle(-240,-50,480,100))
+			property("rectangle", labelRectangle)
 			property("cornerRadius", 3)
 			property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
 			property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
 		}
 		
-		component(new LabelComponent("DEADLABEL")){
-			property("font",font)
-			property("color", utils.color(0f,0f,0f,1f))
-			property("position", utils.vector(400,300))
-			property("message", "Your time was: {0} seconds")
-			propertyRef("value","playtime")
-		}
+		child(entity("deadLabel"){
+			
+			parent("gemserk.gui.label", [
+				font:font,
+				position:utils.vector(400f, 300f),
+				fontColor:utils.color(0f,0f,0f,1f),
+				bounds:labelRectangle,
+				align:"center",
+				valign:"center"
+			])
+			
+			property("playtime", {entity.parent.playtime})
+			property("message", {"Your time was: ${entity.playtime} seconds".toString()})
+		})
 		
 		component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
 			utils.custom.game.loadScene("jylonwars.scenes.scene");
@@ -197,5 +222,4 @@ builder.entity("game") {
 			}
 		}
 	})
-	
 }
