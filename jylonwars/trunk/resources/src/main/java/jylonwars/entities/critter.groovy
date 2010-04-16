@@ -60,7 +60,7 @@ builder.entity("critter-${Math.random()}") {
 			messageQueue.enqueue(deadMessage)
 		}
 		
-		entity.explosionSound.play(1.0f, 0.5f)
+		entity.explosionSound.play(1.0f, 0.01f)
 		
 	})
 	

@@ -52,8 +52,9 @@ public class Game extends StateBasedGame {
 		if(container instanceof AppletGameContainer.Container){
 			container.setVSync(true);
 		}
-		GemserkGameState menuState = new GameGameState(0,"jylonwars.scenes.scene");
-		addState(menuState);
+		GemserkGameState gamestate = new GameGameState(0,"jylonwars.scenes.scene");
+		addState(gamestate);
+		
 	}
 	
 	class GameGameState extends GemserkGameState {

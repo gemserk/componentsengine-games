@@ -25,6 +25,8 @@ builder.entity("game") {
 	property("dead",false)
 	property("playtime",0)
 	
+	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
+	backgroundMusic.play();
 	
 	component(new LabelComponent("fpslabel")){
 		property("color", utils.color(0f,0f,0f,1f))
@@ -32,8 +34,6 @@ builder.entity("game") {
 		property("message", "FPS: {0}")
 		property("value",{utils.custom.gameContainer.getFPS()})
 	}
-	
-	
 	
 	child(entity("world"){
 		
@@ -229,6 +229,7 @@ builder.entity("game") {
 		})
 		
 		component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
+			backgroundMusic.stop();
 			utils.custom.game.loadScene("jylonwars.scenes.scene");
 		})
 		
