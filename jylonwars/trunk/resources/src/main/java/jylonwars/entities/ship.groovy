@@ -28,7 +28,8 @@ builder.entity("ship") {
 	
 	property("radius",20)
 	
-	property("explosionSound",utils.resources.sounds.sound("explosion"))
+	property("shotSound",utils.resources.sounds.sound("shot"))
+	property("gameoverSound",utils.resources.sounds.sound("gameover"))
 	
 	property("target",utils.vector(1,0))
 	property("bounds",parameters.bounds)
@@ -124,6 +125,8 @@ builder.entity("ship") {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))
 			
 			//entity.sound.play(1.0f, 0.3f);
+			
+			entity.shotSound.play();
 		})
 	}
 	
@@ -137,7 +140,7 @@ builder.entity("ship") {
 		//if(entity.id != message.source)
 		//	return
 			
-		entity.explosionSound.play()
+		entity.gameoverSound.play()
 	})
 	
 	

@@ -2,13 +2,9 @@ package jylonwars.entities
 
 import com.gemserk.componentsengine.messages.GenericMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
-import com.gemserk.componentsengine.commons.components.FollowPathComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import com.gemserk.componentsengine.commons.components.IncrementValueComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 
 builder.entity("critter-${Math.random()}") {
@@ -18,6 +14,8 @@ builder.entity("critter-${Math.random()}") {
 	property("position", parameters.position)
 	property("color",parameters.color)
 	propertyRef("direction", "movement.velocity")
+	
+	property("explosionSound",utils.resources.sounds.sound("explosion"))
 	
 	property("speed", parameters.speed)
 	
@@ -61,6 +59,8 @@ builder.entity("critter-${Math.random()}") {
 			
 			messageQueue.enqueue(deadMessage)
 		}
+		
+		entity.explosionSound.play(1.0f, 0.5f)
 		
 	})
 	
