@@ -13,6 +13,7 @@ import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent;
+import com.gemserk.games.jylonwars.ExplosionComponent 
 
 import jylonwars.GroovyBootstrapper 
 
@@ -103,7 +104,7 @@ builder.entity("game") {
 			}
 			
 			component(utils.components.genericComponent(id:"spawntriggeredhandler", messageId:"spawntriggered"){ message ->
-
+				
 				entity.timer.reset()
 				
 				def ship = entity.parent.ship
@@ -138,18 +139,18 @@ builder.entity("game") {
 			}
 		}
 		
-	
+		
 		property("playtime", {(float)(entity.parent.playtime/1000f)})
 		
 		child(entity("playTimeLabel"){
 			
 			parent("gemserk.gui.label", [
-				font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
-				position:utils.vector(700f, 40f),
-				fontColor:utils.color(0f,0f,0f,1f),
-				bounds:utils.rectangle(-50f, -20f, 100f, 40f),
-				align:"left",
-				valign:"top"
+			font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
+			position:utils.vector(700f, 50f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+			align:"left",
+			valign:"top"
 			])
 			
 			property("playtime", {entity.parent.playtime})
@@ -159,18 +160,38 @@ builder.entity("game") {
 		child(entity("crittersDeadLabel"){
 			
 			parent("gemserk.gui.label", [
-				font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
-				position:utils.vector(60f, 40f),
-				fontColor:utils.color(0f,0f,0f,1f),
-				bounds:utils.rectangle(-50f, -20f, 100f, 40f),
-				align:"left",
-				valign:"top"
+			font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
+			position:utils.vector(60f, 50f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+			align:"left",
+			valign:"top"
 			])
 			
 			property("crittersDead", {entity.parent.crittersdead})
 			property("message", {"CrittersDead: ${entity.crittersDead}".toString()})
 		})
 		
+		child(entity("fpsLabel"){
+			
+			parent("gemserk.gui.label", [
+//			font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+			position:utils.vector(60f, 30f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+			align:"left",
+			valign:"top"
+			])
+			
+			property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString()})
+		})
+		
+		component(new ExplosionComponent("explosions")) {
+			property("startColor", utils.color(0.8f, 0f, 0f, 1f))
+			property("endColor", utils.color(1f, 0.5f, 0.5f, 0.6f))
+			property("particlesCount", 100)
+			property("time", 800)
+		}
 	})
 	
 	child(entity("gameover"){
@@ -195,12 +216,12 @@ builder.entity("game") {
 		child(entity("deadLabel"){
 			
 			parent("gemserk.gui.label", [
-				font:font,
-				position:utils.vector(400f, 300f),
-				fontColor:utils.color(0f,0f,0f,1f),
-				bounds:labelRectangle,
-				align:"center",
-				valign:"center"
+			font:font,
+			position:utils.vector(400f, 300f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:labelRectangle,
+			align:"center",
+			valign:"center"
 			])
 			
 			property("playtime", {entity.parent.playtime})
