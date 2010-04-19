@@ -16,6 +16,7 @@ builder.entity("critter-${Math.random()}") {
 	propertyRef("direction", "movement.velocity")
 	
 	property("explosionSound",utils.resources.sounds.sound("explosion"))
+	property("bounds",parameters.bounds)
 	
 	property("speed", parameters.speed)
 	
@@ -26,25 +27,6 @@ builder.entity("critter-${Math.random()}") {
 	}
 	
 	
-	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", parameters.image)
-		propertyRef("color", "color")
-		propertyRef("position", "position")
-		propertyRef("direction", "direction")
-		property("size", utils.vector(0.7f, 0.7f))
-	}
-	
-	component(new ComponentFromListOfClosures("steering",[ {UpdateMessage message ->
-		def target = entity.parent.getEntities(EntityPredicates.withAllTags("ship")).first();
-		
-		if(target == null)
-		return
-		
-		def direction = target.position.copy().sub(entity.position).normalise()
-		
-		entity."movement.force".add(direction.scale(1))
-	}
-	]))
 	
 	
 	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
@@ -58,9 +40,9 @@ builder.entity("critter-${Math.random()}") {
 			deadMessage.critter = entity
 			
 			messageQueue.enqueue(deadMessage)
+			entity.explosionSound.play(1.0f, 0.01f)
 		}
 		
-		entity.explosionSound.play(1.0f, 0.01f)
 		
 	})
 	

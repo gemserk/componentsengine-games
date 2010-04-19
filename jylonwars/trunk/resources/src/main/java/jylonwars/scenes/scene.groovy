@@ -25,8 +25,8 @@ builder.entity("game") {
 	property("dead",false)
 	property("playtime",0)
 	
-	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
-	backgroundMusic.play();
+//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
+//	backgroundMusic.play();
 	
 	component(new LabelComponent("fpslabel")){
 		property("color", utils.color(0f,0f,0f,1f))
@@ -38,6 +38,7 @@ builder.entity("game") {
 	child(entity("world"){
 		
 		property("crittersdead",0)
+		property("bounds",utils.rectangle(0,0,800,600))
 		
 		component(new ProcessingDisablerComponent("gameovercomponent")){
 			property("enabled",{!entity.parent.dead})
@@ -52,8 +53,8 @@ builder.entity("game") {
 		}
 		
 		component(new OutOfBoundsRemover("outofboundsremover")) {
-			property("tags", ["bullet"] as String[] );
-			property("bounds", utils.rectangle(0,0,800,600));
+			property("tags", ["bullet", "critter"] as String[] );
+			propertyRef("bounds", "bounds");
 		}
 		
 		child(entity("ship1"){
@@ -108,8 +109,10 @@ builder.entity("game") {
 				entity.timer.reset()
 				
 				def ship = entity.parent.ship
+				def bounds = entity.parent.bounds
+				def critterType = ["jylonwars.entities.followercritter","jylonwars.entities.wanderercritter","jylonwars.entities.avoidercritter"]
 				def critter = entity("critter-${Math.random()}",{
-					parent("jylonwars.entities.critter",[position:newCritterPosition(ship.position,200),color:utils.color(0,1,0),speed:0.1f,image:utils.resources.image("ship")])
+					parent(critterType[(random.nextInt(3))],[position:newCritterPosition(ship.position,200),color:utils.color(0,1,0),speed:0.1f,image:utils.resources.image("ship"),bounds:bounds])
 				})
 				
 				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(critter,entity.parent))
@@ -229,7 +232,7 @@ builder.entity("game") {
 		})
 		
 		component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
-			backgroundMusic.stop();
+//			backgroundMusic.stop();
 			utils.custom.game.loadScene("jylonwars.scenes.scene");
 		})
 		

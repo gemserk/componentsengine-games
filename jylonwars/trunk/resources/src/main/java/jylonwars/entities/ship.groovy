@@ -43,7 +43,7 @@ builder.entity("ship") {
 				image:utils.resources.image("bullet"),
 				damage:tower.damage,
 				radius:10.0f,
-				maxVelocity:2f,
+				maxVelocity:0.7f,
 				color:utils.color(1.0f, 0.2f, 0.2f, 1.0f)
 				]
 			}))
@@ -113,7 +113,7 @@ builder.entity("ship") {
 	
 	
 	component(new WeaponComponent("shooter")) {
-		property("reloadTime", 100)
+		property("reloadTime", 150)
 		propertyRef("position", "position")
 		property("shouldFire", true)
 		
