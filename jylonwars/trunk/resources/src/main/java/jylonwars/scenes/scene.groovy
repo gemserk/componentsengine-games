@@ -25,6 +25,7 @@ builder.entity("game") {
 	property("gameState", "playing");
 	property("playtime",0)
 	
+	
 	//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
 	//	backgroundMusic.play();
 	
@@ -32,13 +33,17 @@ builder.entity("game") {
 		property("color", utils.color(0f,0f,0f,1f))
 		property("position", utils.vector(50,20))
 		property("message", "FPS: {0}")
-		property("value",{utils.custom.gameContainer.getFPS()})
+		property("value",{
+			utils.custom.gameContainer.getFPS()
+		})
 	}
 	
 	child(entity("world"){
 		
-		property("enabled", {entity.parent.gameState == "playing"})
+		property("enabled", {entity.parent.gameState == "playing" })
 		property("crittersdead",0)
+		property("bombs",3)
+		
 		property("bounds",utils.rectangle(0,0,800,600))
 		
 		component(new ProcessingDisablerComponent("disableStateComponent")){
@@ -62,7 +67,7 @@ builder.entity("game") {
 			parent("jylonwars.entities.ship",[player:"player1",position:utils.vector(400,300), bounds:utils.rectangle(20,20,760,560)])
 		})
 		
-		property("ship",{entity.children["ship1"]})
+		property("ship",{entity.children["ship1"] })
 		//	child(entity("ship2"){
 		//		parent("jylonwars.entities.ship",[player:"player2",position:utils.vector(500,300)])
 		//	})
@@ -79,8 +84,9 @@ builder.entity("game") {
 		}
 		
 		component(utils.components.genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
-			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(message.critter))
 			entity.crittersdead+=1
+			if(entity.crittersdead % 50 == 0)
+				entity.bombs +=1
 		})
 		
 		component(utils.components.genericComponent(id:"shipcollisionhandler", messageId:"shipcollision"){ message ->
@@ -102,7 +108,8 @@ builder.entity("game") {
 			
 			component(new TimerComponent("spawnertimer")){
 				propertyRef("timer","timer")
-				property("trigger", utils.custom.triggers.genericMessage("spawntriggered") {})
+				property("trigger", utils.custom.triggers.genericMessage("spawntriggered") {
+				})
 			}
 			
 			component(utils.components.genericComponent(id:"spawntriggeredhandler", messageId:"spawntriggered"){ message ->
@@ -124,6 +131,18 @@ builder.entity("game") {
 			
 		})
 		
+		
+		component(utils.components.genericComponent(id:"deployBombHandler", messageId:["tryDeployBomb"]){ message ->
+			if(entity.bombs <= 0)
+				return
+			
+			messageQueue.enqueue(utils.genericMessage("deployBomb") {})
+			
+			entity.bombs -=1
+			
+		})
+		
+		
 		input("inputmapping"){
 			keyboard {
 				press(button:"left",eventId:"player1.move.test.left.press")
@@ -138,10 +157,17 @@ builder.entity("game") {
 				hold(button:"s",eventId:"player1.move.down")
 				press(button:"r",eventId:"reloadScene")
 				
+				
+				//cheats
+				press(button:"b",eventId:"addBombs")
+				press(button:"l",eventId:"addLives")
+				
 				press(button:"escape",eventId:"pauseGame")
 				press(button:"p",eventId:"pauseGame")
+				
 			}
 			mouse {
+				press(button:"right", eventId:"tryDeployBomb")
 				move(eventId:"lookAt") { message ->
 					message.x = position.x
 					message.y = position.y
@@ -150,7 +176,9 @@ builder.entity("game") {
 		}
 		
 		
-		property("playtime", {(float)(entity.parent.playtime/1000f)})
+		property("playtime", {
+			(float)(entity.parent.playtime/1000f)
+		})
 		
 		child(entity("playTimeLabel"){
 			
@@ -163,8 +191,8 @@ builder.entity("game") {
 			valign:"top"
 			])
 			
-			property("playtime", {entity.parent.playtime})
-			property("message", {"Time: ${entity.playtime}".toString()})
+			property("playtime", {entity.parent.playtime })
+			property("message", {"Time: ${entity.playtime}".toString() })
 		})
 		
 		child(entity("crittersDeadLabel"){
@@ -178,8 +206,24 @@ builder.entity("game") {
 			valign:"top"
 			])
 			
-			property("crittersDead", {entity.parent.crittersdead})
-			property("message", {"CrittersDead: ${entity.crittersDead}".toString()})
+			property("crittersDead", {entity.parent.crittersdead })
+			property("message", {"CrittersDead: ${entity.crittersDead}".toString() })
+		})
+		
+		child(entity("bombsLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
+			position:utils.vector(60f, 75f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+			align:"left",
+			valign:"top"
+			])
+			
+			property("value", {entity.parent.bombs })
+			property("message","Bombs: {0}")
+		
 		})
 		
 		child(entity("fpsLabel"){
@@ -193,14 +237,10 @@ builder.entity("game") {
 			valign:"top"
 			])
 			
-			property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString()})
+			property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString() })
 		})
 		
 		component(new ExplosionComponent("explosions")) {
-			property("startColor", utils.color(0.8f, 0f, 0f, 1f))
-			property("endColor", utils.color(1f, 0.5f, 0.5f, 0.6f))
-			property("particlesCount", 100)
-			property("time", 800)
 		}
 		
 		component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
@@ -212,10 +252,12 @@ builder.entity("game") {
 		
 		def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 		
-		property("enabled", {entity.parent.gameState == "gameover"})
-		property("playtime", {(float)(entity.parent.playtime/1000f)})
+		property("enabled", {entity.parent.gameState == "gameover" })
+		property("playtime", {
+			(float)(entity.parent.playtime/1000f)
+		})
 		
-		component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled")  }
+		component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled") }
 		
 		def labelRectangle = utils.rectangle(-240,-50,480,100)
 		
@@ -238,8 +280,8 @@ builder.entity("game") {
 			valign:"center"
 			])
 			
-			property("playtime", {entity.parent.playtime})
-			property("message", {"Your time was: ${entity.playtime} seconds".toString()})
+			property("playtime", {entity.parent.playtime })
+			property("message", {"Your time was: ${entity.playtime} seconds".toString() })
 		})
 		
 		component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
@@ -263,9 +305,9 @@ builder.entity("game") {
 		
 		def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 		
-		property("enabled", {entity.parent.gameState == "paused"})
+		property("enabled", {entity.parent.gameState == "paused" })
 		
-		component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled")  }
+		component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled") }
 		
 		def labelRectangle = utils.rectangle(-240,-50,480,100)
 		

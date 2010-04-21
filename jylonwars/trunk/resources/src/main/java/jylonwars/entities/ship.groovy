@@ -14,6 +14,7 @@ import com.gemserk.componentsengine.commons.components.GenericHitComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.commons.components.WeaponComponent 
+import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.games.jylonwars.WorldBoundsComponent;
 
 
@@ -36,19 +37,24 @@ builder.entity("ship") {
 	
 	property("bulletTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("jylonwars.entities.bullet"), 
-			utils.custom.genericprovider.provide{ tower ->
+			utils.custom.genericprovider.provide{ ship ->
 				[
-				position:tower.position.copy(),
-				direction:tower.direction.copy(),
+				position:ship.position.copy(),
+				direction:ship.direction.copy(),
 				image:utils.resources.image("bullet"),
-				damage:tower.damage,
 				radius:10.0f,
 				maxVelocity:0.7f,
 				color:utils.color(1.0f, 0.2f, 0.2f, 1.0f)
 				]
 			}))
 	
-	
+	property("bombTemplate",new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("jylonwars.entities.bomb"), 
+			utils.custom.genericprovider.provide{ ship ->
+				[
+				position:ship.position.copy(),
+				]
+			}))
 	
 	component(new ComponentFromListOfClosures("directionToForceComponent",[ {UpdateMessage message ->
 		entity.direction = entity.target.copy().sub(entity.position)
@@ -117,10 +123,10 @@ builder.entity("ship") {
 		propertyRef("position", "position")
 		property("shouldFire", true)
 		
-		property("trigger", utils.custom.triggers.closureTrigger { tower -> 
+		property("trigger", utils.custom.triggers.closureTrigger { ship -> 
 			def bulletTemplate = entity.bulletTemplate
 			
-			def bullet = bulletTemplate.get(tower)
+			def bullet = bulletTemplate.get(ship)
 			
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))
 			
@@ -139,7 +145,7 @@ builder.entity("ship") {
 	component(utils.components.genericComponent(id:"shipcollision", messageId:"shipcollision"){ message ->
 		//if(entity.id != message.source)
 		//	return
-			
+		
 		entity.gameoverSound.play()
 	})
 	
@@ -148,5 +154,20 @@ builder.entity("ship") {
 		propertyRef("bounds","bounds")
 		propertyRef("position","position")
 	}
+	
+	
+	component(utils.components.genericComponent(id:"deployBombHandler", messageId:["deployBomb"]){ message ->
+		def bombTemplate = entity.bombTemplate
+		
+		def bomb = bombTemplate.get(entity)
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bomb, entity.parent))
+		
+		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+			newMessage.explosion =EffectFactory.explosionEffect(700, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 2000, 10.0f, 1000f, 1000f, 3f) 
+		})
+		
+		
+	})
 	
 }

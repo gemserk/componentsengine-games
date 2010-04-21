@@ -1,7 +1,9 @@
 package jylonwars.entities
 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.GenericMessage 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
+import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.games.jylonwars.WorldBoundsComponent 
 
 builder.entity("critter-${Math.random()}") {
@@ -37,9 +39,21 @@ builder.entity("critter-${Math.random()}") {
 			deadMessage.critter = entity
 			
 			messageQueue.enqueue(deadMessage)
-			entity.explosionSound.play(1.0f, 0.01f)
 		}
 		
+		
+	})
+	
+	component(utils.components.genericComponent(id:"critterdeadhandler", messageId:"critterdead"){ message ->
+		if(message.critter != entity)
+			return
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+			newMessage.explosion =EffectFactory.explosionEffect(100, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f) 
+		})
+		
+		entity.explosionSound.play(1.0f, 0.01f)
 		
 	})
 	
