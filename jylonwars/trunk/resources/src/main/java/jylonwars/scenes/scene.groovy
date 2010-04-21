@@ -22,11 +22,11 @@ builder.entity("game") {
 	
 	new GroovyBootstrapper();
 	
-	property("dead",false)
+	property("gameState", "playing");
 	property("playtime",0)
 	
-//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
-//	backgroundMusic.play();
+	//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
+	//	backgroundMusic.play();
 	
 	component(new LabelComponent("fpslabel")){
 		property("color", utils.color(0f,0f,0f,1f))
@@ -37,11 +37,12 @@ builder.entity("game") {
 	
 	child(entity("world"){
 		
+		property("enabled", {entity.parent.gameState == "playing"})
 		property("crittersdead",0)
 		property("bounds",utils.rectangle(0,0,800,600))
 		
-		component(new ProcessingDisablerComponent("gameovercomponent")){
-			property("enabled",{!entity.parent.dead})
+		component(new ProcessingDisablerComponent("disableStateComponent")){
+			propertyRef("enabled","enabled")
 			property("exclusions",[SlickRenderMessage.class])
 		}
 		
@@ -83,7 +84,8 @@ builder.entity("game") {
 		})
 		
 		component(utils.components.genericComponent(id:"shipcollisionhandler", messageId:"shipcollision"){ message ->
-			entity.parent.dead = true
+			//			entity.parent.dead = true
+			entity.parent.gameState = "gameover"
 		})
 		
 		component(new ComponentFromListOfClosures("playtimecomponent",[{ UpdateMessage message ->
@@ -135,6 +137,9 @@ builder.entity("game") {
 				hold(button:"w",eventId:"player1.move.up")
 				hold(button:"s",eventId:"player1.move.down")
 				press(button:"r",eventId:"reloadScene")
+				
+				press(button:"escape",eventId:"pauseGame")
+				press(button:"p",eventId:"pauseGame")
 			}
 			mouse {
 				move(eventId:"lookAt") { message ->
@@ -180,7 +185,7 @@ builder.entity("game") {
 		child(entity("fpsLabel"){
 			
 			parent("gemserk.gui.label", [
-//			font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+			//			font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
 			position:utils.vector(60f, 30f),
 			fontColor:utils.color(0f,0f,0f,1f),
 			bounds:utils.rectangle(-50f, -20f, 100f, 40f),
@@ -197,16 +202,20 @@ builder.entity("game") {
 			property("particlesCount", 100)
 			property("time", 800)
 		}
+		
+		component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
+			entity.parent.gameState = "paused"
+		})
 	})
 	
 	child(entity("gameover"){
 		
 		def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 		
-		property("dead", {entity.parent.dead})
+		property("enabled", {entity.parent.gameState == "gameover"})
 		property("playtime", {(float)(entity.parent.playtime/1000f)})
 		
-		component(new ProcessingDisablerComponent("gameovercomponent")){ propertyRef("enabled", "dead") }
+		component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled")  }
 		
 		def labelRectangle = utils.rectangle(-240,-50,480,100)
 		
@@ -234,7 +243,7 @@ builder.entity("game") {
 		})
 		
 		component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
-//			backgroundMusic.stop();
+			//			backgroundMusic.stop();
 			utils.custom.game.loadScene("jylonwars.scenes.scene");
 		})
 		
@@ -246,6 +255,52 @@ builder.entity("game") {
 			mouse {
 				press(button:"left", eventId:"restart")
 				press(button:"right", eventId:"restart")
+			}
+		}
+	})
+	
+	child(entity("paused"){
+		
+		def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
+		
+		property("enabled", {entity.parent.gameState == "paused"})
+		
+		component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled")  }
+		
+		def labelRectangle = utils.rectangle(-240,-50,480,100)
+		
+		component(new RectangleRendererComponent("background")) {
+			property("position",utils.vector(0,0))
+			property("rectangle", utils.rectangle(0,0, 800, 600))
+			property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
+			property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
+		}
+		
+		child(entity("deadLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(400f, 300f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:labelRectangle,
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "Paused, press click to continue...")
+		})
+		
+		component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
+			entity.parent.gameState = "playing"
+		})
+		
+		input("inputmapping"){
+			keyboard {
+				press(button:"return",eventId:"resumeGame")
+			}
+			mouse {
+				press(button:"left", eventId:"resumeGame")
+				press(button:"right", eventId:"resumeGame")
 			}
 		}
 	})

@@ -27,8 +27,6 @@ builder.entity("critter-${Math.random()}") {
 		property("increment", 0.2f)
 	}
 	
-	
-	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("avoidercritter"))
 		property("color", utils.color(1,1,1,1))
@@ -67,14 +65,8 @@ builder.entity("critter-${Math.random()}") {
 		if(angle > 45)
 			return
 			
-		
-		
-		
 		Line line = new Line(shipPosition,shipPosition.copy().add(shipDirection.copy().scale(10000)))
-		println shipDirection
-		println line
 		debugVectors << [start:shipPosition.copy(), vector:shipPosition.copy().add(shipDirection.copy().scale(10000)), color:Color.green]
-		
 		
 		def closestPoint = new Vector2f();
 		
