@@ -53,7 +53,7 @@ builder.entity("game") {
 		}
 		
 		component(new OutOfBoundsRemover("outofboundsremover")) {
-			property("tags", ["bullet", "critter"] as String[] );
+			property("tags", ["bullet"] as String[] );
 			propertyRef("bounds", "bounds");
 		}
 		
@@ -78,7 +78,6 @@ builder.entity("game") {
 		}
 		
 		component(utils.components.genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
-			//message.critter.position = newCritterPosition(entity.ship.position,200)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(message.critter))
 			entity.crittersdead+=1
 		})
@@ -95,7 +94,7 @@ builder.entity("game") {
 			
 			property("interval",utils.interval(800,1200))
 			
-			property("timer",new CountDownTimer(500))
+			property("timer",new CountDownTimer(1000))
 			
 			entity.timer.reset()
 			
@@ -110,9 +109,12 @@ builder.entity("game") {
 				
 				def ship = entity.parent.ship
 				def bounds = entity.parent.bounds
-				def critterType = ["jylonwars.entities.followercritter","jylonwars.entities.wanderercritter","jylonwars.entities.avoidercritter"]
+				def critterType = []
+				critterType << "jylonwars.entities.followercritter"
+				critterType << "jylonwars.entities.wanderercritter"
+				critterType << "jylonwars.entities.avoidercritter"
 				def critter = entity("critter-${Math.random()}",{
-					parent(critterType[(random.nextInt(3))],[position:newCritterPosition(ship.position,200),color:utils.color(0,1,0),speed:0.1f,image:utils.resources.image("ship"),bounds:bounds])
+					parent(critterType[(random.nextInt(critterType.size()))],[position:newCritterPosition(ship.position,200),color:utils.color(0,1,0),speed:0.1f,image:utils.resources.image("ship"),bounds:bounds])
 				})
 				
 				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(critter,entity.parent))

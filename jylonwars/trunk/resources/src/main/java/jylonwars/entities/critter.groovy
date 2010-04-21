@@ -1,11 +1,8 @@
 package jylonwars.entities
 
 import com.gemserk.componentsengine.messages.GenericMessage 
-import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
-import com.gemserk.componentsengine.predicates.EntityPredicates;
+import com.gemserk.games.jylonwars.WorldBoundsComponent 
 
 builder.entity("critter-${Math.random()}") {
 	
@@ -45,6 +42,11 @@ builder.entity("critter-${Math.random()}") {
 		
 		
 	})
+	
+	component(new WorldBoundsComponent("bounds")){
+		propertyRef("bounds","bounds")
+		propertyRef("position","position")
+	}
 	
 }
 
