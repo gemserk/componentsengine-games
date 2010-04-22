@@ -7,13 +7,13 @@ import com.gemserk.componentsengine.timers.CountDownTimer;
 
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
+import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.LabelComponent;
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent;
-import com.gemserk.games.jylonwars.ExplosionComponent 
 
 import jylonwars.GroovyBootstrapper 
 
