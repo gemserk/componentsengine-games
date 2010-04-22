@@ -142,6 +142,10 @@ builder.entity("game") {
 			
 		})
 		
+		component(utils.components.genericComponent(id:"cheat", messageId:["addBombs"]){ message ->	
+			entity.bombs +=1
+		})
+		
 		
 		input("inputmapping"){
 			keyboard {
@@ -159,8 +163,8 @@ builder.entity("game") {
 				
 				
 				//cheats
-				press(button:"b",eventId:"addBombs")
-				press(button:"l",eventId:"addLives")
+				hold(button:"b",eventId:"addBombs")
+				hold(button:"l",eventId:"addLives")
 				
 				press(button:"escape",eventId:"pauseGame")
 				press(button:"p",eventId:"pauseGame")

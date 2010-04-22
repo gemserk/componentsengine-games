@@ -126,9 +126,12 @@ builder.entity("ship") {
 		property("trigger", utils.custom.triggers.closureTrigger { ship -> 
 			def bulletTemplate = entity.bulletTemplate
 			
-			def bullet = bulletTemplate.get(ship)
-			
-			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))
+			def modif = [1f,0,-1f]
+			3.times {
+				def bullet = bulletTemplate.get([position:ship.position.copy(),direction:ship.direction.copy().add(modif[it])])
+				
+				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))
+			}
 			
 			//entity.sound.play(1.0f, 0.3f);
 			
