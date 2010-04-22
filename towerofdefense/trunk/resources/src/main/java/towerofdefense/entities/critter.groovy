@@ -85,7 +85,9 @@ builder.entity("critter-${Math.random()}") {
 		if(message.critter == entity) {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 			messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
-				newMessage.explosion = EffectFactory.explosionEffect(50, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 300, 10.0f, 30f, 80f, 1f) 
+				newMessage.explosion = EffectFactory.explosionEffect(50, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 300, 10.0f, 30f, 80f, 1f)
+				newMessage.position = entity.position
+				newMessage.range = 50.0f
 			})
 			entity.explosionSound.play()
 		}

@@ -1,4 +1,5 @@
-package towerofdefense.scenes;
+
+
 import com.gemserk.componentsengine.commons.components.ExplosionComponent;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
@@ -17,7 +18,6 @@ import com.gemserk.componentsengine.messages.*;
 import com.gemserk.componentsengine.commons.components.DisablerComponent;
 import com.gemserk.componentsengine.components.Component 
 
-import towerofdefense.components.GridRenderer 
 import towerofdefense.components.TowerDeployer 
 
 import org.newdawn.slick.state.StateBasedGame;
@@ -33,6 +33,9 @@ import com.gemserk.componentsengine.commons.components.*;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.games.towerofdefense.*;
 import com.gemserk.games.towerofdefense.components.*;
+import com.gemserk.games.towerofdefense.springmesh.MeshFactory 
+import com.gemserk.games.towerofdefense.springmesh.SpringMesh;
+import com.gemserk.games.towerofdefense.springmesh.SpringMeshComponent;
 import com.gemserk.games.towerofdefense.waves.Waves;
 
 builder.entity {
@@ -62,9 +65,34 @@ builder.entity {
 		property("lineColor", utils.color(0f, 0f, 0f, 0f))
 	}
 	
-	component(new GridRenderer("grid")){
-		propertyRef("bounds","gameBoundsToRender")
-		property("distance",gridDistance)
+	//	component(new GridRenderer("grid")){
+	//		propertyRef("bounds","gameBoundsToRender")
+	//		property("distance",gridDistance)
+	//	}
+	
+	def meshVPoints = 64
+	def meshHPoints = 64
+	
+	property("springMesh", new SpringMesh(MeshFactory.springMesh(800 + meshHPoints, 600 + meshVPoints, meshHPoints, meshVPoints)))
+	
+	component(new SpringMeshComponent()) {
+		property("quadMesh2d", MeshFactory.quadMesh2d(meshVPoints, meshHPoints, null))
+		propertyRef("springMesh", "springMesh")
+	}
+	
+	component(utils.components.genericComponent(id:"explosionMeshEffect", messageId:"explosion"){ message ->
+		def springMesh = entity.springMesh
+		def position = message.position
+		def power = (float)(message.range*3.0f)
+		
+		springMesh.applyForce(position, power)
+	})
+	
+	component(new RectangleRendererComponent("hudBackgroundRenderer")) {
+		property("position", utils.vector(0, 0))
+		property("rectangle", utils.rectangle(0, 0, 800, 120))
+		property("fillColor", utils.color(0.1f, 0.1f, 0.1f, 1.0f))
+		property("lineColor", utils.color(0f, 0f, 0f, 0f))
 	}
 	
 	property("path",parameters.path)

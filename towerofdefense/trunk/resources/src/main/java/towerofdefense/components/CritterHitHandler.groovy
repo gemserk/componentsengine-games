@@ -33,6 +33,8 @@ class CritterHitHandler extends ReflectionComponent{
 			def explosionMessage = new GenericMessage("explosion")
 			int dcount = (int) Math.ceil(message.damage);
 			explosionMessage.explosion = EffectFactory.explosionEffect(dcount, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 300, 5.0f, 20f, 30f, 1f)
+			explosionMessage.position = entity.position
+			explosionMessage.range = message.damage * 3.0f
 			messageQueue.enqueue(explosionMessage)
 			
 			if (entity.health.isEmpty()){
