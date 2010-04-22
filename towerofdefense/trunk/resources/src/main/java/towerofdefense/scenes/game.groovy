@@ -23,7 +23,7 @@ builder.entity("game") {
 			entity.gamestate.paused=true
 		})
 		
-		component(new ChildsDisablerComponent("disabler")) {
+		component(new ProcessingDisablerComponent("disabler")) {
 			property("enabled", {!entity.gamestate.paused})
 			property("exclusions", [SlickRenderMessage.class])
 		}
@@ -32,7 +32,7 @@ builder.entity("game") {
 			
 			parent("towerofdefense.scenes.world", parameters)
 			
-		} )
+		})
 	})
 	
 	child(entity("paused") {
@@ -43,19 +43,15 @@ builder.entity("game") {
 			entity.gamestate.paused=false
 		})
 		
-		component(new ChildsDisablerComponent("disabler")) {
+		component(new ProcessingDisablerComponent("disabler")) {
 			property("enabled", {entity.gamestate.paused})
 		}
 		
-		child(entity("insidePaused"){
-			
-			component(new RectangleRendererComponent("background")) {
-				property("position", utils.vector(0, 0))
-				property("fillColor", utils.color(0.5f, 0.5f, 0.5f, 0.5f))
-				property("rectangle", utils.rectangle(0,0, 800, 600))
-			}
-			
-		})
+		component(new RectangleRendererComponent("background")) {
+			property("position", utils.vector(0, 0))
+			property("fillColor", utils.color(0.5f, 0.5f, 0.5f, 0.5f))
+			property("rectangle", utils.rectangle(0,0, 800, 600))
+		}
 		
 	})
 	
@@ -63,48 +59,42 @@ builder.entity("game") {
 		
 		property("gamestate", {entity.parent.gamestate})
 		
-		component(new ChildsDisablerComponent("disabler")) {
+		component(new ProcessingDisablerComponent("disabler")) {
 			property("enabled", {!entity.gamestate.paused})
 		}
 		
-		child(entity("pausebuttonlogic") {
-			parent("gemserk.gui.imagebutton", [
-			buttonImage:utils.resources.image("pausebutton"),
-			buttonImageOver:utils.resources.image("pausebutton"),
-			buttonImagePressed:utils.resources.image("pausebutton"),
-			onOverSize:1.1f,
-			onPressedSize:1.05f,			
-			position:utils.vector(750, 540),
-			direction:utils.vector(1,0),
-			size:utils.vector(36, 40),
-			onReleasedTrigger:utils.custom.triggers.genericMessage("pause"){},
-			])	
-		})
-		
+		parent("gemserk.gui.imagebutton", [
+				buttonImage:utils.resources.image("pausebutton"),
+				buttonImageOver:utils.resources.image("pausebutton"),
+				buttonImagePressed:utils.resources.image("pausebutton"),
+				onOverSize:1.1f,
+				onPressedSize:1.05f,			
+				position:utils.vector(750, 540),
+				direction:utils.vector(1,0),
+				size:utils.vector(36, 40),
+				onReleasedTrigger:utils.custom.triggers.genericMessage("pause"){},
+				])	
 	})
 	
 	child(entity("resumeButton"){
 		
 		property("gamestate", {entity.parent.gamestate})
 		
-		component(new ChildsDisablerComponent("disabler")) {
+		component(new ProcessingDisablerComponent("disabler")) {
 			property("enabled", {entity.gamestate.paused})
 		}
 		
-		child(entity("resumebuttonlogic") {
-			parent("gemserk.gui.imagebutton", [
-			buttonImage:utils.resources.image("resumebutton"),
-			buttonImageOver:utils.resources.image("resumebutton"),
-			buttonImagePressed:utils.resources.image("resumebutton"),
-			onOverSize:1.1f,
-			onPressedSize:1.05f,			
-			position:utils.vector(750, 540),
-			direction:utils.vector(1,0),
-			size:utils.vector(36, 48),
-			onReleasedTrigger:utils.custom.triggers.genericMessage("resume"){},
-			])	
-		})
-		
+		parent("gemserk.gui.imagebutton", [
+				buttonImage:utils.resources.image("resumebutton"),
+				buttonImageOver:utils.resources.image("resumebutton"),
+				buttonImagePressed:utils.resources.image("resumebutton"),
+				onOverSize:1.1f,
+				onPressedSize:1.05f,			
+				position:utils.vector(750, 540),
+				direction:utils.vector(1,0),
+				size:utils.vector(36, 48),
+				onReleasedTrigger:utils.custom.triggers.genericMessage("resume"){},
+				])	
 	})
 	
 	input("inputmapping"){
