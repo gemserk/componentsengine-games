@@ -1,4 +1,5 @@
 package towerofdefense.entities;
+
 import com.gemserk.componentsengine.messages.UpdateMessage;
 
 
@@ -8,6 +9,7 @@ import com.gemserk.componentsengine.commons.components.FollowPathComponent
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.IncrementValueComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
+import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import towerofdefense.components.CritterHitHandler 
 
@@ -82,6 +84,9 @@ builder.entity("critter-${Math.random()}") {
 	component(utils.components.genericComponent(id:"critterdeadHandler", messageId:"critterdead"){ message ->
 		if(message.critter == entity) {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+			messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+				newMessage.explosion = EffectFactory.explosionEffect(50, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 300, 10.0f, 30f, 80f, 1f) 
+			})
 			entity.explosionSound.play()
 		}
 	})
@@ -92,16 +97,15 @@ builder.entity("critter-${Math.random()}") {
 	})
 	
 	property("forwardForce",utils.vector(1,0))
-	component(new ComponentFromListOfClosures("forwardForce",[
-	                                                          {UpdateMessage message ->
-	                                                          	def direction = entity."movement.velocity".copy().normalise()
-	                                                          	def maxVelocity = entity."movement.maxVelocity"
-	                                                          	
-	                                                          	def forwardForce = direction.scale((float)(maxVelocity/1500f))
-	                                                          	entity.forwardForce = forwardForce
-	                                                          	entity."movement.force".add(forwardForce)
-	                                                          }
-	                                                          ]))
+	component(new ComponentFromListOfClosures("forwardForce",[ {UpdateMessage message ->
+		def direction = entity."movement.velocity".copy().normalise()
+		def maxVelocity = entity."movement.maxVelocity"
+		
+		def forwardForce = direction.scale((float)(maxVelocity/1500f))
+		entity.forwardForce = forwardForce
+		entity."movement.force".add(forwardForce)
+	}
+	]))
 	
 }
 
