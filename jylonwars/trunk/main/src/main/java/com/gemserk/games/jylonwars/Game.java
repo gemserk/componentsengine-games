@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
+import com.gemserk.games.jylonwars.data.DataStoreInMemoryImpl;
 
 public class Game extends StateBasedGame {
 
@@ -35,7 +36,7 @@ public class Game extends StateBasedGame {
 			// app.setTargetFrameRate(60);
 
 			app.start();
-
+			
 		} catch (SlickException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -54,6 +55,8 @@ public class Game extends StateBasedGame {
 		}
 		GemserkGameState gamestate = new GameGameState(0,"jylonwars.scenes.scene");
 		addState(gamestate);
+		
+		gameProperties.put("dataStore", new DataStoreInMemoryImpl());
 		
 	}
 	

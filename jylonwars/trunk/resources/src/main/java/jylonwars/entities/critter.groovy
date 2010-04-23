@@ -19,6 +19,8 @@ builder.entity("critter-${Math.random()}") {
 	
 	property("speed", parameters.speed)
 	
+	property("dead",false)
+	
 	component(new SuperMovementComponent("movement")){
 		property("velocity",utils.vector(entity.speed,0))
 		propertyRef("maxVelocity", "speed")
@@ -31,10 +33,14 @@ builder.entity("critter-${Math.random()}") {
 	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		def sourceEntity = message.source
 		
+		if(entity.dead)
+			return
+		
 		if (!sourceEntity.tags.contains("bullet"))
 			return;
 		
 		if (message.targets.contains(entity)) {
+			entity.dead = true
 			def deadMessage = new GenericMessage("critterdead")
 			deadMessage.critter = entity
 			
