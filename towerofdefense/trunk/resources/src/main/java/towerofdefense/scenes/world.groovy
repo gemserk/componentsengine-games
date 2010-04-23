@@ -1,3 +1,4 @@
+package towerofdefense.scenes;
 
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent;
@@ -83,9 +84,10 @@ builder.entity {
 	component(utils.components.genericComponent(id:"explosionMeshEffect", messageId:"explosion"){ message ->
 		def springMesh = entity.springMesh
 		def position = message.position
-		def power = (float)(message.range*3.0f)
-		
-		springMesh.applyForce(position, power)
+		def range = (float) (message.range)
+		def power = (float) message.power
+		def time = 300
+		springMesh.applyForce(time, position, range, power)
 	})
 	
 	component(new RectangleRendererComponent("hudBackgroundRenderer")) {

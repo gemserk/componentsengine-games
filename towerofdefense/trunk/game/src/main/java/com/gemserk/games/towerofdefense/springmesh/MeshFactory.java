@@ -59,13 +59,8 @@ public class MeshFactory {
 				colorArray.put(0.1f);
 				colorArray.put(0.1f);
 				colorArray.put(xc + yc);
-				colorArray.put(0.4f);
-
-				// colorArray.put(0.5f);
-				// colorArray.put(0.5f);
-				// colorArray.put(0.5f);
-				// colorArray.put(0.3f);
-
+				colorArray.put(0.6f);
+				
 			}
 		}
 

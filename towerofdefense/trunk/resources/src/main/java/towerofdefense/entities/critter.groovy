@@ -87,7 +87,8 @@ builder.entity("critter-${Math.random()}") {
 			messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 				newMessage.explosion = EffectFactory.explosionEffect(50, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 300, 10.0f, 30f, 80f, 1f)
 				newMessage.position = entity.position
-				newMessage.range = 50.0f
+				newMessage.range = 80.0f
+				newMessage.power = 200.0f
 			})
 			entity.explosionSound.play()
 		}
