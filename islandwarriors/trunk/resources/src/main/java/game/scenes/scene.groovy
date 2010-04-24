@@ -1,5 +1,10 @@
 package game.scenes
+import org.newdawn.slick.Graphics;
+
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
+
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.google.common.base.Predicates 
@@ -9,6 +14,7 @@ builder.entity("scene") {
 	
 	new GroovyBootstrapper();
 	
+	property("cursor",utils.vector(1,1))
 	
 	child(template:"game.entities.island", id:"island1")	{
 		position = utils.vector(100,100)
@@ -39,29 +45,78 @@ builder.entity("scene") {
 	component(utils.components.genericComponent(id:"moveHandler", messageId:"move"){ message ->
 		def targets = entity.parent.getEntities(Predicates.and(EntityPredicates.withAllTags("island"),EntityPredicates.isNear(utils.vector(message.x, message.y),50)))
 		
-		if(targets.isEmpty())
+		if(targets.isEmpty()){
+			entity.overIsland = null
 			return;
+		}
 		
 		entity.overIsland = targets.first()
 	})
 	
+	
+	
+	component(utils.components.genericComponent(id:"selectTowerHandler", messageId:"click"){ message ->
+		if(entity.overIsland==null)
+			return
+		
+		entity.selectedIsland = entity.overIsland
+	})
+	
 	child(entity("islandHighlighter"){
 		
-		property("island",{entity.parent.overIsland})
-		property("enabled",{entity.island != null})
+		property("island",{entity.parent.overIsland })
+		property("enabled",{entity.island != null })
 		
-		component(new ProcessingDisablerComponent("disableStateComponent")){
-			propertyRef("enabled","enabled")
-		}
+		component(new ProcessingDisablerComponent("disableStateComponent")){ propertyRef("enabled","enabled") }
 		
 		component(new CircleRenderableComponent("image")){
-			property("position",{entity.island.position})
-			property("radius",{(float)(entity.island.radius + 10)})
+			property("position",{entity.island.position })
+			property("radius",{
+				(float)(entity.island.radius + 10)
+			})
 			property("lineColor",utils.color(1,0,0,1))
 		}
 	})
 	
 	
+	
+	child(entity("selectedIslandHighlighter"){
+		
+		property("island",{entity.parent.selectedIsland })
+		property("enabled",{entity.island != null })
+		
+		component(new ProcessingDisablerComponent("disableStateComponent")){ propertyRef("enabled","enabled") }
+		
+		component(new CircleRenderableComponent("image")){
+			property("position",{entity.island.position })
+			property("radius",{
+				(float)(entity.island.radius - 10)
+			})
+			property("lineColor",utils.color(0,1,0,1))
+		}
+	})
+	
+	
+	component(utils.components.genericComponent(id:"cursorSetter", messageId:"move"){ message ->
+		entity.cursor = utils.vector(message.x, message.y)
+	})
+	
+	child(entity("choosingDestinationRender"){
+		
+		property("island",{entity.parent.selectedIsland })
+		property("cursor",{entity.parent.cursor})
+		property("enabled",{entity.island != null })
+		
+		component(new ProcessingDisablerComponent("disableStateComponent")){ propertyRef("enabled","enabled") }
+		
+		component(new ComponentFromListOfClosures("render",[{SlickRenderMessage message ->
+			Graphics graphics = message.graphics
+			def cursor = entity.cursor
+			def island = entity.island
+			graphics.drawLine(island.position.x, island.position.y,cursor.x,cursor.y)
+		
+		}]))
+	})
 	
 	input("inputmapping"){
 		keyboard {
