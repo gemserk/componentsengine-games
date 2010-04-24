@@ -24,14 +24,14 @@ builder.entity("game") {
 	def scenes = [1:[startPosition:utils.vector(100, 50), islands:[
 			[type:"floatingislands.entities.island01", position:utils.vector(100,150)],
 			[type:"floatingislands.entities.island02", position:utils.vector(230,300)],
-			[type:"floatingislands.entities.island01", position:utils.vector(350,230)],
-			[type:"floatingislands.entities.island01", position:utils.vector(550,280)]
+			[type:"floatingislands.entities.island03", position:utils.vector(350,230)],
+			[type:"floatingislands.entities.island04", position:utils.vector(550,280)]
 			]], 2:[startPosition:utils.vector(320, 400), islands:[
 			[type:"floatingislands.entities.island02", position:utils.vector(320,450)],
 			[type:"floatingislands.entities.island02", position:utils.vector(220,400)],
-			[type:"floatingislands.entities.island01", position:utils.vector(150,340)],
-			[type:"floatingislands.entities.island02", position:utils.vector(234,250)],
-			[type:"floatingislands.entities.island01", position:utils.vector(330,260)],
+			[type:"floatingislands.entities.island03", position:utils.vector(150,340)],
+			[type:"floatingislands.entities.island04", position:utils.vector(234,250)],
+			[type:"floatingislands.entities.island01", position:utils.vector(360,230)],
 			]]]
 	
 	def scene = scenes[currentScene]
