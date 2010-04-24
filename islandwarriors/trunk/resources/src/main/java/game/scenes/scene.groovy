@@ -55,8 +55,8 @@ builder.entity("scene") {
 	
 	
 	
-	component(utils.components.genericComponent(id:"selectTowerHandler", messageId:"click"){ message ->
-		if(entity.overIsland==null)
+	component(utils.components.genericComponent(id:"selectIslandHandler", messageId:"click"){ message ->
+		if(entity.selectedIsland != null || entity.overIsland==null)
 			return
 		
 		entity.selectedIsland = entity.overIsland
@@ -114,9 +114,39 @@ builder.entity("scene") {
 			def cursor = entity.cursor
 			def island = entity.island
 			graphics.drawLine(island.position.x, island.position.y,cursor.x,cursor.y)
-		
+			
 		}]))
 	})
+	
+	
+	
+	component(utils.components.genericComponent(id:"selectDestinationHandler", messageId:"click"){ message ->
+		if(entity.selectedIsland == null)
+			return
+		
+		if(entity.overIsland==null)
+			return
+		
+		if(entity.selectedIsland == entity.overIsland)
+			return
+		
+		
+		
+		messageQueue.enqueue(utils.genericMessage("sendShips"){ sendShipMessage ->
+			sendShipMessage.origin = entity.selectedIsland
+			sendShipMessage.destination = entity.overIsland
+		})	
+
+		entity.selectedIsland = null
+	})
+	
+	component(utils.components.genericComponent(id:"sendShipsHandler", messageId:"sendShips"){ message ->
+		def unitsToMove = (float)(message.origin.units /2)
+		message.origin.units =(float) (message.origin.units - unitsToMove)
+		message.destination.units =(float) (message.destination.units + unitsToMove)
+	})
+	
+	
 	
 	input("inputmapping"){
 		keyboard {
