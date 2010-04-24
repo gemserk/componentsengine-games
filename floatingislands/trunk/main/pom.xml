@@ -52,13 +52,6 @@
 			<artifactId>game</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.jnlp</groupId>
-			<artifactId>javaws</artifactId>
-			<version>1.6.0.15</version>
-			<scope>provided</scope>
-		</dependency>
-		
 	</dependencies>
 
 	<profiles>
