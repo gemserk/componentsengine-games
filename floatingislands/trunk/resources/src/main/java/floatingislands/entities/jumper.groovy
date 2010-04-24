@@ -138,6 +138,9 @@ builder.entity {
 		
 		if (entity.overIsland)
 			return
+			
+		if (entity.velocity.y < 0)
+			return
 		
 		def world = entity.world
 		def position = entity.position
@@ -148,12 +151,15 @@ builder.entity {
 			def islandBounds = island.bounds
 			def islandPosition = island.position
 			
-			def x = (float)(position.x - islandPosition.x)
-			def y = (float)(position.y - islandPosition.y + 15)
+			def x1 = (float)(position.x - islandPosition.x)
+			def y1 = (float)(position.y - islandPosition.y + 15)
+
+//			def x2 = (float)(position.x - islandPosition.x)
+//			def y2 = (float)(position.y - islandPosition.y + 30)
 			
 			// TODO: use entity.bounds instead entity.position
 			
-			def inside = islandBounds.contains(x, y)
+			def inside = islandBounds.contains(x1, y1)
 			entity.overIsland = entity.overIsland || inside
 			
 			if (inside) {
@@ -167,6 +173,7 @@ builder.entity {
 	}]))
 	
 	component(utils.components.genericComponent(id:"islandReachedHandler", messageId:"islandReached"){ message -> 
+		entity.position.y = (float)(message.island.position.y + message.island.bounds.minY - message.island.bounds.height + 5)
 		entity.velocity.set(0f,0f)
 		entity.force.set(0f,0f)
 		entity.jetPackSound.stop()	

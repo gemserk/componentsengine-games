@@ -1,7 +1,6 @@
 package floatingislands.entities;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
-import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
 builder.entity {
 	
@@ -21,10 +20,10 @@ builder.entity {
 	}
 
 	// for debug
-	component(new RectangleRendererComponent("boundsRenderer")) {
-		propertyRef("position", "position")
-		propertyRef("rectangle", "bounds")
-		property("lineColor", utils.color(1,1,1,1))
-	}
+//	component(new RectangleRendererComponent("boundsRenderer")) {
+//		propertyRef("position", "position")
+//		propertyRef("rectangle", "bounds")
+//		property("lineColor", utils.color(1,1,1,1))
+//	}
 	
 }

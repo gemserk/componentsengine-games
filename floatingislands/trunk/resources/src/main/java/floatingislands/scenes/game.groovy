@@ -82,7 +82,9 @@ builder.entity("game") {
 		
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
 			utils.custom.gameStateManager.gameProperties.currentScene = currentScene+1
-			// losing state?
+			if (utils.custom.gameStateManager.gameProperties.currentScene> scenes.size())
+				utils.custom.gameStateManager.gameProperties.currentScene = 1
+			// lose current game state?
 			utils.custom.game.loadScene("floatingislands.scenes.game");
 		})
 		
