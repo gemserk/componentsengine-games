@@ -18,27 +18,33 @@ builder.entity("scene") {
 	
 	child(template:"game.entities.island", id:"island1")	{
 		position = utils.vector(100,100)
+		team = "team1"
 	}
 	
 	child(template:"game.entities.island", id:"island2")	{
 		position = utils.vector(100,300)
+		team = "team1"
 	}
 	
 	child(template:"game.entities.island", id:"island3")	{
 		position = utils.vector(100,500)
+		team = "team1"
 	}
 	
 	
 	child(template:"game.entities.island", id:"island4")	{
 		position = utils.vector(700,100)
+		team = "team2"
 	}
 	
 	child(template:"game.entities.island", id:"island5")	{
 		position = utils.vector(700,300)
+		team = "team2"
 	}
 	
 	child(template:"game.entities.island", id:"island6")	{
 		position = utils.vector(700,500)
+		team = "team2"
 	}
 	
 	
@@ -139,13 +145,6 @@ builder.entity("scene") {
 
 		entity.selectedIsland = null
 	})
-	
-	component(utils.components.genericComponent(id:"sendShipsHandler", messageId:"sendShips"){ message ->
-		def unitsToMove = (float)(message.origin.units /2)
-		message.origin.units =(float) (message.origin.units - unitsToMove)
-		message.destination.units =(float) (message.destination.units + unitsToMove)
-	})
-	
 	
 	
 	input("inputmapping"){
