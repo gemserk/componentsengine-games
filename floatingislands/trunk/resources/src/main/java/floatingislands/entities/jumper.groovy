@@ -91,7 +91,7 @@ builder.entity {
 		def length = diff.length()
 		def jumpdirection = diff.normalise()
 		
-		entity.jumpForce = jumpdirection.scale((float)(entity.jumppower * 0.00002f))
+		entity.jumpForce = jumpdirection.scale((float)(entity.jumppower * 0.000002f))
 		
 		entity.jumpTime = 100
 		
@@ -100,12 +100,16 @@ builder.entity {
 		utils.custom.messageQueue.enqueue(utils.genericMessage("jumped") { })
 	})
 	
+		component(utils.components.genericComponent(id:"jumpedHandler", messageId:"jumped"){ message -> 
+		entity.jetPackSound.loop()	
+	})
+	
 	component(new ComponentFromListOfClosures("forceApplier",[{ UpdateMessage m->
 		if (entity.jumpTime <= 0)
 			return 
 		
-		def jumpForce = entity.jumpForce
 		def delta = m.delta
+		def jumpForce = entity.jumpForce.copy().scale(delta)
 		
 		entity.force.add(jumpForce)
 		entity.jumpTime -= delta
@@ -113,15 +117,6 @@ builder.entity {
 		if (entity.jumpTime <=0 )
 			entity.overIsland = false
 		
-	}]))
-	
-	component(new ComponentFromListOfClosures("playSound",[{ UpdateMessage m->
-		if (entity.overIsland) {
-			entity.jetPackSound.stop()
-			return
-		}
-		if (!entity.jetPackSound.isPlaying())
-			entity.jetPackSound.play()
 	}]))
 	
 	component(new ComponentFromListOfClosures("jumppower",[{ UpdateMessage m->
@@ -172,10 +167,9 @@ builder.entity {
 	}]))
 	
 	component(utils.components.genericComponent(id:"islandReachedHandler", messageId:"islandReached"){ message -> 
-		if (entity.overIsland == true) {
-			entity.velocity.set(0f,0f)
-			entity.force.set(0f,0f)
-		}
+		entity.velocity.set(0f,0f)
+		entity.force.set(0f,0f)
+		entity.jetPackSound.stop()	
 	})
 	
 	component(new ComponentFromListOfClosures("jumpDirectionRenderer",[{ SlickRenderMessage m->
@@ -194,6 +188,7 @@ builder.entity {
 		
 		if (entity.position.y > 1000f) {
 			utils.custom.messageQueue.enqueue(utils.genericMessage("jumperOutsideScreen") { })
+			entity.jetPackSound.stop()	
 		}
 		
 	}]))	

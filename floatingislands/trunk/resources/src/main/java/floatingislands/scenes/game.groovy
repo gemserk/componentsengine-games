@@ -1,6 +1,8 @@
 package floatingislands.scenes
+
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
+
 
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
@@ -37,7 +39,8 @@ builder.entity("game") {
 		def startPosition = scene.startPosition
 		
 		property("jumpCount", 0)
-		property("lives", 1)
+		property("lives", 3)
+		property("lifeImage", utils.resources.image("jumper"))
 		
 		property("lastIsland", null)
 		
@@ -104,7 +107,7 @@ builder.entity("game") {
 				
 				def windSound = entity.windSound
 				if (!windSound.isPlaying())
-					windSound.play()
+					windSound.loop()
 				
 			}]))
 			
@@ -119,10 +122,10 @@ builder.entity("game") {
 		component(utils.components.genericComponent(id:"jumperOutsideScreenHandler", messageId:"jumperOutsideScreen"){ message ->
 			// utils.custom.game.loadScene("floatingislands.scenes.game");
 			entity.lives -= 1
-		
+			
 			if (entity.lives == 0)
 			{
-				entity.parent.gamestate = "gameover"
+				utils.custom.messageQueue.enqueue(utils.genericMessage("jumperDead") { })
 				return
 			}
 			
@@ -140,6 +143,22 @@ builder.entity("game") {
 			
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(jumper, "world"))
 		})
+		
+		component(utils.components.genericComponent(id:"jumperOutsideScreenHandler", messageId:"jumperOutsideScreen"){ message ->
+			entity.parent.gamestate = "gameover"
+			entity.windSound.stop()
+		})
+		
+		component(new ComponentFromListOfClosures("livesRenderer",[{ SlickRenderMessage m->
+			
+			def image = entity.lifeImage
+			def lives = entity.lives
+			
+			lives.times {
+				image.draw((float)(100 + it*20), 5, 30, 30)
+			}
+			
+		}]))
 		
 		child(entity("jumpCountLabel"){
 			
@@ -187,6 +206,20 @@ builder.entity("game") {
 			
 			property("message", "Game Over")
 		})
+		
+		component(utils.components.genericComponent(id:"restartGameHandler", messageId:"restartGame"){ message ->
+			utils.custom.game.loadScene("floatingislands.scenes.game");
+		})
+		
+		input("inputmapping"){
+			keyboard {
+				press(button:"return", eventId:"restartGame")
+				press(button:"space", eventId:"restartGame")
+			}
+			mouse {
+				press(button:"left", eventId:"restartGame")
+			}
+		}
 		
 	})
 	
