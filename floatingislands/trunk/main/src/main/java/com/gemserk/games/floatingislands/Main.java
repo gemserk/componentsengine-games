@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.AppletGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
@@ -44,14 +43,14 @@ public class Main extends StateBasedGame {
 	}
 
 	public Main() {
-		super("Floating Islands - Ludum Dare");
+		super("Floating Islands - Ludum Dare 17");
 	}
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		if (container instanceof AppletGameContainer.Container) {
+//		if (container instanceof AppletGameContainer.Container) {
 			container.setVSync(true);
-		}
+//		}
 		GemserkGameState menuState = new GameGameState(0, "floatingislands.scenes.game");
 		addState(menuState);
 	}
