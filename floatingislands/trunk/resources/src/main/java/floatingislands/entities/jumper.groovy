@@ -31,14 +31,33 @@ builder.entity {
 	property("jumpForce", utils.vector(0,0))
 	property("jumpTime", 0)
 	
-	property("flyingImage", utils.resources.image("jumper_flying"))
-	property("normalImage", utils.resources.image("jumper"))
+	property("flyingImageRight", utils.resources.image("jumper_flying"))
+	property("normalImageRight", utils.resources.image("jumper"))
+	
+	property("flyingImageLeft", utils.resources.image("jumper_flying").getFlippedCopy(true, false))
+	property("normalImageLeft", utils.resources.image("jumper").getFlippedCopy(true, false))
+	
+	property("normalImage", {
+		if (entity.velocity.x < 0)
+			return entity.normalImageLeft
+		else 
+			return entity.normalImageRight
+	})
+	
+	property("flyingImage", {
+		if (entity.velocity.x < 0)
+			return entity.flyingImageLeft
+		else 
+			return entity.flyingImageRight
+	})
 	
 	property("image", {
-		if (!entity.overIsland)
+		if (!entity.overIsland) {
 			return entity.flyingImage
-		else
+		}
+		else {
 			return entity.normalImage
+		}
 	})
 	
 	property("direction", utils.vector(1,0))
