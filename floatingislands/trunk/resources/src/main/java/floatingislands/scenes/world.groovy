@@ -31,6 +31,12 @@ builder.entity("world") {
 		property("direction", utils.vector(1,0))
 	}
 	
+	def islands = entity.islands
+	
+	child(entity("flag") {
+		parent("floatingislands.entities.flag", [island:{ islands[islands.size()-1] }])
+	})
+	
 	def createIsland = { island, index ->
 		def type = island.type
 		def position = island.position
@@ -54,7 +60,6 @@ builder.entity("world") {
 	scene.islands.eachWithIndex(createIsland)
 	
 	entity.currentIsland = entity.islands[0]
-	println "current island: $entity.currentIsland.id"
 	
 	child(entity("jumper"){
 		
