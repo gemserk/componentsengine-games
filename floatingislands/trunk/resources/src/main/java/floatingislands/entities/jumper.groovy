@@ -20,7 +20,7 @@ builder.entity {
 	
 	property("position", parameters.position)
 	
-	property("jumpposition", utils.vector(0,0))
+	property("jumpDirection", utils.vector(0,0))
 	property("jumppower", 0.0f)
 	
 	property("velocity", utils.vector(0,0))
@@ -64,7 +64,7 @@ builder.entity {
 	property("overIsland", false)
 	property("currentIsland", null)
 	
-	property("world", {entity.parent})
+	property("world", {entity.parent })
 	
 	property("jetPackSound", utils.resources.sounds.sound("jetpack"))
 	
@@ -84,41 +84,58 @@ builder.entity {
 	}
 	
 	component(new DisablerComponent(new ForceComponent("gravityLogic"))) {
-		property("enabled", {!entity.overIsland})
+		property("enabled", {!entity.overIsland })
 		propertyRef("force", "force")
 		property("acceleration", utils.vector(0f, 0.10f))
 		property("mass", 1.0f)
 	}
 	
-	component(utils.components.genericComponent(id:"startJumpHandler", messageId:"startJump"){ message ->
+	property("charging", false)
+	
+	component(utils.components.genericComponent(id:"startJumpHandler", messageId:"charge"){ message ->
 		if (!entity.overIsland)
 			return
-		entity.jumppower = 10.0f
+		entity.charging = true
 	})
 	
+	component(new ComponentFromListOfClosures("jumppower",[{ UpdateMessage m->
+		
+		if (!entity.charging)
+			return
+		
+		def delta = (float)(m.delta)
+		
+		entity.jumppower = (float) (entity.jumppower + 0.3f * delta)
+		
+		if (entity.jumppower < 10.0f)
+			entity.jumppower = 10.0f
+		
+		if (entity.jumppower > 220.0f)
+			entity.jumppower = 220.0f
+	}]))
+	
 	component(utils.components.genericComponent(id:"jumpDirectionChangedHandler", messageId:"jumpDirectionChanged"){ message ->
-		entity.jumpposition = utils.vector(message.x, message.y)
+		entity.jumpDirection = utils.vector(message.x, message.y).sub(entity.position).normalise()
 	})
 	
 	component(utils.components.genericComponent(id:"jumpHandler", messageId:"jump"){ message ->
-		if (entity.jumpTime > 0)
-			return 
 		
-		if (!entity.overIsland)
+		if(!entity.charging)
 			return
-		// use entity.overIsland instead 
 		
-		def diff = entity.jumpposition.copy().sub(entity.position)
-		def length = diff.length()
-		def jumpdirection = diff.normalise()
+		println "jumpPower: $entity.jumppower"
 		
-		entity.jumpForce = jumpdirection.scale((float)(entity.jumppower * 0.000002f))
+		def jumpDirection = entity.jumpDirection
 		
+		entity.jumpForce = jumpDirection.copy().scale((float)(entity.jumppower * 0.000004f))
 		entity.jumpTime = 100
 		
+		entity.charging = false
 		entity.jumppower = 0.0f
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("jumped") { })
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("jumped") {
+		})
 	})
 	
 	component(utils.components.genericComponent(id:"jumpedHandler", messageId:"jumped"){ message -> 
@@ -131,30 +148,24 @@ builder.entity {
 			return 
 		
 		def delta = m.delta
-		def jumpForce = entity.jumpForce.copy().scale(delta)
 		
+		entity.jumpTime -= delta		
+		def diff = delta
+		
+		if (entity.jumpTime < 0)
+			diff += entity.jumpTime
+		
+		println "delta = $delta, remainingTime = $entity.jumpTime, diff = $diff"
+		
+		def jumpForce = entity.jumpForce.copy().scale(diff)
 		entity.force.add(jumpForce)
-		entity.jumpTime -= delta
 		
 		if (entity.jumpTime <=0 )
 			entity.overIsland = false
 		
 	}]))
 	
-	component(new ComponentFromListOfClosures("jumppower",[{ UpdateMessage m->
-		if (entity.jumppower <= 0)
-			return 
-		
-		def delta = (float)(m.delta)
-		
-		entity.jumppower = (float) (entity.jumppower + 0.3f * delta)
-		
-		if (entity.jumppower < 10.0f)
-			entity.jumppower = 10.0f
-		
-		if (entity.jumppower > 300.0f)
-			entity.jumppower = 300.0f
-	}]))
+	
 	
 	component(new ComponentFromListOfClosures("islandCollisionLogic",[{ UpdateMessage m->
 		
@@ -235,7 +246,7 @@ builder.entity {
 		
 		def x = (float)(currentPosition.x - islandPosition.x)
 		
-		if (x < (islandBounds.minX-5) || x > (islandBounds.maxX +5)) {
+		if (x < (islandBounds.minX) || x > (islandBounds.maxX)) {
 			entity.overIsland = false
 			entity.currentIsland=null		
 		}
@@ -259,7 +270,7 @@ builder.entity {
 	
 	component(new ComponentFromListOfClosures("jumpDirectionRenderer",[{ SlickRenderMessage m->
 		
-		def direction = entity.jumpposition.copy().sub(entity.position).normalise();
+		def direction = entity.jumpDirection.copy();
 		
 		def crossPosition = entity.position.copy().add(direction.scale((float)(entity.jumppower * 0.3f)))
 		
@@ -276,8 +287,9 @@ builder.entity {
 			return
 		
 		if (entity.position.y > 700f) {
-			utils.custom.messageQueue.enqueue(utils.genericMessage("jumperOutsideScreen") { })
 			entity.jetPackSound.stop()
+			utils.custom.messageQueue.enqueue(utils.genericMessage("jumperOutsideScreen") {
+			})
 			entity.outsideScreen = true
 		}
 		

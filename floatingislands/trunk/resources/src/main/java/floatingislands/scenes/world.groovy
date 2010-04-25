@@ -164,4 +164,18 @@ builder.entity("world") {
 		property("message", {"Jumps: $entity.jumpCount".toString() })
 	})
 	
+	input("inputmapping"){
+		keyboard {
+			press(button:"up", eventId:"jump")
+		}
+		mouse {
+			press(button:"left", eventId:"charge")
+			release(button:"left", eventId:"jump")
+			move(eventId:"jumpDirectionChanged") { message ->
+				message.x = position.x
+				message.y = position.y
+			}
+		}
+	}
+	
 }

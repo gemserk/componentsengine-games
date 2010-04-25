@@ -262,18 +262,6 @@ builder.entity("game") {
 		
 	})
 	
-	input("inputmapping"){
-		keyboard {
-			press(button:"up", eventId:"jump")
-		}
-		mouse {
-			press(button:"left", eventId:"startJump")
-			release(button:"left", eventId:"jump")
-			move(eventId:"jumpDirectionChanged") { message ->
-				message.x = position.x
-				message.y = position.y
-			}
-		}
-	}
+
 	
 }
