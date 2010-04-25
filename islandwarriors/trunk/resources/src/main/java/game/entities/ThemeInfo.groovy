@@ -5,13 +5,13 @@ class ThemeInfo {
 	
 	return [
 	                        "team1":[
-	                                 color:utils.color(1,1,0)
+	                                 color:utils.color(1,0,0)
 	                                 
 	                                 
 	                                 
 	                                 ],
 	                         "team2":[
-	                                  color:utils.color(0,1,0)
+	                                  color:utils.color(1,1,0)
 	                                  ]
 	                                 
 	                                 

@@ -111,7 +111,7 @@ builder.entity("scene") {
 		component(new CircleRenderableComponent("image")){
 			property("position",{entity.island.position })
 			property("radius",{
-				(float)(entity.island.radius - 10)
+				(float)(entity.island.radius)
 			})
 			property("lineColor",utils.color(0,1,0,1))
 		}
@@ -158,6 +158,10 @@ builder.entity("scene") {
 			sendShipMessage.destination = entity.overIsland
 		})	
 		
+		entity.selectedIsland = null
+	})
+	
+	component(utils.components.genericComponent(id:"deselectIsland", messageId:"rightClick"){ message ->
 		entity.selectedIsland = null
 	})
 	

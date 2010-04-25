@@ -89,7 +89,7 @@ builder.entity("boat-${Math.random()}") {
 				Vector2f distanceVector = boatPosition.copy().sub(position);
 				Vector2f direction = distanceVector.copy().normalise();
 				
-				Vector2f generatedForce = direction.copy().scale((float)1000 / distanceVector.lengthSquared());
+				Vector2f generatedForce = direction.copy().scale((float)300 / distanceVector.lengthSquared());
 				boat."movement.force".add(generatedForce)
 			}
 		})
