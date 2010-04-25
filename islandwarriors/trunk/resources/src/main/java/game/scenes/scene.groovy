@@ -6,6 +6,7 @@ import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
+import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.google.common.base.Predicates 
 import game.GroovyBootstrapper
@@ -15,6 +16,16 @@ builder.entity("scene") {
 	new GroovyBootstrapper();
 	
 	property("cursor",utils.vector(1,1))
+	
+	
+	component(new RectangleRendererComponent("background")) {
+		property("position", utils.vector(0, 0))
+		property("rectangle", utils.rectangle(0,0,800,600))
+		property("fillColor", utils.color((float)60/256, (float)169/256,(float)178/256, 1.0f))
+		property("lineColor", utils.color(0f, 0f, 0f, 0f))
+	}
+	
+	
 	
 	child(template:"game.entities.island", id:"island1")	{
 		position = utils.vector(100,100)
@@ -146,7 +157,7 @@ builder.entity("scene") {
 			sendShipMessage.origin = entity.selectedIsland
 			sendShipMessage.destination = entity.overIsland
 		})	
-
+		
 		entity.selectedIsland = null
 	})
 	

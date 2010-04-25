@@ -7,6 +7,7 @@ import org.newdawn.slick.geom.Vector2f
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.LabelComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
@@ -42,12 +43,21 @@ builder.entity("island-${Math.random()}") {
 				]
 			}))
 	
-	component(new CircleRenderableComponent("image")){
-		propertyRef("position","position")
-		propertyRef("radius","radius")
-		propertyRef("lineColor","color")
+			
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image("island1"))
+		//property("color", utils.color(1,1,1,1))
+		propertyRef("position", "position")
+		property("direction", utils.randomVector(utils.rectangle(-1,-1,2,2)))
 	}
-	
+			
+			
+//	component(new CircleRenderableComponent("image")){
+//		propertyRef("position","position")
+//		propertyRef("radius","radius")
+//		propertyRef("lineColor","color")
+//	}
+//	
 	component(new TimerComponent("generateUnitsTimer")){
 		property("trigger",utils.custom.triggers.closureTrigger { entity.units += 1 })
 		property("timer",new PeriodicTimer(1000))
