@@ -140,12 +140,25 @@ builder.entity {
 	component(new ComponentFromListOfClosures("islandCollisionLogic",[{ UpdateMessage m->
 		
 		// I am over an island right now...
-		if (entity.overIsland) 
+		if (entity.overIsland ) {
+			
+			// entity.lastPositionIslandX = island.position.x - entity.position.x
+			if (entity.currentIsland) {
+				
+				def island = entity.currentIsland
+				
+				entity.position.y = (float)(island.position.y + island.bounds.minY - island.bounds.height + 5)
+				entity.position.x += island.position.x - entity.lastPositionIslandX
+				
+				entity.lastPositionIslandX = island.position.x
+			}
+			
 			return
-
+		}
+		
 		// I am going up here...
 		if (entity.velocity.y < 0) 
-				return
+			return
 		
 		def world = entity.world
 		def position = entity.position
@@ -213,6 +226,9 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"islandReachedHandler", messageId:"islandReached"){ message ->
 		def island = message.island
+		
+		entity.lastPositionIslandX = island.position.x
+		
 		entity.position.y = (float)(island.position.y + island.bounds.minY - island.bounds.height + 5)
 		entity.velocity.y = 0.0f
 		entity.force.set(0f,0f)
@@ -239,7 +255,7 @@ builder.entity {
 		
 		if (outside)
 			return
-			
+		
 		if (entity.position.y > 700f) {
 			utils.custom.messageQueue.enqueue(utils.genericMessage("jumperOutsideScreen") { })
 			entity.jetPackSound.stop()
