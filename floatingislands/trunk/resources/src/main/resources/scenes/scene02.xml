@@ -1,42 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scene id="1" name="NAME">
-	<startPosition>
-		<x>320</x>
-		<y>400</y>
-	</startPosition>
-	<island>
-		<type>floatingislands.entities.island02</type>
-		<position>
-			<x>320</x>
-			<y>450</y>
-		</position>
-	</island>
-	<island>
-		<type>floatingislands.entities.island02</type>
-		<position>
-			<x>220</x>
-			<y>400</y>
-		</position>
-	</island>
+<scene>
+	<startPosition x="550" y="30" />
 	<island>
 		<type>floatingislands.entities.island03</type>
-		<position>
-			<x>150</x>
-			<y>340</y>
-		</position>
+		<position x="550" y="130" />
 	</island>
 	<island>
 		<type>floatingislands.entities.island04</type>
-		<position>
-			<x>234</x>
-			<y>250</y>
-		</position>
+		<position x="410" y="230" />
 	</island>
 	<island>
 		<type>floatingislands.entities.island01</type>
-		<position>
-			<x>420</x>
-			<y>230</y>
-		</position>
+		<position x="270" y="430" />
+	</island>
+	<island>
+		<type>floatingislands.entities.island02</type>
+		<position x="80" y="330" />
 	</island>
 </scene>

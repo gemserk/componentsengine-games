@@ -32,7 +32,7 @@ builder.entity("game") {
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
 	def font2 = utils.resources.fonts.font([italic:false, bold:false, size:48])
 	
-	def scenesDef = ["scenes/scene01.xml", "scenes/scene02.xml", "scenes/scene03.xml"]
+	def scenesDef = ["scenes/scene01.xml", "scenes/scene02.xml", "scenes/scene03.xml", "scenes/scene04.xml", "scenes/scene05.xml"]
 	
 	def loadScene = { scenes, number ->
 		def scene = [islands:[]]
@@ -41,9 +41,9 @@ builder.entity("game") {
 		def sceneStream = this.getClass().getClassLoader().getResourceAsStream(sceneDef)
 		def sceneXml = new XmlSlurper().parse(sceneStream)
 		
-		scene.startPosition = utils.vector(sceneXml.startPosition.x.toFloat(), sceneXml.startPosition.y.toFloat())
+		scene.startPosition = utils.vector(sceneXml.startPosition.@x.toFloat(), sceneXml.startPosition.@y.toFloat())
 		sceneXml.island.each { islandXml ->
-			scene.islands << [type:islandXml.type.text(), position:utils.vector(islandXml.position.x.toFloat(), islandXml.position.y.toFloat())]
+			scene.islands << [type:islandXml.type.text(), position:utils.vector(islandXml.position.@x.toFloat(), islandXml.position.@y.toFloat())]
 		}
 		
 		return scene
@@ -51,8 +51,8 @@ builder.entity("game") {
 	
 	property("gamestate", "playing")
 	
-	property("endSceneTimer", new CountDownTimer(2000))
-	property("gameOverTimer", new CountDownTimer(2000))
+	property("endSceneTimer", new CountDownTimer(1200))
+	property("gameOverTimer", new CountDownTimer(1200))
 	
 	component(new TimerComponent("endSceneTimer")) {
 		propertyRef("timer", "endSceneTimer")
