@@ -2,9 +2,12 @@ package game.entities
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
+import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
+import com.gemserk.componentsengine.predicates.EntityPredicates 
+import org.newdawn.slick.geom.Vector2f 
 
 
 builder.entity("boat-${Math.random()}") {
@@ -17,9 +20,11 @@ builder.entity("boat-${Math.random()}") {
 	property("destination",parameters.destination)
 	
 	
+	
 	component(new CircleRenderableComponent("image")){
 		propertyRef("position","position")
 		propertyRef("radius","radius")
+		property("lineColor",parameters.color)
 	}
 	
 	component(new SuperMovementComponent("movement")){
@@ -47,4 +52,32 @@ builder.entity("boat-${Math.random()}") {
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
+	
+	
+	component(new GenericHitComponent("deflectBoats")){
+		property("targetTag", "boat")
+		property("predicate",{EntityPredicates.isNear(entity.position,(float) entity.radius + 10)})
+		property("trigger", utils.custom.triggers.closureTrigger  { data ->
+			def thisBoat = data.source
+			def boats = data.targets
+			
+			if(thisBoat != entity)
+				return 
+			
+			def position = thisBoat.position
+			
+			boats.each { boat ->
+				if(boat == entity)
+					return 
+					
+				def boatPosition = boat.position
+				Vector2f distanceVector = boatPosition.copy().sub(position);
+				Vector2f direction = distanceVector.copy().normalise();
+			
+				Vector2f generatedForce = direction.copy().scale((float)1000 / distanceVector.lengthSquared());
+				boat."movement.force".add(generatedForce)
+			}
+		})
+	}
+	
 }

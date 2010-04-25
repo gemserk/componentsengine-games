@@ -47,6 +47,10 @@ builder.entity("scene") {
 		team = "team2"
 	}
 	
+	child(template:"game.entities.whirpool", id:"whirpool1")	{
+		position = utils.vector(400,300)
+	}
+	
 	
 	component(utils.components.genericComponent(id:"moveHandler", messageId:"move"){ message ->
 		def targets = entity.parent.getEntities(Predicates.and(EntityPredicates.withAllTags("island"),EntityPredicates.isNear(utils.vector(message.x, message.y),50)))
