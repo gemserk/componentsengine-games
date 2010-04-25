@@ -16,25 +16,29 @@ builder.entity("game") {
 	
 	def gameProperties = utils.custom.gameStateManager.gameProperties
 	
-	def currentScene = gameProperties.currentScene ?: 1
+	def currentScene = gameProperties.currentScene ?: 0
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
 	def font2 = utils.resources.fonts.font([italic:false, bold:false, size:36])
 	
-	def scenes = [1:[startPosition:utils.vector(100, 50), islands:[
-			[type:"floatingislands.entities.island01", position:utils.vector(100,150)],
-			[type:"floatingislands.entities.island02", position:utils.vector(230,300)],
-			[type:"floatingislands.entities.island03", position:utils.vector(350,230)],
-			[type:"floatingislands.entities.island04", position:utils.vector(550,280)]
-			]], 2:[startPosition:utils.vector(320, 400), islands:[
-			[type:"floatingislands.entities.island02", position:utils.vector(320,450)],
-			[type:"floatingislands.entities.island02", position:utils.vector(220,400)],
-			[type:"floatingislands.entities.island03", position:utils.vector(150,340)],
-			[type:"floatingislands.entities.island04", position:utils.vector(234,250)],
-			[type:"floatingislands.entities.island01", position:utils.vector(360,230)],
-			]]]
+	def scenesDef = ["scenes/scene01.xml", "scenes/scene02.xml"]
 	
-	def scene = scenes[currentScene]
+	def loadScene = { scenes, number ->
+		def scene = [islands:[]]
+		             
+		def sceneDef = scenes[number]
+		def sceneStream = this.getClass().getClassLoader().getResourceAsStream(sceneDef)
+		def sceneXml = new XmlSlurper().parse(sceneStream)
+		
+		scene.startPosition = utils.vector(sceneXml.startPosition.x.toFloat(), sceneXml.startPosition.y.toFloat())
+		sceneXml.island.each { islandXml ->
+			scene.islands << [type:islandXml.type.text(), position:utils.vector(islandXml.position.x.toFloat(), islandXml.position.y.toFloat())]
+		}
+		
+		return scene
+	}
+	
+	def scene = loadScene(scenesDef, currentScene)
 	
 	property("gamestate", "playing")
 	
@@ -83,8 +87,8 @@ builder.entity("game") {
 		
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
 			utils.custom.gameStateManager.gameProperties.currentScene = currentScene+1
-			if (utils.custom.gameStateManager.gameProperties.currentScene> scenes.size())
-				utils.custom.gameStateManager.gameProperties.currentScene = 1
+			if (utils.custom.gameStateManager.gameProperties.currentScene>= scenesDef.size())
+				utils.custom.gameStateManager.gameProperties.currentScene = 0
 			// lose current game state?
 			utils.custom.game.loadScene("floatingislands.scenes.game");
 		})
