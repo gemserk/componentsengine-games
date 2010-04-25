@@ -37,6 +37,14 @@ builder.entity {
 	property("flyingImageLeft", utils.resources.image("jumper_flying").getFlippedCopy(true, false))
 	property("normalImageLeft", utils.resources.image("jumper").getFlippedCopy(true, false))
 	
+	property("frictionFactor", {
+		if (entity.overIsland)
+			return 0.01f
+		else
+			return 0.0005f
+		
+	})
+	
 	property("normalImage", {
 		if (entity.velocity.x < 0)
 			return entity.normalImageLeft
@@ -80,7 +88,7 @@ builder.entity {
 		propertyRef("velocity", "velocity")
 		propertyRef("force", "force")
 		property("maxVelocity", 10.0f)
-		property("frictionFactor", 0.005f)
+		propertyRef("frictionFactor", "frictionFactor")
 	}
 	
 	component(new DisablerComponent(new ForceComponent("gravityLogic"))) {
@@ -110,8 +118,8 @@ builder.entity {
 		if (entity.jumppower < 10.0f)
 			entity.jumppower = 10.0f
 		
-		if (entity.jumppower > 220.0f)
-			entity.jumppower = 220.0f
+		if (entity.jumppower > 300.0f)
+			entity.jumppower = 300.0f
 	}]))
 	
 	component(utils.components.genericComponent(id:"jumpDirectionChangedHandler", messageId:"jumpDirectionChanged"){ message ->
@@ -127,7 +135,7 @@ builder.entity {
 		
 		def jumpDirection = entity.jumpDirection
 		
-		entity.jumpForce = jumpDirection.copy().scale((float)(entity.jumppower * 0.000004f))
+		entity.jumpForce = jumpDirection.copy().scale((float)(entity.jumppower * 0.0000025f))
 		entity.jumpTime = 100
 		
 		entity.charging = false

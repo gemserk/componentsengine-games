@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scene>
-	<startPosition x="100" y="250" />
+	<startPosition x="100" y="230" />
 	<island>
 		<type>floatingislands.entities.island01</type>
 		<position x="100" y="300" />

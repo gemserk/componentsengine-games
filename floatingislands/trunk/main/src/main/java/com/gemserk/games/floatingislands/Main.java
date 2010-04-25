@@ -37,8 +37,8 @@ public class Main extends StateBasedGame {
 			app.setAlwaysRender(true);
 			app.setShowFPS(true);
 
-			app.setMinimumLogicUpdateInterval(15);
-			app.setMaximumLogicUpdateInterval(15);
+			// app.setMinimumLogicUpdateInterval(15);
+			// app.setMaximumLogicUpdateInterval(15);
 			// app.setTargetFrameRate(60);
 
 			app.start();
@@ -56,6 +56,8 @@ public class Main extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		// if (container instanceof AppletGameContainer.Container) {
 		container.setVSync(true);
+		container.setMinimumLogicUpdateInterval(15);
+		container.setMaximumLogicUpdateInterval(15);
 		// }
 		GemserkGameState menuState = new GameGameState(0, "floatingislands.scenes.game");
 		addState(menuState);
@@ -77,7 +79,7 @@ public class Main extends StateBasedGame {
 
 					@Override
 					public Animation instantiate() {
-						Animation flagAnimation = new Animation(flagAnimationSpriteSheet, (int)(1000f/6f));
+						Animation flagAnimation = new Animation(flagAnimationSpriteSheet, (int) (1000f / 6f));
 						return flagAnimation;
 					}
 				});
