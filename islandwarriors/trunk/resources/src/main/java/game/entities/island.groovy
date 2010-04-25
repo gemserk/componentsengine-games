@@ -30,7 +30,9 @@ builder.entity("island-${Math.random()}") {
 	
 	property("units",10)
 	property("color",{themeInfo[(entity.team)].color})
-
+	
+	property("direction",utils.randomVector(utils.rectangle(-1,-1,2,2)))
+	
 	
 	property("boatTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("game.entities.boat"), 
@@ -43,21 +45,28 @@ builder.entity("island-${Math.random()}") {
 				]
 			}))
 	
-			
+//	component(new CircleRenderableComponent("image")){
+//		propertyRef("position","position")
+//		propertyRef("radius","radius")
+//		property("lineColor",utils.color(0,0,0,0))
+//		property("fillColor",{entity.color.addToCopy(utils.color(0,0,0,-0.5f))})
+//	}		
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("island1"))
 		//property("color", utils.color(1,1,1,1))
 		propertyRef("position", "position")
-		property("direction", utils.randomVector(utils.rectangle(-1,-1,2,2)))
+		propertyRef("direction","direction")
+		
 	}
-			
-			
-//	component(new CircleRenderableComponent("image")){
-//		propertyRef("position","position")
-//		propertyRef("radius","radius")
-//		propertyRef("lineColor","color")
-//	}
-//	
+	
+	component(new ImageRenderableComponent("imagerendererteam")) {
+		property("image", utils.resources.image("island1-team"))
+		propertyRef("color", "color")
+		propertyRef("position", "position")
+		propertyRef("direction","direction")
+	}
+	
+	
 	component(new TimerComponent("generateUnitsTimer")){
 		property("trigger",utils.custom.triggers.closureTrigger { entity.units += 1 })
 		property("timer",new PeriodicTimer(1000))
@@ -123,7 +132,7 @@ builder.entity("island-${Math.random()}") {
 				def boatPosition = boat.position
 				Vector2f distanceVector = boatPosition.copy().sub(islandPosition);
 				Vector2f direction = distanceVector.copy().normalise();
-			
+				
 				Vector2f generatedForce = direction.copy().scale((float)3000 / distanceVector.lengthSquared());
 				boat."movement.force".add(generatedForce)
 			}
@@ -133,7 +142,7 @@ builder.entity("island-${Math.random()}") {
 	component(utils.components.genericComponent(id:"boatArrivedHandler", messageId:"boatArrived"){ message ->
 		if(message.island != entity)
 			return
-			
+		
 		message.boats.each { boat ->
 			def team = entity.team
 			def value = boat.team == team ? 1 : -1
