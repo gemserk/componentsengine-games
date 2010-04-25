@@ -21,7 +21,7 @@ builder.entity("scene") {
 	component(new RectangleRendererComponent("background")) {
 		property("position", utils.vector(0, 0))
 		property("rectangle", utils.rectangle(0,0,800,600))
-		property("fillColor", utils.color((float)60/256, (float)169/256,(float)178/256, 1.0f))
+		property("fillColor", utils.color((float)60/255, (float)169/255,(float)178/255, 1.0f))
 		property("lineColor", utils.color(0f, 0f, 0f, 0f))
 	}
 	
