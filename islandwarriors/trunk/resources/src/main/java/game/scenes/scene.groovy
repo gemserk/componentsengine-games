@@ -7,7 +7,10 @@ import com.gemserk.componentsengine.commons.components.CircleRenderableComponent
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
+import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.componentsengine.timers.PeriodicTimer 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
 import game.GroovyBootstrapper
 
@@ -79,6 +82,10 @@ builder.entity("scene") {
 	component(utils.components.genericComponent(id:"selectIslandHandler", messageId:"click"){ message ->
 		if(entity.selectedIsland != null || entity.overIsland==null)
 			return
+		
+		if(entity.overIsland.team != "team1")
+			return
+		
 		
 		entity.selectedIsland = entity.overIsland
 	})
@@ -164,6 +171,47 @@ builder.entity("scene") {
 	component(utils.components.genericComponent(id:"deselectIsland", messageId:"rightClick"){ message ->
 		entity.selectedIsland = null
 	})
+	
+	
+	component(new TimerComponent("evaluateIATimer")){
+		property("trigger",utils.custom.triggers.genericMessage("evaluateIA") {})
+		property("timer",new PeriodicTimer(1000))
+	}
+	
+	Random random = new Random();
+	
+	
+	component(utils.components.genericComponent(id:"evaluateIAHandler", messageId:"evaluateIA"){ message ->
+		
+		if(random.nextFloat() > 0.5f)
+			return
+		
+		def myIslands = entity.getEntities({island -> island.tags.contains("island") && island.team == "team2"} as Predicate);
+		
+		def origin = myIslands[random.nextInt(myIslands.size())]
+		
+		def destinations
+		if(random.nextFloat() > 0.3){
+			destinations = myIslands.findAll{ it != origin}
+			
+		}else{
+			destinations = entity.getEntities({island -> island.tags.contains("island") && island.team == "team1"} as Predicate);
+		}
+		
+		def destination = destinations[random.nextInt(destinations.size())]
+		
+		messageQueue.enqueue(utils.genericMessage("sendShips"){ sendShipMessage ->
+			sendShipMessage.origin = origin
+			sendShipMessage.destination = destination
+		})	                              
+		
+		
+		
+	})
+	
+	
+	
+	
 	
 	
 	input("inputmapping"){
