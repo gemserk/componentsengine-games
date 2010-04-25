@@ -3,6 +3,7 @@ package game.entities
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
@@ -15,17 +16,31 @@ builder.entity("boat-${Math.random()}") {
 	tags("boat")
 	
 	property("position",parameters.position)
-	property("radius",5f)
+	property("radius",10f)
 	property("team",parameters.team)
 	property("destination",parameters.destination)
 	
-	
-	
-	component(new CircleRenderableComponent("image")){
-		propertyRef("position","position")
-		propertyRef("radius","radius")
-		property("lineColor",parameters.color)
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image("boat"))
+		//property("color", utils.color(1,1,1,1))
+		propertyRef("position", "position")
+		propertyRef("direction","movement.velocity")
+		
 	}
+	
+	component(new ImageRenderableComponent("imagerenderer-team")) {
+		property("image", utils.resources.image("boat-team"))
+		property("color", parameters.color)
+		propertyRef("position", "position")
+		propertyRef("direction","movement.velocity")
+		
+	}
+	
+//	component(new CircleRenderableComponent("image")){
+//		propertyRef("position","position")
+//		propertyRef("radius","radius")
+//		property("lineColor",parameters.color)
+//	}
 	
 	component(new SuperMovementComponent("movement")){
 		property("velocity", utils.vector(0,0))
@@ -69,11 +84,11 @@ builder.entity("boat-${Math.random()}") {
 			boats.each { boat ->
 				if(boat == entity)
 					return 
-					
+				
 				def boatPosition = boat.position
 				Vector2f distanceVector = boatPosition.copy().sub(position);
 				Vector2f direction = distanceVector.copy().normalise();
-			
+				
 				Vector2f generatedForce = direction.copy().scale((float)1000 / distanceVector.lengthSquared());
 				boat."movement.force".add(generatedForce)
 			}
