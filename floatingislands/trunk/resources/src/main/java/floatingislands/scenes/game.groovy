@@ -58,15 +58,17 @@ builder.entity("game") {
 		propertyRef("timer", "endSceneTimer")
 		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {
 			// not used like the others ( message -> )
-			message.gameState = "sceneFinished"
+			
+			if (gameProperties.currentScene == scenesDef.size() - 1) 
+				message.gameState = "gameFinished"
+			else
+				message.gameState = "sceneFinished"
 		})
 	}
 	
 	component(new TimerComponent("gameOverTimer")) {
 		propertyRef("timer", "gameOverTimer")
-		property("trigger", utils.custom.triggers.genericMessage("changeGameState") { 
-			message.gameState = "gameover" 
-		})
+		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {  message.gameState = "gameover"  })
 	}
 	
 	component(utils.components.genericComponent(id:"lastIslandReachedHandler", messageId:"lastIslandReached"){ message ->
@@ -118,6 +120,20 @@ builder.entity("game") {
 			property("message", "Scene completed")
 		})
 		
+		child(entity("pressClickLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(320, 440),
+			fontColor:utils.color(0.0f,0.0f,0.0f,1f),
+			bounds:utils.rectangle(-100, -20, 200, 40),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "press click to continue...")
+		})	
+		
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
 			gameProperties.currentScene = gameProperties.currentScene+1
 			
@@ -125,13 +141,61 @@ builder.entity("game") {
 			gameProperties.jumpCount = entity.parent.children["world"].jumpCount
 			
 			if (gameProperties.currentScene>= scenesDef.size()) {
-				
-				// move to YOU FINISH THE GAME
-				// resetGameProperties(gameProperties) next time...
-				
-				gameProperties.currentScene = 0
+				entity.parent.gamestate = "gameFinished"
+			} else {
+				// lose current game state?
+				utils.custom.game.loadScene("floatingislands.scenes.game");
 			}
-			// lose current game state?
+		})
+		
+		input("inputmapping"){
+			keyboard {
+				press(button:"return", eventId:"nextScene")
+				press(button:"space", eventId:"nextScene")
+			}
+			mouse {
+				press(button:"left", eventId:"nextScene")
+			}
+		}
+		
+	})
+	
+	child(entity("gameFinishedState") {
+		
+		component(new ProcessingDisablerComponent("disabler")) {
+			property("enabled", {entity.parent.gamestate == "gameFinished" })
+		}
+		
+		child(entity("gameFinishedLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font2,
+			position:utils.vector(320, 240),
+			fontColor:utils.color(0.3f,0.7f,0.3f,1f),
+			bounds:utils.rectangle(-100, -20, 200, 40),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "The End: thanks for playing")
+		})
+		
+		child(entity("pressClickLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(320, 440),
+			fontColor:utils.color(0.0f,0.0f,0.0f,1f),
+			bounds:utils.rectangle(-100, -20, 200, 40),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "press click to restart game...")
+		})		
+		
+		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
+			resetGameProperties(gameProperties)
 			utils.custom.game.loadScene("floatingislands.scenes.game");
 		})
 		
@@ -165,6 +229,20 @@ builder.entity("game") {
 			])
 			
 			property("message", "Game Over")
+		})
+		
+		child(entity("pressClickLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(320, 440),
+			fontColor:utils.color(0.0f,0.0f,0.0f,1f),
+			bounds:utils.rectangle(-100, -20, 200, 40),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "press click to restart...")
 		})
 		
 		component(utils.components.genericComponent(id:"restartGameHandler", messageId:"restartGame"){ message ->
