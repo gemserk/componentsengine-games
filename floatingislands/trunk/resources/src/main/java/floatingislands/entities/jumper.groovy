@@ -43,6 +43,7 @@ builder.entity {
 	
 	property("direction", utils.vector(1,0))
 	property("overIsland", false)
+	property("currentIsland", null)
 	
 	property("world", {entity.parent})
 	
@@ -60,6 +61,7 @@ builder.entity {
 		propertyRef("velocity", "velocity")
 		propertyRef("force", "force")
 		property("maxVelocity", 10.0f)
+		property("frictionFactor", 0.005f)
 	}
 	
 	component(new DisablerComponent(new ForceComponent("gravityLogic"))) {
@@ -100,8 +102,9 @@ builder.entity {
 		utils.custom.messageQueue.enqueue(utils.genericMessage("jumped") { })
 	})
 	
-		component(utils.components.genericComponent(id:"jumpedHandler", messageId:"jumped"){ message -> 
+	component(utils.components.genericComponent(id:"jumpedHandler", messageId:"jumped"){ message -> 
 		entity.jetPackSound.loop()	
+		entity.currentIsland = null
 	})
 	
 	component(new ComponentFromListOfClosures("forceApplier",[{ UpdateMessage m->
@@ -130,16 +133,13 @@ builder.entity {
 		if (entity.jumppower < 10.0f)
 			entity.jumppower = 10.0f
 		
-		if (entity.jumppower > 200.0f)
-			entity.jumppower = 200.0f
+		if (entity.jumppower > 300.0f)
+			entity.jumppower = 300.0f
 	}]))
 	
 	component(new ComponentFromListOfClosures("islandCollisionLogic",[{ UpdateMessage m->
 		
-		if (entity.overIsland)
-			return
-			
-		if (entity.velocity.y < 0)
+		if (entity.overIsland) 
 			return
 		
 		def world = entity.world
@@ -147,20 +147,28 @@ builder.entity {
 		
 		def islands = world.getEntities(EntityPredicates.withAllTags("island"));
 		
+		def overIsland = false
+		
 		islands.each { island ->
+			
+			if (overIsland) 
+				return
+			
 			def islandBounds = island.bounds
 			def islandPosition = island.position
 			
+			def diffy = 15
+			
 			def x1 = (float)(position.x - islandPosition.x)
-			def y1 = (float)(position.y - islandPosition.y + 15)
-
-//			def x2 = (float)(position.x - islandPosition.x)
-//			def y2 = (float)(position.y - islandPosition.y + 30)
+			def y1 = (float)(position.y - islandPosition.y + diffy)
+			
+			//			def x2 = (float)(position.x - islandPosition.x)
+			//			def y2 = (float)(position.y - islandPosition.y + 30)
 			
 			// TODO: use entity.bounds instead entity.position
 			
 			def inside = islandBounds.contains(x1, y1)
-			entity.overIsland = entity.overIsland || inside
+			overIsland = overIsland || inside
 			
 			if (inside) {
 				utils.custom.messageQueue.enqueue(utils.genericMessage("islandReached") { message ->
@@ -169,14 +177,44 @@ builder.entity {
 			}
 		}
 		
+		if (!overIsland) {
+			entity.overIsland = false
+			entity.currentIsland=null
+		}
+		
 		
 	}]))
 	
-	component(utils.components.genericComponent(id:"islandReachedHandler", messageId:"islandReached"){ message -> 
-		entity.position.y = (float)(message.island.position.y + message.island.bounds.minY - message.island.bounds.height + 5)
-		entity.velocity.set(0f,0f)
+	component(new ComponentFromListOfClosures("currentIslandCollision",[{ UpdateMessage m->
+		
+		if (entity.currentIsland == null) {
+			return
+		}
+		
+		def currentIsland = entity.currentIsland
+		def currentPosition = entity.position
+		def islandPosition = currentIsland.position
+		def islandBounds = currentIsland.bounds
+		
+		def x = (float)(currentPosition.x - islandPosition.x)
+		
+		if (x < (islandBounds.minX-5) || x > (islandBounds.maxX +5)) {
+			entity.overIsland = false
+			entity.currentIsland=null		
+		}
+		
+		
+	}]))
+	
+	component(utils.components.genericComponent(id:"islandReachedHandler", messageId:"islandReached"){ message ->
+		def island = message.island
+		entity.position.y = (float)(island.position.y + island.bounds.minY - island.bounds.height + 5)
+		entity.velocity.y = 0.0f
 		entity.force.set(0f,0f)
 		entity.jetPackSound.stop()	
+		
+		entity.overIsland = true
+		entity.currentIsland=island
 	})
 	
 	component(new ComponentFromListOfClosures("jumpDirectionRenderer",[{ SlickRenderMessage m->
@@ -186,7 +224,7 @@ builder.entity {
 		def crossPosition = entity.position.copy().add(direction.scale((float)(entity.jumppower * 0.3f)))
 		
 		SlickCallable.enterSafeBlock();
-		OpenGlUtils.renderLine(entity.position, crossPosition, 2.0f, utils.color(1f,1f,0f,0.5f))
+		OpenGlUtils.renderLine(entity.position, crossPosition, 3.0f, utils.color(1f,0.7f,0.2f,0.9f))
 		SlickCallable.leaveSafeBlock();
 		
 	}]))

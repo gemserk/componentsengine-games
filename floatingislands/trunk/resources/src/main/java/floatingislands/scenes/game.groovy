@@ -64,6 +64,7 @@ builder.entity("game") {
 			property("rectangle", utils.rectangle(40,40, 560, 400))
 			property("lineColor", utils.color(0,0,0,0))
 			property("fillColor", utils.color(0.5f,0.5f,1f,0.4f))
+			property("cornerRadius", 10)
 		}
 		
 		child(entity("gameOverLabel"){
@@ -112,6 +113,7 @@ builder.entity("game") {
 			property("rectangle", utils.rectangle(40,40, 560, 400))
 			property("lineColor", utils.color(0,0,0,0))
 			property("fillColor", utils.color(0.5f,0.5f,1f,0.4f))
+			property("cornerRadius", 10)
 		}
 		
 		child(entity("gameOverLabel"){
