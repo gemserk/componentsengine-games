@@ -235,10 +235,15 @@ builder.entity {
 	}]))
 	
 	component(new ComponentFromListOfClosures("outsideScreen", [{ UpdateMessage m ->
+		def outside = entity.outsideScreen ?: false
 		
-		if (entity.position.y > 1000f) {
+		if (outside)
+			return
+			
+		if (entity.position.y > 700f) {
 			utils.custom.messageQueue.enqueue(utils.genericMessage("jumperOutsideScreen") { })
-			entity.jetPackSound.stop()	
+			entity.jetPackSound.stop()
+			entity.outsideScreen = true
 		}
 		
 	}]))	

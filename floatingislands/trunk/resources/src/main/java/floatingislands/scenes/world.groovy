@@ -15,11 +15,10 @@ builder.entity("world") {
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
 	
-	property("jumpCount", 0)
-	property("lives", 3)
-	property("lifeImage", utils.resources.image("jumper"))
+	property("jumpCount", parameters.jumpCount)
+	property("lives", parameters.lives)
 	
-	property("windSound", utils.resources.sounds.sound("wind"))
+	property("lifeImage", utils.resources.image("jumper"))
 	
 	property("currentIsland", null)
 	property("lastIsland", null)
@@ -47,15 +46,15 @@ builder.entity("world") {
 		child(newIsland)
 		
 		entity.islands << newIsland
-		
 		entity.lastIsland = newIsland
-		
-		println "lastIsland: $entity.lastIsland.id"
 	}
 	
 	createIsland.setResolveStrategy Closure.DELEGATE_FIRST
 	
 	scene.islands.eachWithIndex(createIsland)
+	
+	entity.currentIsland = entity.islands[0]
+	println "current island: $entity.currentIsland.id"
 	
 	child(entity("jumper"){
 		
@@ -117,7 +116,7 @@ builder.entity("world") {
 		// utils.custom.game.loadScene("floatingislands.scenes.game");
 		entity.lives -= 1
 		
-		if (entity.lives == 0)
+		if (entity.lives <= 0)
 		{
 			utils.custom.messageQueue.enqueue(utils.genericMessage("jumperDead") { })
 			return
@@ -136,11 +135,6 @@ builder.entity("world") {
 		}
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(jumper, "world"))
-	})
-	
-	component(utils.components.genericComponent(id:"jumperDeadHandler", messageId:"jumperDead"){ message ->
-		entity.parent.gamestate = "gameover"
-		entity.windSound.stop()
 	})
 	
 	component(new ComponentFromListOfClosures("livesRenderer",[{ SlickRenderMessage m->
