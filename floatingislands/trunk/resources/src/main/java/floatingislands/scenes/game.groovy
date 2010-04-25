@@ -59,10 +59,14 @@ builder.entity("game") {
 		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {
 			// not used like the others ( message -> )
 			
+			gameProperties.lives = entity.children["world"].lives
+			gameProperties.jumpCount = entity.children["world"].jumpCount
+			
 			if (gameProperties.currentScene == scenesDef.size() - 1) 
 				message.gameState = "gameFinished"
 			else
 				message.gameState = "sceneFinished"
+	
 		})
 	}
 	
@@ -137,8 +141,8 @@ builder.entity("game") {
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
 			gameProperties.currentScene = gameProperties.currentScene+1
 			
-			gameProperties.lives = entity.parent.children["world"].lives
-			gameProperties.jumpCount = entity.parent.children["world"].jumpCount
+			//			gameProperties.lives = entity.parent.children["world"].lives
+			//			gameProperties.jumpCount = entity.parent.children["world"].jumpCount
 			
 			if (gameProperties.currentScene>= scenesDef.size()) {
 				entity.parent.gamestate = "gameFinished"
@@ -171,13 +175,27 @@ builder.entity("game") {
 			parent("gemserk.gui.label", [
 			font:font2,
 			position:utils.vector(320, 240),
-			fontColor:utils.color(0.3f,0.7f,0.3f,1f),
+			fontColor:utils.color(0.0f,0.0f,0.0f,1f),
 			bounds:utils.rectangle(-100, -20, 200, 40),
 			align:"center",
 			valign:"center"
 			])
 			
 			property("message", "The End: thanks for playing")
+		})
+		
+		child(entity("resultsLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(320, 390),
+			fontColor:utils.color(0.0f,0.0f,0.0f,1f),
+			bounds:utils.rectangle(-100, -20, 200, 40),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", {"you used $gameProperties.jumpCount jumps".toString()})
 		})
 		
 		child(entity("pressClickLabel"){
@@ -262,6 +280,6 @@ builder.entity("game") {
 		
 	})
 	
-
+	
 	
 }

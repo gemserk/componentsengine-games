@@ -37,7 +37,8 @@ public class Main extends StateBasedGame {
 			app.setAlwaysRender(true);
 			app.setShowFPS(true);
 
-			app.setMinimumLogicUpdateInterval(1);
+			app.setMinimumLogicUpdateInterval(15);
+			app.setMaximumLogicUpdateInterval(15);
 			// app.setTargetFrameRate(60);
 
 			app.start();
