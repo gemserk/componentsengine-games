@@ -1,4 +1,8 @@
 package floatingislands.scenes
+import com.gemserk.componentsengine.timers.CountDownTimer;
+
+import com.gemserk.componentsengine.commons.components.TimerComponent;
+
 
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
@@ -21,11 +25,11 @@ builder.entity("game") {
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
 	def font2 = utils.resources.fonts.font([italic:false, bold:false, size:36])
 	
-	def scenesDef = ["scenes/scene01.xml", "scenes/scene02.xml"]
+	def scenesDef = ["scenes/scene01.xml", "scenes/scene02.xml", "scenes/scene03.xml"]
 	
 	def loadScene = { scenes, number ->
 		def scene = [islands:[]]
-		             
+		
 		def sceneDef = scenes[number]
 		def sceneStream = this.getClass().getClassLoader().getResourceAsStream(sceneDef)
 		def sceneXml = new XmlSlurper().parse(sceneStream)
@@ -42,14 +46,29 @@ builder.entity("game") {
 	
 	property("gamestate", "playing")
 	
+	property("endSceneTimer", new CountDownTimer(2000))
+	
+	component(new TimerComponent("endSceneTimer")) {
+		propertyRef("timer", "endSceneTimer")
+		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {
+			// not used like the others ( message -> )
+			message.gameState = "sceneFinished"
+		})
+	}
+	
 	component(utils.components.genericComponent(id:"lastIslandReachedHandler", messageId:"lastIslandReached"){ message ->
-		entity.gamestate = "sceneFinished"
+		entity.endSceneTimer.reset()
+	})
+
+	component(utils.components.genericComponent(id:"changeGameStateHandler", messageId:"changeGameState"){ message ->
+		entity.gamestate = message.gameState
 	})
 	
 	child(entity("world") {
 		
 		component(new ProcessingDisablerComponent("disabler")) {
-			property("enabled", {entity.parent.gamestate == "playing"})
+			property("enabled", {entity.parent.gamestate == "playing"
+			})
 			property("exclusions", [SlickRenderMessage.class])
 		}
 		
@@ -60,7 +79,8 @@ builder.entity("game") {
 	child(entity("sceneFinishedState") {
 		
 		component(new ProcessingDisablerComponent("disabler")) {
-			property("enabled", {entity.parent.gamestate == "sceneFinished"})
+			property("enabled", {entity.parent.gamestate == "sceneFinished"
+			})
 		}
 		
 		component(new RectangleRendererComponent("rectangle")) {
@@ -88,7 +108,7 @@ builder.entity("game") {
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
 			utils.custom.gameStateManager.gameProperties.currentScene = currentScene+1
 			if (utils.custom.gameStateManager.gameProperties.currentScene>= scenesDef.size())
-				utils.custom.gameStateManager.gameProperties.currentScene = 0
+			utils.custom.gameStateManager.gameProperties.currentScene = 0
 			// lose current game state?
 			utils.custom.game.loadScene("floatingislands.scenes.game");
 		})
@@ -109,7 +129,8 @@ builder.entity("game") {
 		
 		
 		component(new ProcessingDisablerComponent("disabler")) {
-			property("enabled", {entity.parent.gamestate == "gameover"})
+			property("enabled", {entity.parent.gamestate == "gameover"
+			})
 		}
 		
 		component(new RectangleRendererComponent("rectangle")) {

@@ -139,8 +139,13 @@ builder.entity {
 	
 	component(new ComponentFromListOfClosures("islandCollisionLogic",[{ UpdateMessage m->
 		
+		// I am over an island right now...
 		if (entity.overIsland) 
 			return
+
+		// I am going up here...
+		if (entity.velocity.y < 0) 
+				return
 		
 		def world = entity.world
 		def position = entity.position
