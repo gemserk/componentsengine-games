@@ -28,6 +28,20 @@ builder.entity("paused") {
 		
 		parent("gemserk.gui.label", [
 		font:font,
+		position:utils.vector(400f, 270),
+		fontColor:utils.color(0f,0f,0f,1f),
+		bounds:labelRectangle,
+		align:"center",
+		valign:"center"
+		])
+		
+		property("message", "Paused")
+	})
+	
+	child(entity("resumeLabel"){
+		
+		parent("gemserk.gui.label", [
+		font:font,
 		position:utils.vector(400f, 300),
 		fontColor:utils.color(0f,0f,0f,1f),
 		bounds:labelRectangle,
@@ -35,7 +49,21 @@ builder.entity("paused") {
 		valign:"center"
 		])
 		
-		property("message", "Paused, press click to continue...")
+		property("message", "Press click to continue")
+	})
+	
+	child(entity("restartLabel"){
+		
+		parent("gemserk.gui.label", [
+		font:font,
+		position:utils.vector(400f, 330),
+		fontColor:utils.color(0f,0f,0f,1f),
+		bounds:labelRectangle,
+		align:"center",
+		valign:"center"
+		])
+		
+		property("message", "Press \"r\" to restart")
 	})
 	
 	
@@ -45,9 +73,14 @@ builder.entity("paused") {
 		entity.parent.gameState = "playing"
 	})
 	
+	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
+		utils.custom.game.loadScene("game.scenes.scene");
+	})
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"return",eventId:"resumeGame")
+			press(button:"r",eventId:"restart")
 		}
 		mouse {
 			press(button:"left", eventId:"resumeGame")

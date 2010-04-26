@@ -28,7 +28,7 @@ builder.entity("island-${Math.random()}") {
 	property("radius",50f)
 	property("team",parameters.team)
 	
-	property("units",1)
+	property("units",10)
 	property("color",{themeInfo[(entity.team)].color})
 	
 	property("direction",utils.randomVector(utils.rectangle(-1,-1,2,2)))
