@@ -39,33 +39,62 @@ builder.entity("world") {
 	
 	
 	child(template:"game.entities.island", id:"island1")	{
-		position = utils.vector(100,100)
+		position = utils.vector(60,100)
 		team = "team1"
 	}
 	
 	child(template:"game.entities.island", id:"island2")	{
-		position = utils.vector(100,300)
+		position = utils.vector(60,300)
 		team = "team1"
 	}
 	
 	child(template:"game.entities.island", id:"island3")	{
-		position = utils.vector(100,500)
+		position = utils.vector(60,500)
 		team = "team1"
 	}
 	
-	
 	child(template:"game.entities.island", id:"island4")	{
-		position = utils.vector(700,100)
-		team = "team2"
+		position = utils.vector(200,200)
+		team = "team1"
 	}
 	
 	child(template:"game.entities.island", id:"island5")	{
-		position = utils.vector(700,300)
-		team = "team2"
+		position = utils.vector(200,400)
+		team = "team1"
+	}
+	
+	child(template:"game.entities.island", id:"island5")	{
+		position = utils.vector(400,100)
+		team = "team1"
 	}
 	
 	child(template:"game.entities.island", id:"island6")	{
-		position = utils.vector(700,500)
+		position = utils.vector(740,100)
+		team = "team2"
+	}
+	
+	child(template:"game.entities.island", id:"island7")	{
+		position = utils.vector(740,300)
+		team = "team2"
+	}
+	
+	child(template:"game.entities.island", id:"island8")	{
+		position = utils.vector(740,500)
+		team = "team2"
+	}
+	
+	child(template:"game.entities.island", id:"island9")	{
+		position = utils.vector(600,200)
+		team = "team2"
+	}
+	
+	child(template:"game.entities.island", id:"island10")	{
+		position = utils.vector(600,400)
+		team = "team2"
+	}
+	
+	child(template:"game.entities.island", id:"island11")	{
+		position = utils.vector(400,500)
 		team = "team2"
 	}
 	

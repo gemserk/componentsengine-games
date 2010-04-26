@@ -25,11 +25,14 @@ builder.entity("island-${Math.random()}") {
 	tags("island")
 	
 	property("position",parameters.position)
-	property("radius",50f)
+	property("radius",40f)
 	property("team",parameters.team)
 	
 	property("units",10)
 	property("color",{themeInfo[(entity.team)].color})
+	
+	def scaleValue = (float)(entity.radius*2)/100f
+	property("scale",utils.vector(scaleValue,scaleValue))
 	
 	property("direction",utils.randomVector(utils.rectangle(-1,-1,2,2)))
 	
@@ -56,6 +59,7 @@ builder.entity("island-${Math.random()}") {
 		//property("color", utils.color(1,1,1,1))
 		propertyRef("position", "position")
 		propertyRef("direction","direction")
+		propertyRef("size","scale")
 		
 	}
 	
@@ -64,6 +68,7 @@ builder.entity("island-${Math.random()}") {
 		propertyRef("color", "color")
 		propertyRef("position", "position")
 		propertyRef("direction","direction")
+		propertyRef("size","scale")
 	}
 	
 	

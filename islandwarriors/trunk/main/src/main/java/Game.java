@@ -48,9 +48,10 @@ public class Game extends StateBasedGame {
 	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		if(container instanceof AppletGameContainer.Container){
+		//if(container instanceof AppletGameContainer.Container){
 			container.setVSync(true);
-		}
+		//}
+		container.setShowFPS(false);
 		GemserkGameState menuState = new GameGameState(0,"game.scenes.scene");
 		addState(menuState);
 	}
