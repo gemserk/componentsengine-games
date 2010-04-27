@@ -153,8 +153,10 @@ builder.entity("island-${Math.random()}") {
 			def value = boat.team == team ? 1 : -1
 			entity.units += value
 			
-			if(entity.units == 0)
+			if(entity.units == 0){
 				entity.team = boat.team //should throw ownerChanged???
+				entity.units = 1
+			}
 		}
 	})
 }
