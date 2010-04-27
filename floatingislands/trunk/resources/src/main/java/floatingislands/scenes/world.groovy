@@ -2,9 +2,11 @@ package floatingislands.scenes
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
+import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage 
+import com.gemserk.componentsengine.timers.CountDownTimer;
 
 
 builder.entity("world") {
@@ -23,6 +25,38 @@ builder.entity("world") {
 	property("currentIsland", null)
 	property("lastIsland", null)
 	property("islands", [])
+	
+	property("currentLevel", parameters.currentLevel)			
+	property("levelsCount", parameters.levelsCount)	
+	
+	property("endSceneTimer", new CountDownTimer(1200))
+	property("gameOverTimer", new CountDownTimer(1200))
+	
+	component(new TimerComponent("endSceneTimer")) {
+		propertyRef("timer", "endSceneTimer")
+		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {
+			// not used like the others ( message -> )
+			
+			if (entity.currentLevel == entity.levelsCount) 
+				message.gameState = "gameFinished"
+			else
+				message.gameState = "sceneFinished"
+			
+		})
+	}
+	
+	component(utils.components.genericComponent(id:"lastIslandReachedHandler", messageId:"lastIslandReached"){ message ->
+		entity.endSceneTimer.reset()
+	})
+	
+	component(new TimerComponent("gameOverTimer")) {
+		propertyRef("timer", "gameOverTimer")
+		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {  message.gameState = "gameover"  })
+	}
+	
+	component(utils.components.genericComponent(id:"jumperDeadHandler", messageId:"jumperDead"){ message ->
+		entity.gameOverTimer.reset()
+	})
 	
 	component(new ImageRenderableComponent("backgroundRenderer")) {
 		property("image", utils.resources.image("background02"))
@@ -148,10 +182,27 @@ builder.entity("world") {
 		def lives = entity.lives
 		
 		lives.times {
-			image.draw((float)(100 + it*20), 5, 30, 30)
+			image.draw((float)(100 + it*20), 15, 30, 30)
 		}
 		
 	}]))
+	
+	child(entity("levelCountLabel"){
+		
+		parent("gemserk.gui.label", [
+		font:font,
+		position:utils.vector(320, 40),
+		fontColor:utils.color(0f,0f,0f,1f),
+		bounds:utils.rectangle(-320, -20, 320, 40),
+		align:"center",
+		valign:"top"
+		])
+		
+		property("currentLevel", { entity.parent.currentLevel })			
+		property("levelsCount", { entity.parent.levelsCount })
+		
+		property("message", {"Level $entity.currentLevel / $entity.levelsCount".toString()})
+	})
 	
 	child(entity("jumpCountLabel"){
 		
@@ -169,8 +220,14 @@ builder.entity("world") {
 		property("message", {"Jumps: $entity.jumpCount".toString() })
 	})
 	
+	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
+		entity.parent.gamestate = "paused"
+	})
+	
+	
 	input("inputmapping"){
 		keyboard {
+			press(button:"escape", eventId:"pauseGame")
 			press(button:"up", eventId:"jump")
 		}
 		mouse {

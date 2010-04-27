@@ -1,16 +1,16 @@
 package floatingislands.scenes
-import com.gemserk.componentsengine.timers.CountDownTimer;
 
-import com.gemserk.componentsengine.commons.components.TimerComponent;
+import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
+
+
+import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
+import com.gemserk.componentsengine.messages.SlickRenderMessage 
+
 
 
 import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
 
-
-
-import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
-import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import floatingislands.GroovyBootstrapper 
 
 builder.entity("game") {
@@ -51,39 +51,10 @@ builder.entity("game") {
 	
 	property("gamestate", "playing")
 	
-	property("endSceneTimer", new CountDownTimer(1200))
-	property("gameOverTimer", new CountDownTimer(1200))
-	
-	component(new TimerComponent("endSceneTimer")) {
-		propertyRef("timer", "endSceneTimer")
-		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {
-			// not used like the others ( message -> )
-			
-			gameProperties.lives = entity.children["world"].lives
-			gameProperties.jumpCount = entity.children["world"].jumpCount
-			
-			if (gameProperties.currentScene == scenesDef.size() - 1) 
-				message.gameState = "gameFinished"
-			else
-				message.gameState = "sceneFinished"
-	
-		})
-	}
-	
-	component(new TimerComponent("gameOverTimer")) {
-		propertyRef("timer", "gameOverTimer")
-		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {  message.gameState = "gameover"  })
-	}
-	
-	component(utils.components.genericComponent(id:"lastIslandReachedHandler", messageId:"lastIslandReached"){ message ->
-		entity.endSceneTimer.reset()
-	})
-	
-	component(utils.components.genericComponent(id:"jumperDeadHandler", messageId:"jumperDead"){ message ->
-		entity.gameOverTimer.reset()
-	})
-	
 	component(utils.components.genericComponent(id:"changeGameStateHandler", messageId:"changeGameState"){ message ->
+		gameProperties.lives = entity.children["world"].lives
+		gameProperties.jumpCount = entity.children["world"].jumpCount
+
 		entity.gamestate = message.gameState
 	})
 	
@@ -100,7 +71,11 @@ builder.entity("game") {
 			property("exclusions", [SlickRenderMessage.class])
 		}
 		
-		parent("floatingislands.scenes.world", [scene:loadScene(scenesDef, gameProperties.currentScene), lives:gameProperties.lives, jumpCount:gameProperties.jumpCount])
+		parent("floatingislands.scenes.world", [scene:loadScene(scenesDef, gameProperties.currentScene), 
+				lives:gameProperties.lives, 
+				jumpCount:gameProperties.jumpCount,
+				currentLevel:gameProperties.currentScene+1, 
+				levelsCount:scenesDef.size()])
 		
 	})
 	
@@ -110,7 +85,7 @@ builder.entity("game") {
 			property("enabled", {entity.parent.gamestate == "sceneFinished" })
 		}
 		
-		child(entity("gameOverLabel"){
+		child(entity("sceneFinishedLabel"){
 			
 			parent("gemserk.gui.label", [
 			font:font2,
@@ -140,9 +115,6 @@ builder.entity("game") {
 		
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
 			gameProperties.currentScene = gameProperties.currentScene+1
-			
-			//			gameProperties.lives = entity.parent.children["world"].lives
-			//			gameProperties.jumpCount = entity.parent.children["world"].jumpCount
 			
 			if (gameProperties.currentScene>= scenesDef.size()) {
 				entity.parent.gamestate = "gameFinished"
@@ -280,6 +252,45 @@ builder.entity("game") {
 		
 	})
 	
-	
+	child(entity("pausedGameState") {
+		
+		component(new ProcessingDisablerComponent("disabler")) {
+			property("enabled", {entity.parent.gamestate == "paused" })
+		}
+		
+		component(new RectangleRendererComponent("rectangle")) {
+			property("position", utils.vector(0,0))
+			property("rectangle", utils.rectangle(0,0, 640, 480))
+			property("lineColor", utils.color(1,1,1,0f))
+			property("fillColor", utils.color(0,0,0,0.1f))
+		}
+		
+		child(entity("pausedClickLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(320, 440),
+			fontColor:utils.color(0.0f,0.0f,0.0f,1f),
+			bounds:utils.rectangle(-100, -20, 200, 40),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "Paused, press return to continue...")
+		})	
+		
+		component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
+			entity.parent.gamestate = "playing"
+		})
+		
+		input("inputmapping"){
+			keyboard {
+				press(button:"return", eventId:"resumeGame")
+				press(button:"space", eventId:"resumeGame")
+				press(button:"escape", eventId:"resumeGame")
+			}
+		}
+		
+	})
 	
 }
