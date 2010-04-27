@@ -15,6 +15,7 @@
 
 	<properties>
 	
+		<webstartName>${project.parent.name}</webstartName>
 		<webstartCodebase>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstartCodebase>
 
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
