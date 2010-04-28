@@ -1,3 +1,4 @@
+
 package floatingislands.entities;
 
 import org.newdawn.slick.opengl.SlickCallable;
@@ -11,8 +12,10 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.gemserk.componentsengine.utils.OpenGlUtils;
 import com.gemserk.games.floatingislands.components.ForceComponent;
+import com.gemserk.games.floatingislands.components.RenderUtils;
+
+import static org.lwjgl.opengl.GL11.*;
 
 builder.entity {
 	
@@ -22,6 +25,7 @@ builder.entity {
 	
 	property("jumpDirection", utils.vector(0,0))
 	property("jumppower", 0.0f)
+	property("maxJumpPower", 300.0f)
 	
 	property("velocity", utils.vector(0,0))
 	property("force", utils.vector(0,0))
@@ -113,13 +117,13 @@ builder.entity {
 		
 		def delta = (float)(m.delta)
 		
-		entity.jumppower = (float) (entity.jumppower + 0.3f * delta)
+		entity.jumppower = (float) (entity.jumppower + 0.2f * delta)
 		
 		if (entity.jumppower < 10.0f)
 			entity.jumppower = 10.0f
 		
-		if (entity.jumppower > 300.0f)
-			entity.jumppower = 300.0f
+		if (entity.jumppower > entity.maxJumpPower)
+			entity.jumppower = entity.maxJumpPower
 	}]))
 	
 	component(utils.components.genericComponent(id:"jumpDirectionChangedHandler", messageId:"jumpDirectionChanged"){ message ->
@@ -281,9 +285,11 @@ builder.entity {
 		def direction = entity.jumpDirection.copy();
 		
 		def crossPosition = entity.position.copy().add(direction.scale((float)(entity.jumppower * 0.3f)))
+		def calpha = (float)(entity.jumppower / entity.maxJumpPower * 0.8f) + 0.2f
 		
 		SlickCallable.enterSafeBlock();
-		OpenGlUtils.renderLine(entity.position, crossPosition, 3.0f, utils.color(1f,0.7f,0.2f,0.9f))
+		RenderUtils.renderArrow(entity.position, crossPosition, 3.0f, 10.0f, utils.color(0f,1f,0.0f,0.2f), utils.color(calpha,(float)(1f - calpha),0.0f,calpha))
+		// OpenGlUtils.renderLine(entity.position, crossPosition, 3.0f, utils.color(1f,0.7f,0.2f,0.9f))
 		SlickCallable.leaveSafeBlock();
 		
 	}]))
