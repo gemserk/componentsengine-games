@@ -20,7 +20,7 @@ public class SpringMesh {
 
 		float power;
 
-		final float range;
+		float range;
 
 		public Force(int time, Vector2f position, float range, float power) {
 			this.time = time;
@@ -64,6 +64,12 @@ public class SpringMesh {
 		Iterator<Force> iterator = forcesToApply.iterator();
 		while (iterator.hasNext()) {
 			Force force = iterator.next();
+			
+			force.range += 5.0f;
+			force.power -= 2.0f;
+			if (force.power < 0.0f)
+				force.power = 0.0f;
+			
 			force.time -= delta;
 			if (force.time< 0)
 				iterator.remove();
