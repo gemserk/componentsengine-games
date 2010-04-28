@@ -6,9 +6,9 @@
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<description>Game using componentsengine</description>
+	<description>JylonWars is a shmup</description>
 
-	<name>Game using componentsengine</name>
+	<name>JylonWars</name>
 
 	<organization>
 		<name>Gemserk</name>

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp
-    spec="$jnlpspec"
-    codebase="$project.Url"
-    href="$outputFile">
-  <information>
-    <title>$project.Name</title>
+	<jnlp spec="$jnlpspec" codebase="$webstartCodebase" href="JNLPFILE">
+  	<information>
+    <title>$webstartName</title>
     <vendor>$project.Organization.Name</vendor>
     <homepage href="$project.Url"/>
     <description>$project.Description</description>
@@ -50,9 +47,10 @@
 		#end
 	</resources>
   
-    <applet-desc name="$project.Description" main-class="$mainClass"
-      width="800" height="600">
-    	<param name="game" value="$project.Properties.appletGameParameter"/>
-  	</applet-desc>
+    <applet-desc name="$project.Description" main-class="$mainClass" width="800" height="600"> <!-- JNLPAPPLET -->
+    	<param name="game" value="$project.Properties.appletGameParameter"/> <!-- JNLPAPPLET -->
+  	</applet-desc> <!-- JNLPAPPLET -->
+  	
+  	<application-desc main-class="$project.Properties.webstartMain" /> <!-- JNLPWEBSTART -->  
   
 </jnlp>

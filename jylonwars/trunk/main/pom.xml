@@ -11,15 +11,17 @@
 	<name>JylonWars</name>
 	<description>JylonWars</description>
 	
-	<url>${webstart.url}</url>
+	<url>http://www.gemserk.com</url>
 
 	<properties>
 	
-		<webstart.url>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstart.url>
-
+		<webstartName>${project.name}</webstartName>
+		<webstartCodebase>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstartCodebase>
+	
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
+		<webstartMain>com.gemserk.games.jylonwars.Game</webstartMain>
 		<appletGameParameter>com.gemserk.games.jylonwars.Game</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
 		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
@@ -62,7 +64,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo.webstart</groupId>
 						<artifactId>webstart-maven-plugin</artifactId>
-						<version>1.0-alpha-2-gemserk</version>
+						<version>1.0-alpha-2-gemserk-2</version>
 
 						<executions>
 							<execution>
