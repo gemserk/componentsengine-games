@@ -9,23 +9,23 @@
 	<groupId>com.gemserk.games.towerofdefense</groupId>
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Tower of Defense - Loader</name>
-	<description>Tower of Defense - Loader</description>
+	<name>Tower of Defense</name>
+	<description>Tower of Defense</description>
 
-	<url>${webstart.url}</url>
+	<url>http://www.gemserk.com</url>
 
 	<properties>
 
-		<webstart.url>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/
-		</webstart.url>
+		<webstartName>${project.name}</webstartName>
+		<webstartCodebase>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstartCodebase>
 
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
+		<webstartMain>com.gemserk.games.towerofdefense.TowerOfDefenseGame</webstartMain>
 		<appletGameParameter>com.gemserk.games.towerofdefense.TowerOfDefenseGame</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
-		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer
-		</jnlp.applet.mainClass>
+		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
 
 		<natives>${basedir}/target/natives/</natives>
 
@@ -69,7 +69,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo.webstart</groupId>
 						<artifactId>webstart-maven-plugin</artifactId>
-						<version>1.0-alpha-2-gemserk</version>
+						<version>1.0-alpha-2-gemserk-2</version>
 
 						<executions>
 							<execution>
