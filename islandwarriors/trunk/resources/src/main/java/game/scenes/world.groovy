@@ -1,5 +1,6 @@
 package game.scenes
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.opengl.SlickCallable;
 
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage 
@@ -11,6 +12,7 @@ import com.gemserk.componentsengine.commons.components.RectangleRendererComponen
 import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.gemserk.componentsengine.timers.PeriodicTimer 
+import com.gemserk.componentsengine.utils.OpenGlUtils;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
 import game.GroovyBootstrapper
@@ -178,8 +180,10 @@ builder.entity("world") {
 			Graphics graphics = message.graphics
 			def cursor = entity.cursor
 			def island = entity.island
-			graphics.drawLine(island.position.x, island.position.y,cursor.x,cursor.y)
-			
+			//graphics.drawLine(island.position.x, island.position.y,cursor.x,cursor.y)
+			SlickCallable.enterSafeBlock()
+			OpenGlUtils.renderLine(island.position, cursor, 1f, utils.color(0,1,0,1))
+			SlickCallable.leaveSafeBlock()
 		}]))
 	})
 	
