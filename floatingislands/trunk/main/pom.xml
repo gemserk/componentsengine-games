@@ -8,14 +8,14 @@
 	</parent>
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Game - Loader</name>
+	<name>Floating Islands - Ludum Dare #17</name>
 	<description>Game - Loader</description>
 	
 	<url>http://www.gemserk.com</url>
 
 	<properties>
 	
-		<webstartName>${project.parent.name}</webstartName>
+		<webstartName>${project.name}</webstartName>
 		<webstartCodebase>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstartCodebase>
 
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
