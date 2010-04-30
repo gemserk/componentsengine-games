@@ -8,8 +8,8 @@
 	</parent>
 	<artifactId>main</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>JylonWars - Ludum Dare #17</name>
-	<description>JylonWars - Ludum Dare #17</description>
+	<name>Island Warriors - Ludum Dare #17</name>
+	<description>Island Warriors - Ludum Dare #17</description>
 	
 	<url>http://www.gemserk.com</url>
 
@@ -21,8 +21,8 @@
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
-		<webstartMain>com.gemserk.games.jylonwars.Game</webstartMain>
-		<appletGameParameter>com.gemserk.games.jylonwars.Game</appletGameParameter>
+		<webstartMain>Game</webstartMain>
+		<appletGameParameter>Game</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
 		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
 
