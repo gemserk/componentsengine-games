@@ -8,12 +8,10 @@ builder.entity("gameover") {
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	
-	property("enabled", {entity.parent.gameState == "gameover" })
 	property("playtime", {
 		(float)(entity.parent.playtime/1000f)
 	})
 	
-	component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled") }
 	
 	def labelRectangle = utils.rectangle(-220,-50,440,100)
 	

@@ -30,21 +30,26 @@ builder.entity("game") {
 	//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
 	//	backgroundMusic.play();
 	
-	component(new LabelComponent("fpslabel")){
-		property("color", utils.color(0f,0f,0f,1f))
-		property("position", utils.vector(50,20))
-		property("message", "FPS: {0}")
-		property("value",{
-			utils.custom.gameContainer.getFPS()
-		})
-	}
 	
-	child(entity("world"){ parent("jylonwars.scenes.world") })
+	child(entity("world"){ 
+		parent("jylonwars.scenes.stateBasedNode",[enabled:{entity.parent.gameState == "playing"},exclusions:[SlickRenderMessage.class]])
+		parent("jylonwars.scenes.world") 
+		
+	})
 	
-	child(entity("gameover"){ parent("jylonwars.scenes.gameover") })
+	child(entity("gameover"){ 
+		parent("jylonwars.scenes.stateBasedNode",[enabled:{entity.parent.gameState == "gameover"}])
+		parent("jylonwars.scenes.gameover")
+	})
 	
-	child(entity("paused"){ parent("jylonwars.scenes.paused") })
+	child(entity("paused"){ 
+		parent("jylonwars.scenes.stateBasedNode",[enabled:{entity.parent.gameState == "paused"}])
+		parent("jylonwars.scenes.paused")
+	})
 	
-	child(entity("highscore"){parent("jylonwars.scenes.highscore") })
+	child(entity("highscore"){
+		parent("jylonwars.scenes.stateBasedNode",[enabled:{entity.parent.gameState != "playing"}])
+		parent("jylonwars.scenes.highscore")
+	})
 }
 

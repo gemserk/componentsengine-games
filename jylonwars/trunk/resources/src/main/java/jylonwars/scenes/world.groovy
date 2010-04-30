@@ -19,16 +19,10 @@ import com.gemserk.games.jylonwars.data.Data;
 builder.entity("world") {
 	
 	
-	property("enabled", {entity.parent.gameState == "playing" })
 	property("crittersdead",0)
 	property("bombs",3)
 	
 	property("bounds",utils.rectangle(0,0,800,600))
-	
-	component(new ProcessingDisablerComponent("disableStateComponent")){
-		propertyRef("enabled","enabled")
-		property("exclusions",[SlickRenderMessage.class])
-	}
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("background"))

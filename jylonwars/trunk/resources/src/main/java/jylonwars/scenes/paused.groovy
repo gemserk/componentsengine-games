@@ -10,10 +10,6 @@ builder.entity("game") {
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	
-	property("enabled", {entity.parent.gameState == "paused" })
-	
-	component(new ProcessingDisablerComponent("disableStateComponent")){  propertyRef("enabled", "enabled") }
-	
 	def labelRectangle = utils.rectangle(-220,-50,440,100)
 	
 	component(new RectangleRendererComponent("background")) {
