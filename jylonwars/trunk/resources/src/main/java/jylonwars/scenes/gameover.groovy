@@ -44,8 +44,8 @@ builder.entity("gameover") {
 	
 	input("inputmapping"){
 		keyboard {
-			press(button:"return",eventId:"restart")
-			press(button:"space",eventId:"restart")
+			release(button:"return",eventId:"restart")
+			release(button:"space",eventId:"restart")
 		}
 		mouse {
 			press(button:"left", eventId:"restart")

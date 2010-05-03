@@ -15,6 +15,8 @@ import com.gemserk.componentsengine.commons.components.ProcessingDisablerCompone
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.games.jylonwars.data.Data;
+import com.gemserk.games.jylonwars.TextField;
+import com.gemserk.games.jylonwars.TextFieldComponent 
 
 import jylonwars.GroovyBootstrapper 
 
@@ -26,6 +28,8 @@ builder.entity("game") {
 	property("gameState", "playing");
 	property("playtime",0)
 	
+	// temporal hasta que esten los estados
+	property("playerData", [:])
 	
 	//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
 	//	backgroundMusic.play();
@@ -48,8 +52,13 @@ builder.entity("game") {
 	})
 	
 	child(entity("highscore"){
-		parent("jylonwars.scenes.stateBasedNode",[enabled:{entity.parent.gameState != "playing"}])
+		parent("jylonwars.scenes.stateBasedNode",[enabled:{entity.parent.gameState != "playing" && entity.parent.gameState != "enterscore" }])
 		parent("jylonwars.scenes.highscore")
+	})
+	
+	child(entity("enterscore"){
+		parent("jylonwars.scenes.stateBasedNode",[enabled:{entity.parent.gameState == "enterscore" }])
+		parent("jylonwars.scenes.enterscore")
 	})
 }
 

@@ -63,13 +63,16 @@ builder.entity("world") {
 	})
 	
 	component(utils.components.genericComponent(id:"shipcollisionhandler", messageId:"shipcollision"){ message ->
-		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
+//		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
+//		
+//		dataStore.submit(new Data(tags:["score"], values:[name:"yo", playtime:entity.playtime, crittersdead:entity.crittersdead]))
 		
-		dataStore.submit(new Data(tags:["score"], values:[name:"yo", playtime:entity.playtime, crittersdead:entity.crittersdead]))
+		entity.parent.playerData["playtime"] = entity.playtime
+		entity.parent.playerData["crittersdead"] = entity.crittersdead
 		
-		entity.parent.gameState = "gameover"
+		entity.parent.gameState = "enterscore"
 		
-		messageQueue.enqueue(utils.genericMessage("refreshScores"){})	
+//		messageQueue.enqueue(utils.genericMessage("refreshScores"){})	
 	})
 	
 	component(new ComponentFromListOfClosures("playtimecomponent",[{ UpdateMessage message ->

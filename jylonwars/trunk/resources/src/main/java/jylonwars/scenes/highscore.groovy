@@ -18,8 +18,7 @@ import com.gemserk.games.jylonwars.data.Data;
 
 import jylonwars.GroovyBootstrapper 
 
-
-builder.entity("game") {
+builder.entity {
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	
@@ -55,7 +54,7 @@ builder.entity("game") {
 	
 	
 	
-	component(utils.components.genericComponent(id:"refreshSCoresHandler", messageId:"refreshScores"){ message ->
+	component(utils.components.genericComponent(id:"refreshScoresHandler", messageId:"refreshScores"){ message ->
 		def newEntities = []
 		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
 		
