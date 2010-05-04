@@ -16,9 +16,14 @@
 #end
 	<resources>
 	    <j2se version="$j2seVersion"/>
-	    #foreach( $dependency in $fulldependencies )
-			#if ( !$dependency.classifier || !$dependency.classifier.startsWith('natives-'))
+	     #foreach( $dependency in $fulldependencies )
+			#if ( !$dependency.classifier)
 				<jar href="${dependency.artifactId}-${dependency.version}.jar" />
+			#end
+		#end
+	    #foreach( $dependency in $fulldependencies )
+			#if ( $dependency.classifier && !$dependency.classifier.startsWith('natives-'))
+				<jar href="${dependency.artifactId}-${dependency.version}-${dependency.classifier}.jar" />
 			#end
 		#end
 	</resources>
