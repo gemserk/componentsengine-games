@@ -38,13 +38,12 @@ builder.entity("gameover") {
 	})
 	
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
-		//			backgroundMusic.stop();
 		utils.custom.game.loadScene("jylonwars.scenes.scene");
 	})
 	
 	input("inputmapping"){
 		keyboard {
-			release(button:"return",eventId:"restart")
+			release(button:"escape",eventId:"restart")
 			release(button:"space",eventId:"restart")
 		}
 		mouse {

@@ -16,8 +16,7 @@ import com.gemserk.games.jylonwars.data.Data;
 
 
 
-builder.entity("world") {
-	
+builder.entity {
 	
 	property("crittersdead",0)
 	property("bombs",3)
@@ -63,16 +62,13 @@ builder.entity("world") {
 	})
 	
 	component(utils.components.genericComponent(id:"shipcollisionhandler", messageId:"shipcollision"){ message ->
-//		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
-//		
-//		dataStore.submit(new Data(tags:["score"], values:[name:"yo", playtime:entity.playtime, crittersdead:entity.crittersdead]))
-		
-		entity.parent.playerData["playtime"] = entity.playtime
-		entity.parent.playerData["crittersdead"] = entity.crittersdead
-		
-		entity.parent.gameState = "enterscore"
-		
-//		messageQueue.enqueue(utils.genericMessage("refreshScores"){})	
+		def playtime = entity.playtime
+		def crittersdead = entity.crittersdead
+	
+		messageQueue.enqueue(utils.genericMessage("enterscore") { newMessage ->
+			newMessage.playtime = playtime
+			newMessage.crittersdead = crittersdead
+		})
 	})
 	
 	component(new ComponentFromListOfClosures("playtimecomponent",[{ UpdateMessage message ->
@@ -229,7 +225,6 @@ builder.entity("world") {
 	}
 	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
-		entity.parent.gameState = "paused"
-		messageQueue.enqueue(utils.genericMessage("refreshScores"){})	
+		messageQueue.enqueue(utils.genericMessage("paused"){})	
 	})
 }

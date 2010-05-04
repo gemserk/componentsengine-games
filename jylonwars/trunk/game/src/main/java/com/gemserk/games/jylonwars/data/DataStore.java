@@ -5,7 +5,11 @@ import java.util.Set;
 
 public interface DataStore {
 	
-	void submit(Data data);
+	/**
+	 * @param data
+	 * @return the id of the entry
+	 */
+	String submit(Data data);
 	
 	Collection<Data> get(Set<String> tags);
 

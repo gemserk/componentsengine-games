@@ -4,10 +4,20 @@ import java.util.Map;
 import java.util.Set;
 
 public class Data {
+	
+	String id;
 
 	Set<String> tags;
 
 	Map<String, Object> values;
+	
+	public String getId() {
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public void setTags(Set<String> tags) {
 		this.tags = tags;

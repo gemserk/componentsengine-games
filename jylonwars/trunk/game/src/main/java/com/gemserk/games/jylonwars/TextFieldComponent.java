@@ -2,14 +2,14 @@ package com.gemserk.games.jylonwars;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.InputListener;
+import org.newdawn.slick.KeyListener;
 
 import com.gemserk.componentsengine.annotations.EntityProperty;
 import com.gemserk.componentsengine.commons.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.google.inject.Inject;
 
-public class TextFieldComponent extends FieldsReflectionComponent implements InputListener {
+public class TextFieldComponent extends FieldsReflectionComponent implements KeyListener {
 
 	@EntityProperty
 	TextField textField;
@@ -17,16 +17,12 @@ public class TextFieldComponent extends FieldsReflectionComponent implements Inp
 	@EntityProperty
 	boolean enabled;
 
-	@Inject
-	Input input;
-
 	public TextField getTextField() {
 		return textField;
 	}
 	
 	@Override
 	public void onAdd(Entity entity) {
-		input.addListener(this);
 		super.onAdd(entity);
 	}
 
@@ -62,31 +58,6 @@ public class TextFieldComponent extends FieldsReflectionComponent implements Inp
 	}
 	
 	@Override
-	public void mouseClicked(int button, int x, int y, int clickCount) {
-		
-	}
-
-	@Override
-	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-		
-	}
-
-	@Override
-	public void mousePressed(int button, int x, int y) {
-		
-	}
-
-	@Override
-	public void mouseReleased(int button, int x, int y) {
-		
-	}
-
-	@Override
-	public void mouseWheelMoved(int change) {
-		
-	}
-
-	@Override
 	public void inputEnded() {
 		
 	}
@@ -105,56 +76,5 @@ public class TextFieldComponent extends FieldsReflectionComponent implements Inp
 	public void keyReleased(int key, char c) {
 		
 	}
-
-	@Override
-	public void controllerButtonPressed(int controller, int button) {
-		
-	}
-
-	@Override
-	public void controllerButtonReleased(int controller, int button) {
-		
-	}
-
-	@Override
-	public void controllerDownPressed(int controller) {
-		
-	}
-
-	@Override
-	public void controllerDownReleased(int controller) {
-		
-	}
-
-	@Override
-	public void controllerLeftPressed(int controller) {
-		
-	}
-
-	@Override
-	public void controllerLeftReleased(int controller) {
-		
-	}
-
-	@Override
-	public void controllerRightPressed(int controller) {
-		
-	}
-
-	@Override
-	public void controllerRightReleased(int controller) {
-		
-	}
-
-	@Override
-	public void controllerUpPressed(int controller) {
-		
-	}
-
-	@Override
-	public void controllerUpReleased(int controller) {
-		
-	}
-
 
 }

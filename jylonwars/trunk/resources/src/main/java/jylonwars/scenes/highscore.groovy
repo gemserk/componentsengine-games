@@ -52,7 +52,18 @@ builder.entity {
 		property("message", "PLAYTIME")
 	})
 	
+	property("scoreId", null)
 	
+	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
+	
+		def sourceMessage = message.message
+		def scoreId = sourceMessage.scoreId
+		
+		if (scoreId)
+			entity.scoreId = scoreId
+		
+		messageQueue.enqueue(utils.genericMessage("refreshScores"){})
+	})
 	
 	component(utils.components.genericComponent(id:"refreshScoresHandler", messageId:"refreshScores"){ message ->
 		def newEntities = []
@@ -60,14 +71,19 @@ builder.entity {
 		
 		scores = dataStore.get([] as Set).sort { it.values.playtime}.reverse()
 		
-		def createLabel = { data, scoreId -> 
+		def createLabel = { data, scoreIndex ->
+		
+			if (scoreIndex > 10)
+				return
+		
+			def fontColor = data.id != entity.scoreId ? utils.color(0f,0f,0f,1f) : utils.color(1f,0f,0f,1f)  
 			
-			newEntities << entity("scoresLabel-name-${scoreId}".toString()){
+			newEntities << entity("scoresLabel-name-${scoreIndex}".toString()){
 				
 				parent("gemserk.gui.label", [
 				font:font,
-				position:utils.vector(400f, (float)(170 + 30 * scoreId)),
-				fontColor:utils.color(0f,0f,0f,1f),
+				position:utils.vector(400f, (float)(170 + 30 * scoreIndex)),
+				fontColor:fontColor,
 				bounds:labelRectangle,
 				align:"left",
 				valign:"center"
@@ -76,12 +92,12 @@ builder.entity {
 				property("message", "$data.values.name".toString())
 			}
 			
-			newEntities << entity("scoresLabel-playtime-${scoreId}".toString()){
+			newEntities << entity("scoresLabel-playtime-${scoreIndex}".toString()){
 				
 				parent("gemserk.gui.label", [
 				font:font,
-				position:utils.vector(400f, (float)(170 + 30 * scoreId)),
-				fontColor:utils.color(0f,0f,0f,1f),
+				position:utils.vector(400f, (float)(170 + 30 * scoreIndex)),
+				fontColor:fontColor,
 				bounds:labelRectangle,
 				align:"right",
 				valign:"center"

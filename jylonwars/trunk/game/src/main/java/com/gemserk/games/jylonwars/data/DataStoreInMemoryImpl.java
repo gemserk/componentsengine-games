@@ -14,8 +14,10 @@ public class DataStoreInMemoryImpl implements DataStore {
 	}
 
 	@Override
-	public void submit(Data data) {
+	public String submit(Data data) {
+		data.setId(Integer.toHexString(System.identityHashCode(data)));
 		dataCollection.add(data);
+		return data.getId();
 	}
 
 }

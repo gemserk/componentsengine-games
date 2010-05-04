@@ -4,9 +4,7 @@ import com.gemserk.componentsengine.commons.components.ProcessingDisablerCompone
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
 
-builder.entity("game") {
-	
-	
+builder.entity {
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	
@@ -33,11 +31,8 @@ builder.entity("game") {
 		property("message", "Paused, press click to continue...")
 	})
 	
-	
-	
-	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
-		entity.parent.gameState = "playing"
+		messageQueue.enqueue(utils.genericMessage("resume"){})	
 	})
 	
 	input("inputmapping"){

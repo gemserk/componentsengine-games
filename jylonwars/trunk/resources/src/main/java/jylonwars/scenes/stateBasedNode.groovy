@@ -5,7 +5,11 @@ import com.gemserk.componentsengine.commons.components.ProcessingDisablerCompone
 
 builder.entity("statebasednode") {
 	
-	property("enabled", parameters.enabled)
+	property("enabled", parameters.enabled != null ? parameters.enabled : false)
+	
+	component(utils.components.genericComponent(id:"stateBasedNodeEnabledHandler", messageId:"changeNodeState"){ message ->
+		entity.enabled = message.states.contains(entity.id)
+	})
 	
 	component(new ProcessingDisablerComponent("disableStateComponent")){
 		propertyRef("enabled","enabled")
