@@ -69,7 +69,7 @@ builder.entity {
 		def newEntities = []
 		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
 		
-		scores = dataStore.get([] as Set).sort { it.values.playtime}.reverse()
+		scores = dataStore.get(["score"] as Set).sort { it.values.playtime}.reverse()
 		
 		def createLabel = { data, scoreIndex ->
 		

@@ -1,4 +1,5 @@
 package com.gemserk.games.jylonwars;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
-import com.gemserk.games.jylonwars.data.DataStoreInMemoryImpl;
+import com.gemserk.games.jylonwars.data.DataStoreJSONInFileImpl;
 
 public class Game extends StateBasedGame {
 
@@ -56,8 +57,9 @@ public class Game extends StateBasedGame {
 		GemserkGameState gamestate = new GameGameState(0,"jylonwars.scenes.scene");
 		addState(gamestate);
 		
-		gameProperties.put("dataStore", new DataStoreInMemoryImpl());
-		
+		//gameProperties.put("dataStore", new DataStoreInMemoryImpl());
+		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/storage.data");
+		gameProperties.put("dataStore", new DataStoreJSONInFileImpl(storageFile));
 	}
 	
 	class GameGameState extends GemserkGameState {

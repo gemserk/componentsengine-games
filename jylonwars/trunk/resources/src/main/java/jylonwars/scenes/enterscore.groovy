@@ -79,16 +79,19 @@ builder.entity {
 	
 	component(textFieldComponent) {
 		property("textField", {entity.textField})
-		property("enabled", true)
 	}
 	
 	component(utils.components.genericComponent(id:"enterNameGameStateEndHandler", messageId:"enterNameGameStateEnd"){ message ->
+		def text = entity.textField.text.trim()
+		
+		if (text == "") 
+			return
+
 		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
 		
 		def playtime = entity.playtime
 		def crittersDead = entity.crittersdead
 		
-		def text = entity.textField.text
 		
 		def dataId = dataStore.submit(new Data(tags:["score"], values:[name:text, playtime:playtime, crittersdead:crittersDead]))
 		

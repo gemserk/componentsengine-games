@@ -1,8 +1,9 @@
 package com.gemserk.games.jylonwars;
 
 import org.newdawn.slick.Input;
-import org.newdawn.slick.InputListener;
 import org.newdawn.slick.KeyListener;
+
+import ch.qos.logback.core.joran.spi.Pattern;
 
 import com.gemserk.componentsengine.annotations.EntityProperty;
 import com.gemserk.componentsengine.commons.components.FieldsReflectionComponent;
@@ -13,9 +14,9 @@ public class TextFieldComponent extends FieldsReflectionComponent implements Key
 
 	@EntityProperty
 	TextField textField;
-
-	@EntityProperty
-	boolean enabled;
+	
+	@EntityProperty(required=false)
+	String regex = "[\\w ]";
 
 	public TextField getTextField() {
 		return textField;
@@ -26,21 +27,11 @@ public class TextFieldComponent extends FieldsReflectionComponent implements Key
 		super.onAdd(entity);
 	}
 
-	public boolean isFocus() {
-		return enabled;
-	}
-
-	public void setFocus(boolean focus) {
-		this.enabled = focus;
-	}
-
 	public TextFieldComponent(String id) {
 		super(id);
 	}
 
 	public void keyPressed(int key, char c) {
-		if (!enabled)
-			return;
 		if (key == Input.KEY_LEFT)
 			textField.cursorLeft();
 		else if (key == Input.KEY_RIGHT)
@@ -49,8 +40,10 @@ public class TextFieldComponent extends FieldsReflectionComponent implements Key
 			textField.backspace();
 		else if (key == Input.KEY_DELETE)
 			textField.delete();
-		else
-			textField.insert(c);
+		else {
+			if (Character.toString(c).matches(regex))
+				textField.insert(c);
+		}
 	}
 	
 	public void handleMessage(UpdateMessage message) {
