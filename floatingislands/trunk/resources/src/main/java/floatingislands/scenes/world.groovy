@@ -1,10 +1,15 @@
 package floatingislands.scenes
 
 
+import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.opengl.SlickCallable;
+
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.timers.CountDownTimer;
 
@@ -54,6 +59,35 @@ builder.entity("world") {
 		property("direction", utils.vector(1,0))
 	}
 	
+	property("scroll", utils.vector(0.0f, 0.0f))
+	property("scale", utils.vector(1.0f, 1.0f))
+	
+	component(utils.components.genericComponent(id:"scrollHandler", messageId:["scroll.up", "scroll.down", "scroll.left", "scroll.right"]){ message ->
+		if (message.id == "scroll.up") {
+			entity.scale.x += 0.01f
+			entity.scale.y += 0.01f
+						entity.scroll.y -= 1f
+		}
+		
+		if (message.id == "scroll.down") {
+			entity.scale.x -= 0.01f
+			entity.scale.y -= 0.01f
+						entity.scroll.y += 1f
+		}
+		
+		if (message.id == "scroll.left")
+			entity.scroll.x -= 1f
+		
+		if (message.id == "scroll.right")
+			entity.scroll.x += 1f
+	})
+	
+	component(new ComponentFromListOfClosures("scrollComponent", [{SlickRenderMessage message ->
+		Graphics g = message.graphics
+		// g.scale entity.scale.x, entity.scale.y
+		g.translate entity.scroll.x, entity.scroll.y
+	}]))
+	
 	def islands = entity.islands
 	
 	child(entity("flag") {
@@ -96,30 +130,53 @@ builder.entity("world") {
 		
 		property("windSound", {entity.parent.windSound})
 		
-		property("position1", utils.vector(320, 240))
-		property("position2", utils.vector((float)(320 - 640), 240))
+		property("speed", (float)(640.0f / 10000f))
+		property("positions", [utils.vector(320, 240), utils.vector((float)(320 - 640), 240)])
 		
-		component(new ImageRenderableComponent("cloudsRenderer1")) {
-			propertyRef("position", "position1")
-			property("image", utils.resources.image("clouds"))
-			property("color", utils.color(1,1,1,1))
-			property("direction", utils.vector(1,0))
-		}
+		property("image", utils.resources.image("clouds"))
 		
-		component(new ImageRenderableComponent("cloudsRenderer2")) {
-			propertyRef("position", "position2")
-			property("image", utils.resources.image("clouds"))
-			property("color", utils.color(1,1,1,1))
-			property("direction", utils.vector(1,0))
-		}
+		component(new ComponentFromListOfClosures("scrollComponent", [{SlickRenderMessage message ->
+			
+			def image = entity.image
+			
+			SlickCallable.enterSafeBlock();
+			
+			image.bind()
+			
+			GL11.glPushMatrix();
+			
+			entity.positions.each { position ->
+				GL11.glLoadIdentity();
+				GL11.glTranslatef(position.x, position.y, 0.0f)
+				GL11.glBegin(GL11.GL_QUADS) 
+				
+				GL11.glTexCoord2f 0f, 0f
+				GL11.glVertex2f((float)(-image.width/2f), (float)(-image.height/2f))
+				
+				GL11.glTexCoord2f image.texture.width, 0f
+				GL11.glVertex2f((float)(image.width/2f), (float)(-image.height/2f))
+				
+				GL11.glTexCoord2f image.texture.width, image.texture.height 
+				GL11.glVertex2f((float)(image.width/2), (float)(image.height/2))
+				
+				GL11.glTexCoord2f 0f, image.texture.height 
+				GL11.glVertex2f((float)(-image.width/2), (float)(image.height/2))
+				GL11.glEnd()
+			}
+			
+			GL11.glPopMatrix();
+			
+			SlickCallable.leaveSafeBlock();
+			
+		}]))
 		
 		component(new ComponentFromListOfClosures("cloudsMovement", [{ UpdateMessage m ->
 			
-			entity.position1.x += (float) (0.05f * m.getDelta())
-			entity.position2.x = (float) (entity.position1.x - 640.0f)
-			
-			if (entity.position1.x > 640+320)
-				entity.position1.x = (float)(320.0f)
+			entity.positions.each { position ->
+				position.x += (float) (entity.speed * m.getDelta())
+				if (position.x > 640+320)
+					position.x -= 1280f
+			}
 			
 			def windSound = entity.windSound
 			if (!windSound.isPlaying())
@@ -193,16 +250,29 @@ builder.entity("world") {
 		entity.parent.gamestate = "paused"
 	})
 	
+	component(utils.components.genericComponent(id:"mouseMovedHandler", messageId:"mouseMoved"){ message ->
+		def x = (float)( message.x - entity.scroll.x)
+		def y = (float)(message.y - entity.scroll.y)
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("jumpDirectionChanged") { newMessage ->
+			newMessage.x = x
+			newMessage.y = y
+		})
+	})
+	
 	
 	input("inputmapping"){
 		keyboard {
 			press(button:"escape", eventId:"pauseGame")
-			press(button:"up", eventId:"jump")
+			hold(button:"up", eventId:"scroll.up")
+			hold(button:"down", eventId:"scroll.down")
+			hold(button:"left", eventId:"scroll.left")
+			hold(button:"right", eventId:"scroll.right")
 		}
 		mouse {
 			press(button:"left", eventId:"charge")
 			release(button:"left", eventId:"jump")
-			move(eventId:"jumpDirectionChanged") { message ->
+			move(eventId:"mouseMoved") { message ->
 				message.x = position.x
 				message.y = position.y
 			}
