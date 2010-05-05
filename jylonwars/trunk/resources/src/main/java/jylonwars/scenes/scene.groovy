@@ -4,26 +4,12 @@ import com.gemserk.componentsengine.messages.GenericMessage;
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 
 
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.SlickRenderMessage;
-import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.timers.CountDownTimer;
 
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
-import com.gemserk.componentsengine.commons.components.ExplosionComponent 
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import com.gemserk.componentsengine.commons.components.LabelComponent;
-import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
-import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
-import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
-import com.gemserk.componentsengine.commons.components.TimerComponent;
-import com.gemserk.games.jylonwars.data.Data;
-import com.gemserk.games.jylonwars.TextField;
-import com.gemserk.games.jylonwars.TextFieldComponent 
 
 import jylonwars.GroovyBootstrapper 
-
 
 builder.entity("game") {
 	

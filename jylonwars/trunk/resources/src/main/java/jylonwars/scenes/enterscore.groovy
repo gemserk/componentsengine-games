@@ -51,42 +51,49 @@ builder.entity {
 		property("message", {"Your killed $entity.parent.crittersdead critters in ${entity.parent.playtime}s, put your name:".toString()})
 	})
 	
-	property("textField", new TextField("", 30))
-	
-	def textFieldRectangle = utils.rectangle(-220,-20,440,40)
-	def textFieldPosition = utils.vector(400f, 340f)
-	
-	component(new RectangleRendererComponent("textFieldBackground")) {
-		property("position", textFieldPosition)
-		property("rectangle", textFieldRectangle)
-		property("lineColor", utils.color(0.0f,0.0f,0.0f,1.0f))
-		property("fillColor", utils.color(1.0f,1f,1f,1f))
-	}
-	
-	child(entity("label2"){
+	child(entity("textField1") {
 		
-		parent("gemserk.gui.label", [
-		font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
-		position:textFieldPosition,
-		fontColor:utils.color(0f,0f,0f,1f),
-		bounds:textFieldRectangle,
-		align:"center",
-		valign:"center"
-		])
+		property("textField", new TextField("", 30))
+		property("text", {entity.textField.text})
 		
-		property("message", {entity.parent.textField.text + "|"})
+		def textFieldRectangle = utils.rectangle(-220,-20,440,40)
+		def textFieldPosition = utils.vector(400f, 340f)
+		
+		component(new RectangleRendererComponent("textFieldBackground")) {
+			property("position", textFieldPosition)
+			property("rectangle", textFieldRectangle)
+			property("lineColor", utils.color(0.0f,0.0f,0.0f,1.0f))
+			property("fillColor", utils.color(1.0f,1f,1f,1f))
+		}
+		
+		child(entity("textFieldLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
+			position:textFieldPosition,
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:textFieldRectangle,
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", {entity.parent.text + "|"})
+		})
+		
+		component(textFieldComponent) {
+			property("textField", {entity.textField})
+		}
+		
 	})
 	
-	component(textFieldComponent) {
-		property("textField", {entity.textField})
-	}
 	
 	component(utils.components.genericComponent(id:"enterNameGameStateEndHandler", messageId:"enterNameGameStateEnd"){ message ->
-		def text = entity.textField.text.trim()
+		def textField = entity.children["textField1"]
+		def text = textField.text.trim()
 		
 		if (text == "") 
 			return
-
+		
 		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
 		
 		def playtime = entity.playtime

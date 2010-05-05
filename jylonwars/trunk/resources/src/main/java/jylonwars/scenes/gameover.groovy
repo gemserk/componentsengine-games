@@ -1,17 +1,14 @@
 package jylonwars.scenes;
 
-import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
-
-builder.entity("gameover") {
+builder.entity {
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	
 	property("playtime", {
 		(float)(entity.parent.playtime/1000f)
 	})
-	
 	
 	def labelRectangle = utils.rectangle(-220,-50,440,100)
 	

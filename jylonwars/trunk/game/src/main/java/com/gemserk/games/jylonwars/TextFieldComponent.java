@@ -3,8 +3,6 @@ package com.gemserk.games.jylonwars;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.KeyListener;
 
-import ch.qos.logback.core.joran.spi.Pattern;
-
 import com.gemserk.componentsengine.annotations.EntityProperty;
 import com.gemserk.componentsengine.commons.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.entities.Entity;
