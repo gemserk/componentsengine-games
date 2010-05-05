@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scene>
+	<startPosition x="70" y="400" />
+	<island>
+		<type>floatingislands.entities.island01</type>
+		<position x="60" y="450" />
+	</island>
+	<island>
+		<type>floatingislands.entities.island04</type>
+		<position x="325" y="490" />
+	</island>
+	<island>
+		<type>floatingislands.entities.island03</type>
+		<position x="560" y="480" />
+	</island>
+</scene>

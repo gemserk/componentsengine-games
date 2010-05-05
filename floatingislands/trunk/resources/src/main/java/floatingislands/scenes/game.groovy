@@ -19,20 +19,18 @@ builder.entity("game") {
 	
 	def resetGameProperties = { properties ->
 		properties.currentScene = 0
-		properties.lives = 5
 		properties.jumpCount = 0
 	}
 	
 	def gameProperties = utils.custom.gameStateManager.gameProperties
 	
 	gameProperties.currentScene = gameProperties.currentScene ?: 0
-	gameProperties.lives = gameProperties.lives ?: 5
 	gameProperties.jumpCount = gameProperties.jumpCount ?: 0
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
 	def font2 = utils.resources.fonts.font([italic:false, bold:false, size:48])
 	
-	def scenesDef = ["scenes/scene01.xml", "scenes/scene02.xml", "scenes/scene03.xml", "scenes/scene04.xml", "scenes/scene05.xml"]
+	def scenesDef = ["scenes/scene01.xml", "scenes/scene02.xml", "scenes/scene03.xml", "scenes/scene04.xml", "scenes/scene05.xml", "scenes/scene06.xml"]
 	
 	def loadScene = { scenes, number ->
 		def scene = [islands:[]]
@@ -52,9 +50,7 @@ builder.entity("game") {
 	property("gamestate", "playing")
 	
 	component(utils.components.genericComponent(id:"changeGameStateHandler", messageId:"changeGameState"){ message ->
-		gameProperties.lives = entity.children["world"].lives
 		gameProperties.jumpCount = entity.children["world"].jumpCount
-
 		entity.gamestate = message.gameState
 	})
 	
@@ -72,7 +68,6 @@ builder.entity("game") {
 		}
 		
 		parent("floatingislands.scenes.world", [scene:loadScene(scenesDef, gameProperties.currentScene), 
-				lives:gameProperties.lives, 
 				jumpCount:gameProperties.jumpCount,
 				currentLevel:gameProperties.currentScene+1, 
 				levelsCount:scenesDef.size()])
@@ -115,13 +110,7 @@ builder.entity("game") {
 		
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
 			gameProperties.currentScene = gameProperties.currentScene+1
-			
-			if (gameProperties.currentScene>= scenesDef.size()) {
-				entity.parent.gamestate = "gameFinished"
-			} else {
-				// lose current game state?
-				utils.custom.game.loadScene("floatingislands.scenes.game");
-			}
+			utils.custom.game.loadScene("floatingislands.scenes.game");
 		})
 		
 		input("inputmapping"){
@@ -201,57 +190,6 @@ builder.entity("game") {
 		
 	})
 	
-	child(entity("gameOverState") {
-		
-		component(new ProcessingDisablerComponent("disabler")) {
-			property("enabled", {entity.parent.gamestate == "gameover" })
-		}
-		
-		child(entity("gameOverLabel"){
-			
-			parent("gemserk.gui.label", [
-			font:font2,
-			position:utils.vector(320, 240),
-			fontColor:utils.color(0.8f,0.2f,0.2f,1f),
-			bounds:utils.rectangle(-100, -20, 200, 40),
-			align:"center",
-			valign:"center"
-			])
-			
-			property("message", "Game Over")
-		})
-		
-		child(entity("pressClickLabel"){
-			
-			parent("gemserk.gui.label", [
-			font:font,
-			position:utils.vector(320, 440),
-			fontColor:utils.color(0.0f,0.0f,0.0f,1f),
-			bounds:utils.rectangle(-100, -20, 200, 40),
-			align:"center",
-			valign:"center"
-			])
-			
-			property("message", "press click to restart...")
-		})
-		
-		component(utils.components.genericComponent(id:"restartGameHandler", messageId:"restartGame"){ message ->
-			resetGameProperties(gameProperties)
-			utils.custom.game.loadScene("floatingislands.scenes.game");
-		})
-		
-		input("inputmapping"){
-			keyboard {
-				press(button:"return", eventId:"restartGame")
-				press(button:"space", eventId:"restartGame")
-			}
-			mouse {
-				press(button:"left", eventId:"restartGame")
-			}
-		}
-		
-	})
-	
 	child(entity("pausedGameState") {
 		
 		component(new ProcessingDisablerComponent("disabler")) {
@@ -293,4 +231,14 @@ builder.entity("game") {
 		
 	})
 	
+	component(utils.components.genericComponent(id:"restartGameHandler", messageId:"restartGame2"){ message ->
+		resetGameProperties(gameProperties)
+		utils.custom.game.loadScene("floatingislands.scenes.game");
+	})
+	
+	input("inputmapping"){
+		keyboard {
+			press(button:"r", eventId:"restartGame2")
+		}
+	}
 }

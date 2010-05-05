@@ -1,10 +1,10 @@
 package floatingislands.scenes
 
+
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.timers.CountDownTimer;
 
@@ -18,7 +18,6 @@ builder.entity("world") {
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
 	
 	property("jumpCount", parameters.jumpCount)
-	property("lives", parameters.lives)
 	
 	property("lifeImage", utils.resources.image("jumper"))
 	
@@ -30,7 +29,6 @@ builder.entity("world") {
 	property("levelsCount", parameters.levelsCount)	
 	
 	property("endSceneTimer", new CountDownTimer(1200))
-	property("gameOverTimer", new CountDownTimer(1200))
 	
 	component(new TimerComponent("endSceneTimer")) {
 		propertyRef("timer", "endSceneTimer")
@@ -47,15 +45,6 @@ builder.entity("world") {
 	
 	component(utils.components.genericComponent(id:"lastIslandReachedHandler", messageId:"lastIslandReached"){ message ->
 		entity.endSceneTimer.reset()
-	})
-	
-	component(new TimerComponent("gameOverTimer")) {
-		propertyRef("timer", "gameOverTimer")
-		property("trigger", utils.custom.triggers.genericMessage("changeGameState") {  message.gameState = "gameover"  })
-	}
-	
-	component(utils.components.genericComponent(id:"jumperDeadHandler", messageId:"jumperDead"){ message ->
-		entity.gameOverTimer.reset()
 	})
 	
 	component(new ImageRenderableComponent("backgroundRenderer")) {
@@ -152,15 +141,6 @@ builder.entity("world") {
 	})
 	
 	component(utils.components.genericComponent(id:"jumperOutsideScreenHandler", messageId:"jumperOutsideScreen"){ message ->
-		// utils.custom.game.loadScene("floatingislands.scenes.game");
-		entity.lives -= 1
-		
-		if (entity.lives <= 0)
-		{
-			utils.custom.messageQueue.enqueue(utils.genericMessage("jumperDead") { })
-			return
-		}
-		
 		
 		def island = entity.currentIsland
 		def newPosition = island.position.copy().sub(island.startPosition)
@@ -175,17 +155,6 @@ builder.entity("world") {
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(jumper, "world"))
 	})
-	
-	component(new ComponentFromListOfClosures("livesRenderer",[{ SlickRenderMessage m->
-		
-		def image = entity.lifeImage
-		def lives = entity.lives
-		
-		lives.times {
-			image.draw((float)(100 + it*20), 15, 30, 30)
-		}
-		
-	}]))
 	
 	child(entity("levelCountLabel"){
 		
