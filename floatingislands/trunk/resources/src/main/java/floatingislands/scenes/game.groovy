@@ -18,13 +18,13 @@ builder.entity("game") {
 	new GroovyBootstrapper();
 	
 	def resetGameProperties = { properties ->
-		properties.currentScene = 0
+		properties.currentLevel = 0
 		properties.jumpCount = 0
 	}
 	
 	def gameProperties = utils.custom.gameStateManager.gameProperties
 	
-	gameProperties.currentScene = gameProperties.currentScene ?: 0
+	gameProperties.currentLevel = gameProperties.currentLevel ?: 0
 	gameProperties.jumpCount = gameProperties.jumpCount ?: 0
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
@@ -50,11 +50,11 @@ builder.entity("game") {
 	property("gamestate", "playing")
 	
 	component(utils.components.genericComponent(id:"changeGameStateHandler", messageId:"changeGameState"){ message ->
-		gameProperties.jumpCount = entity.children["world"].jumpCount
+		// gameProperties.jumpCount = entity.getEntityById("world").jumpCount
 		entity.gamestate = message.gameState
 	})
 	
-	child(entity("world") {
+	child(entity("play") {
 		
 		property("windSound", utils.resources.sounds.sound("wind"))
 		
@@ -67,9 +67,8 @@ builder.entity("game") {
 			property("exclusions", [SlickRenderMessage.class])
 		}
 		
-		parent("floatingislands.scenes.world", [scene:loadScene(scenesDef, gameProperties.currentScene), 
-				jumpCount:gameProperties.jumpCount,
-				currentLevel:gameProperties.currentScene+1, 
+		parent("floatingislands.scenes.play", [scene:loadScene(scenesDef, gameProperties.currentLevel), 
+				player:gameProperties,
 				levelsCount:scenesDef.size()])
 		
 	})
@@ -109,7 +108,7 @@ builder.entity("game") {
 		})	
 		
 		component(utils.components.genericComponent(id:"nextSceneHanlder", messageId:"nextScene"){ message ->
-			gameProperties.currentScene = gameProperties.currentScene+1
+			gameProperties.currentLevel = gameProperties.currentLevel+1
 			utils.custom.game.loadScene("floatingislands.scenes.game");
 		})
 		
