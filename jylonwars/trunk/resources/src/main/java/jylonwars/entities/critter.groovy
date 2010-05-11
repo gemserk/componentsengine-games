@@ -3,8 +3,8 @@ package jylonwars.entities
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.GenericMessage 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
+import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
-import com.gemserk.games.jylonwars.WorldBoundsComponent 
 
 builder.entity("critter-${Math.random()}") {
 	

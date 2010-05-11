@@ -14,8 +14,8 @@ import com.gemserk.componentsengine.commons.components.GenericHitComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.commons.components.WeaponComponent 
+import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
-import com.gemserk.games.jylonwars.WorldBoundsComponent;
 
 
 builder.entity("ship") {
