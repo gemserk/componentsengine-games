@@ -29,6 +29,7 @@ builder.entity {
 		property("controllerEnabled", true)
 		
 		property("scroll", utils.vector(0.0f, 0.0f))
+		property("scrollLimits", utils.rectangle(-500.0f, -200.0f, 1000.0f, 400.0f))
 		
 		component(utils.components.genericComponent(id:"scrollHandler", messageId:["scroll.up", "scroll.down", "scroll.left", "scroll.right"]){ message ->
 			if (message.id == "scroll.up") 
@@ -42,6 +43,44 @@ builder.entity {
 			
 			if (message.id == "scroll.right")
 				entity.scroll.x += 1f
+		})
+		
+		property("dragging", false)
+		property("lastMousePosition", utils.vector(0,0))
+		
+		component(utils.components.genericComponent(id:"mouseRightPressedHandler", messageId:"mouseRightPressed"){ message ->
+			entity.dragging = true
+		})
+		
+		component(utils.components.genericComponent(id:"mouseRightReleasedHandler", messageId:"mouseRightReleased"){ message ->
+			entity.dragging = false
+		})
+		
+		component(utils.components.genericComponent(id:"dragScrollWhenMouseMoveHandler", messageId:"mouseMoved"){ message ->
+			def mouseposition = utils.vector(message.x, message.y)
+			
+			if (!entity.dragging) {
+				entity.lastMousePosition = mouseposition
+				return
+			}
+			
+			def scroll = entity.scroll
+			
+			scroll.sub(entity.lastMousePosition.copy().sub(mouseposition))
+			
+			entity.lastMousePosition = mouseposition
+			
+			def scrollLimits = entity.scrollLimits
+			
+			if (scroll.x < scrollLimits.minX)
+				scroll.x = scrollLimits.minX
+			if (scroll.x > scrollLimits.maxX)
+				scroll.x = scrollLimits.maxX
+				
+			if (scroll.y < scrollLimits.minY)
+				scroll.y = scrollLimits.minY
+			if (scroll.y > scrollLimits.maxY)
+				scroll.y = scrollLimits.maxY
 		})
 		
 		component(utils.components.genericComponent(id:"mouseMovedHandler", messageId:"mouseMoved"){ message ->
@@ -105,6 +144,10 @@ builder.entity {
 			mouse {
 				press(button:"left", eventId:"mouseLeftPressed")
 				release(button:"left", eventId:"mouseLeftReleased")
+				
+				press(button:"right", eventId:"mouseRightPressed")
+				release(button:"right", eventId:"mouseRightReleased")
+				
 				move(eventId:"mouseMoved") { message ->
 					message.x = position.x
 					message.y = position.y
@@ -129,10 +172,9 @@ builder.entity {
 			
 			image.bind()
 			
-			GL11.glPushMatrix();
-			
 			entity.positions.each { position ->
-				GL11.glLoadIdentity();
+				GL11.glPushMatrix();
+				// GL11.glLoadIdentity();
 				GL11.glTranslatef(position.x, position.y, 0.0f)
 				GL11.glBegin(GL11.GL_QUADS) 
 				
@@ -148,9 +190,8 @@ builder.entity {
 				GL11.glTexCoord2f 0f, image.texture.height 
 				GL11.glVertex2f((float)(-image.width/2), (float)(image.height/2))
 				GL11.glEnd()
+				GL11.glPopMatrix();
 			}
-			
-			GL11.glPopMatrix();
 			
 			SlickCallable.leaveSafeBlock();
 			
