@@ -1,9 +1,9 @@
 package jylonwars.scenes;
 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
+import com.gemserk.datastore.Data 
 import com.gemserk.games.jylonwars.TextField 
 import com.gemserk.games.jylonwars.TextFieldComponent 
-import com.gemserk.games.jylonwars.data.Data;
 
 builder.entity {
 	

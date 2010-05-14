@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
-import com.gemserk.games.jylonwars.data.DataStoreJSONInFileImpl;
+import com.gemserk.datastore.DataStoreJSONInFileImpl;
 
 public class Game extends StateBasedGame {
 
