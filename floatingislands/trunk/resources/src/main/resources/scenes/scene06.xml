@@ -13,4 +13,12 @@
 		<type>floatingislands.entities.island03</type>
 		<position x="560" y="480" />
 	</island>
+	<island>
+		<type>floatingislands.entities.island02</type>
+		<position x="780" y="420" />
+	</island>
+	<island>
+		<type>floatingislands.entities.island02</type>
+		<position x="1060" y="475" />
+	</island>
 </scene>

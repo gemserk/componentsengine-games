@@ -29,21 +29,29 @@ builder.entity {
 		property("controllerEnabled", true)
 		
 		property("scroll", utils.vector(0.0f, 0.0f))
-		property("scrollLimits", utils.rectangle(-500.0f, -200.0f, 1000.0f, 400.0f))
+
+		def vmin = utils.vector(10000f,10000f)
+		def vmax = utils.vector(-10000f, -10000f)
 		
-		component(utils.components.genericComponent(id:"scrollHandler", messageId:["scroll.up", "scroll.down", "scroll.left", "scroll.right"]){ message ->
-			if (message.id == "scroll.up") 
-				entity.scroll.y -= 1f
+		parameters.scene.islands.each { island -> 
 			
-			if (message.id == "scroll.down") 
-				entity.scroll.y += 1f
+			def position = island.position
+		
+			vmin.x = Math.min(vmin.x, position.x)
+			vmin.y = Math.min(vmin.y, position.y)
 			
-			if (message.id == "scroll.left")
-				entity.scroll.x -= 1f
-			
-			if (message.id == "scroll.right")
-				entity.scroll.x += 1f
-		})
+			vmax.x = Math.max(vmax.x, position.x)
+			vmax.y = Math.max(vmax.y, position.y)
+
+		}
+		
+		vmin.x -= 500f
+		vmin.y -= 400f
+		
+		property("scrollLimits", utils.rectangle(vmin.x, vmin.y, (float)(vmax.x-vmin.x), (float)(vmax.y - vmin.y)))
+		
+		println entity.scrollLimits.minX
+		println entity.scrollLimits.maxX
 		
 		property("dragging", false)
 		property("lastMousePosition", utils.vector(0,0))
@@ -66,21 +74,22 @@ builder.entity {
 			
 			def scroll = entity.scroll
 			
-			scroll.sub(entity.lastMousePosition.copy().sub(mouseposition))
+			scroll.add(mouseposition.copy().sub(entity.lastMousePosition))
 			
 			entity.lastMousePosition = mouseposition
 			
 			def scrollLimits = entity.scrollLimits
 			
-			if (scroll.x < scrollLimits.minX)
-				scroll.x = scrollLimits.minX
-			if (scroll.x > scrollLimits.maxX)
-				scroll.x = scrollLimits.maxX
+			if (scroll.x > -scrollLimits.minX)
+				scroll.x = -scrollLimits.minX
+			if (scroll.x < -scrollLimits.maxX)
+				scroll.x = -scrollLimits.maxX
 				
-			if (scroll.y < scrollLimits.minY)
-				scroll.y = scrollLimits.minY
-			if (scroll.y > scrollLimits.maxY)
-				scroll.y = scrollLimits.maxY
+			if (scroll.y > -scrollLimits.minY)
+				scroll.y = -scrollLimits.minY
+			if (scroll.y < -scrollLimits.maxY)
+				scroll.y = -scrollLimits.maxY
+				
 		})
 		
 		component(utils.components.genericComponent(id:"mouseMovedHandler", messageId:"mouseMoved"){ message ->
@@ -135,12 +144,6 @@ builder.entity {
 		})
 		
 		input("inputmapping"){
-			keyboard {
-				hold(button:"up", eventId:"scroll.up")
-				hold(button:"down", eventId:"scroll.down")
-				hold(button:"left", eventId:"scroll.left")
-				hold(button:"right", eventId:"scroll.right")
-			}
 			mouse {
 				press(button:"left", eventId:"mouseLeftPressed")
 				release(button:"left", eventId:"mouseLeftReleased")
