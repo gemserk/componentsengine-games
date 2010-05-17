@@ -74,7 +74,9 @@ builder.entity {
 	child(entity("jumper"){
 		
 		parent("floatingislands.entities.jumper", [
-		position:startPosition
+		position:startPosition,
+		minAngle:15f,
+		maxAngle:165f
 		])
 		
 	})
@@ -100,7 +102,9 @@ builder.entity {
 		def jumper = entity("jumper"){
 			
 			parent("floatingislands.entities.jumper", [
-			position:newPosition
+			position:newPosition,
+			minAngle:15f,
+			maxAngle:165f
 			])
 		}
 		

@@ -24,6 +24,10 @@ builder.entity {
 	property("position", parameters.position)
 	
 	property("jumpDirection", utils.vector(0,0))
+	property("jumpEnabled", true)
+	property("minAngle", parameters.minAngle)
+	property("maxAngle", parameters.maxAngle)
+	
 	property("jumppower", 0.0f)
 	property("maxJumpPower", 300.0f)
 	
@@ -128,10 +132,25 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"jumpDirectionChangedHandler", messageId:"jumpDirectionChanged"){ message ->
 		entity.jumpDirection = utils.vector(message.x, message.y).sub(entity.position).normalise()
+		
+		def angle = 360f - entity.jumpDirection.theta
+		
+		if (angle < entity.minAngle || angle > entity.maxAngle) {
+			entity.jumpEnabled = false
+			return
+		}
+		
+		entity.jumpEnabled = true
 	})
 	
 	component(utils.components.genericComponent(id:"jumpHandler", messageId:"jump"){ message ->
 		
+		if (!entity.jumpEnabled) {
+			entity.charging = false
+			entity.jumppower = 0.0f
+			return
+		}
+	
 		if(!entity.charging)
 			return
 		
@@ -222,9 +241,6 @@ builder.entity {
 			def x1 = (float)(position.x - islandPosition.x)
 			def y1 = (float)(position.y - islandPosition.y + diffy)
 			
-			//			def x2 = (float)(position.x - islandPosition.x)
-			//			def y2 = (float)(position.y - islandPosition.y + 30)
-			
 			// TODO: use entity.bounds instead entity.position
 			
 			def inside = islandBounds.contains(x1, y1)
@@ -282,13 +298,24 @@ builder.entity {
 	
 	component(new ComponentFromListOfClosures("jumpDirectionRenderer",[{ SlickRenderMessage m->
 		
+		if (!entity.charging)
+			return
+	
 		def direction = entity.jumpDirection.copy();
 		
 		def crossPosition = entity.position.copy().add(direction.scale((float)(entity.jumppower * 0.3f)))
 		def calpha = (float)(entity.jumppower / entity.maxJumpPower * 0.8f) + 0.2f
 		
+		def startColor = utils.color(0f,1f,0.0f,0.4f)
+		def endColor = utils.color(calpha,(float)(1f - calpha),0.0f,calpha)
+		
+		if (!entity.jumpEnabled) {
+			startColor = utils.color(0f,0f,0.0f,0.1f)
+			endColor = utils.color(0,0,0.0f,0.3f)
+		}
+		
 		SlickCallable.enterSafeBlock();
-		RenderUtils.renderArrow(entity.position, crossPosition, 3.0f, 10.0f, utils.color(0f,1f,0.0f,0.2f), utils.color(calpha,(float)(1f - calpha),0.0f,calpha))
+		RenderUtils.renderArrow(entity.position, crossPosition, 3.0f, 10.0f, startColor, endColor)
 		// OpenGlUtils.renderLine(entity.position, crossPosition, 3.0f, utils.color(1f,0.7f,0.2f,0.9f))
 		SlickCallable.leaveSafeBlock();
 		
