@@ -43,7 +43,7 @@ public class Game extends StateBasedGame {
 	}
 
 	public Game() {
-		super("TITULO");
+		super("Zombie Rockers");
 	}
 
 	

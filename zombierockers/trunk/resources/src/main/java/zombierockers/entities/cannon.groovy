@@ -30,12 +30,11 @@ builder.entity("cannon") {
 	property("bounds",parameters.bounds)
 	
 	property("cannonballtemplate",new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("zombierockers.entities.cannonball"), 
+			utils.custom.templateProvider.getTemplate("zombierockers.entities.bullet"), 
 			utils.custom.genericprovider.provide{ cannon ->
 				[
 				position:cannon.position.copy(),
 				direction:cannon.direction.copy(),
-				image:utils.resources.image("ship"),
 				radius:10.0f,
 				maxVelocity:0.7f,
 				color:utils.color(1.0f, 0.2f, 0.2f, 1.0f)
@@ -59,7 +58,7 @@ builder.entity("cannon") {
 	})
 	
 	component(new WeaponComponent("shooter")) {
-		property("reloadTime", 150)
+		property("reloadTime", 250)
 		propertyRef("position", "position")
 		propertyRef("shouldFire", "fileTriggered")
 		
