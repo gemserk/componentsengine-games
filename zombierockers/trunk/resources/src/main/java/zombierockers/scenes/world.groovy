@@ -5,10 +5,12 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.PathRendererComponent 
+import com.gemserk.componentsengine.entities.Entity 
 
 builder.entity {
 	
 	property("bounds",utils.rectangle(0,0,800,600))
+	property("ballsQuantity",0)
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("background"))
@@ -56,7 +58,36 @@ builder.entity {
 	input("inputmapping"){
 		keyboard {
 			press(button:"space",eventId:"releaseBalls")
-			press(button:"d",eventId:"dumpDeque")
+			press(button:"s",eventId:"spawn")
+			press(button:"d",eventId:"dumpDebug")
+			hold(button:"l",eventId:"messageLoad")
 		}
 	}
+	
+	component(utils.components.genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
+		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
+	} )   
+	
+	component(utils.components.genericComponent(id:"generateMessageLoad", messageId:["messageLoad"]){ message ->
+		def messageQueue = messageQueue
+		100.times {
+			messageQueue.enqueue(utils.genericMessage("pipote"){})
+		}
+		println "Generating Load - ${messageQueue.messages.size()}"
+	})
+	
+	child(entity("ballsQuantityLAbel"){
+		
+		parent("gemserk.gui.label", [
+		//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+		position:utils.vector(60f, 40f),
+		fontColor:utils.color(0f,0f,0f,1f),
+		bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+		align:"left",
+		valign:"top"
+		])
+		
+		property("message", {"Balls: ${entity.parent.ballsQuantity}".toString() })
+	})
+	
 }

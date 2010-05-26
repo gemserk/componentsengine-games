@@ -19,7 +19,6 @@ builder.entity("limbo-${Math.random()}") {
 	property("nextBallPoint",{entity.path.getPoint(2)})
 	
 	component(utils.components.genericComponent(id:"releaseBallsHandler", messageId:["releaseBalls"]){ message ->
-		println "Releasing Balls"
 		def deque = entity.deque
 		if(deque.isEmpty())
 			return
@@ -28,8 +27,11 @@ builder.entity("limbo-${Math.random()}") {
 		ball.state = "spawned"
 		
 		ball.position = entity.spawnPoint.copy()
-		ball."followpath.pathindex" = 2
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
+		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
+			newMessage.segment = entity.segment
+			newMessage.ball = ball
+		})
+		entity.parent.ballsQuantity++
 	})
 		
 	component(new ComponentFromListOfClosures("nextBallPointReached",[{ UpdateMessage message ->
@@ -50,8 +52,17 @@ builder.entity("limbo-${Math.random()}") {
 		println "DUMPINGDEQUE:${entity.deque.collect{it.color}}"
 	})
 		
-	component(utils.components.genericComponent(id:"spawnedBallHandler", messageId:["spawnedBall"]){ message ->
-		entity.deque.addLast(message.ball)
+	component(utils.components.genericComponent(id:"spawnedSegmentHandler", messageId:["spawnedSegment"]){ message ->
+		def deque = entity.deque
+		message.balls.each { ball ->
+			deque.addLast(ball)
+		}
+		def segment = message.segment
+		entity.segment = segment
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment, entity.parent))
+		
+		messageQueue.enqueue(utils.genericMessage("releaseBalls"){})
 	})
 }
 

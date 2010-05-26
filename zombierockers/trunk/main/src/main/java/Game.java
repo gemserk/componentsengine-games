@@ -1,15 +1,20 @@
+import groovy.lang.Closure;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.AppletGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.builders.BuilderUtils;
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
+import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
+import com.google.common.collect.Lists;
 
 public class Game extends StateBasedGame {
 
@@ -62,6 +67,12 @@ public class Game extends StateBasedGame {
 		public void onInit() {
 			super.onInit();
 			images(injector, "assets/images.properties");
+			injector.getInstance(BuilderUtils.class).addCustomUtil("components", new Object(){
+				public Component closureComponent(String id, Closure closure) {
+					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
+				}
+			});
+
 		}
 		
 		
