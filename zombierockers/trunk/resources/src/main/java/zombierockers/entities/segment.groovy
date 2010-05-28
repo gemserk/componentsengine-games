@@ -61,11 +61,51 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.ball = ball
 			newMessage.index = ballIndex
 		})
+		
+		messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
+			newMessage.segment = entity
+			newMessage.index = ballIndex
+		})
 		entity.parent.ballsQuantity++
 		
 		
 		
 		println "Chocaron segmento - $entity.id"
+	})
+	
+	component(utils.components.genericComponent(id:"checkBallSeriesHandler", messageId:["checkBallSeries"]){ message ->
+		if(message.segment != entity)
+			return
+			
+		def forwardIterator = entity.balls.listIterator(message.index)
+		def newBall = forwardIterator.next()
+		def ballsToRemove = [newBall]
+		
+		while(forwardIterator.hasNext()){
+			def ballToCheck = forwardIterator.next()
+			if(ballToCheck.color != newBall.color)
+				break;
+			
+			ballsToRemove << ballToCheck			
+		}
+		
+		def backwardsIterator = entity.balls.listIterator(message.index)
+		while(backwardsIterator.hasPrevious()){
+			def ballToCheck = backwardsIterator.previous()
+			if(ballToCheck.color != newBall.color)
+				break;
+			
+			ballsToRemove << ballToCheck			
+		}
+		
+		if(ballsToRemove.size() < 3)
+			return
+			
+		ballsToRemove.each { ball ->
+			entity.balls.remove(ball)
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
+		}
+		println "Se formo jueguito - ${ballsToRemove.size()}"
 	})
 }
 
