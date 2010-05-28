@@ -22,6 +22,10 @@ builder.entity("segment-${Math.random()}") {
 			
 		def insertionPoint = message.index ?: 0
 		entity.balls.add(insertionPoint,message.ball)
+		
+		if(insertionPoint > 0)
+			entity.pathTraversal = entity.pathTraversal.add((float)message.ball.radius * 2)
+		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(message.ball, entity))
 	})
 	
