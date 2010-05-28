@@ -6,6 +6,7 @@ import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.PathRendererComponent 
 import com.gemserk.componentsengine.entities.Entity 
+import com.gemserk.games.zombierockers.TestMessage;
 
 builder.entity {
 	
@@ -71,7 +72,7 @@ builder.entity {
 	component(utils.components.genericComponent(id:"generateMessageLoad", messageId:["messageLoad"]){ message ->
 		def messageQueue = messageQueue
 		100.times {
-			messageQueue.enqueue(utils.genericMessage("pipote"){})
+			messageQueue.enqueue(new TestMessage())
 		}
 		println "Generating Load - ${messageQueue.messages.size()}"
 	})

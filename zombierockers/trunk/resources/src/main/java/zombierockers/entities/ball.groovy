@@ -1,6 +1,6 @@
 package zombierockers.entities
 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent;
+import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 
 
 builder.entity("ball-${Math.random()}") {
@@ -25,13 +25,13 @@ builder.entity("ball-${Math.random()}") {
 //	})
 	
 	
-	//	component(new ImageRenderableComponent("imagerenderer")) {
-	//		property("image",utils.resources.image("ship"))
-	//		propertyRef("color", "color")
-	//		propertyRef("position", "position")
-	//		propertyRef("direction", "direction")
-	//		property("size", utils.vector(0.7f, 0.7f))
-	//	}
+//		component(new ImageRenderableComponent("imagerenderer")) {
+//			property("image",utils.resources.image("ship"))
+//			propertyRef("color", "color")
+//			propertyRef("position", "position")
+//			propertyRef("direction", "direction")
+//			property("size", utils.vector(0.7f, 0.7f))
+//		}
 	
 }
 
