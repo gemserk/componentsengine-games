@@ -53,6 +53,9 @@ builder.entity {
 		parent("zombierockers.entities.cannon",[bounds:utils.rectangle(20,20,760,560)])
 	})
 	
+	
+	
+	
 	component(new ExplosionComponent("explosions")) {
 	}
 	

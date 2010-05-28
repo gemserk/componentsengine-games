@@ -12,10 +12,10 @@ builder.entity("bullet-${Math.random()}") {
 	
 	tags("bullet", "nofriction")
 	
+	property("ball",parameters.ball)
 	property("position", parameters.position);
 	propertyRef("direction", "movement.velocity");
-	property("damage", parameters.damage);
-	property("radius", parameters.radius);
+	property("radius", {entity.ball.radius});
 	
 	component(new SuperMovementComponent("movement")){
 		property("velocity", parameters.direction.scale(parameters.maxVelocity))
@@ -27,7 +27,7 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("position", "position")
 		propertyRef("radius", "radius")
 		property("lineColor", utils.color(0,0,0,0))
-		property("fillColor", parameters.color)
+		property("fillColor", {entity.ball.color})
 	}
 	
 	//	component(new ImageRenderableComponent("imagerenderer")) {
@@ -38,7 +38,7 @@ builder.entity("bullet-${Math.random()}") {
 	//	}
 	component(new GenericHitComponent("bullethitComponent")){
 		property("targetTag", "ball")
-		property("predicate",{EntityPredicates.isNear(entity.position, entity.radius)})
+		property("predicate",{EntityPredicates.isNear(entity.position, (float)entity.radius+1)})
 		property("trigger", utils.custom.triggers.genericMessage("bulletHit") { 
 			def source = message.source
 			def targets = message.targets
