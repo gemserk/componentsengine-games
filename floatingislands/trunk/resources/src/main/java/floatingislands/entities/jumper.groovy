@@ -107,11 +107,13 @@ builder.entity {
 	}
 	
 	property("charging", false)
+	property("chargePower", 0.2f)
 	
-	component(utils.components.genericComponent(id:"startJumpHandler", messageId:"charge"){ message ->
+	component(utils.components.genericComponent(id:"chargeHandler", messageId:"charge"){ message ->
 		if (!entity.overIsland)
 			return
 		entity.charging = true
+		entity.chargePower = 0.2f
 	})
 	
 	component(new ComponentFromListOfClosures("jumppower",[{ UpdateMessage m->
@@ -121,13 +123,17 @@ builder.entity {
 		
 		def delta = (float)(m.delta)
 		
-		entity.jumppower = (float) (entity.jumppower + 0.2f * delta)
+		entity.jumppower = (float) (entity.jumppower + entity.chargePower * delta)
 		
-		if (entity.jumppower < 10.0f)
+		if (entity.jumppower < 10.0f) {
 			entity.jumppower = 10.0f
+			entity.chargePower = -entity.chargePower
+		}
 		
-		if (entity.jumppower > entity.maxJumpPower)
+		if (entity.jumppower > entity.maxJumpPower) {
 			entity.jumppower = entity.maxJumpPower
+			entity.chargePower = -entity.chargePower
+		}
 	}]))
 	
 	component(utils.components.genericComponent(id:"jumpDirectionChangedHandler", messageId:"jumpDirectionChanged"){ message ->
