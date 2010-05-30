@@ -11,7 +11,14 @@ import org.newdawn.slick.opengl.SlickCallable
 
 builder.entity {
 	
-	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
+	def font = utils.resources.fonts.font([italic:false, bold:false, size:20])
+	
+	property("player", parameters.player)
+	
+	component(new ComponentFromListOfClosures("updatePlayTimeComponent",[{ UpdateMessage message ->
+		entity.player.levelPlayTime+=message.delta
+		entity.player.totalPlayTime+=message.delta
+	}]))
 	
 	child(entity("background") {
 		
@@ -29,20 +36,20 @@ builder.entity {
 		property("controllerEnabled", true)
 		
 		property("scroll", utils.vector(0.0f, 0.0f))
-
+		
 		def vmin = utils.vector(10000f,10000f)
 		def vmax = utils.vector(-10000f, -10000f)
 		
 		parameters.scene.islands.each { island -> 
 			
 			def position = island.position
-		
+			
 			vmin.x = Math.min(vmin.x, position.x)
 			vmin.y = Math.min(vmin.y, position.y)
 			
 			vmax.x = Math.max(vmax.x, position.x)
 			vmax.y = Math.max(vmax.y, position.y)
-
+			
 		}
 		
 		vmin.x -= 500f
@@ -84,12 +91,12 @@ builder.entity {
 				scroll.x = -scrollLimits.minX
 			if (scroll.x < -scrollLimits.maxX)
 				scroll.x = -scrollLimits.maxX
-				
+			
 			if (scroll.y > -scrollLimits.minY)
 				scroll.y = -scrollLimits.minY
 			if (scroll.y < -scrollLimits.maxY)
 				scroll.y = -scrollLimits.maxY
-				
+			
 		})
 		
 		component(utils.components.genericComponent(id:"mouseMovedHandler", messageId:"mouseMoved"){ message ->
@@ -221,11 +228,29 @@ builder.entity {
 		property("player", parameters.player)	
 		property("levelsCount", parameters.levelsCount)	
 		
+		def ypos = 40f
+		
+		child(entity("playTimeLabel"){
+			
+			property("playtime", {entity.parent.player.levelPlayTime})
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(70f, ypos),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+			align:"left",
+			valign:"top"
+			])
+			
+			property("message", {"Time: ${(float)entity.playtime/1000f}".toString() })
+		})
+		
 		child(entity("levelCountLabel"){
 			
 			parent("gemserk.gui.label", [
 			font:font,
-			position:utils.vector(320, 40),
+			position:utils.vector(320, ypos),
 			fontColor:utils.color(0f,0f,0f,1f),
 			bounds:utils.rectangle(-320, -20, 320, 40),
 			align:"center",
@@ -242,7 +267,7 @@ builder.entity {
 			
 			parent("gemserk.gui.label", [
 			font:font,
-			position:utils.vector(600, 40),
+			position:utils.vector(550, ypos),
 			fontColor:utils.color(0f,0f,0f,1f),
 			bounds:utils.rectangle(-100, -20, 200, 40),
 			align:"left",
@@ -251,7 +276,7 @@ builder.entity {
 			
 			property("jumpCount", { entity.parent.player.jumpCount })			
 			
-			property("message", {"Jumps: $entity.jumpCount".toString() })
+			property("message", {"Total jumps: $entity.jumpCount".toString() })
 		})
 		
 	})

@@ -82,7 +82,8 @@ builder.entity {
 	})
 	
 	component(utils.components.genericComponent(id:"jumpedHandler", messageId:"jumped"){ message ->
-		entity.player.jumpCount++ 
+		entity.player.jumpCount++
+		entity.player.levelJumpCount++ 
 	})
 	
 	component(utils.components.genericComponent(id:"islandReachedHandler", messageId:"islandReached"){ message ->

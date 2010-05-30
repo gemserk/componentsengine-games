@@ -20,12 +20,16 @@ builder.entity("game") {
 	def resetGameProperties = { properties ->
 		properties.currentLevel = 0
 		properties.jumpCount = 0
+		properties.totalPlayTime = 0f
 	}
 	
 	def gameProperties = utils.custom.gameStateManager.gameProperties
 	
 	gameProperties.currentLevel = gameProperties.currentLevel ?: 0
 	gameProperties.jumpCount = gameProperties.jumpCount ?: 0
+	gameProperties.totalPlayTime = gameProperties.totalPlayTime ?: 0f
+	gameProperties.levelPlayTime = 0f
+	gameProperties.levelJumpCount = 0
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:24])
 	def font2 = utils.resources.fonts.font([italic:false, bold:false, size:48])
@@ -82,15 +86,17 @@ builder.entity("game") {
 		child(entity("sceneFinishedLabel"){
 			
 			parent("gemserk.gui.label", [
-			font:font2,
+			font:font,
 			position:utils.vector(320, 240),
-			fontColor:utils.color(0.3f,0.7f,0.3f,1f),
+			fontColor:utils.color(0.2f,0.6f,0.2f,1f),
 			bounds:utils.rectangle(-100, -20, 200, 40),
 			align:"center",
 			valign:"center"
 			])
 			
-			property("message", "Scene completed")
+			property("message", {
+				"Scene completed in $gameProperties.levelPlayTime ms and $gameProperties.levelJumpCount jumps".toString()
+				})
 		})
 		
 		child(entity("pressClickLabel"){
