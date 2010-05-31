@@ -11,6 +11,7 @@ public class PathTraversal {
 	final float innerDistance;
 
 	Vector2f currentPosition = null;
+	Vector2f currentTangent;
 
 	public PathTraversal(Path path, int index, float innerDistance) {
 		super();
@@ -55,7 +56,7 @@ public class PathTraversal {
 	}
 
 	private PathTraversal forward(float distance) {
-		if (index == path.getPoints().size() - 1)
+		if (isOnLastPoint())
 			return new PathTraversal(path, index, innerDistance);
 
 		Vector2f p0 = path.getPoint(index);
@@ -71,7 +72,7 @@ public class PathTraversal {
 
 	public Vector2f getPosition() {
 		if (currentPosition == null) {
-			if (index == path.getPoints().size() - 1)
+			if (isOnLastPoint())
 				return path.getPoint(index);
 
 			Vector2f p0 = path.getPoint(index);
@@ -82,6 +83,23 @@ public class PathTraversal {
 			currentPosition = p0.copy().add(direction.scale(innerDistance));
 		}
 		return currentPosition.copy();
+	}
+
+	private boolean isOnLastPoint() {
+		return index == path.getPoints().size() - 1;
+	}
+
+	public Vector2f getTangent() {
+		if(currentTangent == null){
+			if(path.getPoints().size()==1)
+				return new Vector2f();
+
+			if(isOnLastPoint())
+				return path.getPoint(index).copy().sub(path.getPoint(index-1)).normalise();
+			else
+				return path.getPoint(index +1 ).copy().sub(path.getPoint(index)).normalise();			
+		}
+		return currentTangent.copy();
 	}
 
 }

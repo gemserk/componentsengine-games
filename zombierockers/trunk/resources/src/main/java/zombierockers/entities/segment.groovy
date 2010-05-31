@@ -47,14 +47,28 @@ builder.entity("segment-${Math.random()}") {
 	
 	
 	component(utils.components.genericComponent(id:"bulletHitHandler", messageId:["bulletHit"]){ message ->
-		def target = message.targets[0]
-		def ballIndex = entity.balls.indexOf(target)
+		def collisionBall = message.targets[0]
+		def ballIndex = entity.balls.indexOf(collisionBall)
 		
 		if(ballIndex == -1)
 			return
-			
+		
+		
+		
+		def tangent = entity.pathTraversal.add((float)-collisionBall.radius * 2 * ballIndex).tangent
+		
+		def collisionBallPosition = collisionBall.position
+		def bulletPosition = message.source.position
+		
+		def differenceVector = bulletPosition.copy().sub(collisionBallPosition)
+		
+		def proyection = tangent.dot(differenceVector)
+		
+		if(proyection > 0)
+			ballIndex++
+		
 		def ball = message.source.ball
-		ball.position = target.position
+		ball.position = collisionBall.position
 				
 		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity

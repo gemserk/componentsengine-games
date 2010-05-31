@@ -123,5 +123,25 @@ public class PathTraversalTest {
 		pathTraversal = pathTraversal.add(-40);
 		assertThat(pathTraversal.getPosition(), equalTo(new Vector2f(25.0f, 10.0f)));
 	}
+	
+	@Test
+	public void weCanGetTheTangentVectorInOnePositionInTheMiddle(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(40, 40));
+
+		PathTraversal pathTraversal = new PathTraversal(path, 0, 15);
+		Vector2f tangent = pathTraversal.getTangent();
+		assertThat(tangent, equalTo(new Vector2f(40,40).sub(new Vector2f(10,10)).normalise()));
+	}
+	
+	@Test
+	public void weCanGetTheTangentVectorInOnePositionInTheLastPoint(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(40, 40));
+
+		PathTraversal pathTraversal = new PathTraversal(path, 1, 0);
+		Vector2f tangent = pathTraversal.getTangent();
+		assertThat(tangent, equalTo(new Vector2f(40,40).sub(new Vector2f(10,10)).normalise()));
+	}
 
 }
