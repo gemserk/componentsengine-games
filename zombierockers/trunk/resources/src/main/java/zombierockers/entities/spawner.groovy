@@ -32,9 +32,10 @@ builder.entity("segment-${Math.random()}") {
 	
 	property("segmentTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
-			utils.custom.genericprovider.provide{ spawner ->
+			utils.custom.genericprovider.provide{ data ->
 				[
-				path:spawner.path
+				path:data.path,
+				speed:0.07f
 				]
 			}))
 	

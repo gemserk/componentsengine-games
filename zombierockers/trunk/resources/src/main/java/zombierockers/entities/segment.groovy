@@ -2,6 +2,7 @@ package zombierockers.entities
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
+import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
@@ -11,9 +12,34 @@ builder.entity("segment-${Math.random()}") {
 	
 	tags("segment")
 	
-	property("pathTraversal", new PathTraversal(parameters.path,1,0))
-	property("speed",0.07f)
-	property("balls",new LinkedList())
+	property("pathTraversal", parameters.pathTraversal ?: new PathTraversal(parameters.path,1,0))
+	property("speed", parameters.speed)
+	property("balls",parameters.balls ?: new LinkedList())
+	
+	property("segmentTemplate",new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
+			utils.custom.genericprovider.provide{ data ->
+				[
+				pathTraversal:data.pathTraversal,
+				balls:data.balls,
+				speed:data.speed
+				]
+			}))
+			
+	
+	def getPathTraversal = {entity, index ->
+		def pathTraversal = entity.pathTraversal
+		int currentIndex = entity.balls.size() -1
+		entity.balls.reverseEach { ball ->
+			if(currentIndex == index)
+				return
+			
+			pathTraversal = pathTraversal.add((float)-ball.radius * 2)
+			currentIndex--
+		}
+		
+		return pathTraversal
+	}
 	
 	
 	
@@ -21,7 +47,7 @@ builder.entity("segment-${Math.random()}") {
 	component(utils.components.genericComponent(id:"addNewBallHandler", messageId:["addNewBall"]){ message ->
 		if(message.segment != entity)
 			return
-			
+		
 		def insertionPoint = message.index ?: 0
 		entity.balls.add(insertionPoint,message.ball)
 		
@@ -56,9 +82,7 @@ builder.entity("segment-${Math.random()}") {
 		if(ballIndex == -1)
 			return
 		
-		
-		
-		def tangent = entity.pathTraversal.add((float)-collisionBall.radius * 2 * ballIndex).tangent
+		def tangent = getPathTraversal(entity,ballIndex).tangent
 		
 		def collisionBallPosition = collisionBall.position
 		def bulletPosition = message.source.position
@@ -72,7 +96,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		def ball = message.source.ball
 		ball.position = collisionBall.position
-				
+		
 		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity
 			newMessage.ball = ball
@@ -90,7 +114,7 @@ builder.entity("segment-${Math.random()}") {
 	component(utils.components.genericComponent(id:"checkBallSeriesHandler", messageId:["checkBallSeries"]){ message ->
 		if(message.segment != entity)
 			return
-			
+		
 		def forwardIterator = entity.balls.listIterator(message.index)
 		def newBall = forwardIterator.next()
 		def ballsToRemove = [newBall]
@@ -109,14 +133,54 @@ builder.entity("segment-${Math.random()}") {
 			if(ballToCheck.color != newBall.color)
 				break;
 			
-			ballsToRemove << ballToCheck			
+			ballsToRemove.add(0,ballToCheck)			
 		}
 		
 		if(ballsToRemove.size() < 3)
 			return
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("splitSegment"){newMessage ->
+			newMessage.segment = entity
+			newMessage.ballsToRemove = ballsToRemove
+		})
+	})
+	
+	component(utils.components.genericComponent(id:"splitSegmentHandler", messageId:["splitSegment"]){ message ->
+		if(message.segment != entity)
+			return
+		def balls = entity.balls
+		def ballsToRemove = message.ballsToRemove
+		
+		def firstIndex = balls.indexOf(ballsToRemove[0])
+		def lastIndex = balls.indexOf(ballsToRemove[-1])
+		
+		def originalPathTraversal = entity.pathTraversal
+		
+		def firstSegmentBalls = new LinkedList(balls.subList(0,firstIndex))
+		def secondSegmentBalls = new LinkedList(balls.subList(lastIndex+1,balls.size()))
+		
+		if(firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()){
+			println "Removing segment because it is empty"
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 			
+		} else 	if(firstSegmentBalls.isEmpty()){
+			println "First segment was empty"
+			entity.balls = secondSegmentBalls	
+		} else {
+			entity.pathTraversal = getPathTraversal(entity,firstIndex -1)
+			entity.balls = firstSegmentBalls
+			
+			if(!secondSegmentBalls.isEmpty()){
+				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f]
+				def segment = entity.segmentTemplate.get(newParameters)
+				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
+				println "Splitted into two segments"
+			} else {
+				println "Second segment was empty"
+			}
+		}
+	
 		ballsToRemove.each { ball ->
-			entity.balls.remove(ball)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 		}
 	})
@@ -140,7 +204,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		if(collisionSegment == null)
 			return
-			
+		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("mergeSegments"){newMessage ->
 			newMessage.masterSegment = entity
 			newMessage.slaveSegment = collisionSegment
@@ -152,7 +216,7 @@ builder.entity("segment-${Math.random()}") {
 	component(utils.components.genericComponent(id:"mergeSegmentsHandler", messageId:["mergeSegments"]){ message ->
 		if(message.masterSegment != entity)
 			return
-			
+		
 		def slaveSegment = message.slaveSegment
 		entity.pathTraversal = slaveSegment.pathTraversal
 		
