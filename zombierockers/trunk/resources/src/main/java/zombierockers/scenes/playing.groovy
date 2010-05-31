@@ -1,5 +1,6 @@
 package zombierockers.scenes
 
+import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 
@@ -52,13 +53,13 @@ builder.entity {
 		messageQueue.enqueue(utils.genericMessage("paused"){})	
 	})
 	
-//	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
-//		utils.custom.gameContainer.setMouseGrabbed(true)
-//	})
-//	
-//	component(utils.components.genericComponent(id:"leaveNodeStateHandler", messageId:"leaveNodeState"){ message ->
-//		utils.custom.gameContainer.setMouseGrabbed(false)
-//	})
+	//	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
+	//		utils.custom.gameContainer.setMouseGrabbed(true)
+	//	})
+	//	
+	//	component(utils.components.genericComponent(id:"leaveNodeStateHandler", messageId:"leaveNodeState"){ message ->
+	//		utils.custom.gameContainer.setMouseGrabbed(false)
+	//	})
 	
 	child(entity("fpsLabel"){
 		
@@ -73,5 +74,11 @@ builder.entity {
 		
 		property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString() })
 	})
+	
+	child(entity("explosionEntity") { 
+		component(new ExplosionComponent("explosions")) {
+		}
+	})
+	
 }
 

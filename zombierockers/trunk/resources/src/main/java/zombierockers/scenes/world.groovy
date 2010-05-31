@@ -81,9 +81,6 @@ builder.entity {
 		})
 	})
 	
-	component(new ExplosionComponent("explosions")) {
-	}
-	
 	input("inputmapping"){
 		keyboard {
 			press(button:"space",eventId:"releaseBalls")

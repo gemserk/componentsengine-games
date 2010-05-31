@@ -2,6 +2,7 @@ package zombierockers.entities
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
+import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage;
@@ -145,7 +146,7 @@ builder.entity("segment-${Math.random()}") {
 			return
 		}
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("splitSegment"){newMessage ->
+		utils.custom.messageQueue.enqueue(utils.genericMessage("removeBalls"){newMessage ->
 			newMessage.segment = entity
 			newMessage.ballsToRemove = ballsToRemove
 		})
@@ -157,7 +158,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.speed = message.speed
 	})
 	
-	component(utils.components.genericComponent(id:"splitSegmentHandler", messageId:["splitSegment"]){ message ->
+	component(utils.components.genericComponent(id:"splitSegmentHandler", messageId:["removeBalls"]){ message ->
 		if(message.segment != entity)
 			return
 		def balls = entity.balls
@@ -199,6 +200,19 @@ builder.entity("segment-${Math.random()}") {
 		utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){})
 	})
 	
+	component(utils.components.genericComponent(id:"explosionsWhenRemoveBallsHandler", messageId:["removeBalls"]){ message ->
+		if(message.segment != entity)
+			return
+		
+		def ballsToRemove = message.ballsToRemove
+		ballsToRemove.each { ball ->
+			messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+				newMessage.explosion =EffectFactory.explosionEffect(100, (int) ball.position.x, (int) ball.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, ball.color, ball.color) 
+			})
+		}
+		
+	})
+	
 	component(utils.custom.components.closureComponent("collisionBetweenSegmentsDetector"){ UpdateMessage message ->
 		def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment -> !segment.balls.isEmpty()} as Predicate))
 		
@@ -234,11 +248,16 @@ builder.entity("segment-${Math.random()}") {
 		def slaveSegment = message.slaveSegment
 		entity.pathTraversal = slaveSegment.pathTraversal
 		
-		
+		def index = entity.balls.size()-1
 		
 		entity.balls.addAll(slaveSegment.balls)
 		slaveSegment.balls.clear()
 		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(slaveSegment))
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage ->
+			newMessage.segment = entity
+			newMessage.index = index
+		})
 	})
 }
 
