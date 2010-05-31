@@ -1,8 +1,10 @@
 package zombierockers.entities
 
-import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage;
+import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.games.zombierockers.PathTraversal;
 
 builder.entity("segment-${Math.random()}") {
@@ -12,6 +14,7 @@ builder.entity("segment-${Math.random()}") {
 	property("pathTraversal", new PathTraversal(parameters.path,1,0))
 	property("speed",0.07f)
 	property("balls",new LinkedList())
+	
 	
 	
 	
@@ -25,7 +28,7 @@ builder.entity("segment-${Math.random()}") {
 		if(insertionPoint > 0)
 			entity.pathTraversal = entity.pathTraversal.add((float)message.ball.radius * 2)
 		
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(message.ball, entity))
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(message.ball, entity.parent))
 	})
 	
 	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
@@ -82,9 +85,6 @@ builder.entity("segment-${Math.random()}") {
 		})
 		entity.parent.ballsQuantity++
 		
-		
-		
-		println "Chocaron segmento - $entity.id"
 	})
 	
 	component(utils.components.genericComponent(id:"checkBallSeriesHandler", messageId:["checkBallSeries"]){ message ->
@@ -119,7 +119,48 @@ builder.entity("segment-${Math.random()}") {
 			entity.balls.remove(ball)
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 		}
-		println "Se formo jueguito - ${ballsToRemove.size()}"
+	})
+	
+	component(utils.custom.components.closureComponent("collisionBetweenSegmentsDetector"){ UpdateMessage message ->
+		def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment -> !segment.balls.isEmpty()} as Predicate))
+		
+		def collisionSegment = segments.find{ segment ->
+			if(segment == entity)
+				return false
+			
+			def myPosition = entity.pathTraversal.position
+			def segmentBalls = segment.balls
+			
+			def firstBall = segmentBalls[0]
+			def firstBallPosition = firstBall.position
+			
+			def distance = myPosition.distance(firstBallPosition)
+			return (distance < (float)firstBall.radius * 2)						
+		}
+		
+		if(collisionSegment == null)
+			return
+			
+		utils.custom.messageQueue.enqueue(utils.genericMessage("mergeSegments"){newMessage ->
+			newMessage.masterSegment = entity
+			newMessage.slaveSegment = collisionSegment
+		})
+		
+		
+	})
+	
+	component(utils.components.genericComponent(id:"mergeSegmentsHandler", messageId:["mergeSegments"]){ message ->
+		if(message.masterSegment != entity)
+			return
+			
+		def slaveSegment = message.slaveSegment
+		entity.pathTraversal = slaveSegment.pathTraversal
+		
+		
+		
+		entity.balls.addAll(slaveSegment.balls)
+		slaveSegment.balls.clear()
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(slaveSegment))
 	})
 }
 
