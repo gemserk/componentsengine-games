@@ -3,6 +3,7 @@ import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
 
 
+import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.commons.components.Path;
@@ -44,6 +45,10 @@ builder.entity {
 			property("lineWidth", 30.0f)
 			property("path", {entity.parent.path})		
 		}
+	})
+	
+	child(entity("base"){
+		parent("zombierockers.entities.base", [position:{entity.parent.path.points[-1]},radius:15f])
 	})
 	
 	child(entity("spawner"){

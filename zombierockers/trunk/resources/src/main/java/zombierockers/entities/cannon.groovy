@@ -39,7 +39,7 @@ builder.entity("cannon") {
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				radius:10.0f,
+				radius:16.0f,
 				color:data.color
 				]
 			}))

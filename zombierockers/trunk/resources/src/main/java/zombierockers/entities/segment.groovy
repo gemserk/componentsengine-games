@@ -46,7 +46,24 @@ builder.entity("segment-${Math.random()}") {
 		return pathTraversal
 	}
 	
-	
+	component(utils.components.genericComponent(id:"segmentRemoveHead", messageId:["segmentRemoveHead"]){ message ->
+		if(message.segment != entity)
+			return
+		
+		if (entity.balls.size() < 2) {
+			entity.balls.each { ball ->
+				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
+			}
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+			return
+		}
+			
+		def lastBall = entity.lastBall
+		entity.pathTraversal = getPathTraversal(entity,entity.balls.size()-2)
+		
+		entity.balls.remove(lastBall)
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBall))
+	})
 	
 	
 	component(utils.components.genericComponent(id:"addNewBallHandler", messageId:["addNewBall"]){ message ->
@@ -110,7 +127,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
 			newMessage.segment = entity
-			newMessage.index = ballIndex
+			newMessage.ball = ball
 		})
 		entity.parent.ballsQuantity++
 		
@@ -120,7 +137,13 @@ builder.entity("segment-${Math.random()}") {
 		if(message.segment != entity)
 			return
 		
-		def forwardIterator = entity.balls.listIterator(message.index)
+		def ballFromMessage = message.ball
+		def index = entity.balls.indexOf(ballFromMessage)
+		
+		if(index == -1)
+			return
+		
+		def forwardIterator = entity.balls.listIterator(index)
 		def newBall = forwardIterator.next()
 		def ballsToRemove = [newBall]
 		
@@ -132,7 +155,7 @@ builder.entity("segment-${Math.random()}") {
 			ballsToRemove << ballToCheck			
 		}
 		
-		def backwardsIterator = entity.balls.listIterator(message.index)
+		def backwardsIterator = entity.balls.listIterator(index)
 		while(backwardsIterator.hasPrevious()){
 			def ballToCheck = backwardsIterator.previous()
 			if(ballToCheck.color != newBall.color)
@@ -248,7 +271,7 @@ builder.entity("segment-${Math.random()}") {
 		def slaveSegment = message.slaveSegment
 		entity.pathTraversal = slaveSegment.pathTraversal
 		
-		def index = entity.balls.size()-1
+		def ballToCheck = entity.lastBall
 		
 		entity.balls.addAll(slaveSegment.balls)
 		slaveSegment.balls.clear()
@@ -256,7 +279,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage ->
 			newMessage.segment = entity
-			newMessage.index = index
+			newMessage.ball = ballToCheck
 		})
 	})
 }

@@ -23,10 +23,8 @@ builder.entity("segment-${Math.random()}") {
 			utils.custom.genericprovider.provide{ spawner ->
 				[
 				position:spawner.position.copy(),
-				path:spawner.path,
 				direction:utils.vector(0,1),
-				radius:10.0f,
-				maxVelocity:0.07f,
+				radius:16.0f,
 				color:spawner.color
 				]
 			}))
@@ -36,7 +34,7 @@ builder.entity("segment-${Math.random()}") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				path:data.path,
-				speed:0.07f
+				speed:0.04f
 				]
 			}))
 	
