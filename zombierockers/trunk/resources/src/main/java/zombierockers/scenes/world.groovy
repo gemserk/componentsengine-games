@@ -1,12 +1,13 @@
 package zombierockers.scenes
 import com.gemserk.componentsengine.predicates.EntityPredicates;
+import com.gemserk.componentsengine.timers.CountDownTimer;
 
 
-import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.PathRendererComponent 
+import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.entities.Entity 
 import com.gemserk.games.zombierockers.TestMessage;
 import com.google.common.base.Predicate;
@@ -83,7 +84,6 @@ builder.entity {
 	
 	input("inputmapping"){
 		keyboard {
-			press(button:"space",eventId:"releaseBalls")
 			press(button:"s",eventId:"spawn")
 			press(button:"d",eventId:"dumpDebug")
 			hold(button:"l",eventId:"messageLoad")
@@ -101,6 +101,15 @@ builder.entity {
 		}
 		println "Generating Load - ${messageQueue.messages.size()}"
 	})
+	
+	
+	property("startTimer",new CountDownTimer(2000))
+	entity.startTimer.reset()
+	component(new TimerComponent("startTimer")){
+		property("trigger",utils.custom.triggers.genericMessage("spawn") {})
+		propertyRef("timer","startTimer")
+	}
+	
 	
 	child(entity("ballsQuantityLAbel"){
 		

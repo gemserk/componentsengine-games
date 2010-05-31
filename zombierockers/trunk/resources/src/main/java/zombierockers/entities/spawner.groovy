@@ -15,7 +15,8 @@ builder.entity("segment-${Math.random()}") {
 	property("position", utils.vector(-20,200))
 	
 	//property("spawnTimer",new Count(4000))
-	property("spawnQuantity",10)
+	property("spawnQuantity",200)
+	property("fired",false)
 	
 	property("ballTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
@@ -46,6 +47,11 @@ builder.entity("segment-${Math.random()}") {
 	//	}
 	
 	component(utils.components.genericComponent(id:"spawnHandler", messageId:["spawn"]){ message ->
+		if(entity.fired)
+			return
+			
+		entity.fired = true
+		
 		def template = entity.ballTemplate
 		
 		def colors = [utils.color(1,0,0,1), utils.color(0,1,0,1), utils.color(0,0,1,1)]
@@ -66,6 +72,7 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.balls = balls
 			newMessage.segment = segment
 		})
+		
 	})
 	
 }
