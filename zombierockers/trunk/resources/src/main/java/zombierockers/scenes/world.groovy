@@ -1,4 +1,6 @@
 package zombierockers.scenes
+import com.gemserk.componentsengine.predicates.EntityPredicates;
+
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
@@ -7,6 +9,8 @@ import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.PathRendererComponent 
 import com.gemserk.componentsengine.entities.Entity 
 import com.gemserk.games.zombierockers.TestMessage;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates 
 
 builder.entity {
 	
@@ -25,7 +29,7 @@ builder.entity {
 		propertyRef("bounds", "bounds");
 	}
 	
-	property("path",new Path([utils.vector(-40+60,200),utils.vector(-20+60,200),utils.vector(0+60,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
+	property("path",new Path([utils.vector(-40,200),utils.vector(-20,200),utils.vector(0,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
 	
 	child(entity("path"){
 		
@@ -53,8 +57,29 @@ builder.entity {
 		parent("zombierockers.entities.cannon",[bounds:utils.rectangle(20,20,760,560)])
 	})
 	
-	
-	
+	child(entity("segmentsManager") {
+		component(utils.components.genericComponent(id:"checkSameColorSegmentsHandler", messageId:["checkSameColorSegments"]){ message ->
+			
+			def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment-> !segment.isEmpty} as Predicate))
+			def sortedSegments = segments.sort { it.pathTraversal }
+			
+			sortedSegments.size().times { index ->
+				if (index == sortedSegments.size() -1 )
+					return
+				
+				def segment = sortedSegments[index]
+				def nextSegment = sortedSegments[index+1]
+				
+				if (segment.lastBall.color == nextSegment.firstBall.color) {
+					utils.custom.messageQueue.enqueue(utils.genericMessage("engageReverse"){newMessage ->
+						newMessage.segment = nextSegment
+						newMessage.speed = -0.30f
+					})
+				}
+			}
+			
+		})
+	})
 	
 	component(new ExplosionComponent("explosions")) {
 	}

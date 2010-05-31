@@ -16,6 +16,10 @@ builder.entity("segment-${Math.random()}") {
 	property("speed", parameters.speed)
 	property("balls",parameters.balls ?: new LinkedList())
 	
+	property("firstBall", {entity.balls[0]})
+	property("lastBall", {entity.balls[-1]})
+	property("isEmpty", {entity.balls.isEmpty()})
+	
 	property("segmentTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
 			utils.custom.genericprovider.provide{ data ->
@@ -25,7 +29,7 @@ builder.entity("segment-${Math.random()}") {
 				speed:data.speed
 				]
 			}))
-			
+	
 	
 	def getPathTraversal = {entity, index ->
 		def pathTraversal = entity.pathTraversal
@@ -136,13 +140,21 @@ builder.entity("segment-${Math.random()}") {
 			ballsToRemove.add(0,ballToCheck)			
 		}
 		
-		if(ballsToRemove.size() < 3)
+		if(ballsToRemove.size() < 3) {
+			utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){})
 			return
+		}
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("splitSegment"){newMessage ->
 			newMessage.segment = entity
 			newMessage.ballsToRemove = ballsToRemove
 		})
+	})
+	
+	component(utils.components.genericComponent(id:"engageReverseHandler", messageId:["engageReverse"]){ message ->
+		if(message.segment != entity)
+			return 
+		entity.speed = message.speed
 	})
 	
 	component(utils.components.genericComponent(id:"splitSegmentHandler", messageId:["splitSegment"]){ message ->
@@ -179,10 +191,12 @@ builder.entity("segment-${Math.random()}") {
 				println "Second segment was empty"
 			}
 		}
-	
+		
 		ballsToRemove.each { ball ->
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 		}
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){})
 	})
 	
 	component(utils.custom.components.closureComponent("collisionBetweenSegmentsDetector"){ UpdateMessage message ->

@@ -4,7 +4,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.commons.components.Path;
 
-public class PathTraversal {
+public class PathTraversal implements Comparable<PathTraversal> {
 
 	final Path path;
 	final int index;
@@ -100,6 +100,22 @@ public class PathTraversal {
 				return path.getPoint(index +1 ).copy().sub(path.getPoint(index)).normalise();			
 		}
 		return currentTangent.copy();
+	}
+
+	@Override
+	public int compareTo(PathTraversal pathTraversal) {
+		if (pathTraversal.path != this.path)
+			throw new RuntimeException("cannot compare, different paths");
+		
+		if (this.index == pathTraversal.index){
+			if (this.innerDistance < pathTraversal.innerDistance)
+				return -1;
+			if (this.innerDistance > pathTraversal.innerDistance)
+				return 1;
+			return 0;
+		} 
+		
+		return this.index - pathTraversal.index;
 	}
 
 }
