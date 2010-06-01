@@ -19,6 +19,7 @@ builder.entity("base") {
 	
 	property("position",parameters.position)
 	property("radius",parameters.radius)
+	property("baseReached",false)
 	
 	
 	component(new CircleRenderableComponent("circlerenderer")) {
@@ -45,12 +46,11 @@ builder.entity("base") {
 		if(message.source != entity)
 			return
 		
-		entity.root.getEntities(EntityPredicates.withAllTags("segment")).each{ segment ->
-			segment.speed = 0.5f
+		if(entity.baseReached==false){
+			utils.custom.messageQueue.enqueue(utils.genericMessage("baseReached"){})
+			entity.baseReached = true
 		}
-		
 		def segment = message.targets[0]
-		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("segmentRemoveHead"){newMessage ->
 			newMessage.segment = segment
 		})

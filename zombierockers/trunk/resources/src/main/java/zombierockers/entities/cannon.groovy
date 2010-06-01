@@ -26,7 +26,7 @@ builder.entity("cannon") {
 	property("direction",utils.vector(0,-1))
 	
 	property("fireTriggered",false)
-	
+	property("canFire",true)
 	
 	property("bounds",parameters.bounds)
 	
@@ -40,7 +40,8 @@ builder.entity("cannon") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				radius:16.0f,
-				color:data.color
+				color:data.color,
+				state:"inWorld"
 				]
 			}))
 	
@@ -83,13 +84,19 @@ builder.entity("cannon") {
 	})
 	
 	component(utils.components.genericComponent(id:"leftmousehandler", messageId:["leftmouse"]){ message ->
-		entity.fireTriggered = true
+		if (entity.canFire)
+			entity.fireTriggered = true
 	})
 	
 	component(utils.components.genericComponent(id:"rightmousehandler", messageId:["rightmouse"]){ message ->
 		entity.currentBallIndex = (entity.currentBallIndex + 1) % 2
 	})
 	
+	component(new WorldBoundsComponent("bounds")){
+		propertyRef("bounds","bounds")
+		propertyRef("position","position")
+	}
+
 	component(new WeaponComponent("shooter")) {
 		property("reloadTime", 250)
 		propertyRef("position", "position")
@@ -117,19 +124,7 @@ builder.entity("cannon") {
 	generateBallHandlerMethod(entity) 
 	generateBallHandlerMethod(entity) 
 	
-	//	property("notInitialized",true)
-	//	
-	//	component(new DisablerComponent(utils.custom.components.closureComponent("initHandler"){ UpdateMessage message ->
-	//		entity.notInitialized = false;
-	//		utils.custom.messageQueue.enqueue(utils.genericMessage("generateBall"){})
-	//		utils.custom.messageQueue.enqueue(utils.genericMessage("generateBall"){})
-	//		println "Initialized - $entity.id"
-	//	})){ propertyRef("enabled","notInitialized") }
-	//	
-	
-	
-	component(new WorldBoundsComponent("bounds")){
-		propertyRef("bounds","bounds")
-		propertyRef("position","position")
-	}
+	component(utils.components.genericComponent(id:"baseReachedHandler", messageId:["baseReached"]){ message ->
+		entity.canFire = false
+	})
 }

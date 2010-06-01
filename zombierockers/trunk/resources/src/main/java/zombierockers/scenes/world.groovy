@@ -1,9 +1,9 @@
 package zombierockers.scenes
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
+import com.gemserk.componentsengine.utils.EntityDumper;
 
 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.commons.components.Path;
@@ -13,6 +13,7 @@ import com.gemserk.componentsengine.entities.Entity
 import com.gemserk.games.zombierockers.TestMessage;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
+import net.sf.json.JSONArray 
 
 builder.entity {
 	
@@ -31,7 +32,9 @@ builder.entity {
 		propertyRef("bounds", "bounds");
 	}
 	
-	property("path",new Path([utils.vector(-40,200),utils.vector(-20,200),utils.vector(0,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
+	def offset = 0f
+	
+	property("path",new Path([utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector((float)0+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
 	
 	child(entity("path"){
 		
@@ -47,20 +50,21 @@ builder.entity {
 		}
 	})
 	
-	child(entity("base"){
-		parent("zombierockers.entities.base", [position:{entity.parent.path.points[-1]},radius:15f])
-	})
+	child(id:"base", template:"zombierockers.entities.base") {
+		position = entity.path.points[-1]
+		radius = 15f
+	}
 	
-	child(entity("spawner"){
-		parent("zombierockers.entities.spawner", [path:{entity.parent.path}])
-	})
-	
-	child(entity("limbo"){
-		parent("zombierockers.entities.limbo", [path:{entity.parent.path}])
-	})
+	child(id:"spawner", template:"zombierockers.entities.spawner") {
+		path = entity.path
+	}
+
+	child(id:"limbo", template:"zombierockers.entities.limbo") {
+		path = entity.path
+	}
 	
 	child(entity("cannon"){
-		parent("zombierockers.entities.cannon",[bounds:utils.rectangle(20,20,760,560)])
+		parent("zombierockers.entities.cannon",[bounds:utils.rectangle((float)20+offset,20,(float)760-offset,560)])
 	})
 	
 	child(entity("segmentsManager") {
@@ -91,9 +95,18 @@ builder.entity {
 		keyboard {
 			press(button:"s",eventId:"spawn")
 			press(button:"d",eventId:"dumpDebug")
+			press(button:"x",eventId:"dumpEntities")
+			press(button:"r",eventId:"reloadScene")
 			hold(button:"l",eventId:"messageLoad")
 		}
 	}
+	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
+		utils.custom.game.loadScene("zombierockers.scenes.scene");
+	})
+	
+	component(utils.components.genericComponent(id:"dumpEntitiesHandler", messageId:"dumpEntities"){ message ->
+		println JSONArray.fromObject(new EntityDumper().dumpEntity(entity.root)).toString(4)
+	} ) 
 	
 	component(utils.components.genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }

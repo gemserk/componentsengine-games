@@ -49,7 +49,7 @@ builder.entity("segment-${Math.random()}") {
 	component(utils.components.genericComponent(id:"segmentRemoveHead", messageId:["segmentRemoveHead"]){ message ->
 		if(message.segment != entity)
 			return
-		
+	
 		if (entity.balls.size() < 2) {
 			entity.balls.each { ball ->
 				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
@@ -71,25 +71,35 @@ builder.entity("segment-${Math.random()}") {
 			return
 		
 		def insertionPoint = message.index ?: 0
-		entity.balls.add(insertionPoint,message.ball)
+				
+		def ball = message.ball
+		
+		entity.balls.add(insertionPoint, ball)
+		ball.pathTraversal = getPathTraversal(entity, insertionPoint)
 		
 		if(insertionPoint > 0)
-			entity.pathTraversal = entity.pathTraversal.add((float)message.ball.radius * 2)
+			entity.pathTraversal = entity.pathTraversal.add((float)ball.radius * 2)
+			
+		if (insertionPoint == entity.balls.size()-1) 
+			ball.pathTraversal = entity.pathTraversal
 		
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(message.ball, entity.parent))
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
 	})
 	
 	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
 		def distance = (float)(entity.speed * message.delta)
 		def pathTraversal = entity.pathTraversal.add(distance)
 		entity.pathTraversal = pathTraversal
+		
+		
 		def messageQueue = utils.custom.messageQueue
 		entity.balls.reverseEach { ball ->
-			//			messageQueue.enqueue(utils.genericMessage("moveBall"){newMessage ->
-			//				newMessage.ball = ball
-			//				newMessage.position = pathTraversal.getPosition()
-			//			})
-			ball.position = pathTraversal.position
+//						messageQueue.enqueue(utils.genericMessage("moveBall"){newMessage ->
+//							newMessage.ball = ball
+//							newMessage.position = pathTraversal.getPosition()
+//						})
+			ball.pathTraversal = pathTraversal
+			// ball.position = pathTraversal.position
 			pathTraversal = pathTraversal.add((float)-ball.radius * 2)
 		}
 	})
@@ -117,7 +127,7 @@ builder.entity("segment-${Math.random()}") {
 			ballIndex++
 		
 		def ball = message.source.ball
-		ball.position = collisionBall.position
+//		ball.position = collisionBall.position
 		
 		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity
@@ -158,7 +168,7 @@ builder.entity("segment-${Math.random()}") {
 		def backwardsIterator = entity.balls.listIterator(index)
 		while(backwardsIterator.hasPrevious()){
 			def ballToCheck = backwardsIterator.previous()
-			if(ballToCheck.color != newBall.color)
+			if(ballToCheck.state == "spawned" || ballToCheck.color != newBall.color)
 				break;
 			
 			ballsToRemove.add(0,ballToCheck)			
@@ -271,7 +281,7 @@ builder.entity("segment-${Math.random()}") {
 		def slaveSegment = message.slaveSegment
 		entity.pathTraversal = slaveSegment.pathTraversal
 		
-		def ballToCheck = entity.lastBall
+		def ballToCheck = slaveSegment.firstBall
 		
 		entity.balls.addAll(slaveSegment.balls)
 		slaveSegment.balls.clear()
@@ -281,6 +291,10 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.segment = entity
 			newMessage.ball = ballToCheck
 		})
+	})
+	
+	component(utils.components.genericComponent(id:"baseReachedHandler", messageId:["baseReached"]){ message ->
+		entity.speed = 0.8f
 	})
 }
 

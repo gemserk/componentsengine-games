@@ -55,6 +55,7 @@
 			<artifactId>game</artifactId>
 		</dependency>
 		
+
 	</dependencies>
 
 	<profiles>

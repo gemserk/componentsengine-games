@@ -22,7 +22,6 @@ builder.entity("segment-${Math.random()}") {
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
 			utils.custom.genericprovider.provide{ spawner ->
 				[
-				position:spawner.position.copy(),
 				direction:utils.vector(0,1),
 				radius:16.0f,
 				color:spawner.color
@@ -59,7 +58,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.spawnQuantity.times {
 			def color = getRandomItem(colors)
 			
-			def parameters = [position:entity.position.copy(),path:entity.parent.path,color:color]
+			def parameters = [path:entity.parent.path,color:color]
 			def ball = template.get(parameters)
 			balls << ball
 		}
