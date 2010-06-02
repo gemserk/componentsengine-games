@@ -1,7 +1,9 @@
 package zombierockers.scenes
+import com.google.common.base.Predicate;
+
+import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
-import com.gemserk.componentsengine.utils.EntityDumper;
 
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
@@ -10,15 +12,14 @@ import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.PathRendererComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.entities.Entity 
-import com.gemserk.games.zombierockers.TestMessage;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
-import net.sf.json.JSONArray 
 
 builder.entity {
 	
 	property("bounds",utils.rectangle(0,0,800,600))
 	property("ballsQuantity",0)
+	property("baseReached",false)
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("background"))
@@ -34,7 +35,7 @@ builder.entity {
 	
 	def offset = 0f
 	
-	property("path",new Path([utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector((float)0+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
+	property("path",new Path([utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
 	
 	child(entity("path"){
 		
@@ -55,13 +56,9 @@ builder.entity {
 		radius = 15f
 	}
 	
-	child(id:"spawner", template:"zombierockers.entities.spawner") {
-		path = entity.path
-	}
-
-	child(id:"limbo", template:"zombierockers.entities.limbo") {
-		path = entity.path
-	}
+	child(id:"spawner", template:"zombierockers.entities.spawner") { path = entity.path }
+	
+	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
 	
 	child(entity("cannon"){
 		parent("zombierockers.entities.cannon",[bounds:utils.rectangle((float)20+offset,20,(float)760-offset,560)])
@@ -95,30 +92,15 @@ builder.entity {
 		keyboard {
 			press(button:"s",eventId:"spawn")
 			press(button:"d",eventId:"dumpDebug")
-			press(button:"x",eventId:"dumpEntities")
-			press(button:"r",eventId:"reloadScene")
-			hold(button:"l",eventId:"messageLoad")
 		}
 	}
-	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"reloadScene"){ message ->
-		utils.custom.game.loadScene("zombierockers.scenes.scene");
-	})
 	
-	component(utils.components.genericComponent(id:"dumpEntitiesHandler", messageId:"dumpEntities"){ message ->
-		println JSONArray.fromObject(new EntityDumper().dumpEntity(entity.root)).toString(4)
-	} ) 
+
 	
 	component(utils.components.genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
 	} )   
 	
-	component(utils.components.genericComponent(id:"generateMessageLoad", messageId:["messageLoad"]){ message ->
-		def messageQueue = messageQueue
-		100.times {
-			messageQueue.enqueue(new TestMessage())
-		}
-		println "Generating Load - ${messageQueue.messages.size()}"
-	})
 	
 	
 	property("startTimer",new CountDownTimer(2000))
@@ -143,4 +125,25 @@ builder.entity {
 		property("message", {"Balls: ${entity.parent.ballsQuantity}".toString() })
 	})
 	
+	component(utils.components.genericComponent(id:"baseReachedHandler", messageId:["baseReached"]){ message ->
+		entity.baseReached = true
+	})
+	
+	component(utils.custom.components.closureComponent("gameOverChecker"){ UpdateMessage message ->
+		
+		def limbosNotDone = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("limbo"), {limbo -> !limbo.done} as Predicate))
+		def allLimbosDone = limbosNotDone.isEmpty()
+		def baseReached = entity.baseReached
+		if(!baseReached && !allLimbosDone)
+			return
+		
+		def segments = entity.getEntities(EntityPredicates.withAllTags("segment"))
+		if(!segments.isEmpty())
+			return
+		
+		def win = allLimbosDone && !baseReached
+		utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){newMessage ->
+			newMessage.win = win
+		})
+	})
 }

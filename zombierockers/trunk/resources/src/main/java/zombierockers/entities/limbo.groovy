@@ -19,6 +19,8 @@ builder.entity("limbo-${Math.random()}") {
 		
 	property("nextBallPoint",new PathTraversal(parameters.path,2,0))
 	
+	property("done",false)
+	
 	component(utils.components.genericComponent(id:"releaseBallsHandler", messageId:["releaseBalls"]){ message ->
 		def deque = entity.deque
 		if(deque.isEmpty())
@@ -33,6 +35,9 @@ builder.entity("limbo-${Math.random()}") {
 			newMessage.ball = ball
 		})
 		entity.parent.ballsQuantity++
+		
+		if(deque.isEmpty())
+			entity.done = true
 	})
 		
 	component(new ComponentFromListOfClosures("nextBallPointReached",[{ UpdateMessage message ->
@@ -40,18 +45,14 @@ builder.entity("limbo-${Math.random()}") {
 	    def balls = entity.root.getEntities(predicates)
 	    
 	    if(balls.isEmpty())
-	    	return
+	    	return		
 	    	
 	    def ball = balls[0]
 	    ball.state = "inWorld"
 	    utils.custom.messageQueue.enqueue(utils.genericMessage("releaseBalls"){})
-		                                                                  		           
 	    }
 	]))
 		
-	component(utils.components.genericComponent(id:"dumpDequeHandler", messageId:["dumpDeque"]){ message ->
-		println "DUMPINGDEQUE:${entity.deque.collect{it.color}}"
-	})
 		
 	component(utils.components.genericComponent(id:"spawnedSegmentHandler", messageId:["spawnedSegment"]){ message ->
 		def deque = entity.deque

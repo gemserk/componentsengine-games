@@ -22,7 +22,7 @@ builder.entity {
 		
 		parent("gemserk.gui.label", [
 		font:font,
-		position:utils.vector(400f, 70),
+		position:utils.vector(400f, 280),
 		fontColor:utils.color(0f,0f,0f,1f),
 		bounds:labelRectangle,
 		align:"center",
@@ -32,13 +32,33 @@ builder.entity {
 		property("message", "Paused, press click to continue...")
 	})
 	
+	child(entity("restartLabel"){
+		
+		parent("gemserk.gui.label", [
+		font:font,
+		position:utils.vector(400f, 320f),
+		fontColor:utils.color(0f,0f,0f,1f),
+		bounds:labelRectangle,
+		align:"center",
+		valign:"center"
+		])
+		
+		property("message", "Press \"r\" to restart")
+	})
+	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
 		messageQueue.enqueue(utils.genericMessage("resume"){})	
 	})
 	
+	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
+		utils.custom.game.loadScene("zombierockers.scenes.scene");
+	})
+	
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"return",eventId:"resumeGame")
+			press(button:"r",eventId:"restart")
 		}
 		mouse {
 			press(button:"left", eventId:"resumeGame")

@@ -2,7 +2,9 @@ package zombierockers.scenes;
 
 import com.gemserk.componentsengine.commons.components.states.NodeStateTransitionManagerComponent;
 import com.gemserk.componentsengine.messages.SlickRenderMessage 
+import com.gemserk.componentsengine.utils.EntityDumper 
 import gemserk.utils.GroovyBootstrapper 
+import net.sf.json.JSONArray 
 
 builder.entity("game") { 
 	
@@ -16,13 +18,13 @@ builder.entity("game") {
 	
 	component(new NodeStateTransitionManagerComponent("stateChanger")){
 		property("transitions",[
-		gameover:["gameover","highscore"],
-		paused:["paused","highscore"],
+		gameover:["gameover"],
+		paused:["paused"],
 		resume:["playing"],
 		enterscore:["enterscore"]
 		])
 	}
-
+	
 	child(entity("playing"){ 
 		parent("gemserk.states.stateBasedNode",[enabled:false,exclusions:[SlickRenderMessage.class]])
 		parent("zombierockers.scenes.playing") 
@@ -37,6 +39,15 @@ builder.entity("game") {
 		parent("gemserk.states.stateBasedNode",[enabled:false])
 		parent("zombierockers.scenes.paused")
 	})
+	
+	input("inputmapping"){
+		keyboard {
+			press(button:"x",eventId:"dumpEntities")
+		}
+	}
+	component(utils.components.genericComponent(id:"dumpEntitiesHandler", messageId:"dumpEntities"){ message ->
+		println JSONArray.fromObject(new EntityDumper().dumpEntity(entity.root)).toString(4)
+	} ) 
 	
 	utils.custom.messageQueue.enqueue(utils.genericMessage("resume"){})	
 }

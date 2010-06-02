@@ -1,5 +1,7 @@
 package com.gemserk.games.zombierockers;
 
+import java.text.MessageFormat;
+
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.commons.components.Path;
@@ -116,6 +118,11 @@ public class PathTraversal implements Comparable<PathTraversal> {
 		} 
 		
 		return this.index - pathTraversal.index;
+	}
+	
+	@Override
+	public String toString() {
+		return MessageFormat.format("PATHTRAVERSAL: index: {0}, innerDistance: {1}, position: {2}",index,innerDistance,getPosition());  
 	}
 
 }

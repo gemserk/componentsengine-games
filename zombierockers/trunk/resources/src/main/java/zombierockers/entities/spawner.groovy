@@ -4,7 +4,7 @@ import com.gemserk.componentsengine.commons.components.TimerComponent
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.timers.PeriodicTimer 
 
-builder.entity("segment-${Math.random()}") {
+builder.entity("spawner-${Math.random()}") {
 	
 	Random random = new Random()
 	
@@ -12,19 +12,17 @@ builder.entity("segment-${Math.random()}") {
 		return  items[random.nextInt(items.size())]
 	}
 	
-	property("position", utils.vector(-20,200))
-	
 	//property("spawnTimer",new Count(4000))
-	property("spawnQuantity",200)
+	property("spawnQuantity",10)
 	property("fired",false)
 	
 	property("ballTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
-			utils.custom.genericprovider.provide{ spawner ->
+			utils.custom.genericprovider.provide{ data ->
 				[
 				direction:utils.vector(0,1),
 				radius:16.0f,
-				color:spawner.color
+				color:data.color
 				]
 			}))
 	
@@ -58,7 +56,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.spawnQuantity.times {
 			def color = getRandomItem(colors)
 			
-			def parameters = [path:entity.parent.path,color:color]
+			def parameters = [color:color]
 			def ball = template.get(parameters)
 			balls << ball
 		}
