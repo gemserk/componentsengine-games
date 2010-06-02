@@ -8,15 +8,15 @@
 	</parent>
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>zombierocker</name>
-	<description>zombierocker</description>
+	<name>zombierockers</name>
+	<description>zombierockers</description>
 	
 	<url>http://www.gemserk.com</url>
 
 	<properties>
 	
 		<webstartName>${project.name}</webstartName>
-		<webstartCodebase>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstartCodebase>
+		<webstartCodebase>http://www.gemserk.com/prototipos/zombierockers-webstart-latest/</webstartCodebase>
 	
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
