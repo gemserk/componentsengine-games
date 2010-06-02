@@ -20,6 +20,10 @@ builder.entity("segment-${Math.random()}") {
 	property("firstBall", {entity.balls[0]})
 	property("lastBall", {entity.balls[-1]})
 	property("isEmpty", {entity.balls.isEmpty()})
+
+	property("acceleratedSpeed", parameters.acceleratedSpeed ?: 0.08f)
+	property("accelerated", parameters.accelerated ?: false)
+	property("accelerationStopPoint", parameters.accelerationStopPoint)
 	
 	property("segmentTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
@@ -49,7 +53,7 @@ builder.entity("segment-${Math.random()}") {
 	component(utils.components.genericComponent(id:"segmentRemoveHead", messageId:["segmentRemoveHead"]){ message ->
 		if(message.segment != entity)
 			return
-	
+		
 		if (entity.balls.size() < 2) {
 			entity.balls.each { ball ->
 				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
@@ -57,7 +61,7 @@ builder.entity("segment-${Math.random()}") {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 			return
 		}
-			
+		
 		def lastBall = entity.lastBall
 		entity.pathTraversal = getPathTraversal(entity,entity.balls.size()-2)
 		
@@ -71,7 +75,7 @@ builder.entity("segment-${Math.random()}") {
 			return
 		
 		def insertionPoint = message.index ?: 0
-				
+		
 		def ball = message.ball
 		
 		entity.balls.add(insertionPoint, ball)
@@ -79,7 +83,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		if(insertionPoint > 0)
 			entity.pathTraversal = entity.pathTraversal.add((float)ball.radius * 2)
-			
+		
 		if (insertionPoint == entity.balls.size()-1) 
 			ball.pathTraversal = entity.pathTraversal
 		
@@ -87,25 +91,28 @@ builder.entity("segment-${Math.random()}") {
 	})
 	
 	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
-		def distance = (float)(entity.speed * message.delta)
+		def speed = entity.speed
+		if (entity.accelerated)
+			speed = entity.acceleratedSpeed
+			
+		def distance = (float)(speed * message.delta)
 		def pathTraversal = entity.pathTraversal.add(distance)
 		entity.pathTraversal = pathTraversal
 		
-		
 		def messageQueue = utils.custom.messageQueue
 		entity.balls.reverseEach { ball ->
-//						messageQueue.enqueue(utils.genericMessage("moveBall"){newMessage ->
-//							newMessage.ball = ball
-//							newMessage.position = pathTraversal.getPosition()
-//						})
 			ball.pathTraversal = pathTraversal
-			// ball.position = pathTraversal.position
 			pathTraversal = pathTraversal.add((float)-ball.radius * 2)
 		}
 	})
 	
-	
-	
+	component(utils.custom.components.closureComponent("checkEndAcceleration"){ UpdateMessage message ->
+		if (!entity.accelerated)
+			return
+			
+		if (entity.pathTraversal > entity.accelerationStopPoint)
+			entity.accelerated = false
+	})
 	
 	component(utils.components.genericComponent(id:"bulletHitHandler", messageId:["bulletHit"]){ message ->
 		def collisionBall = message.targets[0]
@@ -127,7 +134,7 @@ builder.entity("segment-${Math.random()}") {
 			ballIndex++
 		
 		def ball = message.source.ball
-//		ball.position = collisionBall.position
+		//		ball.position = collisionBall.position
 		
 		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity

@@ -1,4 +1,5 @@
 package zombierockers.entities
+import com.gemserk.games.zombierockers.PathTraversal;
 
 import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
@@ -12,8 +13,7 @@ builder.entity("spawner-${Math.random()}") {
 		return  items[random.nextInt(items.size())]
 	}
 	
-	//property("spawnTimer",new Count(4000))
-	property("spawnQuantity",10)
+	property("spawnQuantity",30)
 	property("fired",false)
 	
 	property("ballTemplate",new InstantiationTemplateImpl(
@@ -31,20 +31,17 @@ builder.entity("spawner-${Math.random()}") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				path:data.path,
-				speed:0.04f
+				speed:0.04f,
+				acceleratedSpeed:0.5f,
+				accelerationStopPoint:new PathTraversal(data.path, 6, 0f),
+				accelerated:true
 				]
 			}))
-	
-	
-	//	component(new TimerComponent("spawnerTimer")){
-	//		property("trigger",utils.custom.triggers.genericMessage("spawnBall") {message.source = entity })
-	//		propertyRef("timer","spawnTimer")
-	//	}
 	
 	component(utils.components.genericComponent(id:"spawnHandler", messageId:["spawn"]){ message ->
 		if(entity.fired)
 			return
-			
+		
 		entity.fired = true
 		
 		def template = entity.ballTemplate
