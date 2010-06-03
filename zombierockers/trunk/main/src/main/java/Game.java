@@ -1,9 +1,7 @@
 import groovy.lang.Closure;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import net.sf.json.JSONArray;
 
@@ -12,6 +10,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +20,8 @@ import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
-import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.utils.EntityDumper;
+import com.gemserk.componentsengine.utils.SlickToSlf4j;
 import com.google.common.collect.Lists;
 import com.google.inject.Key;
 
@@ -58,6 +57,11 @@ public class Game extends StateBasedGame {
 
 	public Game() {
 		super("Zombie Rockers");
+		Log.setLogSystem(new SlickToSlf4j());
+		
+		logger.info("OS: " +System.getProperty("os.name"));
+		logger.info("OS-VERSION: " +System.getProperty("os.version"));
+		logger.info("OS-ARCH: " +System.getProperty("os.arch"));
 	}
 
 	@Override
