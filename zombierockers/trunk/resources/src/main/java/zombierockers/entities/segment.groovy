@@ -168,7 +168,7 @@ builder.entity("segment-${Math.random()}") {
 		def ballFromMessage = message.ball
 		def index = entity.balls.indexOf(ballFromMessage)
 		
-		log.info("Checking ball series - segment.id: $entity.id - ball.id: $ballFromMessage - ballIndex: $index")
+		log.info("Checking ball series - segment.id: $entity.id - ball.id: $ballFromMessage.id - ballIndex: $index")
 		if(index == -1)
 			return
 		
@@ -229,6 +229,12 @@ builder.entity("segment-${Math.random()}") {
 		
 		def firstSegmentBalls = new LinkedList(balls.subList(0,firstIndex))
 		def secondSegmentBalls = new LinkedList(balls.subList(lastIndex+1,balls.size()))
+		
+		def betweenSegment =  new LinkedList(balls.subList(firstIndex, lastIndex+1))
+		if (betweenSegment.size != ballsToRemove.size) {
+			log.info("MERGE AND COLLISION SPECIAL CASE DETECTED")
+			return
+		}
 		
 		log.info("Splitting segment when removeBalls - segment.id: $entity.id - ballsToRemove: ${ballsToRemove.size()} - segment.balls.size: $balls.size")
 		log.info("First subsegment balls - ${firstSegmentBalls.size()}")
