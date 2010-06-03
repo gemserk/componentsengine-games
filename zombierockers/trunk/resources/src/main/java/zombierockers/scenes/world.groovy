@@ -56,7 +56,10 @@ builder.entity {
 		radius = 15f
 	}
 	
-	child(id:"spawner", template:"zombierockers.entities.spawner") { path = entity.path }
+	child(id:"spawner", template:"zombierockers.entities.spawner") { 
+		path = entity.path
+		ballsQuantity = 20
+	}
 	
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
 	
@@ -65,11 +68,17 @@ builder.entity {
 	})
 	
 	child(entity("segmentsManager") {
+		
+		def getSortedSegments = { entity ->
+			def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment-> !segment.isEmpty} as Predicate))
+			return segments.sort { it.pathTraversal }
+		}
+		
 		component(utils.components.genericComponent(id:"checkSameColorSegmentsHandler", messageId:["checkSameColorSegments"]){ message ->
 			
-			def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment-> !segment.isEmpty} as Predicate))
-			def sortedSegments = segments.sort { it.pathTraversal }
+			def sortedSegments = getSortedSegments(entity)
 			log.info("Segments not empty: $sortedSegments.size")
+			
 			sortedSegments.size().times { index ->
 				if (index == sortedSegments.size() -1 )
 					return

@@ -88,6 +88,8 @@ builder.entity("segment-${Math.random()}") {
 			ball.pathTraversal = entity.pathTraversal
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
+		
+		log.info("Added ball to segment - segment: $message.segment.id ball: $ball.id, $ball.color")
 	})
 	
 	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
@@ -110,7 +112,7 @@ builder.entity("segment-${Math.random()}") {
 		if (!entity.accelerated)
 			return
 			
-		if (entity.pathTraversal > entity.accelerationStopPoint)
+		if (entity.pathTraversal > entity.accelerationStopPoint) 
 			entity.accelerated = false
 	})
 	
@@ -134,7 +136,6 @@ builder.entity("segment-${Math.random()}") {
 			ballIndex++
 		
 		def ball = message.source.ball
-		//		ball.position = collisionBall.position
 		
 		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity
@@ -154,6 +155,8 @@ builder.entity("segment-${Math.random()}") {
 		if(message.segment != entity)
 			return
 		
+		log.info("Checking ball series - $entity.id")
+			
 		def ballFromMessage = message.ball
 		def index = entity.balls.indexOf(ballFromMessage)
 		
@@ -183,9 +186,11 @@ builder.entity("segment-${Math.random()}") {
 		
 		if(ballsToRemove.size() < 3) {
 			utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){})
+			log.info("Less than 3 balls - $entity.id")			
 			return
 		}
 		
+		log.info("More than 2 balls - $entity.id")
 		utils.custom.messageQueue.enqueue(utils.genericMessage("removeBalls"){newMessage ->
 			newMessage.segment = entity
 			newMessage.ballsToRemove = ballsToRemove
@@ -195,6 +200,7 @@ builder.entity("segment-${Math.random()}") {
 	component(utils.components.genericComponent(id:"engageReverseHandler", messageId:["engageReverse"]){ message ->
 		if(message.segment != entity)
 			return 
+		log.info("Engaging reverse - $entity.id")
 		entity.speed = message.speed
 	})
 	
@@ -212,12 +218,15 @@ builder.entity("segment-${Math.random()}") {
 		def firstSegmentBalls = new LinkedList(balls.subList(0,firstIndex))
 		def secondSegmentBalls = new LinkedList(balls.subList(lastIndex+1,balls.size()))
 		
+		log.info("Splitting segment when removeBalls - segment: $entity.id ballsToRemove: ${ballsToRemove.size()}")
+		log.info("First subsegment balls - ${firstSegmentBalls.size()}")
+		log.info("Second subsegment balls - ${secondSegmentBalls.size()}")
+
 		if(firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()){
-			println "Removing segment because it is empty"
+			log.info("Both subsegements are empty, removing segment - $entity.id")
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
-			
 		} else 	if(firstSegmentBalls.isEmpty()){
-			println "First segment was empty"
+			log.info("First subsegment is empty - $entity.id")
 			entity.balls = secondSegmentBalls	
 		} else {
 			entity.pathTraversal = getPathTraversal(entity,firstIndex -1)
@@ -227,9 +236,9 @@ builder.entity("segment-${Math.random()}") {
 				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f]
 				def segment = entity.segmentTemplate.get(newParameters)
 				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
-				println "Splitted into two segments"
+				log.info("Splitted in two segments - segment: $entity.id newSegment: $segment.id")
 			} else {
-				println "Second segment was empty"
+				log.info("Second subsegment is empty - segment: $entity.id")
 			}
 		}
 		
@@ -273,6 +282,8 @@ builder.entity("segment-${Math.random()}") {
 		if(collisionSegment == null)
 			return
 		
+		log.info("Collision detected with other segment - masterSegment: $entity.id slaveSegment: $collisionSegment.id")
+
 		utils.custom.messageQueue.enqueue(utils.genericMessage("mergeSegments"){newMessage ->
 			newMessage.masterSegment = entity
 			newMessage.slaveSegment = collisionSegment
@@ -285,6 +296,8 @@ builder.entity("segment-${Math.random()}") {
 		if(message.masterSegment != entity)
 			return
 		
+		log.info("Merging segments - masterSegment: $message.masterSegment.id slaveSegment: $message.slaveSegment.id")
+			
 		def slaveSegment = message.slaveSegment
 		entity.pathTraversal = slaveSegment.pathTraversal
 		

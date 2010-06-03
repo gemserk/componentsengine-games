@@ -1,9 +1,7 @@
 package zombierockers.entities
 import com.gemserk.games.zombierockers.PathTraversal;
 
-import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
-import com.gemserk.componentsengine.timers.PeriodicTimer 
 
 builder.entity("spawner-${Math.random()}") {
 	
@@ -13,8 +11,8 @@ builder.entity("spawner-${Math.random()}") {
 		return  items[random.nextInt(items.size())]
 	}
 	
-	property("spawnQuantity",30)
-	property("fired",false)
+	property("spawnQuantity", parameters.ballsQuantity)
+	property("fired", false)
 	
 	property("ballTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
