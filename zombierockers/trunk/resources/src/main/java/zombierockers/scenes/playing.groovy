@@ -50,7 +50,10 @@ builder.entity {
 	}
 	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
-		messageQueue.enqueue(utils.genericMessage("paused"){})	
+		if (messageQueue.messages.isEmpty())
+			messageQueue.enqueue(utils.genericMessage("paused"){})
+		else
+			messageQueue.enqueue(utils.genericMessage("pauseGame"){})
 	})
 	
 	//	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
