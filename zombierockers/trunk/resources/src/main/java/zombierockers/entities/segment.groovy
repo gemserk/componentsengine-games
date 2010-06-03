@@ -56,15 +56,17 @@ builder.entity("segment-${Math.random()}") {
 		
 		if (entity.balls.size() < 2) {
 			entity.balls.each { ball ->
+				log.info("Removed last ball - segment.id: $entity.id - ball.id: $ball.id")
 				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 			}
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+			log.info("Removed segment - segment.id: $entity.id")
 			return
 		}
 		
 		def lastBall = entity.lastBall
 		entity.pathTraversal = getPathTraversal(entity,entity.balls.size()-2)
-		
+		log.info("Removed last ball - segment.id: $entity.id - ball.id: $lastBall.id")
 		entity.balls.remove(lastBall)
 		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBall))
 	})
@@ -89,7 +91,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
 		
-		log.info("Added ball to segment - segment: $message.segment.id ball: $ball.id, $ball.color")
+		log.info("Added ball to segment - segment.id: $message.segment.id -  ball: $ball.id - $ball.color - index: $insertionPoint")
 	})
 	
 	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
@@ -113,13 +115,14 @@ builder.entity("segment-${Math.random()}") {
 			return
 			
 		if (entity.pathTraversal > entity.accelerationStopPoint) 
+			log.info("Segment stoped initial acceleration - segment.id: $entity.id")
 			entity.accelerated = false
 	})
 	
 	component(utils.components.genericComponent(id:"bulletHitHandler", messageId:["bulletHit"]){ message ->
 		def collisionBall = message.targets[0]
 		def ballIndex = entity.balls.indexOf(collisionBall)
-		
+		log.info("Bullet collided with segment: segment.id: $entity.id - ball.id: $collisionBall - ballIndex: $ballIndex")
 		if(ballIndex == -1)
 			return
 		
@@ -155,11 +158,11 @@ builder.entity("segment-${Math.random()}") {
 		if(message.segment != entity)
 			return
 		
-		log.info("Checking ball series - $entity.id")
 			
 		def ballFromMessage = message.ball
 		def index = entity.balls.indexOf(ballFromMessage)
 		
+		log.info("Checking ball series - segment.id: $entity.id - ball.id: $ballFromMessage - ballIndex: $index")
 		if(index == -1)
 			return
 		
@@ -184,13 +187,14 @@ builder.entity("segment-${Math.random()}") {
 			ballsToRemove.add(0,ballToCheck)			
 		}
 		
+		
 		if(ballsToRemove.size() < 3) {
 			utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){})
-			log.info("Less than 3 balls - $entity.id")			
+			log.info("When ball added to segment less than 3 balls  in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")			
 			return
 		}
 		
-		log.info("More than 2 balls - $entity.id")
+		log.info("When ball added to segment 3 or more in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")	
 		utils.custom.messageQueue.enqueue(utils.genericMessage("removeBalls"){newMessage ->
 			newMessage.segment = entity
 			newMessage.ballsToRemove = ballsToRemove
@@ -200,8 +204,10 @@ builder.entity("segment-${Math.random()}") {
 	component(utils.components.genericComponent(id:"engageReverseHandler", messageId:["engageReverse"]){ message ->
 		if(message.segment != entity)
 			return 
-		log.info("Engaging reverse - $entity.id")
-		entity.speed = message.speed
+		def oldSpeed = entity.speed
+		def newSpeed = message.speed
+		log.info("Changing speed - $entity.id - oldSpeed: $oldSpeed - newSpeed: $newSpeed")
+		entity.speed = newSpeed
 	})
 	
 	component(utils.components.genericComponent(id:"splitSegmentHandler", messageId:["removeBalls"]){ message ->
@@ -218,12 +224,12 @@ builder.entity("segment-${Math.random()}") {
 		def firstSegmentBalls = new LinkedList(balls.subList(0,firstIndex))
 		def secondSegmentBalls = new LinkedList(balls.subList(lastIndex+1,balls.size()))
 		
-		log.info("Splitting segment when removeBalls - segment: $entity.id ballsToRemove: ${ballsToRemove.size()}")
+		log.info("Splitting segment when removeBalls - segment.id: $entity.id - ballsToRemove: ${ballsToRemove.size()}")
 		log.info("First subsegment balls - ${firstSegmentBalls.size()}")
 		log.info("Second subsegment balls - ${secondSegmentBalls.size()}")
 
 		if(firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()){
-			log.info("Both subsegements are empty, removing segment - $entity.id")
+			log.info("Both subsegments are empty, removing segment - $entity.id")
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 		} else 	if(firstSegmentBalls.isEmpty()){
 			log.info("First subsegment is empty - $entity.id")
@@ -236,7 +242,7 @@ builder.entity("segment-${Math.random()}") {
 				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f]
 				def segment = entity.segmentTemplate.get(newParameters)
 				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
-				log.info("Splitted in two segments - segment: $entity.id newSegment: $segment.id")
+				log.info("Splitted in two segments - segment.id: $entity.id - newSegment.id: $segment.id")
 			} else {
 				log.info("Second subsegment is empty - segment: $entity.id")
 			}
@@ -282,7 +288,7 @@ builder.entity("segment-${Math.random()}") {
 		if(collisionSegment == null)
 			return
 		
-		log.info("Collision detected with other segment - masterSegment: $entity.id slaveSegment: $collisionSegment.id")
+		log.info("Collision detected with other segment - masterSegment.id: $entity.id - slaveSegment.id: $collisionSegment.id")
 
 		utils.custom.messageQueue.enqueue(utils.genericMessage("mergeSegments"){newMessage ->
 			newMessage.masterSegment = entity
@@ -296,7 +302,7 @@ builder.entity("segment-${Math.random()}") {
 		if(message.masterSegment != entity)
 			return
 		
-		log.info("Merging segments - masterSegment: $message.masterSegment.id slaveSegment: $message.slaveSegment.id")
+		log.info("Merging segments: masterSegment.id: $message.masterSegment.id - slaveSegment.id: $message.slaveSegment.id")
 			
 		def slaveSegment = message.slaveSegment
 		entity.pathTraversal = slaveSegment.pathTraversal
@@ -314,6 +320,7 @@ builder.entity("segment-${Math.random()}") {
 	})
 	
 	component(utils.components.genericComponent(id:"baseReachedHandler", messageId:["baseReached"]){ message ->
+		log.info("Base reached - Accelerating - segment.id: $entity.id")
 		entity.speed = 0.8f
 	})
 }

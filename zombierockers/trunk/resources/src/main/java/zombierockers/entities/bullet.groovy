@@ -43,7 +43,7 @@ builder.entity("bullet-${Math.random()}") {
 			def source = message.source
 			def target = message.targets[0]
 			message.targets = [target]
-			log.info("Bullet hit ball bullet.id: $source.id - targets.id: $target.id - target.color: $target.color")
+			log.info("Bullet hit ball bullet.id: $source.id - bullet.color: $source.ball.color - targets.id: $target.id - target.color: $target.color")
 		})
 		
 	}
