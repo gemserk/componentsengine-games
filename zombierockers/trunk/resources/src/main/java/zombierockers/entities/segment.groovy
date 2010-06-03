@@ -7,7 +7,9 @@ import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplate
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
+import com.gemserk.componentsengine.utils.EntityDumper 
 import com.gemserk.games.zombierockers.PathTraversal;
+import net.sf.json.JSONArray 
 
 builder.entity("segment-${Math.random()}") {
 	
@@ -114,17 +116,22 @@ builder.entity("segment-${Math.random()}") {
 		if (!entity.accelerated)
 			return
 			
-		if (entity.pathTraversal > entity.accelerationStopPoint) 
+		if (entity.pathTraversal > entity.accelerationStopPoint) { 
 			log.info("Segment stoped initial acceleration - segment.id: $entity.id")
 			entity.accelerated = false
+		}
 	})
 	
 	component(utils.components.genericComponent(id:"bulletHitHandler", messageId:["bulletHit"]){ message ->
 		def collisionBall = message.targets[0]
 		def ballIndex = entity.balls.indexOf(collisionBall)
-		log.info("Bullet collided with segment: segment.id: $entity.id - ball.id: $collisionBall - ballIndex: $ballIndex")
+		
 		if(ballIndex == -1)
 			return
+
+		def ball = message.source.ball
+		
+		log.info("Bullet collided with segment: segment.id: $entity.id - ball.id: $collisionBall.id - ballIndex: $ballIndex - newBall.id: $ball.id")
 		
 		def tangent = getPathTraversal(entity,ballIndex).tangent
 		
@@ -138,7 +145,6 @@ builder.entity("segment-${Math.random()}") {
 		if(proyection > 0)
 			ballIndex++
 		
-		def ball = message.source.ball
 		
 		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity
@@ -224,10 +230,16 @@ builder.entity("segment-${Math.random()}") {
 		def firstSegmentBalls = new LinkedList(balls.subList(0,firstIndex))
 		def secondSegmentBalls = new LinkedList(balls.subList(lastIndex+1,balls.size()))
 		
-		log.info("Splitting segment when removeBalls - segment.id: $entity.id - ballsToRemove: ${ballsToRemove.size()}")
+		log.info("Splitting segment when removeBalls - segment.id: $entity.id - ballsToRemove: ${ballsToRemove.size()} - segment.balls.size: $balls.size")
 		log.info("First subsegment balls - ${firstSegmentBalls.size()}")
 		log.info("Second subsegment balls - ${secondSegmentBalls.size()}")
-
+		
+		if  (balls.size != (ballsToRemove.size + firstSegmentBalls.size + secondSegmentBalls.size))
+		{
+			log.info("WARNING: SPLIT SEEMS TO BE BROKEN!! DUMPING")
+			log.info(JSONArray.fromObject(new EntityDumper().dumpEntity(entity.root)).toString(4))
+		}
+		
 		if(firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()){
 			log.info("Both subsegments are empty, removing segment - $entity.id")
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
