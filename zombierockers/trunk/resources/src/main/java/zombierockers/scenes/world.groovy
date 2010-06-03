@@ -69,15 +69,17 @@ builder.entity {
 			
 			def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment-> !segment.isEmpty} as Predicate))
 			def sortedSegments = segments.sort { it.pathTraversal }
-			
+			log.info("Segments not empty: $sortedSegments.size")
 			sortedSegments.size().times { index ->
 				if (index == sortedSegments.size() -1 )
 					return
 				
 				def segment = sortedSegments[index]
 				def nextSegment = sortedSegments[index+1]
-				
-				if (segment.lastBall.color == nextSegment.firstBall.color) {
+				def lastBallColor = segment.lastBall.color
+				def nextSegmentColor = nextSegment.firstBall.color
+				if (lastBallColor == nextSegmentColor) {
+					log.info("SegmentManager detected color coincidence between segments ends segment1.id: $segment.id - segment2.id - $nextSegment.id - colorCoincidence: $lastBallColor")
 					utils.custom.messageQueue.enqueue(utils.genericMessage("engageReverse"){newMessage ->
 						newMessage.segment = nextSegment
 						newMessage.speed = -0.30f
@@ -142,6 +144,8 @@ builder.entity {
 			return
 		
 		def win = allLimbosDone && !baseReached
+		log.info("Game over - winResult: $win")
+		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){newMessage ->
 			newMessage.win = win
 		})

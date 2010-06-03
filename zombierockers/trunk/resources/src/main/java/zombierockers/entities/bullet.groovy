@@ -41,9 +41,11 @@ builder.entity("bullet-${Math.random()}") {
 		property("predicate",{EntityPredicates.isNear(entity.position, (float)entity.radius+1)})
 		property("trigger", utils.custom.triggers.genericMessage("bulletHit") { 
 			def source = message.source
-			def targets = message.targets
-			message.targets = [targets[0]]
+			def target = message.targets[0]
+			message.targets = [target]
+			log.info("Bullet hit ball bullet.id: $source.id - targets.id: $target.id - target.color: $target.color")
 		})
+		
 	}
 	
 	component(utils.components.genericComponent(id:"bulletHitHandler", messageId:["bulletHit"]){ message ->

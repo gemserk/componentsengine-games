@@ -47,6 +47,7 @@ builder.entity("base") {
 			return
 		
 		if(entity.baseReached==false){
+			log.info("Base reached - base.id: $entity.id")
 			utils.custom.messageQueue.enqueue(utils.genericMessage("baseReached"){})
 			entity.baseReached = true
 		}
