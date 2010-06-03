@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 	        <groupId>com.gemserk.games.zombierocker</groupId>
-        	<artifactId>zombierocker</artifactId>
+        	<artifactId>zombierockers</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>main</artifactId>
@@ -16,7 +16,7 @@
 	<properties>
 	
 		<webstartName>${project.name}</webstartName>
-		<webstartCodebase>http://www.gemserk.com/prototipos/zombierockers-webstart-latest/</webstartCodebase>
+		<webstartCodebase>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstartCodebase>
 	
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
