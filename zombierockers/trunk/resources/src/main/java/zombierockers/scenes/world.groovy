@@ -1,6 +1,8 @@
 package zombierockers.scenes
 import com.google.common.base.Predicate;
 
+import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
@@ -58,7 +60,7 @@ builder.entity {
 	
 	child(id:"spawner", template:"zombierockers.entities.spawner") { 
 		path = entity.path
-		ballsQuantity = 20
+		ballsQuantity = 30
 	}
 	
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
@@ -77,6 +79,7 @@ builder.entity {
 		component(utils.components.genericComponent(id:"checkSameColorSegmentsHandler", messageId:["checkSameColorSegments"]){ message ->
 			
 			def sortedSegments = getSortedSegments(entity)
+			
 			log.info("Segments not empty: $sortedSegments.size")
 			
 			sortedSegments.size().times { index ->
@@ -85,11 +88,11 @@ builder.entity {
 				
 				def segment = sortedSegments[index]
 				def nextSegment = sortedSegments[index+1]
-				def lastBallColor = segment.lastBall.color
+				def lastBallColor = segment.lastBall.color      
 				def nextSegmentColor = nextSegment.firstBall.color
 				if (lastBallColor == nextSegmentColor) {
 					log.info("SegmentManager detected color coincidence between segments ends segment1.id: $segment.id - segment2.id - $nextSegment.id - colorCoincidence: $lastBallColor")
-					utils.custom.messageQueue.enqueue(utils.genericMessage("engageReverse"){newMessage ->
+					utils.custom.messageQueue.enqueue(utils.genericMessage("segmentChangeSpeed"){newMessage ->
 						newMessage.segment = nextSegment
 						newMessage.speed = -0.30f
 					})
@@ -97,6 +100,61 @@ builder.entity {
 			}
 			
 		})
+		
+		component(utils.components.genericComponent(id:"checkFirstSegmentShouldAdvanceHandler", messageId:["checkFirstSegmentSholdAdvance"]){ message ->
+			
+			if (entity.parent.baseReached)
+				return
+			
+			def sortedSegments = getSortedSegments(entity)
+			
+			log.info("Checking first segment should advance - cantSegments: $sortedSegments.size")
+			
+			if (sortedSegments.isEmpty())
+				return
+			
+			def firstSegment = sortedSegments[0]
+			
+			if (firstSegment.speed <= 0) {
+				utils.custom.messageQueue.enqueue(utils.genericMessage("segmentChangeSpeed"){newMessage ->
+					newMessage.segment = firstSegment
+					newMessage.speed = 0.04f
+				})
+			}
+			
+		})
+		
+		component(utils.components.genericComponent(id:"destroySegmentHandler", messageId:["destroySegment"]){ message ->
+			def segment = message.segment 
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(segment))
+			messageQueue.enqueue(utils.genericMessage("checkFirstSegmentSholdAdvance"){	})
+		})
+		
+		component(utils.custom.components.closureComponent("collisionBetweenSegmentsDetector"){ UpdateMessage message ->
+			def sortedSegments = getSortedSegments(entity)
+			
+			sortedSegments.size().times { index ->
+				if (index == sortedSegments.size() -1 )
+					return
+				
+				def segment = sortedSegments[index]
+				def nextSegment = sortedSegments[index+1]
+				
+				def segmentLastBall = segment.lastBall
+				def nextSegmentFirstBall = nextSegment.firstBall
+				
+				if(segmentLastBall.position.distance(nextSegmentFirstBall.position) < (float)segmentLastBall.radius * 2){
+					log.info("Collision detected with other segment - masterSegment.id: $segment.id - slaveSegment.id: $nextSegment.id")
+					
+					utils.custom.messageQueue.enqueue(utils.genericMessage("mergeSegments"){newMessage ->
+						newMessage.masterSegment = segment
+						newMessage.slaveSegment = nextSegment
+					})
+				}
+			}
+			
+		})
+		
 	})
 	
 	input("inputmapping"){
@@ -106,7 +164,7 @@ builder.entity {
 		}
 	}
 	
-
+	
 	
 	component(utils.components.genericComponent(id:"dumpDebugHandler", messageId:"dumpDebug"){ message ->
 		Entity.times.entrySet().sort({it.count }).each { entry ->  println "$entry.element - $entry.count" }
@@ -159,4 +217,28 @@ builder.entity {
 			newMessage.win = win
 		})
 	})
+	
+//	component(utils.components.genericComponent(id:"mergeSegmentsBugProvider", messageId:["mergeSegments"]){ message ->
+//		def template = new InstantiationTemplateImpl(
+//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
+//		utils.custom.genericprovider.provide{ data ->
+//			[
+//			radius:16.0f,
+//			color:data.color,
+//			state:"inWorld"
+//			]
+//		})
+//		
+//		
+//		def segment = message.masterSegment
+//		def lastBall = segment.lastBall
+//		//def ball = template.get([color:lastBall.color])
+//		def ball = template.get([color:utils.color(1,0,1)])
+//		
+//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
+//			newMessage.source = [ball:ball,position:lastBall.pathTraversal.add(10f).position]
+//			newMessage.targets = [lastBall]
+//		})
+//		
+//	})
 }
