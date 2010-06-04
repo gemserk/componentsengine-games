@@ -27,6 +27,8 @@ builder.entity("segment-${Math.random()}") {
 	property("accelerated", parameters.accelerated ?: false)
 	property("accelerationStopPoint", parameters.accelerationStopPoint)
 	
+	property("pathLength",entity.pathTraversal.add(100000).distanceFromOrigin)
+	
 	property("segmentTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
 			utils.custom.genericprovider.provide{ data ->
@@ -99,8 +101,16 @@ builder.entity("segment-${Math.random()}") {
 	
 	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
 		def speed = entity.speed
+		
 		if (entity.accelerated)
 			speed = entity.acceleratedSpeed
+		else if(entity.baseReached){
+			speed = 0.8f;
+		}
+		else if(speed > 0){
+			def maxSpeed = 0.04f
+			speed = (float)maxSpeed*0.2 + maxSpeed*(1-(entity.pathTraversal.distanceFromOrigin/entity.pathLength))
+		}	
 		
 		def distance = (float)(speed * message.delta)
 		def pathTraversal = entity.pathTraversal.add(distance)
@@ -237,7 +247,7 @@ builder.entity("segment-${Math.random()}") {
 		log.info("Second subsegment balls - ${secondSegmentBalls.size()}")
 		
 		def betweenSegment =  new LinkedList(balls.subList(firstIndex, lastIndex+1))
-
+		
 		if (betweenSegment.size != ballsToRemove.size) {
 			log.info("Splitting canceled because concurrent merge and ball insertion - balls.ids: ${betweenSegment*.id} - balls.colors: ${betweenSegment*.color}")
 			// log.info(JSONArray.fromObject(new EntityDumper().dumpEntity(entity.root)).toString(4))
@@ -273,7 +283,8 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.balls=ballsToRemove
 		})
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){})
+		utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){
+		})
 	})
 	
 	component(utils.components.genericComponent(id:"mergeSegmentsHandler", messageId:["mergeSegments"]){ message ->
@@ -303,7 +314,7 @@ builder.entity("segment-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"baseReachedHandler", messageId:["baseReached"]){ message ->
 		log.info("Base reached - Accelerating - segment.id: $entity.id")
-		entity.speed = 0.8f
+		entity.baseReached = true
 	})
 }
 

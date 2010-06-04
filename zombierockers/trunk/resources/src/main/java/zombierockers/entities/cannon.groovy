@@ -35,6 +35,8 @@ builder.entity("cannon") {
 	property("currentBall",{entity.balls[(entity.currentBallIndex)]})
 	property("nextBall",{entity.balls[((entity.currentBallIndex+1) % 2)]})
 	
+	property("fireRate", 300)
+	
 	property("ballTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
 			utils.custom.genericprovider.provide{ data ->
@@ -98,7 +100,7 @@ builder.entity("cannon") {
 	}
 
 	component(new WeaponComponent("shooter")) {
-		property("reloadTime", 250)
+		propertyRef("reloadTime", "fireRate")
 		propertyRef("position", "position")
 		propertyRef("shouldFire", "fireTriggered")
 		

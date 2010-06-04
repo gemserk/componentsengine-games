@@ -14,9 +14,10 @@ public class PathTraversal implements Comparable<PathTraversal> {
 
 	Vector2f currentPosition = null;
 	Vector2f currentTangent;
+	
+	Float distanceFromOrigin = null;
 
 	public PathTraversal(Path path, int index, float innerDistance) {
-		super();
 		this.path = path;
 		this.index = index;
 		this.innerDistance = innerDistance;
@@ -24,6 +25,11 @@ public class PathTraversal implements Comparable<PathTraversal> {
 
 	public PathTraversal(Path path, int index) {
 		this(path, index, 0);
+	}
+
+	protected PathTraversal(Path path, int index, float innerDistance,float distanceFromOrigin) {
+		this(path, index, innerDistance);
+		this.distanceFromOrigin = distanceFromOrigin;
 	}
 
 	public PathTraversal add(float distance) {
@@ -39,10 +45,10 @@ public class PathTraversal implements Comparable<PathTraversal> {
 
 	private PathTraversal backward(float distance) {
 		if (index == 0 && innerDistance == 0)
-			return new PathTraversal(path, index, innerDistance);
+			return new PathTraversal(path, index, innerDistance,0);
 
 		if (distance < innerDistance)
-			return new PathTraversal(path, index, innerDistance - distance);
+			return new PathTraversal(path, index, innerDistance - distance, getDistanceFromOrigin() - distance);
 		else {
 
 			if (index == 0)
@@ -53,23 +59,22 @@ public class PathTraversal implements Comparable<PathTraversal> {
 
 			float segmentLength = p0.distance(p1);
 
-			return new PathTraversal(path, index - 1, segmentLength).backward(distance - innerDistance);
+			return new PathTraversal(path, index - 1, segmentLength,getDistanceFromOrigin()-innerDistance).backward(distance - innerDistance);
 		}
 	}
 
 	private PathTraversal forward(float distance) {
 		if (isOnLastPoint())
-			return new PathTraversal(path, index, innerDistance);
+			return new PathTraversal(path, index, innerDistance,getDistanceFromOrigin());
 
-		Vector2f p0 = path.getPoint(index);
-		Vector2f p1 = path.getPoint(index + 1);
+		float segmentLength = getCurrentSegmentLength();
 
-		float segmentLength = p0.distance(p1);
-
-		if (segmentLength < innerDistance + distance)
-			return new PathTraversal(path, index + 1, 0).forward(distance - (segmentLength - innerDistance));
-		else
-			return new PathTraversal(path, index, innerDistance + distance);
+		if (segmentLength < innerDistance + distance) {
+			float distanceLeftToAdvance = distance - getDistanceLeftInSegment();
+			
+			return new PathTraversal(path, index + 1, 0,this.getDistanceFromOrigin() + getDistanceLeftInSegment()).forward(distanceLeftToAdvance);
+		} else
+			return new PathTraversal(path, index, innerDistance + distance, this.getDistanceFromOrigin() + distance);
 	}
 
 	public Vector2f getPosition() {
@@ -103,7 +108,28 @@ public class PathTraversal implements Comparable<PathTraversal> {
 		}
 		return currentTangent.copy();
 	}
+	
+	protected float getDistanceLeftInSegment(){
+		return getCurrentSegmentLength() - innerDistance;
+	}
 
+	protected float getCurrentSegmentLength() {
+		if(isOnLastPoint())
+			return 0f;
+		
+		Vector2f p0 = path.getPoint(index);
+		Vector2f p1 = path.getPoint(index + 1);
+
+		return p0.distance(p1);
+	}
+
+	protected PathTraversal forwardSegment(){
+		if(isOnLastPoint())
+			return this;
+
+		return new PathTraversal(path,index+1,0,getDistanceFromOrigin()+getDistanceLeftInSegment());
+	}
+	
 	@Override
 	public int compareTo(PathTraversal pathTraversal) {
 		if (pathTraversal.path != this.path)
@@ -123,6 +149,19 @@ public class PathTraversal implements Comparable<PathTraversal> {
 	@Override
 	public String toString() {
 		return MessageFormat.format("PATHTRAVERSAL: index: {0}, innerDistance: {1}, position: {2}",index,innerDistance,getPosition());  
+	}
+
+	public float getDistanceFromOrigin() {
+		if(distanceFromOrigin == null){
+			PathTraversal pathTraversal = new PathTraversal(path,0,0,0);
+			while(pathTraversal.index < this.index){
+				pathTraversal = pathTraversal.forwardSegment();
+			}
+			pathTraversal = pathTraversal.forward(innerDistance);
+			distanceFromOrigin = pathTraversal.getDistanceFromOrigin();
+		}
+			
+		return distanceFromOrigin;
 	}
 
 }

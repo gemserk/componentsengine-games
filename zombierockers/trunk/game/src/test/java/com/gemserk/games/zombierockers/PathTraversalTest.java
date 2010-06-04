@@ -143,5 +143,74 @@ public class PathTraversalTest {
 		Vector2f tangent = pathTraversal.getTangent();
 		assertThat(tangent, equalTo(new Vector2f(40,40).sub(new Vector2f(10,10)).normalise()));
 	}
+	
+	@Test
+	public void withOneSegmentFirstPointIsDistanceZero(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(40, 40));
 
+		PathTraversal pathTraversal = new PathTraversal(path, 0, 0);
+		float distance = pathTraversal.getDistanceFromOrigin();
+		assertThat(distance, equalTo(0f));
+	}
+	
+	@Test
+	public void withOneSegmentLastPointIsDistanceSegmentLength(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(10, 40));
+
+		PathTraversal pathTraversal = new PathTraversal(path, 1, 0);
+		float distance = pathTraversal.getDistanceFromOrigin();
+		assertThat(distance, equalTo(30f));
+	}
+	
+	@Test
+	public void goingForwardWithinASegmentDistanceIsOK(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(10, 40));
+
+		PathTraversal pathTraversal = new PathTraversal(path, 0, 10);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(10f));
+		pathTraversal = pathTraversal.add(10);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(20f));
+	}
+	
+	@Test
+	public void goingBackWithinASegmentDistanceIsOK(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(10, 40));
+
+		PathTraversal pathTraversal = new PathTraversal(path, 0, 20);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(20f));
+		pathTraversal = pathTraversal.add(-10);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(10f));
+	}
+	
+	@Test
+	public void goingForwardThroughASegmentDistanceIsOK(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(10, 40));
+		points.add(new Vector2f(40, 40));
+		
+		PathTraversal pathTraversal = new PathTraversal(path, 0, 10);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(10f));
+		pathTraversal = pathTraversal.add(40);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(50f));
+		pathTraversal = pathTraversal.add(4000);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(60f));
+	}
+	
+	@Test
+	public void goingBackThroughASegmentDistanceIsOK(){
+		points.add(new Vector2f(10, 10));
+		points.add(new Vector2f(10, 40));
+		points.add(new Vector2f(40, 40));
+		
+		PathTraversal pathTraversal = new PathTraversal(path, 2, 0);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(60f));
+		pathTraversal = pathTraversal.add(-40);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(20f));
+		pathTraversal = pathTraversal.add(-4000);
+		assertThat(pathTraversal.getDistanceFromOrigin(), equalTo(0f));
+	}
 }
