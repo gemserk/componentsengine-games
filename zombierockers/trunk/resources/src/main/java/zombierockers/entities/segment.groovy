@@ -105,7 +105,7 @@ builder.entity("segment-${Math.random()}") {
 		if (entity.accelerated)
 			speed = entity.acceleratedSpeed
 		else if(entity.baseReached){
-			speed = 0.8f;
+			speed = 0.8f
 		}
 		else if(speed > 0){
 			def maxSpeed = 0.04f

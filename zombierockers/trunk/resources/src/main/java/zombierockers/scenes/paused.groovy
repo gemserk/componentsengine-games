@@ -1,7 +1,6 @@
 package zombierockers.scenes
 ;
 
-import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
 
@@ -45,6 +44,8 @@ builder.entity {
 		
 		property("message", "Press \"r\" to restart")
 	})
+	
+	
 	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
 		messageQueue.enqueue(utils.genericMessage("resume"){})	

@@ -1,8 +1,10 @@
 package zombierockers.scenes
+
 import com.google.common.base.Predicate;
 
-import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
+
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
@@ -16,6 +18,10 @@ import com.gemserk.componentsengine.commons.components.TimerComponent
 import com.gemserk.componentsengine.entities.Entity 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
+import org.newdawn.slick.geom.Shape 
+import org.newdawn.slick.svg.Diagram 
+import org.newdawn.slick.svg.Figure 
+import org.newdawn.slick.svg.InkscapeLoader 
 
 builder.entity {
 	
@@ -37,7 +43,18 @@ builder.entity {
 	
 	def offset = 0f
 	
-	property("path",new Path([utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
+	Diagram diagram = InkscapeLoader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/Level1.svg"),false);
+	Figure figure = diagram.getFigure(0);
+	Shape shape = figure.getShape();
+	float[] points = shape.getPoints();
+	def pointsInPath = [utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200)]
+	for(int i=0;i<points.size();i+=2){
+		pointsInPath << utils.vector(points[i],points[i+1])
+	}
+	
+	
+	//property("path",new Path([utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
+	property("path",new Path(pointsInPath))	
 	
 	child(entity("path"){
 		
