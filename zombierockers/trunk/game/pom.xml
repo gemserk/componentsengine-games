@@ -39,6 +39,12 @@
 			<artifactId>datastore</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.kitfox.svg</groupId>
+			<artifactId>svg-salamander</artifactId>
+			<version>0.0.1.GEMSERK.a</version>
+			<classifier>tiny</classifier>
+		</dependency>
 	</dependencies>
 
 </project>

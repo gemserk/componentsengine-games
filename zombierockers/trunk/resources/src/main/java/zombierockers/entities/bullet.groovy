@@ -2,6 +2,7 @@ package zombierockers.entities
 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
@@ -23,19 +24,14 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("position", "position")
 	}
 	
-	component(new CircleRenderableComponent("circlerenderer")) {
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", {entity.ball.animation.currentFrame})
+		property("color",{entity.ball.color})
 		propertyRef("position", "position")
-		propertyRef("radius", "radius")
-		property("lineColor", utils.color(0,0,0,0))
-		property("fillColor", {entity.ball.color})
+		property("direction", utils.vector(0,-1))
+		property("size", utils.vector(1f, 1f))
 	}
 	
-	//	component(new ImageRenderableComponent("imagerenderer")) {
-	//		property("image", utils.resources.image("ship"))
-	//		property("color", parameters.color)
-	//		propertyRef("position", "position")
-	//		propertyRef("direction", "direction")
-	//	}
 	component(new GenericHitComponent("bullethitComponent")){
 		property("targetTag", "ball")
 		property("predicate",{EntityPredicates.isNear(entity.position, (float)entity.radius+1)})

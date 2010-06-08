@@ -58,19 +58,18 @@ builder.entity("cannon") {
 				]
 			}))
 	
-	
-	component(new CircleRenderableComponent("currentBallRenderer")) {
+	component(new ImageRenderableComponent("currentBallRenderer")) {
+		property("image", {entity.currentBall.animation.currentFrame})
+		property("color",{entity.currentBall.color})
 		propertyRef("position", "bulletPosition")
-		property("radius", {entity.currentBall.radius})
-		property("lineColor", utils.color(0,0,0,0))
-		property("fillColor", {entity.currentBall.color})
+		property("direction", utils.vector(0,-1))
 	}
 	
-	component(new CircleRenderableComponent("nextBallRenderer")) {
+	component(new ImageRenderableComponent("nextBallRenderer")) {
+		property("image", {entity.nextBall.animation.currentFrame})
+		property("color",{entity.nextBall.color})
 		propertyRef("position", "nextBulletPosition")
-		property("radius", {entity.nextBall.radius})
-		property("lineColor", utils.color(0,0,0,0))
-		property("fillColor", {entity.nextBall.color})
+		property("direction", utils.vector(0,-1))
 	}
 	
 	component(new ImageRenderableComponent("imagerenderer")) {

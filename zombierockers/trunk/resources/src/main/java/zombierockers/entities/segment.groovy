@@ -102,8 +102,10 @@ builder.entity("segment-${Math.random()}") {
 			speed = 0.8f
 		}
 		else if(speed > 0){
+			def minSpeedFactor = 0.2f
 			def maxSpeed = 0.04f
-			speed = (float)maxSpeed*0.2 + maxSpeed*(1-(entity.pathTraversal.distanceFromOrigin/entity.pathLength))
+			def minSpeed = maxSpeed*minSpeedFactor
+			speed = (float) minSpeed + maxSpeed * (1-minSpeedFactor) *(1-(entity.pathTraversal.distanceFromOrigin/entity.pathLength))
 		}	
 		
 		def distance = (float)(speed * message.delta)
@@ -121,7 +123,7 @@ builder.entity("segment-${Math.random()}") {
 		if (!entity.accelerated)
 			return
 		
-		if (entity.pathTraversal > entity.accelerationStopPoint) { 
+		if (entity.pathTraversal.distanceFromOrigin > entity.accelerationStopPoint) { 
 			log.info("Segment stoped initial acceleration - segment.id: $entity.id")
 			entity.accelerated = false
 		}

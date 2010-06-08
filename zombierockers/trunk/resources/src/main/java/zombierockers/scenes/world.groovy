@@ -1,4 +1,11 @@
 package zombierockers.scenes
+import java.awt.Shape 
+import java.awt.geom.PathIterator;
+import java.util.List;
+
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
+
+
 
 import com.google.common.base.Predicate;
 
@@ -16,10 +23,10 @@ import com.gemserk.componentsengine.commons.components.TimerComponent
 import com.gemserk.componentsengine.entities.Entity 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
-import org.newdawn.slick.geom.Shape 
-import org.newdawn.slick.svg.Diagram 
-import org.newdawn.slick.svg.Figure 
-import org.newdawn.slick.svg.InkscapeLoader 
+import com.kitfox.svg.SVGCache;
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGElement;
+
 
 builder.entity {
 	
@@ -41,14 +48,34 @@ builder.entity {
 	
 	def offset = 0f
 	
-	Diagram diagram = InkscapeLoader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/Level1.svg"),false);
-	Figure figure = diagram.getFigure(0);
-	Shape shape = figure.getShape();
-	float[] points = shape.getPoints();
-	def pointsInPath = [utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200)]
-	for(int i=0;i<points.size();i+=2){
-		pointsInPath << utils.vector(points[i],points[i+1])
+//	Diagram diagram = InkscapeLoader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/Level1.svg"),false);
+//	Figure figure = diagram.getFigure(0);
+//	Shape shape = figure.getShape();
+//	float[] points = shape.getPoints();
+//	def pointsInPath = [utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200)]
+//	def loadedPoints = []
+//	for(int i=0;i<points.size();i+=2){
+//		loadedPoints << utils.vector(points[i],points[i+1])
+//	}
+//	
+//	pointsInPath.addAll(loadedPoints.reverse())
+	
+	
+	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource("levels/Level1.svg").toURI());
+	SVGElement element = diagram.getElement("path3602");
+	List vector = element.getPath(null);
+	com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
+	Shape shape = pathSVG.getShape();
+	PathIterator pathIterator = shape.getPathIterator(null, 0.001d);
+	float[] coords = new float[2];
+	def pointsInPath = [utils.vector((float)-90+offset,45),utils.vector((float)-60+offset,45)]
+	def loadedPoints = []
+	while (!pathIterator.isDone()) {
+		int type = pathIterator.currentSegment(coords);
+		loadedPoints << utils.vector(coords[0],coords[1]);
+		pathIterator.next();
 	}
+	pointsInPath.addAll(loadedPoints)
 	
 	
 	//property("path",new Path([utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
@@ -56,16 +83,17 @@ builder.entity {
 	
 	child(entity("path"){
 		
-		component(new PathRendererComponent("pathrendererBorders")){
-			property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
-			property("lineWidth", 5.0f)
-			property("path", {entity.parent.path})		
-		}
-		component(new PathRendererComponent("pathrendererFill")){
-			property("lineColor", utils.color(0.5f, 0.5f, 1f, 1.0f))
-			property("lineWidth", 30.0f)
-			property("path", {entity.parent.path})		
-		}
+//		component(new PathRendererComponent("pathrendererBorders")){
+//			property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
+//			property("lineWidth", 5.0f)
+//			property("path", {entity.parent.path})		
+//		}
+//		component(new PathRendererComponent("pathrendererFill")){
+//			property("lineColor", utils.color(0.5f, 0.5f, 1f, 1.0f))
+//			property("lineWidth", 30.0f)
+//			property("path", {entity.parent.path})		
+//		}
+		
 	})
 	
 	child(id:"base", template:"zombierockers.entities.base") {
@@ -75,7 +103,7 @@ builder.entity {
 	
 	child(id:"spawner", template:"zombierockers.entities.spawner") { 
 		path = entity.path
-		ballsQuantity = 30
+		ballsQuantity = 60
 	}
 	
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
@@ -203,7 +231,7 @@ builder.entity {
 		
 		parent("gemserk.gui.label", [
 		//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
-		position:utils.vector(60f, 40f),
+		position:utils.vector(740f, 30f),
 		fontColor:utils.color(0f,0f,0f,1f),
 		bounds:utils.rectangle(-50f, -20f, 100f, 40f),
 		align:"left",

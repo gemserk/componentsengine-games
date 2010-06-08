@@ -31,7 +31,7 @@ builder.entity("spawner-${Math.random()}") {
 				path:data.path,
 				speed:0.04f,
 				acceleratedSpeed:0.5f,
-				accelerationStopPoint:new PathTraversal(data.path, 6, 0f),
+				accelerationStopPoint:1000f,
 				accelerated:true
 				]
 			}))
