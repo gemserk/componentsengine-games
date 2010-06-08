@@ -148,8 +148,10 @@ builder.entity {
 		component(utils.custom.components.closureComponent("collisionBetweenSegmentsDetector"){ UpdateMessage message ->
 			def sortedSegments = getSortedSegments(entity)
 			
+			def collisionFound = false
+			
 			sortedSegments.size().times { index ->
-				if (index == sortedSegments.size() -1 )
+				if (index == sortedSegments.size() -1 || collisionFound)
 					return
 				
 				def segment = sortedSegments[index]
@@ -165,6 +167,8 @@ builder.entity {
 						newMessage.masterSegment = segment
 						newMessage.slaveSegment = nextSegment
 					})
+					
+					collisionFound = true
 				}
 			}
 			

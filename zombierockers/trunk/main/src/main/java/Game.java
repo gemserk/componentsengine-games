@@ -114,7 +114,7 @@ public class Game extends StateBasedGame {
 					@Override
 					public Animation instantiate() {
 						// should be specified in the animations.properties (TODO)
-						return createAnimation(ballSpriteSheet, 50, false);
+						return createAnimation(ballSpriteSheet, 128, false);
 					}
 
 				});
