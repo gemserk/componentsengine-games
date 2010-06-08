@@ -99,7 +99,7 @@ builder.entity("segment-${Math.random()}") {
 		if (entity.accelerated)
 			speed = entity.acceleratedSpeed
 		else if(entity.baseReached){
-			speed = 0.8f
+			speed = 0.4f
 		}
 		else if(speed > 0){
 			def minSpeedFactor = 0.2f
