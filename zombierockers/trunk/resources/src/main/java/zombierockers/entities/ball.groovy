@@ -25,7 +25,7 @@ builder.entity("ball-${Math.random()}") {
 	property("animation", utils.resources.animation("ballanimation"))
 	
 	// 2 * pi * radius / totalFramesOfTheAnimation
-	property("animationHelper", new AnimationHelper(entity.animation, (float) 2 * Math.PI * parameters.radius / 50))
+	property("animationHelper", new AnimationHelper(entity.animation, (float) 2 * Math.PI * parameters.radius / entity.animation.frameCount))
 	
 	property("direction", {entity.pathTraversal.tangent})
 	

@@ -63,10 +63,10 @@ public class Game extends StateBasedGame {
 	public Game() {
 		super("Zombie Rockers");
 		Log.setLogSystem(new SlickToSlf4j());
-		
-		logger.info("OS: " +System.getProperty("os.name"));
-		logger.info("OS-VERSION: " +System.getProperty("os.version"));
-		logger.info("OS-ARCH: " +System.getProperty("os.arch"));
+
+		logger.info("OS: " + System.getProperty("os.name"));
+		logger.info("OS-VERSION: " + System.getProperty("os.version"));
+		logger.info("OS-ARCH: " + System.getProperty("os.arch"));
 	}
 
 	@Override
@@ -77,6 +77,28 @@ public class Game extends StateBasedGame {
 		GemserkGameState menuState = new GameGameState(0, "zombierockers.scenes.scene");
 		addState(menuState);
 	}
+
+	/**
+	 * Temporal method to load an animation specifying total frames from a spritesheet.
+	 * @return
+	 */
+	private Animation createAnimation(final SpriteSheet spriteSheet, int totalFrames, boolean autoUpdate) {
+		Animation animation = new Animation();
+		animation.setAutoUpdate(autoUpdate);
+		
+		int horizontalCant = spriteSheet.getHorizontalCount();
+		int verticalCant = spriteSheet.getVerticalCount();
+
+		for (int j = 0; j < verticalCant; j++) {
+			for (int i = 0; i < horizontalCant; i++) {
+				if (i + j * horizontalCant < totalFrames) {
+					animation.addFrame(spriteSheet.getSubImage(i, j), 100);
+				}
+			}
+		}
+
+		return animation;
+	}
 	
 	class GameGameState extends GemserkGameState {
 
@@ -84,20 +106,22 @@ public class Game extends StateBasedGame {
 		public void onInit() {
 			super.onInit();
 			images(injector, "assets/images.properties");
-			
+
 			try {
 				AnimationManager animationManager = injector.getInstance(AnimationManager.class);
 				final SpriteSheet ballSpriteSheet = new SpriteSheet(new Image("assets/images/ball_animation.png"), 32, 32);
 				animationManager.addAnimation("ballanimation", new AnimationInstantiator() {
 					@Override
 					public Animation instantiate() {
-						return new Animation(ballSpriteSheet, 100);
+						// should be specified in the animations.properties (TODO)
+						return createAnimation(ballSpriteSheet, 50, false);
 					}
+
 				});
 			} catch (SlickException e) {
 				throw new RuntimeException("failed to load animation", e);
 			}
-			
+
 			injector.getInstance(BuilderUtils.class).addCustomUtil("components", new Object() {
 				public Component closureComponent(String id, Closure closure) {
 					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
@@ -113,7 +137,7 @@ public class Game extends StateBasedGame {
 		public GameGameState(int id, String defaultScene) {
 			super(id, defaultScene);
 		}
-		
+
 		@Override
 		public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 			try {
@@ -124,7 +148,7 @@ public class Game extends StateBasedGame {
 				logger.info(jobject.toString(4));
 				throw new RuntimeException(e);
 			}
-			
+
 		}
 
 		@Override
@@ -144,7 +168,6 @@ public class Game extends StateBasedGame {
 
 		}
 
-	
 	}
 
 }
