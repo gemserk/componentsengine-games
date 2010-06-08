@@ -1,5 +1,6 @@
 package zombierockers.scenes
 
+
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
@@ -37,7 +38,7 @@ builder.entity {
 		keyboard {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
-			
+			press(button:"g",eventId:"dumpEditorPositions")
 		}
 		mouse {
 			press(button:"left", eventId:"leftmouse")
@@ -49,20 +50,44 @@ builder.entity {
 		}
 	}
 	
+//	TEMPORAL PATH EDITOR
+//	property("newPositions", [])
+//	
+//	property("path", new Path([]))
+//	
+//	child(entity("editor.newPathRenderer"){ 
+//
+//		component(new PathRendererComponent("editor.pathRendererFill")){
+//			property("lineColor", utils.color(0.5f, 0.5f, 1f, 1.0f))
+//			property("lineWidth", 10.0f)
+//			property("path", {entity.parent.path})		
+//		}
+//		
+//	})
+//	
+//	
+//	component(utils.components.genericComponent(id:"editor.putPositionHandler", messageId:"rightmouse"){ message ->
+//		entity.newPositions << entity.mousePosition
+//		log.info("Editor new position : $entity.mousePosition")
+//		
+//		entity.path = new Path(entity.newPositions)
+//	})
+//	
+//	component(utils.components.genericComponent(id:"editor.mouseMoveHandler", messageId:"movemouse"){ message ->
+//		entity.mousePosition = new Vector2f(message.x, message.y)
+//	})
+//	
+//	component(utils.components.genericComponent(id:"editor.dumpPositions", messageId:"dumpEditorPositions"){ message ->
+//		log.info("newPositions dump ")
+//		entity.newPositions.each {   println "utils.vector(${it.x}f, ${it.y}f)," }
+//	})
+	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
 		if (messageQueue.messages.isEmpty())
 			messageQueue.enqueue(utils.genericMessage("paused"){})
 		else
 			messageQueue.enqueue(utils.genericMessage("pauseGame"){})
 	})
-	
-	//	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
-	//		utils.custom.gameContainer.setMouseGrabbed(true)
-	//	})
-	//	
-	//	component(utils.components.genericComponent(id:"leaveNodeStateHandler", messageId:"leaveNodeState"){ message ->
-	//		utils.custom.gameContainer.setMouseGrabbed(false)
-	//	})
 	
 	child(entity("fpsLabel"){
 		

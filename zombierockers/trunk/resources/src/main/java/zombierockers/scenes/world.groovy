@@ -2,9 +2,7 @@ package zombierockers.scenes
 
 import com.google.common.base.Predicate;
 
-
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
@@ -60,7 +58,7 @@ builder.entity {
 		
 		component(new PathRendererComponent("pathrendererBorders")){
 			property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
-			property("lineWidth", 40.0f)
+			property("lineWidth", 5.0f)
 			property("path", {entity.parent.path})		
 		}
 		component(new PathRendererComponent("pathrendererFill")){
@@ -235,27 +233,27 @@ builder.entity {
 		})
 	})
 	
-//	component(utils.components.genericComponent(id:"mergeSegmentsBugProvider", messageId:["mergeSegments"]){ message ->
-//		def template = new InstantiationTemplateImpl(
-//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
-//		utils.custom.genericprovider.provide{ data ->
-//			[
-//			radius:16.0f,
-//			color:data.color,
-//			state:"inWorld"
-//			]
-//		})
-//		
-//		
-//		def segment = message.masterSegment
-//		def lastBall = segment.lastBall
-//		//def ball = template.get([color:lastBall.color])
-//		def ball = template.get([color:utils.color(1,0,1)])
-//		
-//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
-//			newMessage.source = [ball:ball,position:lastBall.pathTraversal.add(10f).position]
-//			newMessage.targets = [lastBall]
-//		})
-//		
-//	})
+	//	component(utils.components.genericComponent(id:"mergeSegmentsBugProvider", messageId:["mergeSegments"]){ message ->
+	//		def template = new InstantiationTemplateImpl(
+	//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
+	//		utils.custom.genericprovider.provide{ data ->
+	//			[
+	//			radius:16.0f,
+	//			color:data.color,
+	//			state:"inWorld"
+	//			]
+	//		})
+	//		
+	//		
+	//		def segment = message.masterSegment
+	//		def lastBall = segment.lastBall
+	//		//def ball = template.get([color:lastBall.color])
+	//		def ball = template.get([color:utils.color(1,0,1)])
+	//		
+	//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
+	//			newMessage.source = [ball:ball,position:lastBall.pathTraversal.add(10f).position]
+	//			newMessage.targets = [lastBall]
+	//		})
+	//		
+	//	})
 }

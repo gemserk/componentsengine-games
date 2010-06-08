@@ -1,15 +1,9 @@
 package zombierockers.entities
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates 
-import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.gemserk.componentsengine.utils.EntityDumper 
 import com.gemserk.games.zombierockers.PathTraversal;
-import net.sf.json.JSONArray 
 
 builder.entity("segment-${Math.random()}") {
 	
@@ -118,7 +112,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		def messageQueue = utils.custom.messageQueue
 		entity.balls.reverseEach { ball ->
-			ball.pathTraversal = pathTraversal
+			ball.newPathTraversal = pathTraversal
 			pathTraversal = pathTraversal.add((float)-ball.radius * 2)
 		}
 	})

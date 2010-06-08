@@ -5,10 +5,13 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
@@ -20,6 +23,8 @@ import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
+import com.gemserk.componentsengine.resources.AnimationInstantiator;
+import com.gemserk.componentsengine.resources.AnimationManager;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.SlickToSlf4j;
 import com.google.common.collect.Lists;
@@ -79,6 +84,20 @@ public class Game extends StateBasedGame {
 		public void onInit() {
 			super.onInit();
 			images(injector, "assets/images.properties");
+			
+			try {
+				AnimationManager animationManager = injector.getInstance(AnimationManager.class);
+				final SpriteSheet ballSpriteSheet = new SpriteSheet(new Image("assets/images/ball_animation.png"), 32, 32);
+				animationManager.addAnimation("ballanimation", new AnimationInstantiator() {
+					@Override
+					public Animation instantiate() {
+						return new Animation(ballSpriteSheet, 100);
+					}
+				});
+			} catch (SlickException e) {
+				throw new RuntimeException("failed to load animation", e);
+			}
+			
 			injector.getInstance(BuilderUtils.class).addCustomUtil("components", new Object() {
 				public Component closureComponent(String id, Closure closure) {
 					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
