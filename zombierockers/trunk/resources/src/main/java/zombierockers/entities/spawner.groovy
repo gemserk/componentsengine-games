@@ -28,11 +28,12 @@ builder.entity("spawner-${Math.random()}") {
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				path:data.path,
+				pathTraversal:data.pathTraversal,
 				speed:0.04f,
 				acceleratedSpeed:0.5f,
 				accelerationStopPoint:1000f,
-				accelerated:true
+				accelerated:true,
+				pathLength:data.pathLength
 				]
 			}))
 	
@@ -56,7 +57,13 @@ builder.entity("spawner-${Math.random()}") {
 			balls << ball
 		}
 		
-		def segment = entity.segmentTemplate.get([path:entity.parent.path])
+		def path = entity.parent.path
+		def pathTraversal = new PathTraversal(path,1,0)
+		pathTraversal.distanceFromOrigin //so that it is calculated, and propagated when segment split
+		def pathLength = new PathTraversal(path,path.points.size-1).distanceFromOrigin
+		println pathLength
+		
+		def segment = entity.segmentTemplate.get([pathTraversal:pathTraversal, pathLength:pathLength])
 		
 		messageQueue.enqueue(utils.genericMessage("spawnedSegment"){ newMessage ->
 			newMessage.balls = balls

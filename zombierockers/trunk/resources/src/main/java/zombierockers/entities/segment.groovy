@@ -9,7 +9,7 @@ builder.entity("segment-${Math.random()}") {
 	
 	tags("segment")
 	
-	property("pathTraversal", parameters.pathTraversal ?: new PathTraversal(parameters.path,1,0))
+	property("pathTraversal", parameters.pathTraversal )
 	property("speed", parameters.speed)
 	property("balls",parameters.balls ?: new LinkedList())
 	
@@ -21,7 +21,7 @@ builder.entity("segment-${Math.random()}") {
 	property("accelerated", parameters.accelerated ?: false)
 	property("accelerationStopPoint", parameters.accelerationStopPoint)
 	
-	property("pathLength",entity.pathTraversal.add(100000).distanceFromOrigin)
+	property("pathLength",parameters.pathLength)
 	
 	property("segmentTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
@@ -29,7 +29,8 @@ builder.entity("segment-${Math.random()}") {
 				[
 				pathTraversal:data.pathTraversal,
 				balls:data.balls,
-				speed:data.speed
+				speed:data.speed,
+				pathLength:data.pathLength
 				]
 			}))
 	
@@ -266,7 +267,7 @@ builder.entity("segment-${Math.random()}") {
 			entity.balls = firstSegmentBalls
 			
 			if(!secondSegmentBalls.isEmpty()){
-				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f]
+				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f,pathLength:entity.pathLength]
 				def segment = entity.segmentTemplate.get(newParameters)
 				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
 				log.info("Splitted in two segments - segment.id: $entity.id - newSegment.id: $segment.id")
