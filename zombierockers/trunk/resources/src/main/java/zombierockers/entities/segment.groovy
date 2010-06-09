@@ -3,7 +3,6 @@ package zombierockers.entities
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage;
-import com.gemserk.games.zombierockers.PathTraversal;
 
 builder.entity("segment-${Math.random()}") {
 	
@@ -172,7 +171,6 @@ builder.entity("segment-${Math.random()}") {
 		if(message.segment != entity)
 			return
 		
-		
 		def ballFromMessage = message.ball
 		def index = entity.balls.indexOf(ballFromMessage)
 		
@@ -207,6 +205,14 @@ builder.entity("segment-${Math.random()}") {
 			})
 			log.info("When ball added to segment less than 3 balls  in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")			
 			return
+		}
+		
+		def mustContainBall = message.mustContainBall
+		if (mustContainBall) {
+			if (!ballsToRemove.contains(mustContainBall)) {
+				log.info("When ball added to segment more than 3 balls but does not contains - segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color} - mustContainBall.id: ${mustContainBall.id} - mustContainBall.color: ${mustContainBall.color}")			
+				return
+			}
 		}
 		
 		log.info("When ball added to segment 3 or more in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")	
@@ -294,6 +300,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.pathTraversal = slaveSegment.pathTraversal
 		
 		def ballToCheck = slaveSegment.firstBall
+		def mustContainBall = entity.lastBall
 		
 		entity.balls.addAll(slaveSegment.balls)
 		slaveSegment.balls.clear()
@@ -306,6 +313,7 @@ builder.entity("segment-${Math.random()}") {
 		utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage ->
 			newMessage.segment = entity
 			newMessage.ball = ballToCheck
+			newMessage.mustContainBall = mustContainBall
 		})
 	})
 	
