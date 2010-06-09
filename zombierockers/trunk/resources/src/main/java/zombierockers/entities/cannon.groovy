@@ -4,10 +4,12 @@ package zombierockers.entities
 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
+import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.WeaponComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 
 builder.entity("cannon") {
@@ -34,6 +36,8 @@ builder.entity("cannon") {
 	property("currentBallIndex",0)
 	property("currentBall",{entity.balls[(entity.currentBallIndex)]})
 	property("nextBall",{entity.balls[((entity.currentBallIndex+1) % 2)]})
+	
+	property("levelBallTypes", parameters.levelBallTypes)
 	
 	property("fireRate", 300)
 	
@@ -97,7 +101,7 @@ builder.entity("cannon") {
 		propertyRef("bounds","bounds")
 		propertyRef("position","position")
 	}
-
+	
 	component(new WeaponComponent("shooter")) {
 		propertyRef("reloadTime", "fireRate")
 		propertyRef("position", "position")
@@ -114,9 +118,32 @@ builder.entity("cannon") {
 			messageQueue.enqueue(utils.genericMessage("generateBall"){})
 		})
 	}
-	def generateBallHandlerMethod = {entity -> 
-		def colors = [utils.color(1,0,0,1), utils.color(0,1,0,1), utils.color(0,0,1,1)]
-		def color = getRandomItem(colors)
+	def generateBallHandlerMethod = {entity ->
+		// maybe it should be obtained from a LevelProperties or something like that, shared with spawner, etc.
+		def levelBallTypes = entity.levelBallTypes
+		
+		def availableBallTypes = []
+		
+		def limbosNotEmpty =  entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("limbo"), { limbo -> !limbo.isEmpty} as Predicate))
+		
+		if (limbosNotEmpty.size == 0) {
+			// use only ball types of the balls left in the world
+			log.info("Limbos are empty, generating balls using only balls left in the wolrd - cannon.id : $entity.id")
+			def segments =  entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), { segment -> !segment.isEmpty} as Predicate))
+			segments.each { segment ->
+				segment.balls.each { ball ->
+					if (!availableBallTypes.contains(ball.color))
+						availableBallTypes << ball.color
+				}
+			}
+		}
+		
+		if (availableBallTypes.isEmpty()) 
+			availableBallTypes = levelBallTypes
+		
+		log.info("Colors available to generate - ballTypes: $availableBallTypes")
+		
+		def color = getRandomItem(availableBallTypes)
 		def ball = entity.ballTemplate.get([color:color])
 		entity.balls[(entity.currentBallIndex)]=ball
 		entity.currentBallIndex = (entity.currentBallIndex + 1) % 2

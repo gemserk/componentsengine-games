@@ -3,7 +3,6 @@ import java.awt.Shape
 import java.awt.geom.PathIterator;
 import java.util.List;
 
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
 
 
 
@@ -18,7 +17,6 @@ import com.gemserk.componentsengine.timers.CountDownTimer;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.commons.components.Path;
-import com.gemserk.componentsengine.commons.components.PathRendererComponent 
 import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.entities.Entity 
 import com.google.common.base.Predicate;
@@ -48,17 +46,17 @@ builder.entity {
 	
 	def offset = 0f
 	
-//	Diagram diagram = InkscapeLoader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/Level1.svg"),false);
-//	Figure figure = diagram.getFigure(0);
-//	Shape shape = figure.getShape();
-//	float[] points = shape.getPoints();
-//	def pointsInPath = [utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200)]
-//	def loadedPoints = []
-//	for(int i=0;i<points.size();i+=2){
-//		loadedPoints << utils.vector(points[i],points[i+1])
-//	}
-//	
-//	pointsInPath.addAll(loadedPoints.reverse())
+	//	Diagram diagram = InkscapeLoader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/Level1.svg"),false);
+	//	Figure figure = diagram.getFigure(0);
+	//	Shape shape = figure.getShape();
+	//	float[] points = shape.getPoints();
+	//	def pointsInPath = [utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200)]
+	//	def loadedPoints = []
+	//	for(int i=0;i<points.size();i+=2){
+	//		loadedPoints << utils.vector(points[i],points[i+1])
+	//	}
+	//	
+	//	pointsInPath.addAll(loadedPoints.reverse())
 	
 	
 	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource("levels/Level1.svg").toURI());
@@ -83,16 +81,16 @@ builder.entity {
 	
 	child(entity("path"){
 		
-//		component(new PathRendererComponent("pathrendererBorders")){
-//			property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
-//			property("lineWidth", 5.0f)
-//			property("path", {entity.parent.path})		
-//		}
-//		component(new PathRendererComponent("pathrendererFill")){
-//			property("lineColor", utils.color(0.5f, 0.5f, 1f, 1.0f))
-//			property("lineWidth", 30.0f)
-//			property("path", {entity.parent.path})		
-//		}
+		//		component(new PathRendererComponent("pathrendererBorders")){
+		//			property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
+		//			property("lineWidth", 5.0f)
+		//			property("path", {entity.parent.path})		
+		//		}
+		//		component(new PathRendererComponent("pathrendererFill")){
+		//			property("lineColor", utils.color(0.5f, 0.5f, 1f, 1.0f))
+		//			property("lineWidth", 30.0f)
+		//			property("path", {entity.parent.path})		
+		//		}
 		
 	})
 	
@@ -108,9 +106,10 @@ builder.entity {
 	
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
 	
-	child(entity("cannon"){
-		parent("zombierockers.entities.cannon",[bounds:utils.rectangle((float)20+offset,20,(float)760-offset,560)])
-	})
+	child(id:"cannon", template:"zombierockers.entities.cannon") {
+		bounds=utils.rectangle((float)20+offset,20,(float)760-offset,560)
+		levelBallTypes = [utils.color(1,0,0,1), utils.color(0,1,0,1), utils.color(0,0,1,1)]
+	}
 	
 	child(entity("segmentsManager") {
 		

@@ -1,6 +1,5 @@
 package zombierockers.entities
 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
@@ -14,12 +13,11 @@ builder.entity("limbo-${Math.random()}") {
 	tags("limbo")
 	
 	property("deque",new LinkedList())
-		
 	property("path", parameters.path)
-		
 	property("nextBallPoint",new PathTraversal(parameters.path,2,0))
-	
 	property("done",false)
+	
+	property("isEmpty", {entity.deque.isEmpty()})
 	
 	component(utils.components.genericComponent(id:"releaseBallsHandler", messageId:["releaseBalls"]){ message ->
 		def deque = entity.deque
