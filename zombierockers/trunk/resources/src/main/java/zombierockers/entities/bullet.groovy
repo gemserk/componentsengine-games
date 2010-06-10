@@ -1,6 +1,5 @@
 package zombierockers.entities
 
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
@@ -16,7 +15,7 @@ builder.entity("bullet-${Math.random()}") {
 	property("ball",parameters.ball)
 	property("position", parameters.position);
 	propertyRef("direction", "movement.velocity");
-	property("radius", {entity.ball.radius});
+	property("radius", {entity.ball.finalRadius});
 	
 	component(new SuperMovementComponent("movement")){
 		property("velocity", parameters.direction.scale(parameters.maxVelocity))
@@ -29,7 +28,6 @@ builder.entity("bullet-${Math.random()}") {
 		property("color",{entity.ball.color})
 		propertyRef("position", "position")
 		property("direction", utils.vector(0,-1))
-		property("size", utils.vector(1f, 1f))
 	}
 	
 	component(new GenericHitComponent("bullethitComponent")){

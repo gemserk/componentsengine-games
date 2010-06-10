@@ -1,5 +1,6 @@
 package zombierockers.entities
 
+
 import com.gemserk.componentsengine.messages.UpdateMessage 
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
@@ -14,8 +15,12 @@ builder.entity("ball-${Math.random()}") {
 	
 	property("color",parameters.color ?: utils.color(0,0,0))
 	property("direction", utils.vector(1,0))
-	property("radius",parameters.radius)
+	property("radius", parameters.radius)
+	property("finalRadius", parameters.finalRadius ?: parameters.radius)
 	property("state",parameters.state)
+	
+	property("fired", parameters.fired)
+	property("isGrownUp", {entity.radius == entity.finalRadius})
 	
 	property("pathTraversal", null)
 	property("newPathTraversal", null)
@@ -24,8 +29,7 @@ builder.entity("ball-${Math.random()}") {
 	
 	property("animation", utils.resources.animation("ballanimation"))
 	
-	// 2 * pi * radius / totalFramesOfTheAnimation
-	property("animationHelper", new AnimationHelper(entity.animation, (float) 2 * Math.PI * parameters.radius / entity.animation.frameCount))
+	property("animationHelper", new AnimationHelper(entity.animation, (float) 2 * Math.PI * entity.finalRadius / entity.animation.frameCount))
 	
 	property("direction", {entity.pathTraversal.tangent})
 	
@@ -34,8 +38,19 @@ builder.entity("ball-${Math.random()}") {
 		propertyRef("color", "color")
 		propertyRef("position", "position")
 		property("direction", {entity.direction.copy().add(-90)})
-		property("size", utils.vector(1f, 1f))
+		property("size", {
+			def size = (float)entity.radius/entity.finalRadius
+			return utils.vector(size, size)
+		})
 	}
+	
+//	component(new DisablerComponent(new IncrementValueComponent("incrementRadiusComponent"))) {
+//		property("enabled", {!entity.isGrownUp})
+//		propertyRef("maxValue", "finalRadius")
+//		propertyRef("value", "radius")
+//		property("loop", false)
+//		property("increment", (float) 0.016f * 4f)
+//	}
 	
 	component(utils.custom.components.closureComponent("updatePositionHandler"){ UpdateMessage message ->
 		def newPathTraversal = entity.newPathTraversal
@@ -53,7 +68,7 @@ builder.entity("ball-${Math.random()}") {
 	component(utils.components.genericComponent(id:"explosionsWhenRemoveBallsHandler", messageId:["explodeBall"]){ message ->
 		def ball = entity
 		if(!message.balls.contains(ball))
-		return
+			return
 		
 		log.info("Exploding ball - ball.id: $ball.id - ball.color: $ball.color")
 		

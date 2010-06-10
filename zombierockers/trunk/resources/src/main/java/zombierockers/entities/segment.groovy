@@ -79,11 +79,14 @@ builder.entity("segment-${Math.random()}") {
 		
 		def ball = message.ball
 		
+		if (insertionPoint >= entity.balls.size)
+			insertionPoint = entity.balls.size
+		
 		entity.balls.add(insertionPoint, ball)
 		ball.pathTraversal = getPathTraversal(entity, insertionPoint)
 		
-		if(insertionPoint > 0)
-			entity.pathTraversal = entity.pathTraversal.add((float)ball.radius * 2)
+		//		if(insertionPoint > 0)
+		//			entity.pathTraversal = entity.pathTraversal.add((float)ball.radius * 2)
 		
 		if (insertionPoint == entity.balls.size()-1) 
 			ball.pathTraversal = entity.pathTraversal
@@ -91,6 +94,33 @@ builder.entity("segment-${Math.random()}") {
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
 		
 		log.info("Added ball to segment - segment.id: $message.segment.id -  ball: $ball.id - $ball.color - index: $insertionPoint")
+	})
+	
+	component(utils.custom.components.closureComponent("incrementRadiusBallQueued"){ UpdateMessage message ->
+		
+		entity.balls.each { ball ->
+			if (!ball.isGrownUp) {
+				
+				def ballGrowSpeed = 0.016f * 6f
+				def grow = ballGrowSpeed * message.delta
+				
+				ball.radius = (float) ball.radius + grow
+				def diff = ball.radius - ball.finalRadius
+				if (diff > 0) {
+					grow -= diff
+					ball.radius = ball.finalRadius
+					
+					utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
+						newMessage.ball = ball
+					})
+				}
+				
+				if (ball != entity.firstBall)
+					entity.pathTraversal = entity.pathTraversal.add((float)grow * 2)
+			}
+		}
+		
+		
 	})
 	
 	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
@@ -159,19 +189,15 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.index = ballIndex
 		})
 		
-		messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
-			newMessage.segment = entity
-			newMessage.ball = ball
-		})
 		entity.parent.ballsQuantity++
 		
 	})
 	
 	component(utils.components.genericComponent(id:"checkBallSeriesHandler", messageId:["checkBallSeries"]){ message ->
-		if(message.segment != entity)
+		def ballFromMessage = message.ball
+		if (!entity.balls.contains(ballFromMessage))
 			return
 		
-		def ballFromMessage = message.ball
 		def index = entity.balls.indexOf(ballFromMessage)
 		
 		log.info("Checking ball series - segment.id: $entity.id - ball.id: $ballFromMessage.id - ballIndex: $index")
@@ -232,10 +258,26 @@ builder.entity("segment-${Math.random()}") {
 	})
 	
 	component(utils.components.genericComponent(id:"splitSegmentHandler", messageId:["seriesDetected"]){ message ->
-		if(message.segment != entity)
-			return
+		//		if(message.segment != entity)
+		//			return
 		def balls = entity.balls
 		def ballsToRemove = message.ballsToRemove
+		
+		def ballsInside = ballsToRemove.findAll { balls.contains(it) }
+		
+		if (ballsInside.isEmpty())
+			return
+		
+		if (ballsInside.size != ballsToRemove.size) {
+			
+			log.info("Splitting segment when removeBalls cancelled because ballsToRemove not in segment - segment.id: $entity.id - ballsToRemove: ${ballsToRemove.size()} - ballsOutside.ids: ${ballsToRemove.findAll({ !balls.contains(it)})*.id }")
+
+			messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
+				newMessage.ball = ballsInside[0]
+			})
+			
+			return
+		}
 		
 		def firstIndex = balls.indexOf(ballsToRemove[0])
 		def lastIndex = balls.indexOf(ballsToRemove[-1])
@@ -311,7 +353,6 @@ builder.entity("segment-${Math.random()}") {
 		})
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage ->
-			newMessage.segment = entity
 			newMessage.ball = ballToCheck
 			newMessage.mustContainBall = mustContainBall
 		})

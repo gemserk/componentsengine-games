@@ -45,9 +45,11 @@ builder.entity("cannon") {
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				radius:16.0f,
+				radius:0.1f,
+				finalRadius:16.0f,
 				color:data.color,
-				state:"inWorld"
+				state:"inWorld",
+				fired:true
 				]
 			}))
 	
