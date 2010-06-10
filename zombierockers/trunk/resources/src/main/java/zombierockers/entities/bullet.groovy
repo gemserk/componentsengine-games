@@ -5,6 +5,8 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 
 
@@ -32,7 +34,7 @@ builder.entity("bullet-${Math.random()}") {
 	
 	component(new GenericHitComponent("bullethitComponent")){
 		property("targetTag", "ball")
-		property("predicate",{EntityPredicates.isNear(entity.position, (float)entity.radius+1)})
+		property("predicate",{Predicates.and(EntityPredicates.isNear(entity.position, (float)entity.radius+1),{ball -> ball.alive} as Predicate)})
 		property("trigger", utils.custom.triggers.genericMessage("bulletHit") { 
 			def source = message.source
 			def target = message.targets[0]

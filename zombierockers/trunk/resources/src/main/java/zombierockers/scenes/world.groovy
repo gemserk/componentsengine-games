@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 
+import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
@@ -207,6 +208,7 @@ builder.entity {
 		keyboard {
 			press(button:"s",eventId:"spawn")
 			press(button:"d",eventId:"dumpDebug")
+			press(button:"t",eventId:"concurrentHit")
 		}
 	}
 	
@@ -287,4 +289,56 @@ builder.entity {
 	//		})
 	//		
 	//	})
+	
+//	component(utils.components.genericComponent(id:"concurrentHitHandler", messageId:["concurrentHit"]){ message ->
+//		def template = new InstantiationTemplateImpl(
+//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
+//		utils.custom.genericprovider.provide{ data ->
+//			[
+//			radius:0.0f,
+//			color:data.color,
+//			state:"inWorld",
+//			finalRadius:16.0f
+//			]
+//		})
+//		
+//		def segment = entity.root.getEntities(EntityPredicates.withAllTags("segment"))[0]
+//		
+//		                                                                               
+//		def serieses = []
+//		segment.balls.each({ball -> 
+//			def balls = segment.balls
+//			def forwardIterator = balls.listIterator(balls.indexOf(ball))
+//			def newBall = forwardIterator.next()
+//			def ballsToRemove = [newBall]
+//			
+//			while(forwardIterator.hasNext()){
+//				def ballToCheck = forwardIterator.next()
+//				if(ballToCheck.color != newBall.color)
+//					break;
+//				
+//				ballsToRemove << ballToCheck			
+//			}
+//			
+//			if(ballsToRemove.size > 2)
+//				serieses << ball
+//		})  
+//		
+//		if(serieses.isEmpty()){
+//			log.info("CONCURRENTHITCHECK CANT FIND SERIES")
+//			return
+//			
+//		}
+//		def firstHitBall = serieses[-1]
+//		                                                                               
+//		                                                                               
+//		//def ball = template.get([color:lastBall.color])
+//		def ball = template.get([color:firstHitBall.color])
+//		
+//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
+//			newMessage.source = [ball:ball,position:firstHitBall.pathTraversal.add(10f).position]
+//			newMessage.targets = [firstHitBall]
+//		})
+//		
+//	})
 }

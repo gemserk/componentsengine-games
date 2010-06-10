@@ -91,6 +91,8 @@ builder.entity("segment-${Math.random()}") {
 		if (insertionPoint == entity.balls.size()-1) 
 			ball.pathTraversal = entity.pathTraversal
 		
+			
+		ball.segment = entity
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
 		
 		log.info("Added ball to segment - segment.id: $message.segment.id -  ball: $ball.id - $ball.color - index: $insertionPoint")
@@ -166,10 +168,16 @@ builder.entity("segment-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"bulletHitHandler", messageId:["bulletHit"]){ message ->
 		def collisionBall = message.targets[0]
+		if(collisionBall.segment != entity)
+			return
+		
 		def ballIndex = entity.balls.indexOf(collisionBall)
 		
-		if(ballIndex == -1)
-			return
+		if(ballIndex == -1){
+			def textMessage = "Collision ball had wrong segment setted -  ball.id: $collisionBall.id - ball.segment.id: $entity.id"
+			log.error(textMessage)
+			throw new RuntimeException(textMessage)
+		}
 		
 		def ball = message.source.ball
 		
@@ -200,14 +208,20 @@ builder.entity("segment-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"checkBallSeriesHandler", messageId:["checkBallSeries"]){ message ->
 		def ballFromMessage = message.ball
-		if (!entity.balls.contains(ballFromMessage))
+		if(!ballFromMessage.alive)
 			return
+		if (ballFromMessage.segment != entity)
+			return
+		
 		
 		def index = entity.balls.indexOf(ballFromMessage)
 		
 		log.info("Checking ball series - segment.id: $entity.id - ball.id: $ballFromMessage.id - ballIndex: $index")
-		if(index == -1)
-			return
+		if(index == -1){
+			def textMessage = "CheckBallSeries -  ball had wrong segment setted -  ball.id: $ballFromMessage.id - ball.segment.id: $entity.id"
+			log.error(textMessage)
+			throw new RuntimeException(textMessage)
+		}
 		
 		def forwardIterator = entity.balls.listIterator(index)
 		def newBall = forwardIterator.next()
@@ -322,6 +336,7 @@ builder.entity("segment-${Math.random()}") {
 				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f,pathLength:entity.pathLength]
 				def segment = entity.segmentTemplate.get(newParameters)
 				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
+				secondSegmentBalls.each { ball -> ball.segment = segment}
 				log.info("Splitted in two segments - segment.id: $entity.id - newSegment.id: $segment.id")
 			} else {
 				log.info("Second subsegment is empty - segment: $entity.id")
@@ -349,8 +364,8 @@ builder.entity("segment-${Math.random()}") {
 		def mustContainBall = entity.lastBall
 		
 		entity.balls.addAll(slaveSegment.balls)
+		slaveSegment.balls.each { ball -> ball.segment = entity}
 		slaveSegment.balls.clear()
-		
 		messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
 			newMessage.segment = slaveSegment 					
 		})
