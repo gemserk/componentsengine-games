@@ -55,7 +55,7 @@ builder.entity("segment-${Math.random()}") {
 		if (entity.balls.size() < 2) {
 			entity.balls.each { ball ->
 				log.info("Removed last ball - segment.id: $entity.id - ball.id: $ball.id")
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
+				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.removeEntity(ball))
 			}
 			messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
 				newMessage.segment = entity 					
@@ -68,7 +68,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.pathTraversal = getPathTraversal(entity,entity.balls.size()-2)
 		log.info("Removed last ball - segment.id: $entity.id - ball.id: $lastBall.id")
 		entity.balls.remove(lastBall)
-		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBall))
+		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.removeEntity(lastBall))
 	})
 	
 	component(utils.components.genericComponent(id:"addNewBallHandler", messageId:["addNewBall"]){ message ->
@@ -91,13 +91,13 @@ builder.entity("segment-${Math.random()}") {
 		if (insertionPoint == entity.balls.size()-1) 
 			ball.pathTraversal = entity.pathTraversal
 		
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
+		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
 		
 		log.info("Added ball to segment - segment.id: $message.segment.id -  ball: $ball.id - $ball.color - index: $insertionPoint")
 	})
 	
 	component(utils.custom.components.closureComponent("incrementRadiusBallQueued"){ UpdateMessage message ->
-		
+		def delayedCheckBallSeries = []
 		entity.balls.each { ball ->
 			if (!ball.isGrownUp) {
 				
@@ -110,14 +110,19 @@ builder.entity("segment-${Math.random()}") {
 					grow -= diff
 					ball.radius = ball.finalRadius
 					
-					utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
-						newMessage.ball = ball
-					})
+					delayedCheckBallSeries << ball
+					
 				}
 				
 				if (ball != entity.firstBall)
 					entity.pathTraversal = entity.pathTraversal.add((float)grow * 2)
 			}
+		}
+		
+		delayedCheckBallSeries.each { ball -> 
+			utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
+				newMessage.ball = ball
+			})
 		}
 		
 		
@@ -302,7 +307,6 @@ builder.entity("segment-${Math.random()}") {
 		if(firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()){
 			log.info("Both subsegments are empty, removing balls - segment.id: $entity.id")
 			entity.balls.clear()
-			// messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 			messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
 				newMessage.segment = entity 					
 			})
@@ -317,7 +321,7 @@ builder.entity("segment-${Math.random()}") {
 			if(!secondSegmentBalls.isEmpty()){
 				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f,pathLength:entity.pathLength]
 				def segment = entity.segmentTemplate.get(newParameters)
-				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
+				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
 				log.info("Splitted in two segments - segment.id: $entity.id - newSegment.id: $segment.id")
 			} else {
 				log.info("Second subsegment is empty - segment: $entity.id")
@@ -328,7 +332,7 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.balls=ballsToRemove
 		})
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){
+		utils.custom.messageQueue.enqueueDelay(utils.genericMessage("checkSameColorSegments"){
 		})
 	})
 	
@@ -347,7 +351,6 @@ builder.entity("segment-${Math.random()}") {
 		entity.balls.addAll(slaveSegment.balls)
 		slaveSegment.balls.clear()
 		
-		//messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(slaveSegment))
 		messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
 			newMessage.segment = slaveSegment 					
 		})

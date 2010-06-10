@@ -26,7 +26,7 @@ builder.entity("game") {
 	}
 	
 	child(entity("playing"){ 
-		parent("gemserk.states.stateBasedNode",[enabled:false,exclusions:[SlickRenderMessage.class]])
+		parent("gemserk.states.stateBasedNode",[enabled:true,exclusions:[SlickRenderMessage.class]])
 		parent("zombierockers.scenes.playing") 
 	})
 	
@@ -49,5 +49,5 @@ builder.entity("game") {
 		println JSONArray.fromObject(new EntityDumper().dumpEntity(entity.root)).toString(4)
 	} ) 
 	
-	utils.custom.messageQueue.enqueue(utils.genericMessage("resume"){})	
+	//utils.custom.messageQueue.enqueue(utils.genericMessage("resume"){})	
 }
