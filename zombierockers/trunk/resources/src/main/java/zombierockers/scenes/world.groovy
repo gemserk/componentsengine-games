@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 
-import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
@@ -45,23 +44,16 @@ builder.entity {
 		propertyRef("bounds", "bounds");
 	}
 	
+	def level = [ballsQuantity:60, ballDefinitions:[
+			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
+			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
+			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
+			]]
+	
 	def offset = 0f
 	
-	//	Diagram diagram = InkscapeLoader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/Level1.svg"),false);
-	//	Figure figure = diagram.getFigure(0);
-	//	Shape shape = figure.getShape();
-	//	float[] points = shape.getPoints();
-	//	def pointsInPath = [utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200)]
-	//	def loadedPoints = []
-	//	for(int i=0;i<points.size();i+=2){
-	//		loadedPoints << utils.vector(points[i],points[i+1])
-	//	}
-	//	
-	//	pointsInPath.addAll(loadedPoints.reverse())
-	
-	
-	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource("levels/Level1.svg").toURI());
-	SVGElement element = diagram.getElement("path3602");
+	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource("levels/level01.svg").toURI());
+	SVGElement element = diagram.getElement("path");
 	List vector = element.getPath(null);
 	com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
 	Shape shape = pathSVG.getShape();
@@ -102,14 +94,15 @@ builder.entity {
 	
 	child(id:"spawner", template:"zombierockers.entities.spawner") { 
 		path = entity.path
-		ballsQuantity = 60
+		ballsQuantity = level.ballsQuantity
+		ballDefinitions = level.ballDefinitions
 	}
 	
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
 	
 	child(id:"cannon", template:"zombierockers.entities.cannon") {
 		bounds=utils.rectangle((float)20+offset,20,(float)760-offset,560)
-		levelBallTypes = [utils.color(1,0,0,1), utils.color(0,1,0,1), utils.color(0,0,1,1)]
+		ballDefinitions = level.ballDefinitions
 	}
 	
 	child(entity("segmentsManager") {
@@ -290,55 +283,55 @@ builder.entity {
 	//		
 	//	})
 	
-//	component(utils.components.genericComponent(id:"concurrentHitHandler", messageId:["concurrentHit"]){ message ->
-//		def template = new InstantiationTemplateImpl(
-//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
-//		utils.custom.genericprovider.provide{ data ->
-//			[
-//			radius:0.0f,
-//			color:data.color,
-//			state:"inWorld",
-//			finalRadius:16.0f
-//			]
-//		})
-//		
-//		def segment = entity.root.getEntities(EntityPredicates.withAllTags("segment"))[0]
-//		
-//		                                                                               
-//		def serieses = []
-//		segment.balls.each({ball -> 
-//			def balls = segment.balls
-//			def forwardIterator = balls.listIterator(balls.indexOf(ball))
-//			def newBall = forwardIterator.next()
-//			def ballsToRemove = [newBall]
-//			
-//			while(forwardIterator.hasNext()){
-//				def ballToCheck = forwardIterator.next()
-//				if(ballToCheck.color != newBall.color)
-//					break;
-//				
-//				ballsToRemove << ballToCheck			
-//			}
-//			
-//			if(ballsToRemove.size > 2)
-//				serieses << ball
-//		})  
-//		
-//		if(serieses.isEmpty()){
-//			log.info("CONCURRENTHITCHECK CANT FIND SERIES")
-//			return
-//			
-//		}
-//		def firstHitBall = serieses[-1]
-//		                                                                               
-//		                                                                               
-//		//def ball = template.get([color:lastBall.color])
-//		def ball = template.get([color:firstHitBall.color])
-//		
-//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
-//			newMessage.source = [ball:ball,position:firstHitBall.pathTraversal.add(10f).position]
-//			newMessage.targets = [firstHitBall]
-//		})
-//		
-//	})
+	//	component(utils.components.genericComponent(id:"concurrentHitHandler", messageId:["concurrentHit"]){ message ->
+	//		def template = new InstantiationTemplateImpl(
+	//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
+	//		utils.custom.genericprovider.provide{ data ->
+	//			[
+	//			radius:0.0f,
+	//			color:data.color,
+	//			state:"inWorld",
+	//			finalRadius:16.0f
+	//			]
+	//		})
+	//		
+	//		def segment = entity.root.getEntities(EntityPredicates.withAllTags("segment"))[0]
+	//		
+	//		                                                                               
+	//		def serieses = []
+	//		segment.balls.each({ball -> 
+	//			def balls = segment.balls
+	//			def forwardIterator = balls.listIterator(balls.indexOf(ball))
+	//			def newBall = forwardIterator.next()
+	//			def ballsToRemove = [newBall]
+	//			
+	//			while(forwardIterator.hasNext()){
+	//				def ballToCheck = forwardIterator.next()
+	//				if(ballToCheck.color != newBall.color)
+	//					break;
+	//				
+	//				ballsToRemove << ballToCheck			
+	//			}
+	//			
+	//			if(ballsToRemove.size > 2)
+	//				serieses << ball
+	//		})  
+	//		
+	//		if(serieses.isEmpty()){
+	//			log.info("CONCURRENTHITCHECK CANT FIND SERIES")
+	//			return
+	//			
+	//		}
+	//		def firstHitBall = serieses[-1]
+	//		                                                                               
+	//		                                                                               
+	//		//def ball = template.get([color:lastBall.color])
+	//		def ball = template.get([color:firstHitBall.color])
+	//		
+	//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
+	//			newMessage.source = [ball:ball,position:firstHitBall.pathTraversal.add(10f).position]
+	//			newMessage.targets = [firstHitBall]
+	//		})
+	//		
+	//	})
 }

@@ -1,7 +1,5 @@
 
 package zombierockers.entities
-import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
-import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
 
 import com.gemserk.componentsengine.messages.UpdateMessage 
@@ -14,9 +12,14 @@ import com.gemserk.games.zombierockers.AnimationHelper;
 
 builder.entity("ball-${Math.random()}") {
 	
+	// todo: remove color, use type instead
+
 	tags("ball", "nofriction")
 	
-	property("color",parameters.color ?: utils.color(0,0,0))
+	property("type", parameters.definition.type)
+	property("color", parameters.definition.color)
+	property("animation", utils.resources.animation(parameters.definition.animation))
+	
 	property("direction", utils.vector(1,0))
 	property("radius", parameters.radius)
 	property("finalRadius", parameters.finalRadius ?: parameters.radius)
@@ -30,7 +33,7 @@ builder.entity("ball-${Math.random()}") {
 	
 	property("position", {entity.pathTraversal.position})
 	
-	property("animation", utils.resources.animation("ballanimation"))
+	// property("animation", utils.resources.animation("ballanimation"))
 	
 	property("animationHelper", new AnimationHelper(entity.animation, (float) 2 * Math.PI * entity.finalRadius / entity.animation.frameCount))
 	
@@ -38,11 +41,9 @@ builder.entity("ball-${Math.random()}") {
 	property("alive",true)
 	property("segment",null)
 	
-	
-	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", {entity.animation.currentFrame})
-		propertyRef("color", "color")
+		 propertyRef("color", "color")
 		propertyRef("position", "position")
 		property("direction", {entity.direction.copy().add(-90)})
 		property("size", {
@@ -50,22 +51,6 @@ builder.entity("ball-${Math.random()}") {
 			return utils.vector(size, size)
 		})
 	}
-	
-//	component(new DisablerComponent(new CircleRenderableComponent("circlerenderer"))) {
-//		property("enabled",{!entity.segment.balls.contains(entity)})
-//		propertyRef("position", "position")
-//		propertyRef("radius", "radius")
-//		property("lineColor", utils.color(0,0,0,1))
-//		property("fillColor", utils.color(0,0,0,1))
-//	}
-	
-//	component(new DisablerComponent(new IncrementValueComponent("incrementRadiusComponent"))) {
-//		property("enabled", {!entity.isGrownUp})
-//		propertyRef("maxValue", "finalRadius")
-//		propertyRef("value", "radius")
-//		property("loop", false)
-//		property("increment", (float) 0.016f * 4f)
-//	}
 	
 	component(utils.custom.components.closureComponent("updatePositionHandler"){ UpdateMessage message ->
 		def newPathTraversal = entity.newPathTraversal

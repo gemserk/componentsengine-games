@@ -37,7 +37,9 @@ builder.entity("cannon") {
 	property("currentBall",{entity.balls[(entity.currentBallIndex)]})
 	property("nextBall",{entity.balls[((entity.currentBallIndex+1) % 2)]})
 	
-	property("levelBallTypes", parameters.levelBallTypes)
+	property("ballDefinitions", parameters.ballDefinitions)
+
+	// property("levelBallTypes", parameters.levelBallTypes)
 	
 	property("fireRate", 300)
 	
@@ -47,7 +49,7 @@ builder.entity("cannon") {
 				[
 				radius:0.1f,
 				finalRadius:16.0f,
-				color:data.color,
+				definition:data.ballDefinition,
 				state:"inWorld",
 				fired:true
 				]
@@ -122,7 +124,7 @@ builder.entity("cannon") {
 	}
 	def generateBallHandlerMethod = {entity ->
 		// maybe it should be obtained from a LevelProperties or something like that, shared with spawner, etc.
-		def levelBallTypes = entity.levelBallTypes
+		def ballDefinitions = entity.ballDefinitions
 		
 		def availableBallTypes = []
 		
@@ -134,19 +136,22 @@ builder.entity("cannon") {
 			def segments =  entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), { segment -> !segment.isEmpty} as Predicate))
 			segments.each { segment ->
 				segment.balls.each { ball ->
-					if (!availableBallTypes.contains(ball.color))
-						availableBallTypes << ball.color
+					if (!availableBallTypes.contains(ball.type))
+						availableBallTypes << ball.type
 				}
 			}
 		}
 		
 		if (availableBallTypes.isEmpty()) 
-			availableBallTypes = levelBallTypes
+			availableBallTypes = ballDefinitions.collect { it.key }
 		
 		log.info("Colors available to generate - ballTypes: $availableBallTypes")
 		
-		def color = getRandomItem(availableBallTypes)
-		def ball = entity.ballTemplate.get([color:color])
+		def ballType = getRandomItem(availableBallTypes)
+		
+		def ballDefinition = ballDefinitions[ballType]
+		
+		def ball = entity.ballTemplate.get([ballDefinition:ballDefinition])
 		entity.balls[(entity.currentBallIndex)]=ball
 		entity.currentBallIndex = (entity.currentBallIndex + 1) % 2
 	}

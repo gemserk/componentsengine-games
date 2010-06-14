@@ -9,7 +9,6 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.state.StateBasedGame;
@@ -80,12 +79,13 @@ public class Game extends StateBasedGame {
 
 	/**
 	 * Temporal method to load an animation specifying total frames from a spritesheet.
+	 * 
 	 * @return
 	 */
 	private Animation createAnimation(final SpriteSheet spriteSheet, int totalFrames, boolean autoUpdate) {
 		Animation animation = new Animation();
 		animation.setAutoUpdate(autoUpdate);
-		
+
 		int horizontalCant = spriteSheet.getHorizontalCount();
 		int verticalCant = spriteSheet.getVerticalCount();
 
@@ -99,7 +99,7 @@ public class Game extends StateBasedGame {
 
 		return animation;
 	}
-	
+
 	class GameGameState extends GemserkGameState {
 
 		@Override
@@ -107,20 +107,11 @@ public class Game extends StateBasedGame {
 			super.onInit();
 			images(injector, "assets/images.properties");
 
-			try {
-				AnimationManager animationManager = injector.getInstance(AnimationManager.class);
-				final SpriteSheet ballSpriteSheet = new SpriteSheet(new Image("assets/images/ball_animation.png"), 32, 32);
-				animationManager.addAnimation("ballanimation", new AnimationInstantiator() {
-					@Override
-					public Animation instantiate() {
-						// should be specified in the animations.properties (TODO)
-						return createAnimation(ballSpriteSheet, 128, false);
-					}
-
-				});
-			} catch (SlickException e) {
-				throw new RuntimeException("failed to load animation", e);
-			}
+			AnimationManager animationManager = injector.getInstance(AnimationManager.class);
+//			addAnimation("assets/images/ball_animation_red.png", "ballanimation_red", animationManager);
+//			addAnimation("assets/images/ball_animation_blue.png", "ballanimation_blue", animationManager);
+//			addAnimation("assets/images/ball_animation_green.png", "ballanimation_green", animationManager);
+			addAnimation("assets/images/ball_animation.png", "ballanimation_white", animationManager);
 
 			injector.getInstance(BuilderUtils.class).addCustomUtil("components", new Object() {
 				public Component closureComponent(String id, Closure closure) {
@@ -128,6 +119,24 @@ public class Game extends StateBasedGame {
 				}
 			});
 
+		}
+
+		// temporal method to load different ball animations 
+		private void addAnimation(String animationFile, String animationKey, AnimationManager animationManager) {
+			try {
+				
+				final SpriteSheet ballSpriteSheet = new SpriteSheet(animationFile, 32, 32);
+				animationManager.addAnimation(animationKey, new AnimationInstantiator() {
+					@Override
+					public Animation instantiate() {
+						// should be specified in the animations.properties (TODO)
+						return createAnimation(ballSpriteSheet, 128, false);
+					}
+				});
+
+			} catch (SlickException e) {
+				throw new RuntimeException("failed to load animation", e);
+			}
 		}
 
 		public GameGameState(int id) {

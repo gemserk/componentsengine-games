@@ -11,6 +11,7 @@ builder.entity("spawner-${Math.random()}") {
 		return  items[random.nextInt(items.size())]
 	}
 	
+	property("ballDefinitions", parameters.ballDefinitions)
 	property("spawnQuantity", parameters.ballsQuantity)
 	property("fired", false)
 	
@@ -20,7 +21,7 @@ builder.entity("spawner-${Math.random()}") {
 				[
 				direction:utils.vector(0,1),
 				radius:16.0f,
-				color:data.color
+				definition:data.ballDefinition
 				]
 			}))
 	
@@ -45,14 +46,14 @@ builder.entity("spawner-${Math.random()}") {
 		
 		def template = entity.ballTemplate
 		
-		def colors = [utils.color(1,0,0,1), utils.color(0,1,0,1), utils.color(0,0,1,1)]
+		def ballDefinitions = entity.ballDefinitions
 		
 		def balls = []
 		
 		entity.spawnQuantity.times {
-			def color = getRandomItem(colors)
+			def ballDefinition = getRandomItem(ballDefinitions)
 			
-			def parameters = [color:color]
+			def parameters = [ballDefinition:ballDefinition]
 			def ball = template.get(parameters)
 			balls << ball
 		}

@@ -229,7 +229,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		while(forwardIterator.hasNext()){
 			def ballToCheck = forwardIterator.next()
-			if(ballToCheck.color != newBall.color)
+			if(ballToCheck.type != newBall.type)
 				break;
 			
 			ballsToRemove << ballToCheck			
@@ -238,7 +238,7 @@ builder.entity("segment-${Math.random()}") {
 		def backwardsIterator = entity.balls.listIterator(index)
 		while(backwardsIterator.hasPrevious()){
 			def ballToCheck = backwardsIterator.previous()
-			if(ballToCheck.state == "spawned" || ballToCheck.color != newBall.color)
+			if(ballToCheck.state == "spawned" || ballToCheck.type != newBall.type)
 				break;
 			
 			ballsToRemove.add(0,ballToCheck)			
