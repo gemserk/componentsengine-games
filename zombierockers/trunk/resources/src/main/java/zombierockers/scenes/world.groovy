@@ -52,7 +52,7 @@ builder.entity {
 	
 	def offset = 0f
 	
-	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource("levels/level01.svg").toURI());
+	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource("levels/level01/path.svg").toURI());
 	SVGElement element = diagram.getElement("path");
 	List vector = element.getPath(null);
 	com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
