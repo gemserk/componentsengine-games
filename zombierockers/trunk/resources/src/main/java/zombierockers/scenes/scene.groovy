@@ -40,7 +40,15 @@ builder.entity("game") {
 			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
 			]]			
 	
-	def levels = [level01, level02, level03]
+	def level04 = [background:"level04", path:"levels/level04/path.svg",ballsQuantity:100, 
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
+			ballDefinitions:[
+			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
+			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
+			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
+			]]		
+			
+	def levels = [level01, level02, level03, level04]
 	
 	def currentLevel = levels[entity.currentLevelIndex]
 	
