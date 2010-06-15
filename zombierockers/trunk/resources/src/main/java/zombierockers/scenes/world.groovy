@@ -3,9 +3,6 @@ import java.awt.Shape
 import java.awt.geom.PathIterator;
 import java.util.List;
 
-
-
-
 import com.google.common.base.Predicate;
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
@@ -32,27 +29,36 @@ builder.entity {
 	property("ballsQuantity",0)
 	property("baseReached",false)
 	
-	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image("background"))
-		property("color", utils.color(1,1,1,1))
-		property("position", utils.vector(400,300))
-		property("direction", utils.vector(1,0))
-	}
-	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
 		property("tags", ["bullet"] as String[] );
 		propertyRef("bounds", "bounds");
 	}
 	
-	def level = [ballsQuantity:60, ballDefinitions:[
+	def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:60, ballDefinitions:[
 			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
 			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
 			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
 			]]
 	
+	def level02 = [background:"level02", path:"levels/level02/path.svg",ballsQuantity:80, ballDefinitions:[
+			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
+			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
+			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
+			]]	
+	
+	def level03 = [background:"level03", path:"levels/level03/path.svg",ballsQuantity:100, ballDefinitions:[
+			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
+			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
+			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
+			]]			
+	
+	def levels = [level01, level02, level03]
+	
+	def level = level01
+	
 	def offset = 0f
 	
-	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource("levels/level01/path.svg").toURI());
+	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource(level.path).toURI());
 	SVGElement element = diagram.getElement("path");
 	List vector = element.getPath(null);
 	com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
@@ -71,6 +77,13 @@ builder.entity {
 	
 	//property("path",new Path([utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
 	property("path",new Path(pointsInPath))	
+	
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image(level.background))
+		property("color", utils.color(1,1,1,1))
+		property("position", utils.vector(400,300))
+		property("direction", utils.vector(1,0))
+	}
 	
 	child(entity("path"){
 		
