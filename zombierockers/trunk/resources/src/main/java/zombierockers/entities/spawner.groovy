@@ -15,6 +15,8 @@ builder.entity("spawner-${Math.random()}") {
 	property("spawnQuantity", parameters.ballsQuantity)
 	property("fired", false)
 	
+	property("pathProperties", parameters.pathProperties)
+	
 	property("ballTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
 			utils.custom.genericprovider.provide{ data ->
@@ -30,9 +32,12 @@ builder.entity("spawner-${Math.random()}") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				pathTraversal:data.pathTraversal,
+				acceleratedSpeed:data.acceleratedSpeed,
+				accelerationStopPoint:data.accelerationStopPoint,
+				minSpeedFactor:data.minSpeedFactor,
+				maxSpeed:data.maxSpeed,
+				speedWhenReachBase:data.speedWhenReachBase,
 				speed:0.04f,
-				acceleratedSpeed:0.5f,
-				accelerationStopPoint:1000f,
 				accelerated:true,
 				pathLength:data.pathLength
 				]
@@ -64,7 +69,9 @@ builder.entity("spawner-${Math.random()}") {
 		def pathLength = new PathTraversal(path,path.points.size-1).distanceFromOrigin
 		println pathLength
 		
-		def segment = entity.segmentTemplate.get([pathTraversal:pathTraversal, pathLength:pathLength])
+		def properties = [pathTraversal:pathTraversal, pathLength:pathLength]
+		properties.putAll(entity.pathProperties)
+		def segment = entity.segmentTemplate.get(properties)
 		
 		messageQueue.enqueue(utils.genericMessage("spawnedSegment"){ newMessage ->
 			newMessage.balls = balls

@@ -45,16 +45,13 @@ builder.entity {
 		property("message", "Press \"r\" to restart")
 	})
 	
-	
-	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
 		messageQueue.enqueue(utils.genericMessage("resume"){})	
 	})
 	
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
-		utils.custom.game.loadScene("zombierockers.scenes.scene");
+		messageQueue.enqueue(utils.genericMessage("restartLevel"){})
 	})
-	
 	
 	input("inputmapping"){
 		keyboard {

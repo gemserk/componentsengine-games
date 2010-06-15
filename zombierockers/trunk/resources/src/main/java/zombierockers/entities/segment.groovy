@@ -16,6 +16,10 @@ builder.entity("segment-${Math.random()}") {
 	property("lastBall", {entity.balls[-1] })
 	property("isEmpty", {entity.balls.isEmpty() })
 	
+	property("minSpeedFactor", parameters.minSpeedFactor ?: 0.2f)
+	property("maxSpeed", parameters.maxSpeed ?: 0.04f)
+	property("speedWhenReachBase", parameters.speedWhenReachBase ?: 0.4f)
+	
 	property("acceleratedSpeed", parameters.acceleratedSpeed ?: 0.08f)
 	property("accelerated", parameters.accelerated ?: false)
 	property("accelerationStopPoint", parameters.accelerationStopPoint)
@@ -29,6 +33,9 @@ builder.entity("segment-${Math.random()}") {
 				pathTraversal:data.pathTraversal,
 				balls:data.balls,
 				speed:data.speed,
+				minSpeedFactor:data.minSpeedFactor,
+				maxSpeed:data.maxSpeed,
+				speedWhenReachBase:data.speedWhenReachBase,
 				pathLength:data.pathLength
 				]
 			}))
@@ -136,11 +143,11 @@ builder.entity("segment-${Math.random()}") {
 		if (entity.accelerated)
 			speed = entity.acceleratedSpeed
 		else if(entity.baseReached){
-			speed = 0.4f
+			speed = entity.speedWhenReachBase
 		}
 		else if(speed > 0){
-			def minSpeedFactor = 0.2f
-			def maxSpeed = 0.04f
+			def minSpeedFactor = entity.minSpeedFactor
+			def maxSpeed = entity.maxSpeed
 			def minSpeed = maxSpeed*minSpeedFactor
 			speed = (float) minSpeed + maxSpeed * (1-minSpeedFactor) *(1-(entity.pathTraversal.distanceFromOrigin/entity.pathLength))
 		}	
@@ -333,7 +340,9 @@ builder.entity("segment-${Math.random()}") {
 			entity.balls = firstSegmentBalls
 			
 			if(!secondSegmentBalls.isEmpty()){
-				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f,pathLength:entity.pathLength]
+				def newParameters = [pathTraversal:originalPathTraversal,balls:secondSegmentBalls,speed:0.0f,pathLength:entity.pathLength, 
+				                     minSpeedFactor:entity.minSpeedFactor, maxSpeed:entity.maxSpeed, speedWhenReachBase:entity.speedWhenReachBase]
+				                     
 				def segment = entity.segmentTemplate.get(newParameters)
 				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
 				secondSegmentBalls.each { ball -> ball.segment = segment}

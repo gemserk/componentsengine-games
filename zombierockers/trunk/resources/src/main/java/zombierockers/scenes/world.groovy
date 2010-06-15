@@ -25,40 +25,22 @@ import com.kitfox.svg.SVGElement;
 
 builder.entity {
 	
+	def gameProperties = utils.custom.gameStateManager.gameProperties
+	
 	property("bounds",utils.rectangle(0,0,800,600))
 	property("ballsQuantity",0)
 	property("baseReached",false)
+	
+	property("level", parameters.level)
 	
 	component(new OutOfBoundsRemover("outofboundsremover")) {
 		property("tags", ["bullet"] as String[] );
 		propertyRef("bounds", "bounds");
 	}
 	
-	def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:60, ballDefinitions:[
-			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
-			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
-			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
-			]]
-	
-	def level02 = [background:"level02", path:"levels/level02/path.svg",ballsQuantity:80, ballDefinitions:[
-			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
-			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
-			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
-			]]	
-	
-	def level03 = [background:"level03", path:"levels/level03/path.svg",ballsQuantity:100, ballDefinitions:[
-			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
-			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
-			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
-			]]			
-	
-	def levels = [level01, level02, level03]
-	
-	def level = level01
-	
 	def offset = 0f
 	
-	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource(level.path).toURI());
+	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource(entity.level.path).toURI());
 	SVGElement element = diagram.getElement("path");
 	List vector = element.getPath(null);
 	com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
@@ -74,29 +56,16 @@ builder.entity {
 	}
 	pointsInPath.addAll(loadedPoints)
 	
-	
-	//property("path",new Path([utils.vector((float)-90+offset,200),utils.vector((float)-60+offset,200),utils.vector((float)-30+offset,200),utils.vector(160,200), utils.vector(240,80),utils.vector(260,70),utils.vector(280,80), utils.vector(440,410),utils.vector(460,420),utils.vector(480,410), utils.vector(560,200), utils.vector(760,200)]))	
 	property("path",new Path(pointsInPath))	
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image(level.background))
+		property("image", utils.resources.image(entity.level.background))
 		property("color", utils.color(1,1,1,1))
 		property("position", utils.vector(400,300))
 		property("direction", utils.vector(1,0))
 	}
 	
 	child(entity("path"){
-		
-		//		component(new PathRendererComponent("pathrendererBorders")){
-		//			property("lineColor", utils.color(0.2f, 0.2f, 0.7f, 1.0f))
-		//			property("lineWidth", 5.0f)
-		//			property("path", {entity.parent.path})		
-		//		}
-		//		component(new PathRendererComponent("pathrendererFill")){
-		//			property("lineColor", utils.color(0.5f, 0.5f, 1f, 1.0f))
-		//			property("lineWidth", 30.0f)
-		//			property("path", {entity.parent.path})		
-		//		}
 		
 	})
 	
@@ -107,15 +76,16 @@ builder.entity {
 	
 	child(id:"spawner", template:"zombierockers.entities.spawner") { 
 		path = entity.path
-		ballsQuantity = level.ballsQuantity
-		ballDefinitions = level.ballDefinitions
+		ballsQuantity = entity.level.ballsQuantity
+		ballDefinitions = entity.level.ballDefinitions
+		pathProperties = entity.level.pathProperties
 	}
 	
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
 	
 	child(id:"cannon", template:"zombierockers.entities.cannon") {
 		bounds=utils.rectangle((float)20+offset,20,(float)760-offset,560)
-		ballDefinitions = level.ballDefinitions
+		ballDefinitions = entity.level.ballDefinitions
 	}
 	
 	child(entity("segmentsManager") {
@@ -126,6 +96,8 @@ builder.entity {
 		}
 		
 		component(utils.components.genericComponent(id:"checkSameColorSegmentsHandler", messageId:["checkSameColorSegments"]){ message ->
+			
+			def reverseSpeed = -0.3f
 			
 			def sortedSegments = getSortedSegments(entity)
 			
@@ -143,7 +115,7 @@ builder.entity {
 					log.info("SegmentManager detected color coincidence between segments ends segment1.id: $segment.id - segment2.id - $nextSegment.id - colorCoincidence: $lastBallColor")
 					utils.custom.messageQueue.enqueue(utils.genericMessage("segmentChangeSpeed"){newMessage ->
 						newMessage.segment = nextSegment
-						newMessage.speed = -0.30f
+						newMessage.speed = reverseSpeed
 					})
 				}
 			}

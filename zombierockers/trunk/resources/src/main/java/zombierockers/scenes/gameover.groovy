@@ -8,10 +8,9 @@ builder.entity {
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	
 	property("labelText","")
-	
+	property("win", false)
 	
 	def labelRectangle = utils.rectangle(-220,-50,440,100)
-	
 	
 	component(new RectangleRendererComponent("background")) {
 		property("position",utils.vector(0,0))
@@ -35,11 +34,11 @@ builder.entity {
 	})
 	
 	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
-	
-		def sourceMessage = message.message
-		def win = sourceMessage.win
 		
-		if (win){
+		def sourceMessage = message.message
+		entity.win = sourceMessage.win
+		
+		if (entity.win){
 			entity.labelText = "You win"
 		}else{
 			entity.labelText = "You lose"
@@ -47,10 +46,12 @@ builder.entity {
 		
 	})
 	
-	
-	
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
-		utils.custom.game.loadScene("zombierockers.scenes.scene");
+		if (entity.win) {
+			messageQueue.enqueue(utils.genericMessage("nextLevel"){ })
+		} else {
+			messageQueue.enqueue(utils.genericMessage("restartLevel"){})
+		}
 	})
 	
 	input("inputmapping"){
