@@ -64,7 +64,7 @@ builder.entity("spawner-${Math.random()}") {
 		}
 		
 		def path = entity.parent.path
-		def pathTraversal = new PathTraversal(path,1,0)
+		def pathTraversal = new PathTraversal(path,0,0)
 		pathTraversal.distanceFromOrigin //so that it is calculated, and propagated when segment split
 		def pathLength = new PathTraversal(path,path.points.size-1).distanceFromOrigin
 		println pathLength

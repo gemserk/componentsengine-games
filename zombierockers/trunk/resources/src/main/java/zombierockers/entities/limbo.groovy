@@ -1,11 +1,9 @@
 package zombierockers.entities
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
-import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
-import com.gemserk.componentsengine.timers.CountDownTimer 
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
@@ -16,7 +14,7 @@ builder.entity("limbo-${Math.random()}") {
 	
 	property("deque",new LinkedList())
 	property("path", parameters.path)
-	property("nextBallPoint",new PathTraversal(parameters.path,2,0))
+	property("nextBallPoint", new PathTraversal(parameters.path,0,0).add(32))
 	property("done",false)
 	
 	property("isEmpty", {entity.deque.isEmpty()})
@@ -68,7 +66,6 @@ builder.entity("limbo-${Math.random()}") {
 		
 		log.info("New segment and balls added to limbo - segment.id:$segment.id - deque.size:$deque.size - deque.balls.collors:${deque.collect{it.color}}")
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(segment, entity.parent))
-	//	entity.firstReleaseBallTimer.reset()
 		utils.custom.messageQueue.enqueueDelay(utils.genericMessage("releaseBalls"){
 		})
 	})
@@ -77,12 +74,6 @@ builder.entity("limbo-${Math.random()}") {
 		entity.deque.clear()
 		log.info("Limbo cleared because of baseReached")
 	})
-	
-//	property("firstReleaseBallTimer",new CountDownTimer(30))
-//	component(new TimerComponent("firstReleaseBallTimer")){
-//		property("trigger",utils.custom.triggers.genericMessage("releaseBalls") {})
-//		propertyRef("timer","firstReleaseBallTimer")
-//	}
 	
 }
 

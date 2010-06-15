@@ -1,7 +1,4 @@
 package zombierockers.scenes
-import java.awt.Shape 
-import java.awt.geom.PathIterator;
-import java.util.List;
 
 import com.google.common.base.Predicate;
 
@@ -18,9 +15,6 @@ import com.gemserk.componentsengine.commons.components.TimerComponent
 import com.gemserk.componentsengine.entities.Entity 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
-import com.kitfox.svg.SVGCache;
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGElement;
 
 
 builder.entity {
@@ -40,23 +34,7 @@ builder.entity {
 	
 	def offset = 0f
 	
-	SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(Thread.currentThread().getContextClassLoader().getResource(entity.level.path).toURI());
-	SVGElement element = diagram.getElement("path");
-	List vector = element.getPath(null);
-	com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
-	Shape shape = pathSVG.getShape();
-	PathIterator pathIterator = shape.getPathIterator(null, 0.001d);
-	float[] coords = new float[2];
-	def pointsInPath = [utils.vector((float)-90+offset,45),utils.vector((float)-60+offset,45)]
-	def loadedPoints = []
-	while (!pathIterator.isDone()) {
-		int type = pathIterator.currentSegment(coords);
-		loadedPoints << utils.vector(coords[0],coords[1]);
-		pathIterator.next();
-	}
-	pointsInPath.addAll(loadedPoints)
-	
-	property("path",new Path(pointsInPath))	
+	property("path",new Path(utils.custom.svg.loadPoints(entity.level.path, "path")))	
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image(entity.level.background))

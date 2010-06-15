@@ -1,6 +1,12 @@
 import groovy.lang.Closure;
 
+import java.awt.Shape;
+import java.awt.geom.PathIterator;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONArray;
@@ -11,6 +17,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
@@ -28,6 +35,9 @@ import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.SlickToSlf4j;
 import com.google.common.collect.Lists;
 import com.google.inject.Key;
+import com.kitfox.svg.SVGCache;
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGElement;
 
 public class Game extends StateBasedGame {
 
@@ -113,9 +123,33 @@ public class Game extends StateBasedGame {
 //			addAnimation("assets/images/ball_animation_green.png", "ballanimation_green", animationManager);
 			addAnimation("assets/images/ball_animation.png", "ballanimation_white", animationManager);
 
-			injector.getInstance(BuilderUtils.class).addCustomUtil("components", new Object() {
+			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
+			builderUtils.addCustomUtil("components", new Object() {
 				public Component closureComponent(String id, Closure closure) {
 					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
+				}
+			});
+			
+			builderUtils.addCustomUtil("svg", new Object(){
+				
+				public List<Vector2f> loadPoints(String file, String pathName) throws URISyntaxException {
+					ArrayList<Vector2f> points = new ArrayList<Vector2f>();
+					URI fileUri = Thread.currentThread().getContextClassLoader().getResource(file).toURI();
+					SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(fileUri);
+					SVGElement element = diagram.getElement(pathName);
+					List vector = element.getPath(null);
+					com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
+					Shape shape = pathSVG.getShape();
+					PathIterator pathIterator = shape.getPathIterator(null, 0.001d);
+					float[] coords = new float[2];
+					
+					while (!pathIterator.isDone()) {
+						pathIterator.currentSegment(coords);
+						points.add(new Vector2f(coords[0],coords[1]));
+						pathIterator.next();
+					}
+					
+					return points;
 				}
 			});
 

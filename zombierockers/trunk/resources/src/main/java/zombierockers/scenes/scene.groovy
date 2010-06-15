@@ -17,22 +17,22 @@ builder.entity("game") {
 	
 	property("currentLevelIndex", parameters.levelIndex ?: 0)
 	
-	def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:10, 
+	def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:60, 
 			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
 			ballDefinitions:[0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
 			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
 			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
 			]]
 	
-	def level02 = [background:"level02", path:"levels/level02/path.svg",ballsQuantity:10, 
-			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:2000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
+	def level02 = [background:"level02", path:"levels/level02/path.svg",ballsQuantity:80, 
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
 			ballDefinitions:[
 			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
 			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
 			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
 			]]	
 	
-	def level03 = [background:"level03", path:"levels/level03/path.svg",ballsQuantity:10, 
+	def level03 = [background:"level03", path:"levels/level03/path.svg",ballsQuantity:100, 
 			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
 			ballDefinitions:[
 			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
