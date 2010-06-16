@@ -4,9 +4,17 @@ package zombierockers.scenes
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
+import com.gemserk.componentsengine.messages.UpdateMessage 
 
 builder.entity {
 	
+	component(utils.custom.components.closureComponent("acceleratorSystem2000"){ UpdateMessage message ->
+		if(entity.accelerating)
+			message.delta = (float)message.delta * 10
+	})
+	component(utils.components.genericComponent(id:"acceleratorSystem2000-setter", messageId:["accelerateSystem2000-press","accelerateSystem2000-release"]){ message ->
+			entity.accelerating = (message.id == "accelerateSystem2000-press")
+	})
 	
 	
 	child(entity("world"){ parent("zombierockers.scenes.world",parameters) })
@@ -40,6 +48,8 @@ builder.entity {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
 			press(button:"g",eventId:"dumpEditorPositions")
+			press(button:"z",eventId:"accelerateSystem2000-press")
+			release(button:"z",eventId:"accelerateSystem2000-release")
 		}
 		mouse {
 			press(button:"left", eventId:"leftmouse")

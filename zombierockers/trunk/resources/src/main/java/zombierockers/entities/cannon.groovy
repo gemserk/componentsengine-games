@@ -38,7 +38,7 @@ builder.entity("cannon") {
 	property("nextBall",{entity.balls[((entity.currentBallIndex+1) % 2)]})
 	
 	property("ballDefinitions", parameters.ballDefinitions)
-
+	
 	// property("levelBallTypes", parameters.levelBallTypes)
 	
 	property("fireRate", 300)
@@ -122,7 +122,8 @@ builder.entity("cannon") {
 			messageQueue.enqueue(utils.genericMessage("generateBall"){})
 		})
 	}
-	def generateBallHandlerMethod = {entity ->
+	
+	def getPosibleTypes = { entity ->
 		// maybe it should be obtained from a LevelProperties or something like that, shared with spawner, etc.
 		def ballDefinitions = entity.ballDefinitions
 		
@@ -145,16 +146,29 @@ builder.entity("cannon") {
 		if (availableBallTypes.isEmpty()) 
 			availableBallTypes = ballDefinitions.collect { it.key }
 		
+		return availableBallTypes
+	}
+	
+	def replaceBall = { entity, index ->
+		def availableBallTypes = getPosibleTypes(entity)
+		
 		log.info("Colors available to generate - ballTypes: $availableBallTypes")
 		
 		def ballType = getRandomItem(availableBallTypes)
 		
-		def ballDefinition = ballDefinitions[ballType]
+		def ballDefinition = entity.ballDefinitions[ballType]
 		
 		def ball = entity.ballTemplate.get([ballDefinition:ballDefinition])
-		entity.balls[(entity.currentBallIndex)]=ball
-		entity.currentBallIndex = (entity.currentBallIndex + 1) % 2
+		entity.balls[(index)]=ball
 	}
+	
+	
+	def generateBallHandlerMethod = {entity->
+		replaceBall(entity,entity.currentBallIndex)
+		entity.currentBallIndex = (entity.currentBallIndex + 1) % 2	
+	}
+	
+	
 	component(utils.components.genericComponent(id:"generateBallHandler", messageId:["generateBall"]){ message -> generateBallHandlerMethod(entity) })
 	
 	generateBallHandlerMethod(entity) 
@@ -162,5 +176,18 @@ builder.entity("cannon") {
 	
 	component(utils.components.genericComponent(id:"baseReachedHandler", messageId:["baseReached"]){ message ->
 		entity.canFire = false
+	})
+	
+	component(utils.components.genericComponent(id:"restrictBallsToExisting", messageId:["explodeBall"]){ message ->
+		def availableBallTypes = getPosibleTypes(entity)
+		def toReplace = []
+		entity.balls.eachWithIndex { ball, index ->
+			if(!availableBallTypes.contains(ball.type))
+				toReplace << index
+		}
+		toReplace.each { index ->
+			replaceBall(entity,index)
+		}
+		
 	})
 }
