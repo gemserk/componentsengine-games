@@ -48,7 +48,11 @@ builder.entity("game") {
 			ballDefinitions:["red":allBallDefinitions.red, "blue":allBallDefinitions.blue, "green":allBallDefinitions.green, "yellow":allBallDefinitions.yellow]
 			]		
 	
-	def levels = [level01, level02, level03, level04]
+	def level05 = [background:"level05", path:"levels/level05/path.svg",ballsQuantity:100, 
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
+			ballDefinitions:["red":allBallDefinitions.red, "blue":allBallDefinitions.blue, "green":allBallDefinitions.green, "yellow":allBallDefinitions.yellow]
+			]				
+	def levels = [level01, level02, level03, level04, level05]
 	
 	def currentLevel = levels[entity.currentLevelIndex]
 	
