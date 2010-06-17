@@ -17,37 +17,37 @@ builder.entity("game") {
 	
 	property("currentLevelIndex", parameters.levelIndex ?: 0)
 	
-	def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:60, 
-			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
-			ballDefinitions:[0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
-			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
-			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
-			]]
+	// TODO: find better way to define balls, now it is not understandable
 	
-	def level02 = [background:"level02", path:"levels/level02/path.svg",ballsQuantity:80, 
-			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
-			ballDefinitions:[
-			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
-			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
-			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
-			]]	
+	def allBallDefinitions = [
+			"red":[type:"red", animation:"ballanimation_white", color:utils.color(1,0,0)],
+			"blue":[type:"blue", animation:"ballanimation_white", color:utils.color(0,0,1)],
+			"green":[type:"green", animation:"ballanimation_white", color:utils.color(0,1,0)],
+			"yellow":[type:"yellow", animation:"ballanimation_white", color:utils.color(1,1,0)],
+			"violet":[type:"violet", animation:"ballanimation_white", color:utils.color(1,0,1)],
+			"white":[type:"white", animation:"ballanimation_white", color:utils.color(1,1,1)],
+			]
 	
-	def level03 = [background:"level03", path:"levels/level03/path.svg",ballsQuantity:100, 
-			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
-			ballDefinitions:[
-			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
-			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
-			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
-			]]			
+	def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:40, 
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:700f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
+			ballDefinitions:["red":allBallDefinitions.red, "blue":allBallDefinitions.blue, "green":allBallDefinitions.green]
+			]
+	
+	def level02 = [background:"level02", path:"levels/level02/path.svg",ballsQuantity:60, 
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:800f, minSpeedFactor:0.2f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
+			ballDefinitions:["red":allBallDefinitions.red, "blue":allBallDefinitions.blue, "green":allBallDefinitions.green]
+			]	
+	
+	def level03 = [background:"level03", path:"levels/level03/path.svg",ballsQuantity:80, 
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:800f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
+			ballDefinitions:["red":allBallDefinitions.red, "blue":allBallDefinitions.blue, "green":allBallDefinitions.green]
+			]			
 	
 	def level04 = [background:"level04", path:"levels/level04/path.svg",ballsQuantity:100, 
-			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1000f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],
-			ballDefinitions:[
-			0:[type:0, animation:"ballanimation_white", color:utils.color(1,0,0)],
-			1:[type:1, animation:"ballanimation_white", color:utils.color(0,0,1)],
-			2:[type:2, animation:"ballanimation_white", color:utils.color(0,1,0)]
-			]]		
-			
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
+			ballDefinitions:["red":allBallDefinitions.red, "blue":allBallDefinitions.blue, "green":allBallDefinitions.green, "yellow":allBallDefinitions.yellow]
+			]		
+	
 	def levels = [level01, level02, level03, level04]
 	
 	def currentLevel = levels[entity.currentLevelIndex]

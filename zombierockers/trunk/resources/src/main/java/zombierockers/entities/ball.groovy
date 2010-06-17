@@ -12,8 +12,6 @@ import com.gemserk.games.zombierockers.AnimationHelper;
 
 builder.entity("ball-${Math.random()}") {
 	
-	// todo: remove color, use type instead
-
 	tags("ball", "nofriction")
 	
 	property("type", parameters.definition.type)
@@ -41,15 +39,17 @@ builder.entity("ball-${Math.random()}") {
 	property("alive",true)
 	property("segment",null)
 	
+	property("size", {
+		def size = (float)entity.radius/entity.finalRadius
+		return utils.vector(size, size)
+	})
+	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", {entity.animation.currentFrame})
-		 propertyRef("color", "color")
+		propertyRef("color", "color")
 		propertyRef("position", "position")
 		property("direction", {entity.direction.copy().add(-90)})
-		property("size", {
-			def size = (float)entity.radius/entity.finalRadius
-			return utils.vector(size, size)
-		})
+		propertyRef("size", "size")
 	}
 	
 	component(utils.custom.components.closureComponent("updatePositionHandler"){ UpdateMessage message ->

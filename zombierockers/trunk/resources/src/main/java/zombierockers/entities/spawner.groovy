@@ -7,8 +7,10 @@ builder.entity("spawner-${Math.random()}") {
 	
 	Random random = new Random()
 	
-	def getRandomItem = {def items ->
-		return  items[random.nextInt(items.size())]
+	def getRandomItemFromMap = {def items ->
+		def keys = items.collect { it.key }
+		def randomKey = keys[random.nextInt(keys.size())]
+		return items[randomKey]
 	}
 	
 	property("ballDefinitions", parameters.ballDefinitions)
@@ -56,7 +58,7 @@ builder.entity("spawner-${Math.random()}") {
 		def balls = []
 		
 		entity.spawnQuantity.times {
-			def ballDefinition = getRandomItem(ballDefinitions)
+			def ballDefinition = getRandomItemFromMap(ballDefinitions)
 			
 			def parameters = [ballDefinition:ballDefinition]
 			def ball = template.get(parameters)

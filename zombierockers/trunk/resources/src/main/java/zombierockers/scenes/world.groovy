@@ -2,7 +2,9 @@ package zombierockers.scenes
 
 import com.google.common.base.Predicate;
 
+
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
@@ -42,6 +44,25 @@ builder.entity {
 		property("position", utils.vector(400,300))
 		property("direction", utils.vector(1,0))
 	}
+	
+	property("ballShadowImage", utils.resources.image("ballshadow"))
+	
+	component(utils.custom.components.closureComponent("drawBallShadows"){ SlickRenderMessage message ->
+		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive} as Predicate))
+		
+		def g = message.getGraphics()
+		def ballShadowImage = entity.ballShadowImage
+		
+		balls.each { ball ->
+			def position = ball.position
+			g.pushTransform()
+			g.translate((float) position.x + 5, (float)position.y + 5)
+			g.scale(ball.size.x, ball.size.y)
+			g.drawImage(ballShadowImage, (float)-(ballShadowImage.getWidth() / 2), (float)-(ballShadowImage.getHeight() / 2))
+			g.popTransform()
+		}
+		
+	})
 	
 	child(entity("path"){
 		
