@@ -11,12 +11,10 @@ import java.util.Map;
 
 import net.sf.json.JSONArray;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
@@ -29,8 +27,6 @@ import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
-import com.gemserk.componentsengine.resources.AnimationInstantiator;
-import com.gemserk.componentsengine.resources.AnimationManager;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.SlickToSlf4j;
 import com.google.common.collect.Lists;
@@ -87,41 +83,14 @@ public class Game extends StateBasedGame {
 		addState(menuState);
 	}
 
-	/**
-	 * Temporal method to load an animation specifying total frames from a spritesheet.
-	 * 
-	 * @return
-	 */
-	private Animation createAnimation(final SpriteSheet spriteSheet, int totalFrames, boolean autoUpdate) {
-		Animation animation = new Animation();
-		animation.setAutoUpdate(autoUpdate);
-
-		int horizontalCant = spriteSheet.getHorizontalCount();
-		int verticalCant = spriteSheet.getVerticalCount();
-
-		for (int j = 0; j < verticalCant; j++) {
-			for (int i = 0; i < horizontalCant; i++) {
-				if (i + j * horizontalCant < totalFrames) {
-					animation.addFrame(spriteSheet.getSubImage(i, j), 100);
-				}
-			}
-		}
-
-		return animation;
-	}
-
 	class GameGameState extends GemserkGameState {
 
 		@Override
 		public void onInit() {
 			super.onInit();
-			images(injector, "assets/images.properties");
 
-			AnimationManager animationManager = injector.getInstance(AnimationManager.class);
-//			addAnimation("assets/images/ball_animation_red.png", "ballanimation_red", animationManager);
-//			addAnimation("assets/images/ball_animation_blue.png", "ballanimation_blue", animationManager);
-//			addAnimation("assets/images/ball_animation_green.png", "ballanimation_green", animationManager);
-			addAnimation("assets/images/ball_animation.png", "ballanimation_white", animationManager);
+			images("assets/images.properties");
+			animations("assets/animations.properties");
 
 			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
 			builderUtils.addCustomUtil("components", new Object() {
@@ -129,9 +98,9 @@ public class Game extends StateBasedGame {
 					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
 				}
 			});
-			
-			builderUtils.addCustomUtil("svg", new Object(){
-				
+
+			builderUtils.addCustomUtil("svg", new Object() {
+
 				public List<Vector2f> loadPoints(String file, String pathName) throws URISyntaxException {
 					ArrayList<Vector2f> points = new ArrayList<Vector2f>();
 					URI fileUri = Thread.currentThread().getContextClassLoader().getResource(file).toURI();
@@ -142,35 +111,17 @@ public class Game extends StateBasedGame {
 					Shape shape = pathSVG.getShape();
 					PathIterator pathIterator = shape.getPathIterator(null, 0.001d);
 					float[] coords = new float[2];
-					
+
 					while (!pathIterator.isDone()) {
 						pathIterator.currentSegment(coords);
-						points.add(new Vector2f(coords[0],coords[1]));
+						points.add(new Vector2f(coords[0], coords[1]));
 						pathIterator.next();
 					}
-					
+
 					return points;
 				}
 			});
 
-		}
-
-		// temporal method to load different ball animations 
-		private void addAnimation(String animationFile, String animationKey, AnimationManager animationManager) {
-			try {
-				
-				final SpriteSheet ballSpriteSheet = new SpriteSheet(animationFile, 32, 32);
-				animationManager.addAnimation(animationKey, new AnimationInstantiator() {
-					@Override
-					public Animation instantiate() {
-						// should be specified in the animations.properties (TODO)
-						return createAnimation(ballSpriteSheet, 128, false);
-					}
-				});
-
-			} catch (SlickException e) {
-				throw new RuntimeException("failed to load animation", e);
-			}
 		}
 
 		public GameGameState(int id) {

@@ -20,12 +20,12 @@ builder.entity("game") {
 	// TODO: find better way to define balls, now it is not understandable
 	
 	def allBallDefinitions = [
-			"red":[type:"red", animation:"ballanimation_white", color:utils.color(1,0,0)],
-			"blue":[type:"blue", animation:"ballanimation_white", color:utils.color(0,0,1)],
-			"green":[type:"green", animation:"ballanimation_white", color:utils.color(0,1,0)],
-			"yellow":[type:"yellow", animation:"ballanimation_white", color:utils.color(1,1,0)],
-			"violet":[type:"violet", animation:"ballanimation_white", color:utils.color(1,0,1)],
-			"white":[type:"white", animation:"ballanimation_white", color:utils.color(1,1,1)],
+			"red":[type:"red", animation:"ballanimation", color:utils.color(1,0,0)],
+			"blue":[type:"blue", animation:"ballanimation", color:utils.color(0,0,1)],
+			"green":[type:"green", animation:"ballanimation", color:utils.color(0,1,0)],
+			"yellow":[type:"yellow", animation:"ballanimation", color:utils.color(1,1,0)],
+			"violet":[type:"violet", animation:"ballanimation", color:utils.color(1,0,1)],
+			"white":[type:"white", animation:"ballanimation", color:utils.color(1,1,1)],
 			]
 	
 	def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:40, 
