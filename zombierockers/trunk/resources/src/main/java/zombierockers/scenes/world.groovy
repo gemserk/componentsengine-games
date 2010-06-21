@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.SlickRenderMessage;
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
@@ -47,10 +46,10 @@ builder.entity {
 	
 	property("ballShadowImage", utils.resources.image("ballshadow"))
 	
-	component(utils.custom.components.closureComponent("drawBallShadows"){ SlickRenderMessage message ->
+	component(utils.components.genericComponent(id:"drawBallShadows", messageId:["render"]){ message ->
 		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive} as Predicate))
 		
-		def g = message.getGraphics()
+		def g = message.graphics
 		def ballShadowImage = entity.ballShadowImage
 		
 		balls.each { ball ->

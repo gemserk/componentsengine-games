@@ -3,7 +3,6 @@ package zombierockers.scenes;
 import com.gemserk.componentsengine.commons.components.states.NodeStateTransitionManagerComponent;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.SlickRenderMessage 
 import com.gemserk.componentsengine.utils.EntityDumper 
 import gemserk.utils.GroovyBootstrapper 
 import net.sf.json.JSONArray 
@@ -69,7 +68,7 @@ builder.entity("game") {
 	}
 	
 	child(entity("playing"){ 
-		parent("gemserk.states.stateBasedNode",[enabled:true,exclusions:[SlickRenderMessage.class]])
+		parent("gemserk.states.stateBasedNode",[enabled:true,exclusions:["render"]])
 		parent("zombierockers.scenes.playing", [level:currentLevel]) 
 	})
 	

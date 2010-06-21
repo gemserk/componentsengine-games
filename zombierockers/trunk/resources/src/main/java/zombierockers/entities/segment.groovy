@@ -91,7 +91,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		entity.balls.add(insertionPoint, ball)
 		ball.pathTraversal = getPathTraversal(entity, insertionPoint)
-		
+		ball.newPathTraversal = ball.pathTraversal
 		//		if(insertionPoint > 0)
 		//			entity.pathTraversal = entity.pathTraversal.add((float)ball.radius * 2)
 		

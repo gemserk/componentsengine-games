@@ -55,7 +55,7 @@ builder.entity("ball-${Math.random()}") {
 	component(utils.custom.components.closureComponent("updatePositionHandler"){ UpdateMessage message ->
 		def newPathTraversal = entity.newPathTraversal
 		def pathTraversal = entity.pathTraversal
-		
+			
 		def distance = (float) (newPathTraversal.distanceFromOrigin - pathTraversal.distanceFromOrigin)
 		
 		// println "DISTANCE: $distance"
