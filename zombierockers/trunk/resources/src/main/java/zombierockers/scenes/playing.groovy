@@ -60,12 +60,19 @@ builder.entity {
 		}
 	}
 	
+	property("shouldGrabMouse",true)
+	
 	component(utils.components.genericComponent(id:"grabMouse", messageId:"update"){ message ->
-		if(entity.enabled && !utils.custom.gameStateManager.gameProperties.runningInDebug)
+		if(entity.shouldGrabMouse && !utils.custom.gameStateManager.gameProperties.runningInDebug)
 			utils.custom.gameContainer.setMouseGrabbed(true)
 	})
-	
-	
+	component(utils.components.genericComponent(id:"grabMouse-enternodestate", messageId:"enterNodeState"){ message ->
+		entity.shouldGrabMouse = true
+	})
+	component(utils.components.genericComponent(id:"grabMouse-leavenodestate", messageId:"leaveNodeState"){ message ->
+		utils.custom.gameContainer.setMouseGrabbed(false)
+		entity.shouldGrabMouse = false
+	})
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
 		if(!utils.custom.gameContainer.hasFocus())
