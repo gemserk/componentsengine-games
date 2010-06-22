@@ -45,6 +45,10 @@ builder.entity {
 		property("message", "Press \"r\" to restart")
 	})
 	
+	component(utils.components.genericComponent(id:"releaseGrabMouse", messageId:"enterNodeState"){ message ->
+		utils.custom.gameContainer.setMouseGrabbed(false)
+	})
+	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
 		messageQueue.enqueue(utils.genericMessage("resume"){})	
 	})

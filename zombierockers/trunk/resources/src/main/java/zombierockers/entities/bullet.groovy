@@ -34,7 +34,7 @@ builder.entity("bullet-${Math.random()}") {
 	
 	component(new GenericHitComponent("bullethitComponent")){
 		property("targetTag", "ball")
-		property("predicate",{Predicates.and(EntityPredicates.isNear(entity.position, (float)entity.radius+1),{ball -> ball.alive} as Predicate)})
+		property("predicate",{Predicates.and(EntityPredicates.isNear(entity.position, (float)entity.radius * 2-3),{ball -> ball.alive} as Predicate)})
 		property("trigger", utils.custom.triggers.genericMessage("bulletHit") { 
 			def source = message.source
 			def target = message.targets[0]

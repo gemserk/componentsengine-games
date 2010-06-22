@@ -14,6 +14,7 @@ import net.sf.json.JSONArray;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
@@ -67,6 +68,8 @@ public class Game extends StateBasedGame {
 
 	public Game() {
 		super("Zombie Rockers");
+		gameProperties.put("runningInDebug", System.getProperty("runningInDebug")!=null);
+		System.out.println(gameProperties);
 		Log.setLogSystem(new SlickToSlf4j());
 
 		logger.info("OS: " + System.getProperty("os.name"));
@@ -148,6 +151,9 @@ public class Game extends StateBasedGame {
 		@Override
 		public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 			try {
+				if(container.getInput().isKeyPressed(Input.KEY_BACK))
+					container.exit();
+				
 				int minimumTargetFPS = 30;
 				int maximumDelta = (int) (1000f / minimumTargetFPS);
 				if (delta > maximumDelta)
