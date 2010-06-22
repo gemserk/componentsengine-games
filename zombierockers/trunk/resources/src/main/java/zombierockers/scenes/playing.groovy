@@ -4,13 +4,12 @@ package zombierockers.scenes
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
-import com.gemserk.componentsengine.messages.UpdateMessage 
 
 builder.entity {
 	
-	component(utils.custom.components.closureComponent("acceleratorSystem2000"){ UpdateMessage message ->
+	component(utils.components.genericComponent(id:"acceleratorSystem2000", messageId:["update"]){ message ->
 		if(entity.accelerating)
-			message.delta = (float)message.delta * 10
+			message.delta = (int)message.delta * 10
 	})
 	component(utils.components.genericComponent(id:"acceleratorSystem2000-setter", messageId:["accelerateSystem2000-press","accelerateSystem2000-release"]){ message ->
 			entity.accelerating = (message.id == "accelerateSystem2000-press")

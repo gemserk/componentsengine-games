@@ -2,7 +2,6 @@ package zombierockers.entities
 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.UpdateMessage;
 
 builder.entity("segment-${Math.random()}") {
 	
@@ -105,7 +104,7 @@ builder.entity("segment-${Math.random()}") {
 		log.info("Added ball to segment - segment.id: $message.segment.id -  ball: $ball.id - $ball.color - index: $insertionPoint")
 	})
 	
-	component(utils.custom.components.closureComponent("incrementRadiusBallQueued"){ UpdateMessage message ->
+	component(utils.components.genericComponent(id:"incrementRadiusBallQueued", messageId:["update"]){ message ->
 		def delayedCheckBallSeries = []
 		entity.balls.each { ball ->
 			if (!ball.isGrownUp) {
@@ -137,7 +136,7 @@ builder.entity("segment-${Math.random()}") {
 		
 	})
 	
-	component(utils.custom.components.closureComponent("advanceHandler"){ UpdateMessage message ->
+	component(utils.components.genericComponent(id:"advanceHandler", messageId:["update"]){ message ->
 		def speed = entity.speed
 		
 		if (entity.accelerated)
@@ -163,7 +162,8 @@ builder.entity("segment-${Math.random()}") {
 		}
 	})
 	
-	component(utils.custom.components.closureComponent("checkEndAcceleration"){ UpdateMessage message ->
+	component(utils.components.genericComponent(id:"checkEndAcceleration", messageId:["update"]){ message ->
+
 		if (!entity.accelerated)
 			return
 		

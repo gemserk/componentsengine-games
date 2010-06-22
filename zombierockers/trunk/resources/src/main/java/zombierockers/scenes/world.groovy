@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
 
@@ -149,7 +148,7 @@ builder.entity {
 			messageQueue.enqueue(utils.genericMessage("checkFirstSegmentSholdAdvance"){	})
 		})
 		
-		component(utils.custom.components.closureComponent("collisionBetweenSegmentsDetector"){ UpdateMessage message ->
+		component(utils.components.genericComponent(id:"collisionBetweenSegmentsDetector", messageId:["update"]){ message ->
 			def sortedSegments = getSortedSegments(entity)
 			
 			def collisionFound = false
@@ -222,8 +221,7 @@ builder.entity {
 		entity.baseReached = true
 	})
 	
-	component(utils.custom.components.closureComponent("gameOverChecker"){ UpdateMessage message ->
-		
+	component(utils.components.genericComponent(id:"gameOverChecker", messageId:["update"]){ message ->		
 		def limbosNotDone = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("limbo"), {limbo -> !limbo.done} as Predicate))
 		def allLimbosDone = limbosNotDone.isEmpty()
 		def baseReached = entity.baseReached

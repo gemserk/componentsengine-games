@@ -1,8 +1,6 @@
 package zombierockers.entities
 
-import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.google.common.base.Predicate 
@@ -40,8 +38,7 @@ builder.entity("limbo-${Math.random()}") {
 			entity.done = true
 		}
 	})
-		
-	component(new ComponentFromListOfClosures("nextBallPointReached",[{ UpdateMessage message ->
+	component(utils.components.genericComponent(id:"nextBallPointReached", messageId:["update"]){ message ->	
 		def predicates = Predicates.and(EntityPredicates.withAllTags("ball"),{ball -> ball.state == "spawned"} as Predicate,{ball -> ball.pathTraversal > entity.nextBallPoint} as Predicate)
 	    def balls = entity.root.getEntities(predicates)
 	    
@@ -52,8 +49,7 @@ builder.entity("limbo-${Math.random()}") {
 	    def ball = balls[0]
 	    ball.state = "inWorld"
 	    utils.custom.messageQueue.enqueue(utils.genericMessage("releaseBalls"){})
-	    }
-	]))
+	})
 		
 		
 	component(utils.components.genericComponent(id:"spawnedSegmentHandler", messageId:["spawnedSegment"]){ message ->

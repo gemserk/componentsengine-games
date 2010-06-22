@@ -2,7 +2,6 @@
 package zombierockers.entities
 
 
-import com.gemserk.componentsengine.messages.UpdateMessage 
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
@@ -52,7 +51,7 @@ builder.entity("ball-${Math.random()}") {
 		propertyRef("size", "size")
 	}
 	
-	component(utils.custom.components.closureComponent("updatePositionHandler"){ UpdateMessage message ->
+	component(utils.components.genericComponent(id:"updatePositionHandler", messageId:["update"]){ message ->
 		def newPathTraversal = entity.newPathTraversal
 		def pathTraversal = entity.pathTraversal
 			
