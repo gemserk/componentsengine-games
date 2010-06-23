@@ -1,4 +1,5 @@
 package zombierockers.entities
+import com.gemserk.componentsengine.commons.components.DisablerComponent;
 
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
@@ -18,6 +19,7 @@ builder.entity("bullet-${Math.random()}") {
 	property("position", parameters.position);
 	propertyRef("direction", "movement.velocity");
 	property("radius", {entity.ball.finalRadius});
+	property("collisionMap",parameters.collisionMap)
 	
 	component(new SuperMovementComponent("movement")){
 		property("velocity", parameters.direction.scale(parameters.maxVelocity))
@@ -30,9 +32,10 @@ builder.entity("bullet-${Math.random()}") {
 		property("color",{entity.ball.color})
 		propertyRef("position", "position")
 		property("direction", utils.vector(0,-1))
+		property("layer",20)
 	}
 	
-	component(new GenericHitComponent("bullethitComponent")){
+	component(new DisablerComponent(new GenericHitComponent("bullethitComponent"))){
 		property("targetTag", "ball")
 		property("predicate",{Predicates.and(EntityPredicates.isNear(entity.position, (float)entity.radius * 2-3),{ball -> ball.alive} as Predicate)})
 		property("trigger", utils.custom.triggers.genericMessage("bulletHit") { 
@@ -41,7 +44,14 @@ builder.entity("bullet-${Math.random()}") {
 			message.targets = [target]
 			log.info("Bullet hit ball bullet.id: $source.id - bullet.color: $source.ball.color - bullet.ball.id: $source.ball.id - targets.id: $target.id - target.color: $target.color")
 		})
-		
+		property("enabled",{
+			def collisionMap = entity.collisionMap
+			if(!collisionMap)
+				return true
+				
+			def position = entity.position
+			return collisionMap.collides(position.x,position.y)
+		})
 	}
 	
 	component(utils.components.genericComponent(id:"bulletHitHandler", messageId:["bulletHit"]){ message ->

@@ -38,7 +38,7 @@ builder.entity("cannon") {
 	property("nextBall",{entity.balls[((entity.currentBallIndex+1) % 2)]})
 	
 	property("ballDefinitions", parameters.ballDefinitions)
-	
+	property("collisionMap",parameters.collisionMap)
 	// property("levelBallTypes", parameters.levelBallTypes)
 	
 	property("fireRate", 300)
@@ -63,6 +63,7 @@ builder.entity("cannon") {
 				position:cannon.position.copy(),
 				direction:cannon.direction.copy(),
 				maxVelocity:0.7f,
+				collisionMap:cannon.collisionMap
 				]
 			}))
 	
@@ -115,7 +116,7 @@ builder.entity("cannon") {
 			entity.fireTriggered = false
 			
 			def bulletTemplate = entity.bulletTemplate
-			def parameters = [position:cannon.bulletPosition.copy(),direction:cannon.direction.copy(),ball:entity.currentBall]
+			def parameters = [position:cannon.bulletPosition.copy(),direction:cannon.direction.copy(),ball:entity.currentBall,collisionMap:entity.collisionMap]
 			def bullet = bulletTemplate.get(parameters)
 			log.info("Fired bullet from Cannon - cannon.id: $entity.id - bullet.id: $bullet.id - bullet.ball.color:$bullet.ball.color" )
 			messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))

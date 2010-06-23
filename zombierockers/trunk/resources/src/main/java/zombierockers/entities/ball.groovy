@@ -76,6 +76,7 @@ builder.entity("ball-${Math.random()}") {
 		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(100, (int) ball.position.x, (int) ball.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, ball.color, ball.color) 
+			newMessage.layer = -500
 		})
 		
 	})

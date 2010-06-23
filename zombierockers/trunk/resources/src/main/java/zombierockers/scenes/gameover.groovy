@@ -17,6 +17,7 @@ builder.entity {
 		property("rectangle", utils.rectangle(0,0, 800, 600))
 		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
 		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
+		property("layer",1000)
 	}
 	
 	child(entity("deadLabel"){
@@ -27,7 +28,8 @@ builder.entity {
 		fontColor:utils.color(0f,0f,0f,1f),
 		bounds:labelRectangle,
 		align:"center",
-		valign:"center"
+		valign:"center",
+		layer:1010
 		])
 		
 		property("message", {entity.parent.labelText })

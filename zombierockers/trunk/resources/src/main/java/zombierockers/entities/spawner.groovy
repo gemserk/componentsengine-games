@@ -19,13 +19,15 @@ builder.entity("spawner-${Math.random()}") {
 	
 	property("pathProperties", parameters.pathProperties)
 	
+	
 	property("ballTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
 				direction:utils.vector(0,1),
 				radius:16.0f,
-				definition:data.ballDefinition
+				definition:data.ballDefinition,
+				collisionMap:data.collisionMap
 				]
 			}))
 	
@@ -56,7 +58,6 @@ builder.entity("spawner-${Math.random()}") {
 		def ballDefinitions = entity.ballDefinitions
 		
 		def balls = []
-		
 		entity.spawnQuantity.times {
 			def ballDefinition = getRandomItemFromMap(ballDefinitions)
 			

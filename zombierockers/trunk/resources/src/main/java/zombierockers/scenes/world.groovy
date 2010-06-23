@@ -1,5 +1,9 @@
 package zombierockers.scenes
 
+import org.newdawn.slick.Graphics;
+
+import com.gemserk.componentsengine.render.ClosureRenderObject;
+
 import com.google.common.base.Predicate;
 
 
@@ -41,25 +45,55 @@ builder.entity {
 		property("color", utils.color(1,1,1,1))
 		property("position", utils.vector(400,300))
 		property("direction", utils.vector(1,0))
+		property("layer", -1000)
 	}
 	
 	property("ballShadowImage", utils.resources.image("ballshadow"))
 	
 	component(utils.components.genericComponent(id:"drawBallShadows", messageId:["render"]){ message ->
-		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive} as Predicate))
+		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
 		
-		def g = message.graphics
 		def ballShadowImage = entity.ballShadowImage
 		
+		def renderer = message.renderer
+		
 		balls.each { ball ->
+			
 			def position = ball.position
-			g.pushTransform()
-			g.translate((float) position.x + 5, (float)position.y + 5)
-			g.scale(ball.size.x, ball.size.y)
-			g.drawImage(ballShadowImage, (float)-(ballShadowImage.getWidth() / 2), (float)-(ballShadowImage.getHeight() / 2))
-			g.popTransform()
+			def layer = -1
+			def size = ball.size
+			
+			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
+				g.pushTransform()
+				g.translate((float) position.x + 5, (float)position.y + 5)
+				g.scale(size.x, size.y)
+				g.drawImage(ballShadowImage, (float)-(ballShadowImage.getWidth() / 2), (float)-(ballShadowImage.getHeight() / 2))
+				g.popTransform()
+			}))
+			
 		}
 		
+	})
+	
+	component(utils.components.genericComponent(id:"placeablesRender", messageId:["render"]){ message ->
+		
+		def renderer = message.renderer
+		
+		def placeables = entity.level.placeables
+		placeables.each { placeable ->
+			def position = placeable.position
+			def layer = placeable.layer
+			def image = utils.resources.image(placeable.image)
+			def input = utils.custom.gameContainer.input
+			//position = utils.vector(input.mouseX, input.mouseY)
+			//println position
+			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
+				g.pushTransform()
+				g.translate((float) position.x + 5, (float)position.y + 5)
+				g.drawImage(image, (float)-(image.getWidth() / 2), (float)-(image.getHeight() / 2))
+				g.popTransform()
+			}))
+		}
 	})
 	
 	child(entity("path"){
@@ -83,12 +117,13 @@ builder.entity {
 	child(id:"cannon", template:"zombierockers.entities.cannon") {
 		bounds=utils.rectangle((float)20+offset,20,(float)760-offset,560)
 		ballDefinitions = entity.level.ballDefinitions
+		collisionMap = entity.level.collisionMap
 	}
 	
 	child(entity("segmentsManager") {
 		
 		def getSortedSegments = { entity ->
-			def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment-> !segment.isEmpty} as Predicate))
+			def segments = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), {segment-> !segment.isEmpty } as Predicate))
 			return segments.sort { it.pathTraversal }
 		}
 		
@@ -145,7 +180,8 @@ builder.entity {
 		component(utils.components.genericComponent(id:"destroySegmentHandler", messageId:["destroySegment"]){ message ->
 			def segment = message.segment 
 			messageQueue.enqueueDelay(ChildrenManagementMessageFactory.removeEntity(segment))
-			messageQueue.enqueue(utils.genericMessage("checkFirstSegmentSholdAdvance"){	})
+			messageQueue.enqueue(utils.genericMessage("checkFirstSegmentSholdAdvance"){
+			})
 		})
 		
 		component(utils.components.genericComponent(id:"collisionBetweenSegmentsDetector", messageId:["update"]){ message ->
@@ -198,7 +234,8 @@ builder.entity {
 	property("startTimer",new CountDownTimer(2000))
 	entity.startTimer.reset()
 	component(new TimerComponent("startTimer")){
-		property("trigger",utils.custom.triggers.genericMessage("spawn") {})
+		property("trigger",utils.custom.triggers.genericMessage("spawn") {
+		})
 		propertyRef("timer","startTimer")
 	}
 	
@@ -222,7 +259,7 @@ builder.entity {
 	})
 	
 	component(utils.components.genericComponent(id:"gameOverChecker", messageId:["update"]){ message ->		
-		def limbosNotDone = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("limbo"), {limbo -> !limbo.done} as Predicate))
+		def limbosNotDone = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("limbo"), {limbo -> !limbo.done } as Predicate))
 		def allLimbosDone = limbosNotDone.isEmpty()
 		def baseReached = entity.baseReached
 		if(!baseReached && !allLimbosDone)
