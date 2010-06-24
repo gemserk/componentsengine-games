@@ -62,6 +62,8 @@ builder.entity {
 		keyboard {
 			press(button:"return",eventId:"resumeGame")
 			press(button:"r",eventId:"restart")
+			press(button:"space",eventId:"resumeGame")
+			press(button:"escape",eventId:"resumeGame")
 		}
 		mouse {
 			press(button:"left", eventId:"resumeGame")

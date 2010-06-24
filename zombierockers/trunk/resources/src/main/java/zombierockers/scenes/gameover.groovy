@@ -58,8 +58,9 @@ builder.entity {
 	
 	input("inputmapping"){
 		keyboard {
-			release(button:"escape",eventId:"restart")
-			release(button:"space",eventId:"restart")
+			press(button:"escape",eventId:"restart")
+			press(button:"space",eventId:"restart")
+			press(button:"return",eventId:"restart")
 		}
 		mouse {
 			press(button:"left", eventId:"restart")

@@ -18,6 +18,7 @@ builder.entity {
 		keyboard {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
+			press(button:"space",eventId:"pauseGame")
 			press(button:"g",eventId:"dumpEditorPositions")
 			press(button:"z",eventId:"accelerateSystem2000-press")
 			release(button:"z",eventId:"accelerateSystem2000-release")
