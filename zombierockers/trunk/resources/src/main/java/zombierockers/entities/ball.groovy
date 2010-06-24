@@ -43,18 +43,24 @@ builder.entity("ball-${Math.random()}") {
 		return utils.vector(size, size)
 	})
 	
+	property("subPathDefinitions", parameters.subPathDefinitions)
+	
+	property("layer", 0)
+	property("collisionMask", 0)
+	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", {entity.animation.currentFrame})
 		propertyRef("color", "color")
 		propertyRef("position", "position")
 		property("direction", {entity.direction.copy().add(-90)})
 		propertyRef("size", "size")
+		propertyRef("layer", "layer")
 	}
 	
 	component(utils.components.genericComponent(id:"updatePositionHandler", messageId:["update"]){ message ->
 		def newPathTraversal = entity.newPathTraversal
 		def pathTraversal = entity.pathTraversal
-			
+		
 		def distance = (float) (newPathTraversal.distanceFromOrigin - pathTraversal.distanceFromOrigin)
 		
 		// println "DISTANCE: $distance"
@@ -62,6 +68,10 @@ builder.entity("ball-${Math.random()}") {
 		entity.animationHelper.add(distance)
 		
 		entity.pathTraversal = newPathTraversal
+		
+		def subPathDefinition = entity.subPathDefinitions.getSubPathDefinition(newPathTraversal)
+		entity.layer = subPathDefinition.metadata.layer
+		entity.collisionMask = subPathDefinition.metadata.collisionMask
 	})
 	
 	component(utils.components.genericComponent(id:"explosionsWhenRemoveBallsHandler", messageId:["explodeBall"]){ message ->
@@ -76,7 +86,7 @@ builder.entity("ball-${Math.random()}") {
 		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(100, (int) ball.position.x, (int) ball.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, ball.color, ball.color) 
-			newMessage.layer = -500
+			newMessage.layer = entity.layer+1
 		})
 		
 	})

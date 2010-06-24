@@ -61,6 +61,7 @@ builder.entity("game") {
 			utils.custom.templateProvider.getTemplate("zombierockers.scenes.scene"), 
 			utils.custom.genericprovider.provide{ data ->[levelIndex:data.levelIndex]}))
 	
+	
 	component(utils.components.genericComponent(id:"nextLevelHandler", messageId:"nextLevel"){ message ->
 		def	levelIndex = (entity.currentLevelIndex + 1) % levels.size
 		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
@@ -73,4 +74,11 @@ builder.entity("game") {
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
 	})
 	
+	property("sceneEditorTemplate",utils.custom.templateProvider.getTemplate("zombierockers.scenes.sceneEditor"))
+	
+	component(utils.components.genericComponent(id:"goToEditorHandler", messageId:"goToEditor"){ message ->
+		def levelIndex = entity.currentLevelIndex
+		def scene = entity.sceneEditorTemplate.instantiate(entity.id,[levelIndex:levelIndex, level:levels[(levelIndex)]])
+		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+	})
 }

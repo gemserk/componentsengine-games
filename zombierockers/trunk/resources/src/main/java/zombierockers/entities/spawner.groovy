@@ -14,6 +14,8 @@ builder.entity("spawner-${Math.random()}") {
 	}
 	
 	property("ballDefinitions", parameters.ballDefinitions)
+	property("subPathDefinitions", parameters.subPathDefinitions)
+	
 	property("spawnQuantity", parameters.ballsQuantity)
 	property("fired", false)
 	
@@ -27,7 +29,8 @@ builder.entity("spawner-${Math.random()}") {
 				direction:utils.vector(0,1),
 				radius:16.0f,
 				definition:data.ballDefinition,
-				collisionMap:data.collisionMap
+				collisionMap:data.collisionMap,
+				subPathDefinitions:data.subPathDefinitions
 				]
 			}))
 	
@@ -61,7 +64,7 @@ builder.entity("spawner-${Math.random()}") {
 		entity.spawnQuantity.times {
 			def ballDefinition = getRandomItemFromMap(ballDefinitions)
 			
-			def parameters = [ballDefinition:ballDefinition]
+			def parameters = [ballDefinition:ballDefinition,subPathDefinitions:entity.subPathDefinitions]
 			def ball = template.get(parameters)
 			balls << ball
 		}

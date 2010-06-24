@@ -20,6 +20,7 @@ builder.entity("bullet-${Math.random()}") {
 	propertyRef("direction", "movement.velocity");
 	property("radius", {entity.ball.finalRadius});
 	property("collisionMap",parameters.collisionMap)
+	property("collisionMask", 1)
 	
 	component(new SuperMovementComponent("movement")){
 		property("velocity", parameters.direction.scale(parameters.maxVelocity))
@@ -35,9 +36,18 @@ builder.entity("bullet-${Math.random()}") {
 		property("layer",20)
 	}
 	
+	component(utils.components.genericComponent(id:"updateCollisionMaskHandler", messageId:["update"]){ message ->
+		def collisionMap = entity.collisionMap
+		if(!collisionMap) 
+			return
+		
+		def position = entity.position
+		entity.collisionMask = collisionMap.collides(position.x,position.y)
+	})
+	
 	component(new DisablerComponent(new GenericHitComponent("bullethitComponent"))){
 		property("targetTag", "ball")
-		property("predicate",{Predicates.and(EntityPredicates.isNear(entity.position, (float)entity.radius * 2-3),{ball -> ball.alive} as Predicate)})
+		property("predicate",{Predicates.and({ball -> ball.collisionMask == entity.collisionMask} as Predicate, EntityPredicates.isNear(entity.position, (float)entity.radius * 2-3),{ball -> ball.alive} as Predicate)})
 		property("trigger", utils.custom.triggers.genericMessage("bulletHit") { 
 			def source = message.source
 			def target = message.targets[0]
@@ -45,12 +55,7 @@ builder.entity("bullet-${Math.random()}") {
 			log.info("Bullet hit ball bullet.id: $source.id - bullet.color: $source.ball.color - bullet.ball.id: $source.ball.id - targets.id: $target.id - target.color: $target.color")
 		})
 		property("enabled",{
-			def collisionMap = entity.collisionMap
-			if(!collisionMap)
-				return true
-				
-			def position = entity.position
-			return collisionMap.collides(position.x,position.y)
+			return true
 		})
 	}
 	

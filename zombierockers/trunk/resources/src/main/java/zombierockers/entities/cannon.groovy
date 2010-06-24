@@ -38,6 +38,7 @@ builder.entity("cannon") {
 	property("nextBall",{entity.balls[((entity.currentBallIndex+1) % 2)]})
 	
 	property("ballDefinitions", parameters.ballDefinitions)
+	property("subPathDefinitions", parameters.subPathDefinitions)
 	property("collisionMap",parameters.collisionMap)
 	// property("levelBallTypes", parameters.levelBallTypes)
 	
@@ -51,7 +52,8 @@ builder.entity("cannon") {
 				finalRadius:16.0f,
 				definition:data.ballDefinition,
 				state:"inWorld",
-				fired:true
+				fired:true,
+				subPathDefinitions:data.subPathDefinitions
 				]
 			}))
 	
@@ -159,7 +161,7 @@ builder.entity("cannon") {
 		
 		def ballDefinition = entity.ballDefinitions[ballType]
 		
-		def ball = entity.ballTemplate.get([ballDefinition:ballDefinition])
+		def ball = entity.ballTemplate.get([ballDefinition:ballDefinition,subPathDefinitions:entity.subPathDefinitions])
 		entity.balls[(index)]=ball
 	}
 	

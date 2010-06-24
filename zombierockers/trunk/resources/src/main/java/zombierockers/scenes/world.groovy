@@ -61,12 +61,12 @@ builder.entity {
 		balls.each { ball ->
 			
 			def position = ball.position
-			def layer = -1
+			def layer = ball.layer-1
 			def size = ball.size
 			
 			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
 				g.pushTransform()
-				g.translate((float) position.x + 5, (float)position.y + 5)
+				g.translate((float) position.x + 3, (float)position.y + 3)
 				g.scale(size.x, size.y)
 				g.drawImage(ballShadowImage, (float)-(ballShadowImage.getWidth() / 2), (float)-(ballShadowImage.getHeight() / 2))
 				g.popTransform()
@@ -113,6 +113,7 @@ builder.entity {
 		ballsQuantity = entity.level.ballsQuantity
 		ballDefinitions = entity.level.ballDefinitions
 		pathProperties = entity.level.pathProperties
+		subPathDefinitions = entity.level.subPathDefinitions
 	}
 	
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
@@ -121,6 +122,7 @@ builder.entity {
 		bounds=utils.rectangle((float)20+offset,20,(float)760-offset,560)
 		ballDefinitions = entity.level.ballDefinitions
 		collisionMap = entity.level.collisionMap
+		subPathDefinitions = entity.level.subPathDefinitions
 	}
 	
 	child(entity("segmentsManager") {
