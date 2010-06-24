@@ -63,6 +63,6 @@ builder.entity("bullet-${Math.random()}") {
 		if(message.source != entity)
 			return
 		
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.removeEntity(entity))
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
 }

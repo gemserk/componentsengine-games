@@ -61,8 +61,8 @@ builder.entity("limbo-${Math.random()}") {
 		entity.segment = segment
 		
 		log.info("New segment and balls added to limbo - segment.id:$segment.id - deque.size:$deque.size - deque.balls.collors:${deque.collect{it.color}}")
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(segment, entity.parent))
-		utils.custom.messageQueue.enqueueDelay(utils.genericMessage("releaseBalls"){
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment, entity.parent))
+		utils.custom.messageQueue.enqueue(utils.genericMessage("releaseBalls"){
 		})
 	})
 	

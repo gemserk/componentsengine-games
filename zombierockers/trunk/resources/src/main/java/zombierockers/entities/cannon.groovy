@@ -121,7 +121,7 @@ builder.entity("cannon") {
 			def parameters = [position:cannon.bulletPosition.copy(),direction:cannon.direction.copy(),ball:entity.currentBall,collisionMap:entity.collisionMap]
 			def bullet = bulletTemplate.get(parameters)
 			log.info("Fired bullet from Cannon - cannon.id: $entity.id - bullet.id: $bullet.id - bullet.ball.color:$bullet.ball.color" )
-			messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))
 			messageQueue.enqueue(utils.genericMessage("generateBall"){})
 		})
 	}

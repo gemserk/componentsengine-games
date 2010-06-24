@@ -61,7 +61,7 @@ builder.entity("segment-${Math.random()}") {
 		if (entity.balls.size() < 2) {
 			entity.balls.each { ball ->
 				log.info("Removed last ball - segment.id: $entity.id - ball.id: $ball.id")
-				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.removeEntity(ball))
+				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 			}
 			messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
 				newMessage.segment = entity 					
@@ -74,7 +74,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.pathTraversal = getPathTraversal(entity,entity.balls.size()-2)
 		log.info("Removed last ball - segment.id: $entity.id - ball.id: $lastBall.id")
 		entity.balls.remove(lastBall)
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.removeEntity(lastBall))
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBall))
 	})
 	
 	component(utils.components.genericComponent(id:"addNewBallHandler", messageId:["addNewBall"]){ message ->
@@ -99,7 +99,7 @@ builder.entity("segment-${Math.random()}") {
 		
 			
 		ball.segment = entity
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
 		
 		log.info("Added ball to segment - segment.id: $message.segment.id -  ball: $ball.id - $ball.color - index: $insertionPoint")
 	})
@@ -344,7 +344,7 @@ builder.entity("segment-${Math.random()}") {
 				                     minSpeedFactor:entity.minSpeedFactor, maxSpeed:entity.maxSpeed, speedWhenReachBase:entity.speedWhenReachBase]
 				                     
 				def segment = entity.segmentTemplate.get(newParameters)
-				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
+				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
 				secondSegmentBalls.each { ball -> ball.segment = segment}
 				log.info("Splitted in two segments - segment.id: $entity.id - newSegment.id: $segment.id")
 			} else {
@@ -356,7 +356,7 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.balls=ballsToRemove
 		})
 		
-		utils.custom.messageQueue.enqueueDelay(utils.genericMessage("checkSameColorSegments"){
+		utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){
 		})
 	})
 	
