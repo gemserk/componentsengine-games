@@ -1,9 +1,6 @@
 package zombierockers.scenes
 
 
-import com.gemserk.componentsengine.commons.components.ExplosionComponent 
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 
 builder.entity {
 	
@@ -15,32 +12,7 @@ builder.entity {
 		entity.accelerating = (message.id == "accelerateSystem2000-press")
 	})
 	
-	
 	child(entity("world"){ parent("zombierockers.scenes.world",parameters) })
-	
-	child(entity("cursor"){
-		
-		property("color", {entity.parent.children["world"].children["cannon"].currentBall.color})
-		
-		property("position",utils.vector(400,300))
-		property("bounds",utils.rectangle(20,20,760,520))
-		
-		component(new WorldBoundsComponent("bounds")){
-			propertyRef("bounds","bounds")
-			propertyRef("position","position")
-		}
-		
-		component(utils.components.genericComponent(id:"mousemovehandler", messageId:["movemouse"]){ message ->
-			entity.position =  utils.vector(message.x,message.y)
-		})
-		
-		component(new ImageRenderableComponent("imagerenderer")) {
-			property("image", utils.resources.image("cursor"))
-			propertyRef("color", "color")
-			property("position", {entity.position})
-			property("direction", utils.vector(0,1))
-		}
-	})
 	
 	input("inputmapping"){
 		keyboard {
@@ -99,11 +71,6 @@ builder.entity {
 		])
 		
 		property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString() })
-	})
-	
-	child(entity("explosionEntity") { 
-		component(new ExplosionComponent("explosions")) {
-		}
 	})
 	
 }

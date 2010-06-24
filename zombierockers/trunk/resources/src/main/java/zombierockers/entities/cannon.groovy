@@ -191,4 +191,29 @@ builder.entity("cannon") {
 		}
 		
 	})
+	
+	child(entity("cursor"){
+		
+		property("color", {entity.parent.currentBall.color})
+		
+		property("position",utils.vector(400,300))
+		property("bounds",utils.rectangle(20,20,760,520))
+		
+		component(new WorldBoundsComponent("bounds")){
+			propertyRef("bounds","bounds")
+			propertyRef("position","position")
+		}
+		
+		component(utils.components.genericComponent(id:"mousemovehandler", messageId:["movemouse"]){ message ->
+			entity.position =  utils.vector(message.x,message.y)
+		})
+		
+		component(new ImageRenderableComponent("imagerenderer")) {
+			property("image", utils.resources.image("cursor"))
+			propertyRef("color", "color")
+			property("position", {entity.position})
+			property("direction", utils.vector(0,1))
+			property("layer", 10)
+		}
+	})
 }

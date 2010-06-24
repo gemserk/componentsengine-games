@@ -12,6 +12,7 @@ import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.timers.CountDownTimer;
 
 
+import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.commons.components.Path;
@@ -99,6 +100,8 @@ builder.entity {
 	child(entity("path"){
 		
 	})
+	
+	component(new ExplosionComponent("explosions")) { }
 	
 	child(id:"base", template:"zombierockers.entities.base") {
 		position = entity.path.points[-1]
