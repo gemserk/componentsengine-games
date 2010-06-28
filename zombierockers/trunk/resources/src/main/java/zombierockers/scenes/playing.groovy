@@ -39,40 +39,38 @@ builder.entity {
 		if(entity.shouldGrabMouse && !utils.custom.gameStateManager.gameProperties.runningInDebug)
 			utils.custom.gameContainer.setMouseGrabbed(true)
 	})
+	
 	component(utils.components.genericComponent(id:"grabMouse-enternodestate", messageId:"enterNodeState"){ message ->
 		entity.shouldGrabMouse = true
+		log.info("Entering playing state")
 	})
 	component(utils.components.genericComponent(id:"grabMouse-leavenodestate", messageId:"leaveNodeState"){ message ->
 		utils.custom.gameContainer.setMouseGrabbed(false)
 		entity.shouldGrabMouse = false
+		log.info("Leaving playing state")
 	})
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
 		if(!utils.custom.gameContainer.hasFocus())
 			messageQueue.enqueue(utils.genericMessage("paused"){})
-		
 	})
 	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
-		if (messageQueue.messages.isEmpty())
-			messageQueue.enqueue(utils.genericMessage("paused"){})
-		else
-			messageQueue.enqueue(utils.genericMessage("pauseGame"){})
+		messageQueue.enqueue(utils.genericMessage("paused"){})
 	})
 	
 	child(entity("fpsLabel"){
 		
 		parent("gemserk.gui.label", [
-		//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
-		position:utils.vector(60f, 30f),
-		fontColor:utils.color(0f,0f,0f,1f),
-		bounds:utils.rectangle(-50f, -20f, 100f, 40f),
-		align:"left",
-		valign:"top"
-		])
+				//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+				position:utils.vector(60f, 30f),
+				fontColor:utils.color(0f,0f,0f,1f),
+				bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+				align:"left",
+				valign:"top"
+				])
 		
 		property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString() })
 	})
-	
 }
 

@@ -63,6 +63,7 @@ builder.entity {
 			press(button:"return",eventId:"resumeGame")
 			press(button:"r",eventId:"restart")
 			press(button:"space",eventId:"resumeGame")
+			press(button:"p",eventId:"resumeGame")
 			press(button:"escape",eventId:"resumeGame")
 			press(button:"e",eventId:"goToEditor")
 		}

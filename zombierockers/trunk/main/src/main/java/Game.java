@@ -28,6 +28,7 @@ import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
+import com.gemserk.componentsengine.input.InputMappingComponent;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.SlickToSlf4j;
 import com.google.common.collect.Lists;
@@ -79,7 +80,7 @@ public class Game extends StateBasedGame {
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		container.setVSync(true);
+		//container.setVSync(true);
 		container.setShowFPS(false);
 
 		GemserkGameState menuState = new GameGameState(0, "zombierockers.scenes.scene");

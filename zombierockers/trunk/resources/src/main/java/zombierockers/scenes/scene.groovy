@@ -1,8 +1,11 @@
 package zombierockers.scenes;
 
+
 import com.gemserk.componentsengine.commons.components.states.NodeStateTransitionManagerComponent;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.messages.Message;
+import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.utils.EntityDumper 
 import gemserk.utils.GroovyBootstrapper 
 import net.sf.json.JSONArray 
@@ -23,28 +26,48 @@ builder.entity("game") {
 	//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
 	//	backgroundMusic.play();
 	
-	component(new NodeStateTransitionManagerComponent("stateChanger")){
-		property("transitions",[
-		gameover:["gameover"],
-		paused:["paused"],
-		resume:["playing"],
-		enterscore:["enterscore"]
-		])
-	}
+	property("transitions",[
+			gameover:"gameover",
+			paused:"paused",
+			resume:"playing",
+			])
 	
-	child(entity("playing"){ 
-		parent("gemserk.states.stateBasedNode",[enabled:true,exclusions:["render"]])
-		parent("zombierockers.scenes.playing", [level:currentLevel]) 
+	property("stateEntities",[
+			entity("playing"){
+				parent("zombierockers.scenes.playing", [level:currentLevel])
+			},
+			entity("paused"){ parent("zombierockers.scenes.paused") },entity("gameover"){  parent("zombierockers.scenes.gameover") }
+			])
+	
+	property("currentNodeState", null)
+	
+	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume"]){ message ->
+		
+		String messageId = message.getId();
+		String transition = entity.transitions.get(messageId);
+		
+		def newEntity = entity.stateEntities.find{it.id == transition}
+		
+		messageQueue.enqueueDelay(new Message("leaveNodeState", new PropertiesMapBuilder().property("message", message).build()));
+		messageQueue.enqueueDelay(utils.genericMessage("changeNodeState"){ newMessage -> newMessage.state = newEntity})
+		messageQueue.enqueueDelay(new Message("enterNodeState", new PropertiesMapBuilder().property("message", message).build()));
 	})
 	
-	child(entity("gameover"){ 
-		parent("gemserk.states.stateBasedNode",[enabled:false])
-		parent("zombierockers.scenes.gameover")
+	component(utils.components.genericComponent(id:"changeNodeStateHandler", messageId:"changeNodeState"){ message ->
+		def newEntity = message.state
+		
+		if (entity.currentNodeState == newEntity)
+			return
+		
+		if (entity.currentNodeState != null)
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.currentNodeState));
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newEntity,entity));
+		entity.currentNodeState = newEntity
 	})
 	
-	child(entity("paused"){ 
-		parent("gemserk.states.stateBasedNode",[enabled:false])
-		parent("zombierockers.scenes.paused")
+	component(utils.components.genericComponent(id:"enterStateHandler", messageId:"enterState"){ message ->
+		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
 	})
 	
 	input("inputmapping"){
@@ -66,12 +89,14 @@ builder.entity("game") {
 		def	levelIndex = (entity.currentLevelIndex + 1) % levels.size
 		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
 	})
 	
 	component(utils.components.genericComponent(id:"restartLevelHandler", messageId:"restartLevel"){ message ->
 		def levelIndex = entity.currentLevelIndex
 		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
 	})
 	
 	property("sceneEditorTemplate",utils.custom.templateProvider.getTemplate("zombierockers.scenes.sceneEditor"))
