@@ -1,5 +1,7 @@
 package zombierockers.scenes
 
+import org.newdawn.slick.Image 
+
 
 
 builder.entity {
@@ -44,10 +46,18 @@ builder.entity {
 		entity.shouldGrabMouse = true
 		log.info("Entering playing state")
 	})
+	
 	component(utils.components.genericComponent(id:"grabMouse-leavenodestate", messageId:"leaveNodeState"){ message ->
 		utils.custom.gameContainer.setMouseGrabbed(false)
 		entity.shouldGrabMouse = false
 		log.info("Leaving playing state")
+	})
+	
+	component(utils.components.genericComponent(id:"grabscreenshot-leavenodestate", messageId:"leaveNodeState"){ message ->
+		def graphics = utils.custom.gameContainer.graphics
+		Image screenshot = new Image(800,600);
+        graphics.copyArea(screenshot, 0, 0); 
+		utils.custom.gameStateManager.gameProperties.screenshot = screenshot
 	})
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
@@ -62,13 +72,13 @@ builder.entity {
 	child(entity("fpsLabel"){
 		
 		parent("gemserk.gui.label", [
-				//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
-				position:utils.vector(60f, 30f),
-				fontColor:utils.color(0f,0f,0f,1f),
-				bounds:utils.rectangle(-50f, -20f, 100f, 40f),
-				align:"left",
-				valign:"top"
-				])
+		//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+		position:utils.vector(60f, 30f),
+		fontColor:utils.color(0f,0f,0f,1f),
+		bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+		align:"left",
+		valign:"top"
+		])
 		
 		property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString() })
 	})

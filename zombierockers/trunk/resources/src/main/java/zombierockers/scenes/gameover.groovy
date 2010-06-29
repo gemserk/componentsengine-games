@@ -1,6 +1,7 @@
 package zombierockers.scenes
 ;
 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
 builder.entity {
@@ -11,6 +12,14 @@ builder.entity {
 	property("win", false)
 	
 	def labelRectangle = utils.rectangle(-220,-50,440,100)
+	
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", {utils.custom.gameStateManager.gameProperties.screenshot})
+		property("color", utils.color(1,1,1,1))
+		property("position", utils.vector(400,300))
+		property("direction", utils.vector(1,0))
+		property("layer", 900)
+	}
 	
 	component(new RectangleRendererComponent("background")) {
 		property("position",utils.vector(0,0))
