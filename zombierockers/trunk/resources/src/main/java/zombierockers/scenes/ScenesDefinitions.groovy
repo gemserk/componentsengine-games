@@ -58,7 +58,7 @@ class ScenesDefinitions {
 			return new SubPathDefinition(start, end, metadata)
 		}
 		
-		def defaultElement = subPathDefinition(0, 100000, [layer:0, collisionMask:1])
+		def defaultElement = subPathDefinition(0, 100000, [layer:10, collisionMask:1])
 		
 		def level01 = [background:"level01", path:"levels/level01/path.svg", ballsQuantity:40, 
 				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:700f, minSpeedFactor:0.2f, maxSpeed:0.04f, speedWhenReachBase:0.4f],

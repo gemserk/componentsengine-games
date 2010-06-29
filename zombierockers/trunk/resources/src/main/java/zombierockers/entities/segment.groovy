@@ -151,6 +151,7 @@ builder.entity("segment-${Math.random()}") {
 			speed = (float) minSpeed + maxSpeed * (1-minSpeedFactor) *(1-(entity.pathTraversal.distanceFromOrigin/entity.pathLength))
 		}	
 		
+		
 		def distance = (float)(speed * message.delta)
 		def pathTraversal = entity.pathTraversal.add(distance)
 		entity.pathTraversal = pathTraversal
@@ -158,7 +159,7 @@ builder.entity("segment-${Math.random()}") {
 		def messageQueue = utils.custom.messageQueue
 		entity.balls.reverseEach { ball ->
 			ball.newPathTraversal = pathTraversal
-			pathTraversal = pathTraversal.add((float)-ball.radius * 2)
+			pathTraversal = pathTraversal.add((float)-ball.radius * 2f)
 		}
 	})
 	

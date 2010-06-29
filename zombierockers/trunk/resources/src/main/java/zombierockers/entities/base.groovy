@@ -27,6 +27,7 @@ builder.entity("base") {
 		propertyRef("radius", "radius")
 		property("lineColor", utils.color(0,0,0,1))
 		property("fillColor", utils.color(0,0,0,1))
+		property("layer",1)
 	}
 	
 	
