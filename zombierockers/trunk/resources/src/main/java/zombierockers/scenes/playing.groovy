@@ -1,6 +1,5 @@
 package zombierockers.scenes
 
-import org.newdawn.slick.Image 
 
 
 
@@ -53,11 +52,10 @@ builder.entity {
 		log.info("Leaving playing state")
 	})
 	
+	
 	component(utils.components.genericComponent(id:"grabscreenshot-leavenodestate", messageId:"leaveNodeState"){ message ->
 		def graphics = utils.custom.gameContainer.graphics
-		Image screenshot = new Image(800,600);
-        graphics.copyArea(screenshot, 0, 0); 
-		utils.custom.gameStateManager.gameProperties.screenshot = screenshot
+        graphics.copyArea(utils.custom.gameStateManager.gameProperties.screenshot, 0, 0); 
 	})
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
@@ -77,7 +75,8 @@ builder.entity {
 		fontColor:utils.color(0f,0f,0f,1f),
 		bounds:utils.rectangle(-50f, -20f, 100f, 40f),
 		align:"left",
-		valign:"top"
+		valign:"top",
+		layer: 100000
 		])
 		
 		property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString() })

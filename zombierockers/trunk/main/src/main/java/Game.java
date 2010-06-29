@@ -14,6 +14,7 @@ import net.sf.json.JSONArray;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
@@ -28,7 +29,6 @@ import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
-import com.gemserk.componentsengine.input.InputMappingComponent;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.SlickToSlf4j;
 import com.google.common.collect.Lists;
@@ -85,6 +85,7 @@ public class Game extends StateBasedGame {
 
 		GemserkGameState menuState = new GameGameState(0, "zombierockers.scenes.scene");
 		addState(menuState);
+		gameProperties.put("screenshot", new Image(800,600));
 	}
 
 	class GameGameState extends GemserkGameState {
