@@ -14,6 +14,10 @@ builder.entity("scene") {
 		position = utils.vector(600,560)
 	}
 	
+	child(id:"droid", template:"dassault.entities.droid") { 
+		position = utils.vector(300,300)
+	}
+	
 	input("inputmapping"){
 		keyboard {
 
