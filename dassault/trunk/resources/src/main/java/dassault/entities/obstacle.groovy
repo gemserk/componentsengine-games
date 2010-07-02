@@ -10,6 +10,12 @@ builder.entity {
 	property("position", parameters.position)
 	property("bounds", parameters.bounds)
 	
+	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
+		// update collision bounds
+		entity.bounds.centerX = entity.position.x
+		entity.bounds.centerY = entity.position.y 
+	})
+	
 	component(utils.components.genericComponent(id:"obstacleRenderer", messageId:"render"){ message ->
 		
 		def renderer = message.renderer
@@ -24,7 +30,7 @@ builder.entity {
 		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
 			g.setColor(color)
 			g.pushTransform()
-			g.translate(position.x, position.y)
+			// g.translate(position.x, position.y)
 			g.scale(size, size)
 			g.fill(shape)
 			g.popTransform()
