@@ -14,8 +14,12 @@ builder.entity("scene") {
 		position = utils.vector(600,560)
 	}
 	
-	child(id:"droid", template:"dassault.entities.droid") { 
+	child(id:"droid1", template:"dassault.entities.droid") { 
 		position = utils.vector(300,300)
+	}
+	
+	child(id:"droid2", template:"dassault.entities.droid") { 
+		position = utils.vector(200,200)
 	}
 	
 	input("inputmapping"){

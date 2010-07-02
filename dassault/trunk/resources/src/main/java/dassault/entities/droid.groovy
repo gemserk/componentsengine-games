@@ -2,6 +2,7 @@ package dassault.entities
 
 import org.newdawn.slick.Input;
 
+import com.gemserk.commons.animation.PropertyAnimation 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 
@@ -15,6 +16,48 @@ builder.entity {
 	property("direction",utils.vector(1,0))
 	property("size", 1.0f)
 	
+	// walk animation
+	
+	property("headPosition", utils.vector(0,0))
+	
+	def headAnimation = new PropertyAnimation("headPosition");
+	
+	headAnimation.addKeyFrame 0, utils.vector(0,0)
+	headAnimation.addKeyFrame 150, utils.vector(0,-5)
+	headAnimation.addKeyFrame 300, utils.vector(0,0)
+	headAnimation.addKeyFrame 450, utils.vector(0,5)
+	headAnimation.addKeyFrame 600, utils.vector(0,0)
+	
+	property("walkAnimations", [headAnimation])
+	
+	component(utils.components.genericComponent(id:"startWalkAnimationHandler", messageId:"startWalkAnimation"){ message ->
+		if(!entity.id.equals(message.animationId))
+			return
+		entity.walkAnimations.each { animation -> 
+			animation.restart()
+		}
+	})
+	
+	component(utils.components.genericComponent(id:"stopWalkAnimationHandler", messageId:"stopWalkAnimation"){ message ->
+		if(!entity.id.equals(message.animationId))
+			return
+		entity.walkAnimations.each { animation -> 
+			animation.stop()
+		}
+	})
+	
+	component(utils.components.genericComponent(id:"updateAnimationsHandler", messageId:"update"){ message ->
+		entity.walkAnimations.each { animation ->
+			if (animation.paused)
+				return
+			animation.animate(entity, message.delta)
+			if (animation.finished)
+				animation.restart()
+		}
+	})
+	
+	property("shadowImage", utils.resources.image("droidshadow"))
+	
 	// render type
 	
 	// weapon type
@@ -24,19 +67,37 @@ builder.entity {
 		def renderer = message.renderer
 		
 		def position = entity.position
+		
+		//		println entity.headPosition
+		//		println entity.isMoving
+		
 		def size = entity.size
 		def layer = 0
 		def color = utils.color(1f,1f,1f,1f)
-		def shape = utils.rectangle(-5, -5, 10, 10)
+		def shape = utils.rectangle(-14, -14, 28, 28)
 		
 		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
 			g.setColor(color)
 			g.pushTransform()
-			g.translate((float) position.x, (float)position.y)
+			g.translate((float) position.x + entity.headPosition.x, (float)position.y + entity.headPosition.y)
 			g.scale(size, size)
 			g.fill(shape)
 			g.popTransform()
 		}))
+		
+		position = entity.position.copy()
+		def image = entity.shadowImage
+		def shadowSize = (float) size * 0.6f
+		
+		renderer.enqueue( new ClosureRenderObject(layer-1, { Graphics g ->
+			g.setColor(utils.color(1f, 1f, 1f, 0.3f))
+			g.pushTransform()
+			g.translate((float) position.x, (float)position.y + 20)
+			g.scale(shadowSize, shadowSize)
+			g.drawImage(image, (float)-(image.getWidth() / 2), (float)-(image.getHeight() / 2))
+			g.popTransform()
+		}))
+		
 	})
 	
 	component(new SuperMovementComponent("movementComponent")) {
@@ -65,7 +126,7 @@ builder.entity {
 		if (input.isKeyDown(Input.KEY_DOWN)) {
 			moveDirection.y = 1
 		}
-	
+		
 		if (moveDirection.lengthSquared() > 0f) {
 			def desiredDirection = moveDirection.normalise().scale(0.01f)
 			entity."movementComponent.force".add(desiredDirection)
@@ -73,6 +134,30 @@ builder.entity {
 			entity."movementComponent.force".add(entity."movementComponent.velocity".copy().negate().scale(0.01f))
 		}
 		
+	})
+	
+	property("isMoving", false)
+	
+	component(utils.components.genericComponent(id:"animationsHandler", messageId:"update"){ message ->
+		def isMoving = entity.isMoving
+		
+		if (!isMoving) {
+			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) {
+				entity.isMoving = true
+				println "starting walk animation"
+				utils.custom.messageQueue.enqueue(utils.genericMessage("startWalkAnimation"){ newMessage ->
+					newMessage.animationId = entity.id
+				})
+			}
+		} else {
+			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) 
+				return
+			println "stop walking"
+			utils.custom.messageQueue.enqueue(utils.genericMessage("stopWalkAnimation"){ newMessage ->
+				newMessage.animationId = entity.id
+			})
+			entity.isMoving = false
+		}
 	})
 	
 }

@@ -3,8 +3,7 @@ package dassault.entities
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import org.newdawn.slick.Graphics 
 
-import com.gemserk.commons.animations.PropertyAnimation;
-
+import com.gemserk.commons.animation.PropertyAnimation;
 
 builder.entity {
 	

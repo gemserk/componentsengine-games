@@ -39,6 +39,11 @@
 			<artifactId>datastore</artifactId>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.gemserk.commons.animation</groupId>
+			<artifactId>animation</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 </project>

@@ -1,8 +1,5 @@
 package dassault.entities
 
-
-
-
 builder.entity {
 	
 	property("animations", parameters.animations)
