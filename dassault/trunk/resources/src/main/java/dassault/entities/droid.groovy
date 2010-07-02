@@ -4,7 +4,10 @@ import org.newdawn.slick.Input;
 
 import com.gemserk.commons.animation.PropertyAnimation 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
+import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 import org.newdawn.slick.Graphics 
 
@@ -12,7 +15,8 @@ builder.entity {
 	
 	tags("droid", "nofriction")
 	
-	property("position", parameters.position)
+	property("position", utils.vector(0,0))
+	property("newPosition", parameters.position)
 	property("direction",utils.vector(1,0))
 	property("size", 1.0f)
 	
@@ -23,9 +27,9 @@ builder.entity {
 	def headAnimation = new PropertyAnimation("headPosition");
 	
 	headAnimation.addKeyFrame 0, utils.vector(0,0)
-	headAnimation.addKeyFrame 150, utils.vector(0,-5)
+	headAnimation.addKeyFrame 150, utils.vector(0,-3)
 	headAnimation.addKeyFrame 300, utils.vector(0,0)
-	headAnimation.addKeyFrame 450, utils.vector(0,5)
+	headAnimation.addKeyFrame 450, utils.vector(0,3)
 	headAnimation.addKeyFrame 600, utils.vector(0,0)
 	
 	property("walkAnimations", [headAnimation])
@@ -101,7 +105,7 @@ builder.entity {
 	})
 	
 	component(new SuperMovementComponent("movementComponent")) {
-		propertyRef("position", "position")
+		propertyRef("position", "newPosition")
 		property("maxVelocity", 0.1f)
 	}
 	
@@ -136,6 +140,20 @@ builder.entity {
 		
 	})
 	
+	component(utils.components.genericComponent(id:"updatePositionHandler", messageId:"update"){ message ->
+		// check collisions
+		
+		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), { obstacle -> obstacle.bounds.contains((float)entity.newPosition.x - obstacle.position.x, (float)entity.newPosition.y -obstacle.position.y) } as Predicate))
+		
+		if (!obstacles.empty) {
+			entity."movementComponent.velocity".set(0,0)
+			entity.newPosition = entity.position.copy()
+			return
+		}
+		
+		entity.position = entity.newPosition
+	})
+	
 	property("isMoving", false)
 	
 	component(utils.components.genericComponent(id:"animationsHandler", messageId:"update"){ message ->
@@ -144,7 +162,7 @@ builder.entity {
 		if (!isMoving) {
 			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) {
 				entity.isMoving = true
-				println "starting walk animation"
+//				println "starting walk animation"
 				utils.custom.messageQueue.enqueue(utils.genericMessage("startWalkAnimation"){ newMessage ->
 					newMessage.animationId = entity.id
 				})
@@ -152,7 +170,7 @@ builder.entity {
 		} else {
 			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) 
 				return
-			println "stop walking"
+//			println "stop walking"
 			utils.custom.messageQueue.enqueue(utils.genericMessage("stopWalkAnimation"){ newMessage ->
 				newMessage.animationId = entity.id
 			})

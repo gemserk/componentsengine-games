@@ -22,6 +22,11 @@ builder.entity("scene") {
 		position = utils.vector(200,200)
 	}
 	
+	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
+		position = utils.vector(400,100)
+		bounds = utils.rectangle(-50, -10, 100, 20)
+	}
+	
 	input("inputmapping"){
 		keyboard {
 
