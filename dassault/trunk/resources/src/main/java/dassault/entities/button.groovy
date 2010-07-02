@@ -25,13 +25,11 @@ builder.entity {
 	property("color", utils.color(1f,1f,1f,1f))
 	property("shape", utils.rectangle(-50f, -10f, 100f, 20f))
 	
-	property("animationId", "$entity.id-animation".toString())
-	
-	child(id:entity.animationId, template:"dassault.entities.animation") { 
-		animations = [sizeAnimation, colorAnimation]
-		target = entity
-	}
-	
+	parent("dassault.entities.animation", [
+			animations:[sizeAnimation, colorAnimation],
+			target:entity
+			])
+			
 	component(utils.components.genericComponent(id:"renderButtonHandler", messageId:"render"){ message ->
 		
 		def renderer = message.renderer
@@ -69,7 +67,7 @@ builder.entity {
 				return
 			log.info("pointer enter area $entity.id")
 			utils.custom.messageQueue.enqueue(utils.genericMessage("restartAnimations"){ newMessage ->
-				newMessage.animationId = entity.parent.animationId
+				newMessage.animationId = entity.parent.id
 			})
 		})
 		
