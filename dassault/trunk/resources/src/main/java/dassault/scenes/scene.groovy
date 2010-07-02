@@ -7,11 +7,11 @@ builder.entity("scene") {
 	new GroovyBootstrapper();
 	
 	child(id:"button1", template:"dassault.entities.button") { 
-		position = utils.vector(100,100)
+		position = utils.vector(200,560)
 	}
 	
 	child(id:"button2", template:"dassault.entities.button") { 
-		position = utils.vector(400,100)
+		position = utils.vector(600,560)
 	}
 	
 	input("inputmapping"){

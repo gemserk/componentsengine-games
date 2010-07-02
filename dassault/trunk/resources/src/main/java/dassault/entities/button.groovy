@@ -23,22 +23,14 @@ builder.entity {
 	property("position", parameters.position)
 	property("size", 1f)
 	property("color", utils.color(1f,1f,1f,1f))
-	property("animations", [sizeAnimation, colorAnimation])
 	property("shape", utils.rectangle(-50f, -10f, 100f, 20f))
 	
-	component(utils.components.genericComponent(id:"restartAnimationsHandler", messageId:"restartAnimations"){ message ->
-		if(!entity.id.equals(message.animationId))
-			return
-		entity.animations.each { animation -> 
-			animation.restart();
-		}
-	})
+	property("animationId", "$entity.id-animation".toString())
 	
-	component(utils.components.genericComponent(id:"updateAnimationsHandler", messageId:"update"){ message ->
-		entity.animations.each { animation -> 
-			animation.animate(entity, message.delta);
-		}
-	})
+	child(id:entity.animationId, template:"dassault.entities.animation") { 
+		animations = [sizeAnimation, colorAnimation]
+		target = entity
+	}
 	
 	component(utils.components.genericComponent(id:"renderButtonHandler", messageId:"render"){ message ->
 		
@@ -48,8 +40,6 @@ builder.entity {
 		def size = entity.size
 		def layer = 10
 		def color = entity.color
-		
-		// def area = utils.rectangle(-50f, -10f, 100f, 20f)
 		def shape = entity.shape
 		
 		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
@@ -58,7 +48,6 @@ builder.entity {
 			g.translate((float) position.x, (float)position.y)
 			g.scale(size, size)
 			g.fill(shape)
-			// g.fillRect(area.minX, area.minY, area.width, area.height)
 			g.popTransform()
 		}))
 	})
@@ -68,8 +57,8 @@ builder.entity {
 		parent("dassault.entities.areatrigger",[
 		enterAreaTrigger:utils.custom.triggers.genericMessage("pointerEnterArea") { 
 		},
-//		leaveAreaTrigger:utils.custom.triggers.genericMessage("pointerLeaveArea") {
-//		}
+		leaveAreaTrigger:utils.custom.triggers.genericMessage("pointerLeaveArea") {
+		}
 		])
 		
 		property("position", {entity.parent.position })
@@ -80,7 +69,7 @@ builder.entity {
 				return
 			log.info("pointer enter area $entity.id")
 			utils.custom.messageQueue.enqueue(utils.genericMessage("restartAnimations"){ newMessage ->
-				newMessage.animationId = entity.parent.id
+				newMessage.animationId = entity.parent.animationId
 			})
 		})
 		
