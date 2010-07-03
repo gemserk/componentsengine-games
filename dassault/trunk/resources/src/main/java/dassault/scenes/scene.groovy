@@ -29,9 +29,12 @@ builder.entity("scene") {
 		parent("dassault.entities.droid",[position:utils.vector(300,400)])
 	} )
 	
-	child(id:"droid2", template:"dassault.entities.droid") { 
-		position = utils.vector(200,200)
-	}
+	child(id:"cpuController", template:"dassault.entities.aicontroller") { player = "cpu" }
+	
+	child(entity("droid2") {
+		tags("cpu")
+		parent("dassault.entities.droid",[position:utils.vector(200,200)])
+	} )
 	
 	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
 		position = utils.vector(400,100)
@@ -57,7 +60,7 @@ builder.entity("scene") {
 		bounds = utils.rectangle(-400, -10, 800, 20)
 		color = utils.color(0,0,0,1)
 	}
-
+	
 	child(id:"sceneLimit4", template:"dassault.entities.obstacle") { 
 		position = utils.vector(400,600)
 		bounds = utils.rectangle(-400, -10, 800, 20)
@@ -66,7 +69,7 @@ builder.entity("scene") {
 	
 	input("inputmapping"){
 		keyboard {
-
+			
 		}
 		mouse {
 			
