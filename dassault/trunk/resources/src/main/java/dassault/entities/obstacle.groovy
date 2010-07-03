@@ -10,6 +10,8 @@ builder.entity {
 	property("position", parameters.position)
 	property("bounds", parameters.bounds)
 	
+	property("color", parameters.color ?: utils.color(1,1,1,1))
+	
 	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
 		// update collision bounds
 		entity.bounds.centerX = entity.position.x
@@ -24,7 +26,7 @@ builder.entity {
 		
 		def size = 1f
 		def layer = 0
-		def color = utils.color(1f,1f,1f,1f)
+		def color = entity.color
 		def shape = entity.bounds
 		
 		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
