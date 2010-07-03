@@ -67,6 +67,13 @@ builder.entity("scene") {
 		color = utils.color(0,0,0,1)
 	}
 	
+	child(id:"spawner1", template:"dassault.entities.droidspawner") { 
+		position = utils.vector(100,100)
+		minTime = 5000
+		maxTime = 5000
+		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
+	}
+	
 	input("inputmapping"){
 		keyboard {
 			

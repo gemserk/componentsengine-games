@@ -27,7 +27,7 @@ builder.entity {
 				wanderDirection.normalise()
 				
 				wanderTime = utils.random.nextInt(1000) + 1000
-				println "wanderDirection : $wanderDirection , wanderTime : $wanderTime"
+//				println "wanderDirection : $wanderDirection , wanderTime : $wanderTime"
 			} else {
 				wanderTime = wanderTime - delta
 			}
