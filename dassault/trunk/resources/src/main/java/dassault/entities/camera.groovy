@@ -10,7 +10,6 @@ builder.entity {
 	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:["update"]){ message ->
 		if (!entity.enabled)
 			return
-		
 		def input = utils.custom.gameContainer.input
 		entity.position = utils.vector((float) input.getMouseX() - 400, (float) input.getMouseY() - 300)
 	})
@@ -30,6 +29,9 @@ builder.entity {
 		
 		renderer.enqueue( new ClosureRenderObject(-100, { Graphics g ->
 			g.pushTransform()
+//			g.translate(400f, 300f)
+//			g.scale(2.0f, 2.0f)
+//			g.translate(-400f, -300f)
 			g.translate(position.x, position.y)
 		}))
 		
@@ -45,8 +47,8 @@ builder.entity {
 //			release(button:"e",eventId:"disableCamera")
 		}
 		mouse {
-			press(button:"left",eventId:"enableCamera")
-			release(button:"left",eventId:"disableCamera")
+			press(button:"right",eventId:"enableCamera")
+			release(button:"right",eventId:"disableCamera")
 		}
 	}
 	

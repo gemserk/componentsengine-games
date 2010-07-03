@@ -29,7 +29,9 @@ builder.entity {
 		controlledEntities.each { controlledEntity -> 
 			
 			Input input = utils.custom.gameContainer.input
+			
 			def moveDirection = utils.vector(0,0)
+			
 			if (input.isKeyDown(leftKey)) {
 				moveDirection.x = -1
 			}
@@ -45,8 +47,18 @@ builder.entity {
 			if (input.isKeyDown(downKey)) {
 				moveDirection.y = 1
 			}
+			
 			controlledEntity.moveDirection = moveDirection
 			
+			def mousePosition = utils.vector(input.mouseX, input.mouseY)
+			def fireDirection = mousePosition.sub(controlledEntity.position)
+			
+			controlledEntity.fireDirection = fireDirection
+			
+			// I don't like this...
+			
+			shouldFire = input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)
+			controlledEntity.shouldFire = shouldFire
 		}
 	})
 	

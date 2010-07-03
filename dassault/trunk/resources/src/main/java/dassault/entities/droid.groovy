@@ -111,9 +111,9 @@ builder.entity {
 	}
 	
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
-
+		
 		def moveDirection = entity.moveDirection ?: utils.vector(0,0)
-	
+		
 		if (moveDirection.lengthSquared() > 0f) {
 			def desiredDirection = moveDirection.normalise().scale(0.01f)
 			entity."movementComponent.force".add(desiredDirection)
