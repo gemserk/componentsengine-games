@@ -7,7 +7,6 @@ import com.gemserk.componentsengine.render.ClosureRenderObject
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates;
 import org.newdawn.slick.Graphics 
-import org.newdawn.slick.Input 
 
 
 builder.entity {
@@ -111,27 +110,9 @@ builder.entity {
 	}
 	
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
-		
-		Input input = utils.custom.gameContainer.input
-		
-		def moveDirection = utils.vector(0,0)
-		
-		if (input.isKeyDown(Input.KEY_LEFT)) {
-			moveDirection.x = -1
-		}
-		
-		if (input.isKeyDown(Input.KEY_RIGHT)) {
-			moveDirection.x = 1
-		}
-		
-		if (input.isKeyDown(Input.KEY_UP)) {
-			moveDirection.y = -1
-		}
-		
-		if (input.isKeyDown(Input.KEY_DOWN)) {
-			moveDirection.y = 1
-		}
-		
+
+		def moveDirection = entity.moveDirection ?: utils.vector(0,0)
+	
 		if (moveDirection.lengthSquared() > 0f) {
 			def desiredDirection = moveDirection.normalise().scale(0.01f)
 			entity."movementComponent.force".add(desiredDirection)

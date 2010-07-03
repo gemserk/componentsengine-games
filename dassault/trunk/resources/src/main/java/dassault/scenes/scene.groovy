@@ -1,5 +1,7 @@
 package dassault.scenes;
 
+import org.newdawn.slick.Input;
+
 import gemserk.utils.GroovyBootstrapper 
 
 builder.entity("scene") {
@@ -14,9 +16,18 @@ builder.entity("scene") {
 		position = utils.vector(600,560)
 	}
 	
-	child(id:"droid1", template:"dassault.entities.droid") { 
-		position = utils.vector(300,300)
+	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
+		player = "player1"
+		leftKey = Input.KEY_LEFT
+		rightKey = Input.KEY_RIGHT
+		upKey = Input.KEY_UP
+		downKey = Input.KEY_DOWN
 	}
+	
+	child(entity("droid1") {
+		tags("player1")
+		parent("dassault.entities.droid",[position:utils.vector(300,400)])
+	} )
 	
 	child(id:"droid2", template:"dassault.entities.droid") { 
 		position = utils.vector(200,200)
