@@ -17,6 +17,7 @@ builder.entity {
 	property("newPosition", parameters.position)
 	property("direction",utils.vector(1,0))
 	property("size", 1.0f)
+	property("speed", parameters.speed ?: 0.1f)
 	
 	property("bounds", utils.rectangle(-15, -15, 30, 30))
 	
@@ -106,7 +107,7 @@ builder.entity {
 	
 	component(new SuperMovementComponent("movementComponent")) {
 		propertyRef("position", "newPosition")
-		property("maxVelocity", 0.1f)
+		propertyRef("maxVelocity", "speed")
 	}
 	
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->

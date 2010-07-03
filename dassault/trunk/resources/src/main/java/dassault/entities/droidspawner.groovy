@@ -1,6 +1,9 @@
 package dassault.entities
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.render.ClosureRenderObject 
+
+import org.newdawn.slick.Graphics 
 
 
 builder.entity {
@@ -45,5 +48,27 @@ builder.entity {
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(droid,entity.parent))
 	})
 	
+	// properties for the renderer, or the renderer itself should be received as parameters
 	
+	component(utils.components.genericComponent(id:"baseRenderer", messageId:"render"){ message ->
+		
+		def renderer = message.renderer
+		
+		def position = entity.position
+		
+		def size = 1f
+		def layer = -5
+		def color = utils.color(0f,0f,0.3f,1f)
+		def shape = entity.bounds
+		
+		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
+			g.setColor(color)
+			g.pushTransform()
+			g.translate(position.x, position.y)
+			g.scale(size, size)
+			g.fillRect(-10, -10, 20, 20)
+			g.popTransform()
+		}))
+		
+	})
 }

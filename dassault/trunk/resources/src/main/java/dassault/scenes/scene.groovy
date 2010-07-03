@@ -8,12 +8,16 @@ builder.entity("scene") {
 	
 	new GroovyBootstrapper();
 	
-	child(id:"button1", template:"dassault.entities.button") { 
-		position = utils.vector(200,560)
-	}
+//	child(id:"button1", template:"dassault.entities.button") { 
+//		position = utils.vector(200,560)
+//	}
+//	
+//	child(id:"button2", template:"dassault.entities.button") { 
+//		position = utils.vector(600,560)
+//	}
 	
-	child(id:"button2", template:"dassault.entities.button") { 
-		position = utils.vector(600,560)
+	child(id:"camera", template:"dassault.entities.camera") { 
+		position = utils.vector(0,0)
 	}
 	
 	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
@@ -26,7 +30,7 @@ builder.entity("scene") {
 	
 	child(entity("droid1") {
 		tags("player1")
-		parent("dassault.entities.droid",[position:utils.vector(300,400)])
+		parent("dassault.entities.droid",[position:utils.vector(300,400), speed:0.2f])
 	} )
 	
 	child(id:"cpuController", template:"dassault.entities.aicontroller") { player = "cpu" }
@@ -74,6 +78,13 @@ builder.entity("scene") {
 		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
 	}
 	
+	child(id:"spawner2", template:"dassault.entities.droidspawner") { 
+		position = utils.vector(700,100)
+		minTime = 8000
+		maxTime = 1000
+		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
+	}
+	
 	input("inputmapping"){
 		keyboard {
 			
@@ -82,4 +93,7 @@ builder.entity("scene") {
 			
 		}
 	}
+	
+	
+
 }
