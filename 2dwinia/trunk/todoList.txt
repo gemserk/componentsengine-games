@@ -1,0 +1,39 @@
+2dwinia - TODO LIST
+
+Requirements:
+
+	There are a lot of darwinians
+		the darwinians wander near a target zone
+
+
+	There are enemy viruses
+		worm - phisical attack
+		spider - spits venom
+	You can influence the behaviour of darwinian using officers
+		the officers change the target zone of darwinians nearby
+
+
+	You can create a squad to defend darwinians
+	The squads fire lasers
+	the engineer captures souls
+	The viruses release souls when killed
+	You can travel between islands
+	
+
+
+
+TODO:
+	add inteligent behaviour for darwinians
+		
+	add the worm virus
+	
+
+
+
+
+
+
+DONE:
+add darwinians
+Show background
+
