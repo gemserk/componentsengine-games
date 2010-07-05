@@ -27,13 +27,17 @@ builder.entity("scene") {
 	
 	child(entity("droid1") {
 		tags("player1", "blasterweapon")
-		parent("dassault.entities.droid",[position:utils.vector(300,400), speed:0.2f])
+		parent("dassault.entities.droid",[position:utils.vector(300,400), 
+		                                  speed:0.2f, 
+		                                  energy:utils.container(100f,100f),
+		                                  regenerationSpeed:0.02f])
 	} )
 	
 	child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
 		owner = "droid1"
 		reloadTime = 100
 		damage = 30f
+		energy = 20f
 		bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
 	}
 	

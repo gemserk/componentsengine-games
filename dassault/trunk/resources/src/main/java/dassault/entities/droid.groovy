@@ -184,6 +184,14 @@ builder.entity {
 		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
 	
+	property("energy", parameters.energy ?: utils.container(100f,100f))
+	property("regenerationSpeed", parameters.regenerationSpeed ?: 0.02f)
+	
+	component(utils.components.genericComponent(id:"regenerateEnergy", messageId:"update"){ message ->
+		regenerationSpeed = entity.regenerationSpeed
+		entity.energy.add((float)regenerationSpeed * message.delta)
+	})
+	
 	property("isMoving", false)
 	
 	component(utils.components.genericComponent(id:"animationsHandler", messageId:"update"){ message ->

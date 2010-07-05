@@ -12,15 +12,21 @@ builder.entity {
 	property("damage", parameters.damage)
 	property("loaded", parameters.loaded ?: false)
 	
+	property("weaponEnergy", parameters.energy)
+	
 	property("bulletTemplate", parameters.bulletTemplate)
 	
 	component(utils.components.genericComponent(id:"weaponComponent", messageId:"update"){ message ->
 		def owner = entity.root.getEntityById(entity.owner)
 		
 		def loaded = entity.loaded ?: false
+				
+		def energy = owner.energy
+		
+		def weaponEnergy = entity.weaponEnergy
 		
 		// owner hasEnergy?
-		if (owner.shouldFire && loaded) {
+		if (owner.shouldFire && loaded && energy.current > weaponEnergy) {
 			
 			def bulletTemplate = entity.bulletTemplate
 			
@@ -36,6 +42,7 @@ builder.entity {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent))
 			
 			// owner.reduceEnergy(...)
+			energy.remove(weaponEnergy)
 			
 			entity.reloadTime = entity.totalReloadTime
 		}
