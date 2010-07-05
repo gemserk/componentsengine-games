@@ -11,6 +11,7 @@ builder.entity {
 	property("zoom", false)
 	
 	property("position", utils.vector(0,0))
+	property("mouseRelativePosition", utils.vector(0,0))
 	
 	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:["update"]){ message ->
 		
@@ -22,15 +23,17 @@ builder.entity {
 		def targetPosition = owner.position.copy().sub(centerPosition).negate()
 		
 		entity.position =  targetPosition
-		
-		if (!entity.followMouse)
-			return
-		
+
 		// if followMouse then mid point between mouse and owner position
 		def input = utils.custom.gameContainer.input
 		
 		def mousePosition = utils.vector((float) input.getMouseX(), (float) input.getMouseY())
-		mousePosition.sub(centerPosition).negateLocal()
+		entity.mouseRelativePosition = mousePosition.sub(centerPosition)
+		
+		if (!entity.followMouse)
+			return
+		
+		mousePosition.negateLocal();
 		
 		targetPosition = targetPosition.add(mousePosition).scale(0.5f)
 		entity.position = targetPosition

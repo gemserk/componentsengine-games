@@ -103,11 +103,14 @@ builder.entity {
 		def color = utils.color(1f,1f,1f,1f)
 		def shape = utils.rectangle(-2, -2, 4, 4)
 		
+		def theta = (float) entity.moveDirection.theta
+		
 		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
 			g.setColor(color)
 			g.pushTransform()
 			g.translate((float) position.x, (float)position.y)
 			g.scale(size, size)
+			g.rotate(0f, 0f, theta);
 			g.fill(shape)
 			g.popTransform()
 		}))

@@ -37,48 +37,24 @@ builder.entity {
 			
 			def moveDirection = utils.vector(0,0)
 			
-			if (input.isKeyDown(leftKey)) {
+			if (input.isKeyDown(leftKey)) 
 				moveDirection.x = -1
-			}
 			
-			if (input.isKeyDown(rightKey)) {
+			if (input.isKeyDown(rightKey)) 
 				moveDirection.x = 1
-			}
 			
-			if (input.isKeyDown(upKey)) {
+			if (input.isKeyDown(upKey)) 
 				moveDirection.y = -1
-			}
 			
-			if (input.isKeyDown(downKey)) {
+			if (input.isKeyDown(downKey)) 
 				moveDirection.y = 1
-			}
 			
 			controlledEntity.moveDirection = moveDirection
 			
 			def mousePosition = utils.vector(input.mouseX, input.mouseY)
 			def droidPosition = controlledEntity.position.copy()
 			
-			def cameraPosition = camera.position
-			
-//			log.info("BEFORE: mousePosition $mousePosition, droidPosition $droidPosition, cameraPosition: $cameraPosition")
-			
-			println "mouse position = $mousePosition"
-			
-			def mouseRelative = mousePosition.copy().sub(utils.vector(400f, 300f))
-			
-			println "mouse center relative position = $mouseRelative"
-			
-			println "camera position: $cameraPosition"
-			
-//			mouseRelative.sub(cameraPosition)
-			
-//			println "mouse camera relative position = $mouseRelative"
-			
-//			droidPosition.sub(cameraPosition)
-			
-//			log.info("CURRENT: mousePosition $mousePosition, droidPosition $droidPosition")
-			
-//			def fireDirection = mouseRelative.sub(droidPosition)
+			def mouseRelative = camera.mouseRelativePosition.copy()
 			
 			controlledEntity.fireDirection = mouseRelative
 			
