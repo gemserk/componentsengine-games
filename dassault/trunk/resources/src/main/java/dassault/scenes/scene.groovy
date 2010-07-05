@@ -9,24 +9,19 @@ builder.entity("scene") {
 	
 	new GroovyBootstrapper();
 	
-	//	child(id:"button1", template:"dassault.entities.button") { 
-	//		position = utils.vector(200,560)
-	//	}
-	//	
-	//	child(id:"button2", template:"dassault.entities.button") { 
-	//		position = utils.vector(600,560)
-	//	}
-	
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)
+		owner = "droid1"
+		screen = utils.rectangle(0,0, 800, 600)
+		followMouse = true
 	}
 	
 	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
 		player = "player1"
-		leftKey = Input.KEY_LEFT
-		rightKey = Input.KEY_RIGHT
-		upKey = Input.KEY_UP
-		downKey = Input.KEY_DOWN
+		leftKey = Input.KEY_A
+		rightKey = Input.KEY_D
+		upKey = Input.KEY_W
+		downKey = Input.KEY_S
 	}
 	
 	child(entity("droid1") {
