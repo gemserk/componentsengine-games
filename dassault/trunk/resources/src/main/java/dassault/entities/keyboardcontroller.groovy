@@ -58,8 +58,8 @@ builder.entity {
 			def mousePosition = utils.vector(input.mouseX, input.mouseY)
 			def droidPosition = controlledEntity.position.copy()
 			
-//			def cameraPosition = camera.position
-
+			def cameraPosition = camera.position
+			
 //			log.info("BEFORE: mousePosition $mousePosition, droidPosition $droidPosition, cameraPosition: $cameraPosition")
 			
 //			mousePosition.sub(cameraPosition)
