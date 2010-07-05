@@ -15,16 +15,7 @@ builder.entity("scene") {
 		screen = utils.rectangle(0,0, 800, 600)
 		followMouse = false
 	}
-	
-	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
-		player = "player1"
-		camera = "camera"
-		leftKey = Input.KEY_A
-		rightKey = Input.KEY_D
-		upKey = Input.KEY_W
-		downKey = Input.KEY_S
-	}
-	
+
 	child(entity("droid1") {
 		tags("player1", "blasterweapon")
 		parent("dassault.entities.droid",[position:utils.vector(300,400), 
@@ -32,6 +23,15 @@ builder.entity("scene") {
 		                                  energy:utils.container(10000f,10000f),
 		                                  regenerationSpeed:0.02f])
 	} )
+		
+	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
+		owner = "droid1"
+		camera = "camera"
+		leftKey = Input.KEY_A
+		rightKey = Input.KEY_D
+		upKey = Input.KEY_W
+		downKey = Input.KEY_S
+	}
 	
 	child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
 		owner = "droid1"
@@ -93,21 +93,10 @@ builder.entity("scene") {
 		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
 	}
 	
-//	component(utils.components.genericComponent(id:"shootBulletHandler", messageId:"shootBullet"){ message ->
-//		def bulletTemplate  = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
-//		def bulletId = "bullet_${utils.random.nextInt()}"
-//		
-//		println bulletId 
-//		
-//		def bullet = bulletTemplate.instantiate(bulletId, [position:utils.vector(20,20), moveDirection:utils.vector(1,0), speed:0.3f])
-//		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity))
-//	})
-	
 	component(new ExplosionComponent("explosions")) { }
 	
 	input("inputmapping"){
 		keyboard {
-//			press(button:"space",eventId:"shootBullet")
 		}
 		mouse {
 			
