@@ -10,6 +10,8 @@ builder.entity {
 	tags("controller", parameters.player)
 	
 	property("player", parameters.player)
+	property("camera", parameters.camera)
+	
 	property("leftKey", parameters.leftKey)
 	property("rightKey", parameters.rightKey)
 	property("upKey", parameters.upKey)
@@ -18,6 +20,9 @@ builder.entity {
 	component(utils.components.genericComponent(id:"controllerComponent", messageId:"update"){ message ->
 		
 		def player = entity.player
+		
+		// set entity instead of id
+		def camera = entity.root.getEntityById(entity.camera)
 		
 		def controlledEntities = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags(player, "droid")))
 		
@@ -51,11 +56,20 @@ builder.entity {
 			controlledEntity.moveDirection = moveDirection
 			
 			def mousePosition = utils.vector(input.mouseX, input.mouseY)
-			def fireDirection = mousePosition.sub(controlledEntity.position)
+			def droidPosition = controlledEntity.position.copy()
+			
+//			def cameraPosition = camera.position
+
+//			log.info("BEFORE: mousePosition $mousePosition, droidPosition $droidPosition, cameraPosition: $cameraPosition")
+			
+//			mousePosition.sub(cameraPosition)
+//			droidPosition.sub(cameraPosition)
+			
+//			log.info("CURRENT: mousePosition $mousePosition, droidPosition $droidPosition")
+			
+			def fireDirection = mousePosition.sub(droidPosition)
 			
 			controlledEntity.fireDirection = fireDirection
-			
-			// I don't like this...
 			
 			shouldFire = input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)
 			controlledEntity.shouldFire = shouldFire

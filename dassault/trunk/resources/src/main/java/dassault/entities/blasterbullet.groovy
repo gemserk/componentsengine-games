@@ -42,7 +42,8 @@ builder.entity {
 		entity.bounds.centerY = entity.newPosition.y 
 		
 		def obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle", "droid"), // 
-				{ collidable -> collidable.bounds.intersects(entity.bounds) } as Predicate))
+				{ collidable -> collidable.bounds.intersects(entity.bounds) } as Predicate, // 
+				{ collidable -> entity.owner != collidable } as Predicate))
 		
 		if (!obstacles.empty) {
 			

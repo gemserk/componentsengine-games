@@ -1,26 +1,55 @@
 package dassault.entities
 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 
-import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.google.common.base.Predicates;
+
 
 builder.entity {
 	
+	property("owner", parameters.owner)
+	property("totalReloadTime", parameters.reloadTime)
+	property("reloadTime", parameters.reloadTime)
+	property("loaded", parameters.loaded ?: false)
+	
+	property("bulletTemplate", parameters.bulletTemplate)
+	
 	component(utils.components.genericComponent(id:"weaponComponent", messageId:"update"){ message ->
+		def owner = entity.root.getEntityById(entity.owner)
 		
-		def player = entity.player
+		def loaded = entity.loaded ?: false
 		
-		def entities = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("blasterweapon")))
-		
-		entities.each { controlledEntity -> 
+		// owner hasEnergy?
+		if (owner.shouldFire && loaded) {
 			
-			if (!controlledEntity.shouldFire)
-				return
-				
-			println "$controlledEntity.id shouldFire!!"
-			// create a bullet using properties of the controlledEntity
-		
+			println "firing..."
+			
+			def bulletTemplate = entity.bulletTemplate
+			
+			def fireDirection = owner.fireDirection
+			def position = owner.position
+			
+			// property
+			def bulletSpeed = 0.3f
+			
+			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
+					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed])
+			
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent))
+			
+			// owner.reduceEnergy(...)
+			
+			entity.reloadTime = entity.totalReloadTime
 		}
+		
+	})
+	
+	component(utils.components.genericComponent(id:"reloadWeapon", messageId:"update"){ message ->
+		def reloadTime = entity.reloadTime 
+		reloadTime = reloadTime - message.delta
+		if (reloadTime < 0)
+			reloadTime = 0
+		entity.loaded = (reloadTime == 0)
+		entity.reloadTime = reloadTime
 	})
 	
 }

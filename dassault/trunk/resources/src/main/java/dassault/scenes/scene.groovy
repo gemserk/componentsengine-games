@@ -2,7 +2,6 @@ package dassault.scenes;
 
 import org.newdawn.slick.Input;
 
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import gemserk.utils.GroovyBootstrapper 
 
 builder.entity("scene") {
@@ -18,6 +17,7 @@ builder.entity("scene") {
 	
 	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
 		player = "player1"
+		camera = "camera"
 		leftKey = Input.KEY_A
 		rightKey = Input.KEY_D
 		upKey = Input.KEY_W
@@ -28,6 +28,12 @@ builder.entity("scene") {
 		tags("player1", "blasterweapon")
 		parent("dassault.entities.droid",[position:utils.vector(300,400), speed:0.2f])
 	} )
+	
+	child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
+		owner = "droid1"
+		reloadTime = 100
+		bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
+	}
 	
 	child(id:"cpuController", template:"dassault.entities.aicontroller") { player = "cpu" }
 	
@@ -81,23 +87,19 @@ builder.entity("scene") {
 		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
 	}
 	
-	component(utils.components.genericComponent(id:"shootBulletHandler", messageId:"shootBullet"){ message ->
-		def bulletTemplate  = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
-		def bulletId = "bullet_${utils.random.nextInt()}"
-		
-		println bulletId 
-		
-		def bullet = bulletTemplate.instantiate(bulletId, [position:utils.vector(20,20), moveDirection:utils.vector(1,0), speed:0.3f])
-		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity))
-	})
-	
-	child(id:"blasterweapon", template:"dassault.entities.blasterweapon") { 
-		bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
-	}
+//	component(utils.components.genericComponent(id:"shootBulletHandler", messageId:"shootBullet"){ message ->
+//		def bulletTemplate  = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
+//		def bulletId = "bullet_${utils.random.nextInt()}"
+//		
+//		println bulletId 
+//		
+//		def bullet = bulletTemplate.instantiate(bulletId, [position:utils.vector(20,20), moveDirection:utils.vector(1,0), speed:0.3f])
+//		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity))
+//	})
 	
 	input("inputmapping"){
 		keyboard {
-			press(button:"space",eventId:"shootBullet")
+//			press(button:"space",eventId:"shootBullet")
 		}
 		mouse {
 			
