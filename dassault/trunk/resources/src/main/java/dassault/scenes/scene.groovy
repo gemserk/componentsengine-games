@@ -2,6 +2,7 @@ package dassault.scenes;
 
 import org.newdawn.slick.Input;
 
+import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import gemserk.utils.GroovyBootstrapper 
 
 builder.entity("scene") {
@@ -32,6 +33,7 @@ builder.entity("scene") {
 	child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
 		owner = "droid1"
 		reloadTime = 100
+		damage = 30f
 		bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
 	}
 	
@@ -96,6 +98,8 @@ builder.entity("scene") {
 //		def bullet = bulletTemplate.instantiate(bulletId, [position:utils.vector(20,20), moveDirection:utils.vector(1,0), speed:0.3f])
 //		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity))
 //	})
+	
+	component(new ExplosionComponent("explosions")) { }
 	
 	input("inputmapping"){
 		keyboard {

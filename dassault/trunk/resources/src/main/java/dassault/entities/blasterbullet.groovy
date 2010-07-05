@@ -1,11 +1,14 @@
 package dassault.entities
 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
+import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
+
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics 
 
 builder.entity {
@@ -16,6 +19,7 @@ builder.entity {
 	property("newPosition", parameters.position)
 	property("moveDirection", parameters.moveDirection)
 	property("speed", parameters.speed)
+	property("damage", parameters.damage)
 	property("owner", parameters.owner)
 	
 	component(new SuperMovementComponent("movementComponent")) {
@@ -45,35 +49,44 @@ builder.entity {
 				{ collidable -> collidable.bounds.intersects(entity.bounds) } as Predicate, // 
 				{ collidable -> entity.owner != collidable } as Predicate))
 		
-		if (!obstacles.empty) {
-			
-			// collides, should do something about it
-			
-			utils.custom.messageQueue.enqueue(utils.genericMessage("bulletCollision"){ newMessage ->
-				newMessage.bulletId = entity.id
-				newMessage.obstacles = obstacles
-			})
-			
-			entity.collisionDetected = true
-			
+		if (obstacles.empty) {
+			entity.position = entity.newPosition
 			return
 		}
 		
-		entity.position = entity.newPosition
+		
+		// collides, should do something about it
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletCollision"){ newMessage ->
+			newMessage.bullet = entity
+			newMessage.target = obstacles[0]
+		})
+		
+		entity.collisionDetected = true
+		
+		return
 		
 	})
 	
 	component(utils.components.genericComponent(id:"bulletCollisionHandler", messageId:"bulletCollision"){ message ->
 		
 		// call hit
-	
-		if (entity.id != message.bulletId)
+		
+		if (entity != message.bullet)
 			return 
-			
-		def obstacles = message.obstacles
-		def firstObstacle = obstacles[0]
-	
-		println "bullet collided with ${firstObstacle.id}"
+		
+		def target = message.target
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("droidHitted"){ newMessage ->
+			newMessage.bullet = entity
+			newMessage.target = target
+			newMessage.damage = entity.damage
+		})
+		
+		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, Color.white, Color.white) 
+			newMessage.layer = 1
+		})
 		
 		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 		

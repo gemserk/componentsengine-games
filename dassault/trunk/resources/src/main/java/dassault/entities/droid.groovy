@@ -2,10 +2,13 @@ package dassault.entities
 
 import com.gemserk.commons.animation.PropertyAnimation 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
+import com.gemserk.componentsengine.effects.EffectFactory 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates;
+import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics 
 
 
@@ -144,6 +147,41 @@ builder.entity {
 		
 		entity.position = entity.newPosition
 		
+	})
+	
+	property("hitpoints", parameters.hitpoints ?: utils.container(100f,100f))
+	
+	component(utils.components.genericComponent(id:"droidHittedHandler", messageId:"droidHitted"){ message ->
+		
+		if (entity != message.target)
+			return
+		
+		// delegate to component who recieve damage? another entity, a child?
+		
+		hitpoints = entity.hitpoints
+		
+		hitpoints.remove(message.damage)
+		
+		if (!hitpoints.empty)
+			return
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("droidDead"){ newMessage ->
+			newMessage.droid = entity
+		})
+		
+	})
+	
+	component(utils.components.genericComponent(id:"droidDeadHandler", messageId:"droidDead"){ message ->
+		
+		if (entity != message.droid)
+			return
+		
+		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 5.0f, 50f, 250f, 1f, Color.white, Color.white) 
+			newMessage.layer = 1
+		})
+		
+		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
 	
 	property("isMoving", false)

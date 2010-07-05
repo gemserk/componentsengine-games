@@ -38,8 +38,6 @@ builder.entity {
 		if (entity.id != message.spawnerId)
 			return
 		
-		println "droid spawned!"
-		
 		def droidId = "droid-${utils.random.nextInt()}" 
 		
 		def droid = entity.droidTemplate.instantiate(droidId, [position:entity.position.copy()])

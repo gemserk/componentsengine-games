@@ -9,6 +9,7 @@ builder.entity {
 	property("owner", parameters.owner)
 	property("totalReloadTime", parameters.reloadTime)
 	property("reloadTime", parameters.reloadTime)
+	property("damage", parameters.damage)
 	property("loaded", parameters.loaded ?: false)
 	
 	property("bulletTemplate", parameters.bulletTemplate)
@@ -21,8 +22,6 @@ builder.entity {
 		// owner hasEnergy?
 		if (owner.shouldFire && loaded) {
 			
-			println "firing..."
-			
 			def bulletTemplate = entity.bulletTemplate
 			
 			def fireDirection = owner.fireDirection
@@ -32,7 +31,7 @@ builder.entity {
 			def bulletSpeed = 0.3f
 			
 			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
-					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed])
+					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage])
 			
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent))
 			
