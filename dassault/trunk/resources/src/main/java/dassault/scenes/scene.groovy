@@ -13,7 +13,7 @@ builder.entity("scene") {
 		position = utils.vector(0,0)
 		owner = "droid1"
 		screen = utils.rectangle(0,0, 800, 600)
-		followMouse = true
+		followMouse = false
 	}
 	
 	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
@@ -29,7 +29,7 @@ builder.entity("scene") {
 		tags("player1", "blasterweapon")
 		parent("dassault.entities.droid",[position:utils.vector(300,400), 
 		                                  speed:0.2f, 
-		                                  energy:utils.container(100f,100f),
+		                                  energy:utils.container(10000f,10000f),
 		                                  regenerationSpeed:0.02f])
 	} )
 	

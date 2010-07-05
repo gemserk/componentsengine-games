@@ -62,14 +62,25 @@ builder.entity {
 			
 //			log.info("BEFORE: mousePosition $mousePosition, droidPosition $droidPosition, cameraPosition: $cameraPosition")
 			
-//			mousePosition.sub(cameraPosition)
+			println "mouse position = $mousePosition"
+			
+			def mouseRelative = mousePosition.copy().sub(utils.vector(400f, 300f))
+			
+			println "mouse center relative position = $mouseRelative"
+			
+			println "camera position: $cameraPosition"
+			
+//			mouseRelative.sub(cameraPosition)
+			
+//			println "mouse camera relative position = $mouseRelative"
+			
 //			droidPosition.sub(cameraPosition)
 			
 //			log.info("CURRENT: mousePosition $mousePosition, droidPosition $droidPosition")
 			
-			def fireDirection = mousePosition.sub(droidPosition)
+//			def fireDirection = mouseRelative.sub(droidPosition)
 			
-			controlledEntity.fireDirection = fireDirection
+			controlledEntity.fireDirection = mouseRelative
 			
 			shouldFire = input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)
 			controlledEntity.shouldFire = shouldFire

@@ -8,6 +8,7 @@ builder.entity {
 	property("screen", parameters.screen)
 	
 	property("followMouse", parameters.followMouse)
+	property("zoom", false)
 	
 	property("position", utils.vector(0,0))
 	
@@ -34,11 +35,15 @@ builder.entity {
 		targetPosition = targetPosition.add(mousePosition).scale(0.5f)
 		entity.position = targetPosition
 		
-//		entity.position = mousePosition
+		//		entity.position = mousePosition
 	})
 	
 	component(utils.components.genericComponent(id:"toggleFollow", messageId:["toggleFollowMouse"]){ message ->
 		entity.followMouse = !entity.followMouse
+	})
+	
+	component(utils.components.genericComponent(id:"toggleZoom", messageId:"toggleZoom"){ message ->
+		entity.zoom = !entity.zoom
 	})
 	
 	component(utils.components.genericComponent(id:"changePerspective", messageId:["render"]){ message ->
@@ -50,9 +55,11 @@ builder.entity {
 		
 		renderer.enqueue( new ClosureRenderObject(-100, { Graphics g ->
 			g.pushTransform()
-			//						g.translate((float)screen.width * 0.5f, (float)screen.height * 0.5f)
-			//						g.scale(2.0f, 2.0f)
-//									g.translate((float)screen.width * -0.5f, (float)screen.height * -0.5f)
+			if (entity.zoom) {
+				g.translate((float)screen.width * 0.5f, (float)screen.height * 0.5f)
+				g.scale(2.0f, 2.0f)
+				g.translate((float)screen.width * -0.5f, (float)screen.height * -0.5f)
+			}
 			g.translate(position.x, position.y)
 		}))
 		
@@ -64,7 +71,8 @@ builder.entity {
 	
 	input("inputmapping"){
 		keyboard {
-			press(button:"e",eventId:"toggleFollowMouse")
+			//			press(button:"e",eventId:"toggleFollowMouse")
+			press(button:"z",eventId:"toggleZoom")
 		}
 		mouse {
 			press(button:"right",eventId:"enableCamera")
