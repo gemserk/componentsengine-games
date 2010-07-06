@@ -38,13 +38,13 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 			def fireDirection = owner.fireDirection
 			def position = owner.position
 			
-			// property
 			def bulletSpeed = 0.3f
 			
 			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
 					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage])
 			
-			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent))
+			// I dont like the entity.parent.parent to point to world
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent.parent))
 			
 			// owner.reduceEnergy(...)
 			energy.remove(weaponEnergy)

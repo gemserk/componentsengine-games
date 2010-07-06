@@ -8,7 +8,6 @@ import com.gemserk.componentsengine.render.ClosureRenderObject
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics 
 
 builder.entity {
@@ -83,8 +82,11 @@ builder.entity {
 			newMessage.damage = entity.damage
 		})
 		
+		def startColor = utils.color(1f, 1f, 1f, 1f)
+		def endColor = utils.color(1f, 1f, 1f, 0.2f)
+		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
-			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, Color.white, Color.white) 
+			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, startColor, endColor) 
 			newMessage.layer = 1
 		})
 		
