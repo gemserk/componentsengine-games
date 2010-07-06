@@ -6,17 +6,20 @@ import com.gemserk.componentsengine.effects.EffectFactory
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
-import com.gemserk.componentsengine.utils.OpenGlUtils;
+import com.gemserk.games.dassault.components.TransferComponent;
+import com.gemserk.games.dassault.components.TransferRendererComponent;
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates;
 import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics 
-import org.newdawn.slick.opengl.SlickCallable;
 
 
 builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	tags("droid", "nofriction")
+	
+	// TODO: use owner instead of id
+	property("ownerId", parameters.ownerId)
 	
 	property("position", parameters.position.copy())
 	property("newPosition", parameters.position)
@@ -78,12 +81,11 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		
 		def position = entity.position
 		
-		//		println entity.headPosition
-		//		println entity.isMoving
+		def owner = entity.root.getEntityById(entity.ownerId)
 		
 		def size = entity.size
 		def layer = 0
-		def color = utils.color(1f,1f,1f,1f)
+		def color = owner.color
 		def shape = utils.rectangle(-14, -14, 28, 28)
 		
 		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
@@ -221,82 +223,23 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	// transfer component
 	
-	property("ownerId", parameters.ownerId)
-	
 	property("selectedDroid", null)
 	property("transfering", false)
-	property("totalTransferTime", parameters.transferTime ?: 500)
-	property("transferTime", 0)
 	
-	component(utils.components.genericComponent(id:"startTransferingHandler", messageId:"startTransfering"){ message ->
-		if (entity.id != message.droidId )
-			return
-			
-			// check preconditions like transfer points, etc
-			
-		entity.selectedDroid = message.selectedDroid
-		entity.transferTime = entity.totalTransferTime
-		entity.transfering = true
-	})
+	component(new TransferComponent("transferComponent")) {
+		propertyRef("selectedDroid", "selectedDroid")
+		propertyRef("transfering", "transfering")
+		property("totalTransferTime", parameters.transferTime ?: 500)
+	}
 	
-	component(utils.components.genericComponent(id:"transferComponent", messageId:"update"){ message ->
+	component(new TransferRendererComponent("transferRendererComponent")) {
+		propertyRef("selectedDroid", "selectedDroid")
+		propertyRef("transfering", "transfering")
+	}
 		
-		if (!entity.transfering)
-			return
-		
-		entity.transferTime = entity.transferTime - message.delta
-		
-		if (entity.transferTime > 0)
-			return
-		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("changeControlledDroid"){ newMessage ->
-			newMessage.controlledDroid = entity.selectedDroid
-			newMessage.ownerId = entity.ownerId
-		})
-		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("stopTransfering"){ newMessage ->
-			newMessage.droidId = entity.id
-		})
-		
-	})
-	
-	component(utils.components.genericComponent(id:"stopTransferingHandler", messageId:"stopTransfering"){ message ->
-		if (entity.id != message.droidId )
-			return
-		
-		entity.selectedDroid = null
-		entity.transfering = false
-	})
-	
-	component(utils.components.genericComponent(id:"transferRenderer", messageId:"render"){ message ->
-		
-		if (!entity.transfering)
-			return
-		
-		def renderer = message.renderer
-		
-		def selectedDroid = entity.selectedDroid
-		
-		def start = entity.position.copy()
-		def end = selectedDroid.position.copy()
-		
-		def layer = 0
-		def color = utils.color(0.2f,0.2f,1f,0.6f)
-		
-		renderer.enqueue( new ClosureRenderObject(layer+2, { Graphics g ->
-			
-			SlickCallable.enterSafeBlock();
-			
-			OpenGlUtils.renderLine(start, end, 5.0f, color)
-			
-			SlickCallable.leaveSafeBlock();
-		}))
-	})
-	
 	component(utils.components.genericComponent(id:"changeOwnerHandler", messageId:"changeOwner"){ message ->
 		if (entity != message.controlledDroid)
 			return
 		entity.ownerId = message.ownerId
 	})
-	
 }

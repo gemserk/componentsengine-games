@@ -19,6 +19,7 @@ builder.entity("scene") {
 	
 	child(entity("player") {
 		property("controlledDroidId", "droid1")
+		property("color", utils.color(0,0,1,1f))
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
 			entity.controlledDroidId = message.controlledDroid.id 
@@ -59,7 +60,7 @@ builder.entity("scene") {
 	} )
 	
 	child(entity("cpu") {
-		
+		property("color", utils.color(1,0,0,1f))
 	})
 	
 	child(id:"cpuController", template:"dassault.entities.aicontroller") {  ownerId = "cpu"  }
