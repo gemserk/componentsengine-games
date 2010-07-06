@@ -3,7 +3,7 @@ package dassault.entities
 import org.newdawn.slick.Input 
 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.google.common.base.Predicate;
+import com.google.common.base.Predicate 
 import com.google.common.base.Predicates;
 
 builder.entity {
@@ -66,16 +66,34 @@ builder.entity {
 		def cameraPosition = camera.position
 		def mouseAbsolutePosition = mousePosition.copy().sub(cameraPosition)
 		
-		controlledDroid.selectedDroid = null
-		def droids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // 
-				{ droid -> droid.bounds.contains(mouseAbsolutePosition.x, mouseAbsolutePosition.y)} as Predicate))
-		if (droids.isEmpty())
-			return
-		controlledDroid.selectedDroid = droids[0]
+		//		controlledDroid.selectedDroid = null
+		def transferEnabled = input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)
 		
-		controlledDroid.shouldTransfer = input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)
+		if (!controlledDroid.transfering) {
+			
+			if (!transferEnabled)
+				return
+			
+			def droids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // 
+					{ droid -> droid.bounds.contains(mouseAbsolutePosition.x, mouseAbsolutePosition.y)} as Predicate))
+			if (droids.isEmpty())
+				return
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("startTransfering"){ newMessage ->
+				newMessage.droidId = controlledDroid.id
+				newMessage.selectedDroid = droids[0]
+			})
+			
+		} else { 
+			if (!transferEnabled) {
+				// send message stop transfering 
+				utils.custom.messageQueue.enqueue(utils.genericMessage("stopTransfering"){ newMessage ->
+					newMessage.droidId = controlledDroid.id
+				})
+			}
+		}
 		
-		println "droid targeted"
+		//		println "droid targeted"
 	})
 	
 }
