@@ -12,6 +12,7 @@ builder.entity {
 	
 	property("position", utils.vector(0,0))
 	property("mouseRelativePosition", utils.vector(0,0))
+	property("mousePosition", utils.vector(0,0))
 	
 	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:["update"]){ message ->
 		
@@ -31,8 +32,6 @@ builder.entity {
 		
 		def input = utils.custom.gameContainer.input
 		
-		//// 
-		
 		def targetPosition = droid.position.copy().sub(centerPosition).negate()
 		entity.position =  targetPosition
 		
@@ -42,29 +41,31 @@ builder.entity {
 		def mousePosition = utils.vector((float) input.getMouseX(), (float) input.getMouseY())
 		entity.mouseRelativePosition = mousePosition.copy().sub(centerPosition)
 		
+		def mouseNewRelative = utils.vector((float) input.getMouseX(), (float) input.getMouseY())
+		
+		def transformation = entity.position
+		def mouseAbsolutePosition = mouseNewRelative.copy().sub(transformation)
+		
+		entity.mousePosition = mouseNewRelative.copy().sub(transformation)
+		
 		if (!entity.followMouse)
 			return
 		
-		def oldCenterPosition = utils.vector((float)screen.width * 0.5f, (float)screen.height * 0.5f)
-		
-		def mousePositionRelativoAlNuevoZero = utils.vector((float) input.getMouseX(), (float) input.getMouseY())
-		
-		def transformation = entity.position
-		def mouseAbsolutePosition = mousePositionRelativoAlNuevoZero.copy().sub(transformation)
-		
-//		println "oldCenter = $oldCenterPosition"
-//		println "mousePositionRelativoAlNuevoZero = $mousePositionRelativoAlNuevoZero"
-//		println "transformation = $transformation"
-//		println "mouseAbsolutePosition = $mouseAbsolutePosition"
+		//		println "oldCenter = $oldCenterPosition"
+		//		println "mousePositionRelativoAlNuevoZero = $mousePositionRelativoAlNuevoZero"
+		//		println "transformation = $transformation"
+		//		println "mouseAbsolutePosition = $mouseAbsolutePosition"
 		
 		mouseAbsolutePosition.sub(centerPosition)
 		mouseAbsolutePosition.negateLocal()
 		
 		targetPosition = targetPosition.add(mouseAbsolutePosition).scale(0.5f)
 		
-//		println "targetPosition = $targetPosition"
+		//		println "targetPosition = $targetPosition"
 		
 		entity.position = targetPosition
+		
+		entity.mousePosition = mouseNewRelative.copy().sub(transformation)
 	})
 	
 	component(utils.components.genericComponent(id:"toggleFollow", messageId:["toggleFollowMouse"]){ message ->
@@ -92,7 +93,7 @@ builder.entity {
 			g.translate(position.x, position.y)
 		}))
 		
-		renderer.enqueue( new ClosureRenderObject(10, { Graphics g ->
+		renderer.enqueue( new ClosureRenderObject(100, { Graphics g ->
 			g.popTransform()
 		}))
 		

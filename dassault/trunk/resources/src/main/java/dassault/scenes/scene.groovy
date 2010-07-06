@@ -149,6 +149,10 @@ builder.entity("scene") {
 		ownerId = "cpu"
 	}
 	
+	child(id:"cursor", template:"dassault.entities.cursor") {
+		camera = {entity.root.getEntityById("camera")}
+	}
+	
 	component(new ExplosionComponent("explosions")) { }
 	
 	input("inputmapping"){
