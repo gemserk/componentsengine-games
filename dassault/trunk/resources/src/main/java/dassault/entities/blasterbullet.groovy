@@ -92,7 +92,7 @@ builder.entity {
 		
 	})
 	
-	component(utils.components.genericComponent(id:"droidRenderer", messageId:"render"){ message ->
+	component(utils.components.genericComponent(id:"bulletRenderer", messageId:"render"){ message ->
 		
 		def renderer = message.renderer
 		

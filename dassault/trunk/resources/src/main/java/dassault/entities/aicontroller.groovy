@@ -13,12 +13,20 @@ builder.entity {
 	component(utils.components.genericComponent(id:"controllerComponent", messageId:"update"){ message ->
 		
 		def ownerId = entity.ownerId
+		def owner = entity.root.getEntityById(ownerId)
+		
+		def controlledDroidId = owner.controlledDroidId ?: null
 		
 		def delta = message.delta
 		
 		def controlledEntities = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // 
-				{ droid -> droid.ownerId == ownerId} as Predicate))
-		
+				{ droid -> droid.ownerId == ownerId && droid.id != controlledDroidId} as Predicate))
+
+		def enemyTargets = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // could be another entity, not only droids 
+				{ enemyTarget -> enemyTarget.ownerId != ownerId} as Predicate))
+				
+		def target = enemyTargets.empty ? null : enemyTargets[0]
+				
 		controlledEntities.each { controlledEntity -> 
 			
 			def wanderDirection = controlledEntity.wanderDirection ?: utils.vector(1,0)
@@ -38,6 +46,14 @@ builder.entity {
 			controlledEntity.wanderDirection = wanderDirection.copy()
 			controlledEntity.moveDirection = controlledEntity.wanderDirection.copy()
 			controlledEntity.wanderTime = wanderTime
+
+			controlledEntity.shouldFire = false
+			
+			if (!target)
+				return
+				
+			controlledEntity.shouldFire = true
+			controlledEntity.fireDirection = target.position.copy().sub(controlledEntity.position).normalise()
 			
 		}
 	})

@@ -3,6 +3,7 @@ package dassault.scenes;
 import org.newdawn.slick.Input;
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
+import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import gemserk.utils.GroovyBootstrapper 
 
 builder.entity("scene") {
@@ -15,14 +16,6 @@ builder.entity("scene") {
 		screen = utils.rectangle(0,0, 800, 600)
 		followMouse = false
 	}
-	
-	child(entity("droid1") {
-		tags("player1")
-		parent("dassault.entities.droid",[position:utils.vector(300,400), 
-				speed:0.2f, 
-				energy:utils.container(10000f,10000f),
-				regenerationSpeed:0.02f])
-	} )
 	
 	child(entity("player") {
 		property("controlledDroidId", "droid1")
@@ -48,23 +41,28 @@ builder.entity("scene") {
 		downKey = Input.KEY_S
 	}
 	
-	child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
-		owner = "droid1"
-		reloadTime = 100
-		damage = 30f
-		energy = 20f
-		bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
-	}
+	child(id:"playerAiHelperController", template:"dassault.entities.aicontroller") {  ownerId = "player"  }
+	
+	child(entity("droid1") {
+		parent("dassault.entities.droid",[ownerId:"player",position:utils.vector(300,400), 
+		speed:0.2f, 
+		energy:utils.container(10000f,10000f),
+		regenerationSpeed:0.02f])
+		
+		child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
+			ownerId = "droid1"
+			reloadTime = 100
+			damage = 30f
+			energy = 20f
+			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
+		}
+	} )
 	
 	child(entity("cpu") {
 		
 	})
 	
 	child(id:"cpuController", template:"dassault.entities.aicontroller") {  ownerId = "cpu"  }
-	
-	child(entity("droid2") {
-		parent("dassault.entities.droid",[position:utils.vector(200,200), ownerId:"cpu"])
-	} )
 	
 	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
 		position = utils.vector(400,100)
@@ -97,11 +95,48 @@ builder.entity("scene") {
 		color = utils.color(0,0,0,1)
 	}
 	
+	def blasterWeaponInstantiationTemplate = new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("dassault.entities.blasterweapon"), 
+			utils.custom.genericprovider.provide{ data ->
+				[
+				ownerId:data.ownerId,
+				reloadTime:100,
+				damage:30f,
+				energy:20f,
+				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
+				]
+			})
+	
+	def droidInstantiationTemplate = new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("dassault.entities.droid"), 
+			utils.custom.genericprovider.provide{ data ->
+				[
+				ownerId:data.ownerId,
+				position:data.position,
+				speed:0.1f,
+				energy:utils.container(50f,50f),
+				regenerationSpeed:0.02f
+				]
+			})
+	
+	//	weapon1 = {
+	//		template = "blasterweapon"
+	//		speed = 0.02f
+	//		reloadTime = 1000
+	//	}
+	
+	//	def weapon1 = [type:"blasterWeapon", reloadTime:100, damage:30f, energy:20f]
+	//	def droid1 = [type:"basicDroid", speed:0.1f, energy:utils.container(50f,50f), regenerationSpeed:0.02f]
+	//	def droid2 = [type:"basicDroid", speed:0.1f, energy:utils.container(100f,100f), regenerationSpeed:0.03f, weapon:"weapon1"]
+	
+	def enemyDroidFactory = [basicDroid:{ params -> droidInstantiationTemplate.get(params) }, 
+	blasterWeapon:{ params -> blasterWeaponInstantiationTemplate.get(params) }]
+	
 	child(id:"spawner1", template:"dassault.entities.droidspawner") { 
 		position = utils.vector(100,100)
 		minTime = 5000
 		maxTime = 5000
-		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
+		droidFactory = enemyDroidFactory
 		ownerId = "cpu"
 	}
 	
@@ -109,7 +144,7 @@ builder.entity("scene") {
 		position = utils.vector(700,100)
 		minTime = 8000
 		maxTime = 1000
-		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
+		droidFactory = enemyDroidFactory
 		ownerId = "cpu"
 	}
 	

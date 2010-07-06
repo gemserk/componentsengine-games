@@ -18,14 +18,13 @@ builder.entity {
 	property("upKey", parameters.upKey)
 	property("downKey", parameters.downKey)
 	
-	component(utils.components.genericComponent(id:"controllerComponent", messageId:"update"){ message ->
+	// TODO: separate move from fire and transfer logics
+	
+	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
+		
+		Input input = utils.custom.gameContainer.input
 		
 		def player = entity.root.getEntityById(entity.ownerId)
-		
-		// set entity instead of id
-		def camera = entity.root.getEntityById(entity.camera)
-		
-		//		def controlledEntities = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags(player, "droid")))
 		
 		def leftKey = entity.leftKey
 		def rightKey = entity.rightKey
@@ -34,7 +33,8 @@ builder.entity {
 		
 		controlledDroid = entity.root.getEntityById(player.controlledDroidId)
 		
-		Input input = utils.custom.gameContainer.input
+		if (!controlledDroid)
+			return
 		
 		def moveDirection = utils.vector(0,0)
 		
@@ -51,22 +51,43 @@ builder.entity {
 			moveDirection.y = 1
 		
 		controlledDroid.moveDirection = moveDirection
+	})
+	
+	component(utils.components.genericComponent(id:"updateShouldFire", messageId:"update"){ message ->
+		Input input = utils.custom.gameContainer.input
+		def player = entity.root.getEntityById(entity.ownerId)
+		
+		controlledDroid = entity.root.getEntityById(player.controlledDroidId)
+		
+		if (!controlledDroid)
+			return
+		
+		// set entity instead of id
+		def camera = entity.root.getEntityById(entity.camera)
+		def mouseRelative = camera.mouseRelativePosition
+		
+		controlledDroid.fireDirection = mouseRelative.copy()
+		controlledDroid.shouldFire = input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)
+		
+	})
+	
+	component(utils.components.genericComponent(id:"updateShouldTransfer", messageId:"update"){ message ->
+		Input input = utils.custom.gameContainer.input
+		def player = entity.root.getEntityById(entity.ownerId)
+		
+		controlledDroid = entity.root.getEntityById(player.controlledDroidId)
+		
+		if (!controlledDroid)
+			return
+		
+		// set entity instead of id
+		def camera = entity.root.getEntityById(entity.camera)
 		
 		def mousePosition = utils.vector(input.mouseX, input.mouseY)
-		def droidPosition = controlledDroid.position.copy()
-		
-		def centerPosition = utils.vector(400f, 300f)
-		
-		def mouseRelative = camera.mouseRelativePosition.copy()
-		
-		controlledDroid.fireDirection = mouseRelative
-		
-		controlledDroid.shouldFire = input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)
 		
 		def cameraPosition = camera.position
 		def mouseAbsolutePosition = mousePosition.copy().sub(cameraPosition)
 		
-		//		controlledDroid.selectedDroid = null
 		def transferEnabled = input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)
 		
 		if (!controlledDroid.transfering) {
@@ -93,7 +114,6 @@ builder.entity {
 			}
 		}
 		
-		//		println "droid targeted"
 	})
 	
 }

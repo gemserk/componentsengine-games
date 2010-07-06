@@ -14,7 +14,7 @@ import org.newdawn.slick.Graphics
 import org.newdawn.slick.opengl.SlickCallable;
 
 
-builder.entity {
+builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	tags("droid", "nofriction")
 	

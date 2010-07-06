@@ -8,8 +8,8 @@
 	</parent>
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dassault</name>
-	<description>Dassault - Game Jolt Contest - Droid Assault Demake</description>
+	<name>Dassault - Game Jolt Demake Contest - Droid Assault</name>
+	<description>Dassault - Game Jolt Demake Contest - Droid Assault</description>
 	
 	<url>http://www.gemserk.com</url>
 

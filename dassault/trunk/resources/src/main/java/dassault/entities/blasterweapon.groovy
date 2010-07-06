@@ -4,9 +4,9 @@ import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory
 
 
 
-builder.entity {
+builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 	
-	property("owner", parameters.owner)
+	property("ownerId", parameters.ownerId)
 	property("totalReloadTime", parameters.reloadTime)
 	property("reloadTime", parameters.reloadTime)
 	property("damage", parameters.damage)
@@ -17,10 +17,15 @@ builder.entity {
 	property("bulletTemplate", parameters.bulletTemplate)
 	
 	component(utils.components.genericComponent(id:"weaponComponent", messageId:"update"){ message ->
-		def owner = entity.root.getEntityById(entity.owner)
+		def owner = entity.root.getEntityById(entity.ownerId)
 		
 		def loaded = entity.loaded ?: false
-				
+		
+		if (owner == null) {
+			log.error("Owner is null - weapon.id = $entity.id")
+			return
+		}
+			
 		def energy = owner.energy
 		
 		def weaponEnergy = entity.weaponEnergy

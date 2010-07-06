@@ -21,6 +21,13 @@ builder.entity {
 		def player = entity.root.getEntityById(entity.ownerId)
 		def droid = entity.root.getEntityById(player.controlledDroidId)
 		
+		if (!droid)
+		{
+			// lost control of main droid
+			entity.position = utils.vector(0,0)
+			return
+		}
+		
 		def targetPosition = droid.position.copy().sub(centerPosition).negate()
 		
 		entity.position =  targetPosition
