@@ -9,7 +9,7 @@
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>dassault</name>
-	<description>dassault</description>
+	<description>Dassault - Game Jolt Contest - Droid Assault Demake</description>
 	
 	<url>http://www.gemserk.com</url>
 
@@ -21,7 +21,7 @@
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
-		<webstartMain>Game</webstartMain>
+		<webstartMain>com.gemserk.games.dassault.Game</webstartMain>
 
 		<appletGameParameter>com.gemserk.games.dassault.Game</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
