@@ -1,16 +1,23 @@
 package dosdewinia.entities
+import com.gemserk.componentsengine.commons.components.DisablerComponent;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates 
+
 
 import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.games.dosdewinia.Target;
 
 builder.entity("officer-${Math.random()}") {
 	
 	
-	tags("officer")
+	tags("officer","selectable")
 	
 	property("position", parameters.position)
-	property("direction",parameters.direction)
+	property("destinationPoint",parameters.destinationPoint)
+	property("radius",20)
 	
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
@@ -24,16 +31,21 @@ builder.entity("officer-${Math.random()}") {
 	
 	
 	
-	component(new GenericHitComponent("bullethitComponent")){
+	component(new DisablerComponent(new GenericHitComponent("bullethitComponent"))){
 		property("targetTag", "darwinian")
-		property("predicate",{EntityPredicates.isNear(entity.position, (float)100)})
+		property("predicate",{Predicates.and({darwinian -> !darwinian.outsideOfBounds} as Predicate,EntityPredicates.isNear(entity.position, (float)100))})
 		property("trigger", utils.custom.triggers.closureTrigger { data ->
 			def source = data.source
 			def targets = data.targets
 			targets.each { target ->
-				target."movement.force".add(source.direction.copy().scale(10))
+				if(target.state != "goTowardsTarget"){
+					target.targetPosition = null
+					target.target = new Target(source.destinationPoint,100,20)
+					target.state = "goTowardsTarget"
+				}
 			}
 		})
+		property("enabled",{entity.destinationPoint != null})
 	}
 	
 	

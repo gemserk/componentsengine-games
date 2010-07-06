@@ -9,14 +9,14 @@ builder.entity {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
 			press(button:"space",eventId:"pauseGame")
-			press(button:"g",eventId:"dumpEditorPositions")
-			press(button:"z",eventId:"accelerateSystem2000-press")
-			release(button:"z",eventId:"accelerateSystem2000-release")
+			press(button:"s",eventId:"spawnDarwinians"){ message ->
+				message.quantity = 50				
+			}
 		}
 		mouse {
 			press(button:"left", eventId:"mouse.left.press")
 			release(button:"left", eventId:"mouse.left.release")
-			move(eventId:"movemouse") { message ->
+			move(eventId:"mouse.move") { message ->
 				message.x = position.x
 				message.y = position.y
 			}

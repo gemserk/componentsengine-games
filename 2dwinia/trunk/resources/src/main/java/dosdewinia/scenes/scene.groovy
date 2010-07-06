@@ -1,5 +1,7 @@
 package dosdewinia.scenes;
 
+import org.newdawn.slick.geom.Vector2f;
+
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
@@ -12,6 +14,11 @@ import net.sf.json.JSONArray
 builder.entity("scene") {
 	
 	new GroovyBootstrapper();
+	
+	Vector2f.metaClass.distanceSquared = { Vector2f otherVector ->
+			return delegate.copy().sub(otherVector).lengthSquared()
+	}
+	
 	
 	
 	property("gameState", "playing");

@@ -47,7 +47,7 @@ public class Game extends StateBasedGame {
 			app.setForceExit(true);
 			app.start();
 
-		} catch (SlickException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			System.exit(0);
 		}

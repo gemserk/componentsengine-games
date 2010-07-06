@@ -3,20 +3,40 @@ package dosdewinia.entities
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
-import com.gemserk.componentsengine.render.ClosureRenderObject 
-import org.newdawn.slick.Graphics 
+import com.gemserk.games.dosdewinia.Target;
 
 builder.entity("darwinian-${Math.random()}") {
 	
+	def traversableColor = utils.color(1,1,1,1)
+	def traversable = { terrainMap, position ->
+		def x = (int)position.x
+		def y = (int)position.y
+		if(x < 0 || y < 0 || x > terrainMap.width || y > terrainMap.height)
+			return false
+		
+		def terrainColor = terrainMap.getColor((int)position.x, (int)position.y)
+		return terrainColor == traversableColor
+	}
+	
+	
+	Random random = new Random()
 	
 	tags("darwinian","nofriction")
 	
 	property("position", parameters.position)
-	property("nextPosition",parameters.position)
+	
+	property("targetSelectionRadius",40)
+	
+	property("targetPosition",null)
+	
 	propertyRef("direction", "movement.velocity")
 	property("terrainMap",utils.resources.image("terrainMap"))
 	
 	property("speed", parameters.speed)
+	
+	property("target",parameters.target)
+	
+	property("state",parameters.state ?: "wander")
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("darwinian"))
@@ -30,7 +50,7 @@ builder.entity("darwinian-${Math.random()}") {
 	component(new SuperMovementComponent("movement")){
 		property("velocity",utils.vector(entity.speed,0))
 		propertyRef("maxVelocity", "speed")
-		propertyRef("position", "nextPosition")
+		propertyRef("position", "position")
 	}
 	
 	component(new WorldBoundsComponent("bounds")){
@@ -39,43 +59,89 @@ builder.entity("darwinian-${Math.random()}") {
 	}
 	
 	
-	component(utils.components.genericComponent(id:"steeringbehaviour", messageId:"update"){ message ->
-		
-		def currentDirection = entity.direction.copy()
-		//		def estimatedNextPosition = entity.position.copy().add(currentDirection.copy().scale(message.delta))
-		//		log.info(estimatedNextPosition.toString())
-		//		def terrainColor = entity.terrainMap.getColor((int)estimatedNextPosition.x, (int)estimatedNextPosition.y)
-		//		log.info(terrainColor.toString())
-		//		if( terrainColor== utils.color(0,0,0,1))
-		//			currentDirection.negate()
-		
-		//log.info(currentDirection.toString())
-		def newForce = currentDirection.add((float)(Math.random()-0.5f)*20)
-		//log.info(newForce.toString())
-		entity."movement.force".add(newForce)
+	component(utils.components.genericComponent(id:"reachedNextDestinationChecker", messageId:"update"){ message ->
+		def position = entity.position
+		def targetPosition = entity.targetPosition
+		if(targetPosition){
+			if(targetPosition.distanceSquared(position) < 9){
+				entity."movement.velocity"=utils.vector(0,0)
+				entity.targetPosition = null
+				if(entity.state=="goTowardsTarget")
+					entity.state = "wander"
+			}
+		} 
 	})
 	
+	component(utils.components.genericComponent(id:"wanderBehaviour", messageId:"update"){ message ->
+		def position = entity.position
+		def targetPosition = entity.targetPosition
+		if(targetPosition)
+			return
+		
+		if(entity.state != "wander")
+			return
+		
+		def terrainMap = entity.terrainMap
+		def direction
+		def randomTargetPosition
+		def target = entity.target
+		def targetCenter = target.position
+		def targetWanderRadiusSquared = (float)target.wanderRadius * target.wanderRadius
+		while(randomTargetPosition == null || !traversable(terrainMap, randomTargetPosition) || targetCenter.distanceSquared(randomTargetPosition) > targetWanderRadiusSquared){
+			direction = utils.vector(1,0).add((float)random.nextFloat()*360)
+			randomTargetPosition = position.copy().add(direction.copy().scale((float)random.nextFloat()*100))
+		}
+		entity.targetPosition = randomTargetPosition
+		entity."movement.velocity" = direction.copy().scale(entity.speed)
+		
+		
+	})
+	
+	component(utils.components.genericComponent(id:"goTowardsTarget", messageId:"update"){ message ->
+		def position = entity.position
+		def targetPosition = entity.targetPosition
+		if(targetPosition)
+			return
+		
+		if(entity.state != "goTowardsTarget")
+			return
+		
+		def terrainMap = entity.terrainMap
+		def direction
+		def randomTargetPosition
+		def target = entity.target
+		def targetCenter = target.position
+		def targetWanderRadiusSquared = (float)target.wanderRadius * target.wanderRadius
+		while(randomTargetPosition == null || !traversable(terrainMap, randomTargetPosition) ){
+			direction = utils.vector(1,0).add((float)random.nextFloat()*360)
+			randomTargetPosition = targetCenter.copy().add(direction.copy().scale((float)random.nextFloat()*target.arrivalRadius))
+		}
+		entity.targetPosition = randomTargetPosition
+		entity."movement.velocity" = randomTargetPosition.copy().sub(position).normalise().scale(entity.speed)
+		
+		
+	})
+	
+	
+	
+	property("outsideOfBounds",false)
 	component(utils.components.genericComponent(id:"islandboundchecker", messageId:"update"){ message ->
-		def nextPosition = entity.nextPosition
-		def terrainColor = entity.terrainMap.getColor((int)nextPosition.x, (int)nextPosition.y)
-		if( terrainColor== utils.color(1,1,1,1)){
-			entity.position = nextPosition
-		}
-		else{
-			entity.nextPosition = entity.position
-			entity."movement.velocity".negateLocal()			
+		def position = entity.position
+		if( !traversable(entity.terrainMap, position)){
+			if(!entity.outsideOfBounds){
+				entity."movement.velocity"=utils.vector(0,0)
+				entity.targetPosition = null
+				entity.state = "wander"
+				entity.target = new Target(position, 30,10)
+				entity.outsideOfBounds = true
+			}
+		}else{
+			entity.outsideOfBounds = false
 		}
 		
 	})
 	
-//	component(utils.components.genericComponent(id:"debug", messageId:["render"]){ message ->
-//			
-//		def renderer = message.renderer
-//		def start = entity.position
-//		def end = entity.position.copy().add(entity.direction.copy().normalise().scale(50))
-//		renderer.enqueue( new ClosureRenderObject(5, { Graphics g ->
-//			g.drawLine( start.x, start.y, end.x, end.y)
-//		}))
-//	})
+	
+	
 	
 }
