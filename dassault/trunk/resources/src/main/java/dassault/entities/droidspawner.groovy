@@ -16,6 +16,7 @@ builder.entity {
 	property("minTime", parameters.minTime)
 	property("maxTime", parameters.maxTime)
 	
+	property("ownerId", parameters.ownerId)
 	property("droidTemplate", parameters.droidTemplate)
 	
 	component(utils.components.genericComponent(id:"updateTimer", messageId:"update"){ message ->
@@ -40,8 +41,7 @@ builder.entity {
 		
 		def droidId = "droid-${utils.random.nextInt()}" 
 		
-		def droid = entity.droidTemplate.instantiate(droidId, [position:entity.position.copy()])
-		droid.tags << "cpu"
+		def droid = entity.droidTemplate.instantiate(droidId, [position:entity.position.copy(), ownerId:entity.ownerId])
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(droid,entity.parent))
 	})

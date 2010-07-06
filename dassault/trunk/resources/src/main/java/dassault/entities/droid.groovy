@@ -124,6 +124,7 @@ builder.entity {
 			entity."movementComponent.force".add(entity."movementComponent.velocity".copy().negate().scale(0.01f))
 		}
 		
+		entity.moveDirection = utils.vector(0,0)
 	})
 	
 	component(utils.components.genericComponent(id:"updatePositionHandler", messageId:"update"){ message ->
@@ -214,6 +215,38 @@ builder.entity {
 			})
 			entity.isMoving = false
 		}
+	})
+	
+	// transfer component
+	
+	property("ownerId", parameters.ownerId)
+	
+	property("shouldTransfer", false)
+	property("selectedDroid", null)
+	
+	component(utils.components.genericComponent(id:"transferComponent", messageId:"update"){ message ->
+		
+		if (!entity.shouldTransfer)
+			return
+		
+		if (!entity.selectedDroid)
+			return
+		
+		// check preconditions like transfer points, etc
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("changeControlledDroid"){ newMessage ->
+			newMessage.controlledDroid = entity.selectedDroid
+			newMessage.ownerId = entity.ownerId
+		})
+		
+		entity.selectedDroid = null
+		entity.shouldTransfer = false
+	})
+	
+	component(utils.components.genericComponent(id:"changeOwnerHandler", messageId:"changeOwner"){ message ->
+		if (entity != message.controlledDroid)
+			return
+		entity.ownerId = message.ownerId
 	})
 	
 }

@@ -4,7 +4,7 @@ import org.newdawn.slick.Graphics
 
 builder.entity {
 	
-	property("owner", parameters.owner)
+	property("ownerId", parameters.ownerId)
 	property("screen", parameters.screen)
 	
 	property("followMouse", parameters.followMouse)
@@ -18,12 +18,13 @@ builder.entity {
 		def screen = entity.screen
 		def centerPosition = utils.vector((float)screen.width * 0.5f, (float)screen.height * 0.5f)
 		
-		def owner = entity.root.getEntityById(entity.owner)
+		def player = entity.root.getEntityById(entity.ownerId)
+		def droid = entity.root.getEntityById(player.controlledDroidId)
 		
-		def targetPosition = owner.position.copy().sub(centerPosition).negate()
+		def targetPosition = droid.position.copy().sub(centerPosition).negate()
 		
 		entity.position =  targetPosition
-
+		
 		// if followMouse then mid point between mouse and owner position
 		def input = utils.custom.gameContainer.input
 		

@@ -11,21 +11,36 @@ builder.entity("scene") {
 	
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)
-		owner = "droid1"
+		ownerId = "player"
 		screen = utils.rectangle(0,0, 800, 600)
 		followMouse = false
 	}
-
+	
 	child(entity("droid1") {
-		tags("player1", "blasterweapon")
+		tags("player1")
 		parent("dassault.entities.droid",[position:utils.vector(300,400), 
-		                                  speed:0.2f, 
-		                                  energy:utils.container(10000f,10000f),
-		                                  regenerationSpeed:0.02f])
+				speed:0.2f, 
+				energy:utils.container(10000f,10000f),
+				regenerationSpeed:0.02f])
 	} )
+	
+	child(entity("player") {
+		property("controlledDroidId", "droid1")
 		
+		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
+			entity.controlledDroidId = message.controlledDroid.id 
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("changeOwner"){ newMessage ->
+				newMessage.controlledDroid = message.controlledDroid
+				newMessage.ownerId = entity.id
+			})
+			
+		})
+		
+	})
+	
 	child(id:"playerController", template:"dassault.entities.keyboardcontroller") {
-		owner = "droid1"
+		ownerId = "player"
 		camera = "camera"
 		leftKey = Input.KEY_A
 		rightKey = Input.KEY_D
@@ -41,11 +56,14 @@ builder.entity("scene") {
 		bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
 	}
 	
-	child(id:"cpuController", template:"dassault.entities.aicontroller") { player = "cpu" }
+	child(entity("cpu") {
+		
+	})
+	
+	child(id:"cpuController", template:"dassault.entities.aicontroller") {  ownerId = "cpu"  }
 	
 	child(entity("droid2") {
-		tags("cpu")
-		parent("dassault.entities.droid",[position:utils.vector(200,200)])
+		parent("dassault.entities.droid",[position:utils.vector(200,200), ownerId:"cpu"])
 	} )
 	
 	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
@@ -84,6 +102,7 @@ builder.entity("scene") {
 		minTime = 5000
 		maxTime = 5000
 		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
+		ownerId = "cpu"
 	}
 	
 	child(id:"spawner2", template:"dassault.entities.droidspawner") { 
@@ -91,6 +110,7 @@ builder.entity("scene") {
 		minTime = 8000
 		maxTime = 1000
 		droidTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.droid")
+		ownerId = "cpu"
 	}
 	
 	component(new ExplosionComponent("explosions")) { }
