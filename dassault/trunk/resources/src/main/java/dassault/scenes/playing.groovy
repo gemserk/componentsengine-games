@@ -60,6 +60,10 @@ builder.entity("playing") {
 		rightKey = Input.KEY_D
 		upKey = Input.KEY_W
 		downKey = Input.KEY_S
+		secondaryLeftKey = Input.KEY_LEFT
+		secondaryRightKey = Input.KEY_RIGHT
+		secondaryUpKey = Input.KEY_UP
+		secondaryDownKey = Input.KEY_DOWN
 	}
 	
 	child(id:"playerAiHelperController", template:"dassault.entities.aicontroller") {  ownerId = "player"  }
@@ -170,6 +174,7 @@ builder.entity("playing") {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
 			press(button:"space",eventId:"pauseGame")
+			press(button:"h",eventId:"helpscreen")
 		}
 		mouse {
 			press(button:"left", eventId:"leftmouse")

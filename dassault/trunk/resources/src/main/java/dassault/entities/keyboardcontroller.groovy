@@ -18,6 +18,11 @@ builder.entity {
 	property("upKey", parameters.upKey)
 	property("downKey", parameters.downKey)
 	
+	property("secondaryLeftKey", parameters.secondaryLeftKey)
+	property("secondaryRightKey", parameters.secondaryRightKey)
+	property("secondaryUpKey", parameters.secondaryUpKey)
+	property("secondaryDownKey", parameters.secondaryDownKey)
+	
 	// TODO: separate move from fire and transfer logics
 	
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
@@ -38,16 +43,16 @@ builder.entity {
 		
 		def moveDirection = utils.vector(0,0)
 		
-		if (input.isKeyDown(leftKey)) 
+		if (input.isKeyDown(leftKey) || input.isKeyDown(entity.secondaryLeftKey)) 
 			moveDirection.x = -1
 		
-		if (input.isKeyDown(rightKey)) 
+		if (input.isKeyDown(rightKey) || input.isKeyDown(entity.secondaryRightKey)) 
 			moveDirection.x = 1
 		
-		if (input.isKeyDown(upKey)) 
+		if (input.isKeyDown(upKey) || input.isKeyDown(entity.secondaryUpKey)) 
 			moveDirection.y = -1
 		
-		if (input.isKeyDown(downKey)) 
+		if (input.isKeyDown(downKey) || input.isKeyDown(entity.secondaryDownKey)) 
 			moveDirection.y = 1
 		
 		controlledDroid.moveDirection = moveDirection

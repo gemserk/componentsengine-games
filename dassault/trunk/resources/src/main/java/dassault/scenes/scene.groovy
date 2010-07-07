@@ -15,15 +15,17 @@ builder.entity("game") {
 	property("transitions",[
 			paused:"paused",
 			resume:"playing",
+			helpscreen:"helpscreen",
 			])
 	
 	property("stateEntities",[
 			entity("playing"){ parent("dassault.scenes.playing") },
-			entity("paused"){ parent("dassault.scenes.paused") }])
+			entity("paused"){ parent("dassault.scenes.paused") }, 
+			entity("helpscreen"){ parent("dassault.scenes.helpscreen") }])
 	
 	property("currentNodeState", null)
 	
-	component(utils.components.genericComponent(id:"transitionHandler", messageId:["paused","resume"]){ message ->
+	component(utils.components.genericComponent(id:"transitionHandler", messageId:["paused","resume", "helpscreen"]){ message ->
 		
 		String messageId = message.getId();
 		String transition = entity.transitions.get(messageId);
@@ -49,16 +51,16 @@ builder.entity("game") {
 	})
 	
 	component(utils.components.genericComponent(id:"enterStateHandler", messageId:"enterState"){ message ->
-		messageQueue.enqueueDelay(utils.genericMessage("resume"){
+		messageQueue.enqueueDelay(utils.genericMessage("helpscreen"){
 		})
 	})
 	
 	property("gameTemplate", utils.custom.templateProvider.getTemplate("dassault.scenes.scene"))
 	
 	component(utils.components.genericComponent(id:"restartLevelHandler", messageId:"restartLevel"){ message ->
-		def scene = entity.gameTemplate.instantiate("playing")
+		def scene = entity.gameTemplate.instantiate("game")
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
-		messageQueue.enqueueDelay(utils.genericMessage("resume"){
+		messageQueue.enqueueDelay(utils.genericMessage("helpscreen"){
 		})
 	})
 	
