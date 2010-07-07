@@ -18,6 +18,19 @@ import com.google.common.base.Predicates
 
 builder.entity {
 	
+	
+	def traversableColor = utils.color(1,1,1,1)
+	def traversable = { terrainMap, position ->
+		def x = (int)position.x
+		def y = (int)position.y
+		if(x < 0 || y < 0 || x > terrainMap.width || y > terrainMap.height)
+			return false
+		
+		def terrainColor = terrainMap.getColor((int)position.x, (int)position.y)
+		return terrainColor == traversableColor
+	}
+	
+	
 	property("bounds",utils.rectangle(0,0,800,600))
 	property("level", parameters.level)
 	
@@ -41,7 +54,7 @@ builder.entity {
 			return
 		
 		entity.started = true
-		messageQueue.enqueue(utils.genericMessage("spawnDarwinians"){newMessage -> newMessage.quantity = 10})
+		messageQueue.enqueue(utils.genericMessage("spawnDarwinians"){newMessage -> newMessage.quantity = 100})
 	})
 	
 	child(entity("darwinianSpawner"){
@@ -93,8 +106,8 @@ builder.entity {
 	//	})
 	
 	property("selectedEntityCandidate", null)
-	
-	component(utils.components.genericComponent(id:"selector", messageId:["update"]){ message ->
+	property("selectedEntity", null)
+	component(utils.components.genericComponent(id:"selectcandidateforselection", messageId:["update"]){ message ->
 		def input = utils.custom.gameContainer.input
 		def cursorPosition = utils.vector(input.getMouseX(),input.getMouseY())
 		
@@ -108,45 +121,69 @@ builder.entity {
 		entity.selectedEntityCandidate = candidate
 	})
 	
-	property("selectedOfficerCursor",utils.resources.image("selectedOfficerCursor"))
-	component(utils.components.genericComponent(id:"selectedEntityCandidateRenderer", messageId:["render"]){ message ->		
-		def renderer = message.renderer
-		def selectedEntityCandidate  = entity.selectedEntityCandidate
-		
-		if(!selectedEntityCandidate)
-			return 
-		
-		if(!selectedEntityCandidate.tags.contains("officer"))
-			return
-		
-		def center = selectedEntityCandidate.position
-		def radius = selectedEntityCandidate.radius
-		def displacement = (float)radius / 2f
-		
-		renderer.enqueue( new ClosureRenderObject(1000, { Graphics g ->
-			def oldColor = g.getColor()
-			g.setColor(utils.color(1f,1f,1f,1f))
-			g.drawOval((float)center.x - displacement,(float)center.y -displacement, radius, radius)
-			g.setColor(oldColor)
-		}))
-		
-		def targetPosition = selectedEntityCandidate.destinationPoint
-		def selectedOfficerCursor = entity.selectedOfficerCursor
-		
-		def cursorDisplacement = (float)selectedOfficerCursor.width /2f
-		
-		
-		renderer.enqueue( new ClosureRenderObject(1000, { Graphics g ->
-			def oldColor = g.getColor()
-			g.setColor(utils.color(1f,1f,1f,1f))
-			g.drawImage(selectedOfficerCursor, (float)targetPosition.x - cursorDisplacement,(float)targetPosition.y - cursorDisplacement)
-			g.setColor(oldColor)
-		}))
-		
+	component(utils.components.genericComponent(id:"selector", messageId:["mouse.left.press"]){ message ->
+		def candidate = entity.selectedEntityCandidate
+		if(candidate){
+			entity.selectedEntity = candidate
+			log.info("Selected entity - $candidate.id")
+		}
+	
 		
 	})
 	
+	property("selectedOfficerCursor",utils.resources.image("selectedOfficerCursor"))
+	component(utils.components.genericComponent(id:"selectedEntityCandidateRenderer", messageId:["render"]){ message ->		
+		def renderer = message.renderer
+		def selectedEntity = entity.selectedEntity
+		def selectedEntityCandidate  = entity.selectedEntityCandidate
+		
+		
+		def toRenderList =[]
+		if(selectedEntity)
+			toRenderList << [entity:selectedEntity, color:utils.color(1,0,1,1)]
+			                 
+		if(selectedEntityCandidate && selectedEntity != selectedEntityCandidate)
+			toRenderList <<[entity:selectedEntityCandidate, color:utils.color(1,1,1,1)]
+		
+		toRenderList.each { toRender ->
+			def theEntity = toRender.entity
+			def renderColor = toRender.color
+			if(!theEntity.tags.contains("officer"))
+				return
+			
+			def center = theEntity.position
+			def radius = theEntity.radius
+			def displacement = (float)radius / 2f
+			
+			renderer.enqueue( new ClosureRenderObject(1000, { Graphics g ->
+				def oldColor = g.getColor()
+				g.setColor(renderColor)
+				g.drawOval((float)center.x - displacement,(float)center.y -displacement, radius, radius)
+				g.setColor(oldColor)
+			}))
+			
+			def targetPosition = theEntity.destinationPoint
+			
+			if(!targetPosition)
+				return
+			
+			def selectedOfficerCursor = entity.selectedOfficerCursor
+			
+			def cursorDisplacement = (float)selectedOfficerCursor.width /2f
+			
+			
+			renderer.enqueue( new ClosureRenderObject(1000, { Graphics g ->
+				def oldColor = g.getColor()
+				g.drawImage(selectedOfficerCursor, (float)targetPosition.x - cursorDisplacement,(float)targetPosition.y - cursorDisplacement,renderColor)
+				g.setColor(oldColor)
+			}))
+			
+		}
+	})
 	
+	component(utils.components.genericComponent(id:"unselector", messageId:["space"]){ message ->
+		entity.selectedEntity = null
+	})
 	
 	
 	child(entity("officialPlacer"){
@@ -165,10 +202,38 @@ builder.entity {
 		
 		
 		component(utils.components.genericComponent(id:"startOfficial", messageId:["mouse.left.press"]){ message ->
+			
+			if(entity.parent.selectedEntityCandidate)
+				return
+				
+		
 			def input = utils.custom.gameContainer.input
-			entity.placementPoint = utils.vector(input.getMouseX(),input.getMouseY())
+			def position = utils.vector(input.getMouseX(),input.getMouseY())
+			
+			def officer = entity.officerTemplate.get([position:position])
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(officer,entity.parent))
+			entity.parent.selectedEntity = officer
 		})
 		
+		
+		component(utils.components.genericComponent(id:"selectDestination", messageId:["mouse.right.press"]){ message ->
+		
+			def selectedEntity = entity.parent.selectedEntity
+		
+			if(!selectedEntity)
+				return
+			
+			if(!selectedEntity.tags.contains("officer"))
+				return
+		
+			def input = utils.custom.gameContainer.input
+			def destination = utils.vector(input.getMouseX(),input.getMouseY())
+			
+			if(traversable(entity.parent.terrainMap,destination))
+				selectedEntity.destinationPoint = destination
+			
+			
+		})
 		
 		component(utils.components.genericComponent(id:"endOfficial", messageId:["mouse.left.release"]){ message ->
 			def placementPoint = entity.placementPoint
@@ -190,20 +255,6 @@ builder.entity {
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(officer,entity))
 		})
 		
-		component(utils.components.genericComponent(id:"renderArrow", messageId:["render"]){ message ->
-			def placementPoint = entity.placementPoint
-			if(!placementPoint)
-				return 
-			
-			def renderer = message.renderer
-			def input = utils.custom.gameContainer.input
-			def destinationPoint = utils.vector(input.getMouseX(),input.getMouseY())
-			renderer.enqueue( new ClosureRenderObject(0, { Graphics g ->
-				def start = entity.placementPoint
-				def end = destinationPoint
-				g.drawLine( start.x, start.y, end.x, end.y)
-			}))
-		})
 		
 	})
 	

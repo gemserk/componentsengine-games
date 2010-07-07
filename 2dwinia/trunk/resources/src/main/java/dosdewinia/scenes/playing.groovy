@@ -8,7 +8,7 @@ builder.entity {
 		keyboard {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
-			press(button:"space",eventId:"pauseGame")
+			press(button:"space",eventId:"unselect")
 			press(button:"s",eventId:"spawnDarwinians"){ message ->
 				message.quantity = 50				
 			}
@@ -16,6 +16,9 @@ builder.entity {
 		mouse {
 			press(button:"left", eventId:"mouse.left.press")
 			release(button:"left", eventId:"mouse.left.release")
+			press(button:"right", eventId:"mouse.right.press")
+			release(button:"right", eventId:"mouse.right.press")
+			
 			move(eventId:"mouse.move") { message ->
 				message.x = position.x
 				message.y = position.y
