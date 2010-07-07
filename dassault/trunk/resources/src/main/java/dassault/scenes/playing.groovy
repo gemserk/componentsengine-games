@@ -52,7 +52,7 @@ builder.entity("playing") {
 		
 		child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
 			ownerId = "droid1"
-			reloadTime = 200
+			reloadTime = 400
 			damage = 30f
 			energy = 20f
 			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
@@ -101,7 +101,7 @@ builder.entity("playing") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				ownerId:data.ownerId,
-				reloadTime:300,
+				reloadTime:500,
 				damage:30f,
 				energy:20f,
 				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
@@ -119,16 +119,6 @@ builder.entity("playing") {
 				regenerationSpeed:0.02f
 				]
 			})
-	
-	//	weapon1 = {
-	//		template = "blasterweapon"
-	//		speed = 0.02f
-	//		reloadTime = 1000
-	//	}
-	
-	//	def weapon1 = [type:"blasterWeapon", reloadTime:100, damage:30f, energy:20f]
-	//	def droid1 = [type:"basicDroid", speed:0.1f, energy:utils.container(50f,50f), regenerationSpeed:0.02f]
-	//	def droid2 = [type:"basicDroid", speed:0.1f, energy:utils.container(100f,100f), regenerationSpeed:0.03f, weapon:"weapon1"]
 	
 	def enemyDroidFactory = [basicDroid:{ params -> droidInstantiationTemplate.get(params) }, 
 	blasterWeapon:{ params -> blasterWeaponInstantiationTemplate.get(params) }]

@@ -75,6 +75,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	// weapon type
 	
+	property("droidImage",  utils.resources.image("droid"))
+	
 	component(utils.components.genericComponent(id:"droidRenderer", messageId:"render"){ message ->
 		
 		def renderer = message.renderer
@@ -88,17 +90,20 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		def color = owner.color
 		def shape = utils.rectangle(-14, -14, 28, 28)
 		
+		def droidImage = entity.droidImage
+		
 		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
 			g.setColor(color)
 			g.pushTransform()
 			g.translate((float) position.x + entity.headPosition.x, (float)position.y + entity.headPosition.y)
 			g.scale(size, size)
-			g.fill(shape)
+			g.drawImage(droidImage, (float)-(droidImage.getWidth() / 2), (float)-(droidImage.getHeight() / 2))
+			// g.fill(shape)
 			g.popTransform()
 		}))
 		
 		position = entity.position.copy()
-		def image = entity.shadowImage
+		def shadowImage = entity.shadowImage
 		def shadowSize = (float) size * 0.6f
 		
 		renderer.enqueue( new ClosureRenderObject(layer-1, { Graphics g ->
@@ -106,7 +111,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			g.pushTransform()
 			g.translate((float) position.x, (float)position.y + 20)
 			g.scale(shadowSize, shadowSize)
-			g.drawImage(image, (float)-(image.getWidth() / 2), (float)-(image.getHeight() / 2))
+			g.drawImage(shadowImage, (float)-(shadowImage.getWidth() / 2), (float)-(shadowImage.getHeight() / 2))
 			g.popTransform()
 		}))
 		

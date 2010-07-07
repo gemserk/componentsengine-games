@@ -38,7 +38,7 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 			def fireDirection = owner.fireDirection
 			def position = owner.position
 			
-			def bulletSpeed = 0.4f
+			def bulletSpeed = 0.5f
 			
 			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
 					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage])
