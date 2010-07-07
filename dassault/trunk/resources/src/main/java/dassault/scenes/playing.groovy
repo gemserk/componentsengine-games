@@ -20,6 +20,26 @@ builder.entity("playing") {
 		followMouse = true
 	}
 	
+	child(entity("gameLogic") {
+		
+		property("playerId", "player")
+		
+		component(utils.components.genericComponent(id:"detectGameOver", messageId:"update"){ message ->
+			
+			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
+			{ droid -> droid.ownerId == entity.playerId} as Predicate))
+			
+			if (!controlledDroids.empty)
+				return
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){ newMessage ->
+				// newMessage.points = ...
+			})
+			
+		})
+		
+	})
+	
 	child(entity("player") {
 		
 		property("controlledDroidId", "droid1")

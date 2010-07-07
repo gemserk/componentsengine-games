@@ -16,16 +16,18 @@ builder.entity("game") {
 			paused:"paused",
 			resume:"playing",
 			helpscreen:"helpscreen",
+			gameover:"gameover",
 			])
 	
 	property("stateEntities",[
 			entity("playing"){ parent("dassault.scenes.playing") },
 			entity("paused"){ parent("dassault.scenes.paused") }, 
-			entity("helpscreen"){ parent("dassault.scenes.helpscreen") }])
+			entity("helpscreen"){ parent("dassault.scenes.helpscreen") },
+			entity("gameover"){ parent("dassault.scenes.gameover") }])
 	
 	property("currentNodeState", null)
 	
-	component(utils.components.genericComponent(id:"transitionHandler", messageId:["paused","resume", "helpscreen"]){ message ->
+	component(utils.components.genericComponent(id:"transitionHandler", messageId:["paused","resume", "helpscreen", "gameover"]){ message ->
 		
 		String messageId = message.getId();
 		String transition = entity.transitions.get(messageId);
