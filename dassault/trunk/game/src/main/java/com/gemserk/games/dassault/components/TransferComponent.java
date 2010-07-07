@@ -51,6 +51,24 @@ public class TransferComponent extends FieldsReflectionComponent {
 		selectedDroid = null;
 		transfering = false;
 	}
+	
+	/**
+	 * If a droid dies when trying to transfer to it, then stop transfering...
+	 * @param message
+	 */
+	@Handles
+	public void droidDead(Message message) {
+		Entity droid = Properties.getValue(message, "droid");
+		if (droid != selectedDroid)
+			return;
+		
+		messageQueue.enqueue(new Message("stopTransfering", new PropertiesMapBuilder() {
+			{
+				property("droidId", entity.getId());
+			}
+		}.build()));
+		
+	}
 
 	@Handles
 	public void update(Message message) {

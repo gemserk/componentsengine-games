@@ -4,6 +4,9 @@ import org.newdawn.slick.Input;
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
+import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.google.common.base.Predicate 
+import com.google.common.base.Predicates 
 import gemserk.utils.GroovyBootstrapper 
 
 builder.entity("playing") {
@@ -18,6 +21,7 @@ builder.entity("playing") {
 	}
 	
 	child(entity("player") {
+		
 		property("controlledDroidId", "droid1")
 		property("color", utils.color(0,0,1,1f))
 		
@@ -28,6 +32,22 @@ builder.entity("playing") {
 				newMessage.controlledDroid = message.controlledDroid
 				newMessage.ownerId = entity.id
 			})
+			
+		})
+		
+		component(utils.components.genericComponent(id:"selectNextControlledDroid", messageId:"update"){ message ->
+			
+			def controlledDroidId = entity.controlledDroidId
+			def controlledDroid = entity.root.getEntityById(controlledDroidId)
+			
+			if (controlledDroid)
+				return;
+			
+			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
+					{ droid -> droid.ownerId == entity.id} as Predicate))
+			
+			if (!controlledDroids.empty)
+				entity.controlledDroidId = controlledDroids[0].id
 			
 		})
 		

@@ -182,7 +182,6 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	})
 	
 	component(utils.components.genericComponent(id:"droidDeadHandler", messageId:"droidDead"){ message ->
-		
 		if (entity != message.droid)
 			return
 		
@@ -245,6 +244,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"changeOwnerHandler", messageId:"changeOwner"){ message ->
 		if (entity != message.controlledDroid)
 			return
+		log.info("Droid has new owner - droid.id : $entity.id - owner.id : $message.ownerId")
 		entity.ownerId = message.ownerId
 	})
 }
