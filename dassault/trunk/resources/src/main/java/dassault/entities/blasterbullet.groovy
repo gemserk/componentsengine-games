@@ -1,5 +1,10 @@
 package dassault.entities
 
+import org.newdawn.slick.opengl.SlickCallable;
+
+import static org.lwjgl.opengl.GL11.*;
+
+
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
@@ -7,8 +12,9 @@ import com.gemserk.componentsengine.predicates.EntityPredicates
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
-
 import org.newdawn.slick.Graphics 
+import org.newdawn.slick.opengl.SlickCallable;
+
 
 builder.entity {
 	
@@ -94,16 +100,25 @@ builder.entity {
 		
 	})
 	
+//	component(new ImageRenderableComponent("renderBullet")) {
+//		propertyRef("position", "position")
+//		property("image", utils.resources.image("blasterbullet"))
+//		propertyRef("direction", "moveDirection")
+//		property("layer", -1)
+//		property("size", utils.vector(0.6f, 0.6f))
+//		property("color", utils.color(1f,1,1,1f))
+//	}
+	
 	component(utils.components.genericComponent(id:"bulletRenderer", messageId:"render"){ message ->
 		
 		def renderer = message.renderer
 		
 		def position = entity.position
 		
-		def size = 1.0f
+		def size = 8.0f
 		def layer = 0
 		def color = utils.color(1f,1f,1f,1f)
-		def shape = utils.rectangle(-2, -2, 4, 4)
+		// def shape = utils.rectangle(-2, -2, 4, 4)
 		
 		def theta = (float) entity.moveDirection.theta
 		
@@ -113,7 +128,21 @@ builder.entity {
 			g.translate((float) position.x, (float)position.y)
 			g.scale(size, size)
 			g.rotate(0f, 0f, theta);
-			g.fill(shape)
+//			g.fill(shape)
+			
+			SlickCallable.enterSafeBlock();
+			glBegin(GL_QUADS);
+			glColor4f(1.0f, 0.0f,  0.0f, 0.8f);
+			glVertex2f(-0.5f, -0.4f);
+			glColor4f(1.0f, 0.5f, 0.5f, 1.0f);
+			glVertex2f(0.5f, -0.4f);
+			glColor4f(1.0f, 0.5f, 0.5f, 1.0f);
+			glVertex2f(0.5f, 0.4f);
+			glColor4f(1.0f,  0.0f,  0.0f, 0.5f);
+			glVertex2f(-0.5f, 0.4f);
+			glEnd();
+			SlickCallable.leaveSafeBlock();
+			
 			g.popTransform()
 		}))
 		

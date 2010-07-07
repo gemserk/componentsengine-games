@@ -45,14 +45,14 @@ builder.entity("playing") {
 	child(id:"playerAiHelperController", template:"dassault.entities.aicontroller") {  ownerId = "player"  }
 	
 	child(entity("droid1") {
-		parent("dassault.entities.droid",[ownerId:"player",position:utils.vector(300,400), 
+		parent("dassault.entities.droid",[ownerId:"player",position:utils.vector(400,300), 
 		speed:0.2f, 
 		energy:utils.container(10000f,10000f),
 		regenerationSpeed:0.02f])
 		
 		child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
 			ownerId = "droid1"
-			reloadTime = 100
+			reloadTime = 200
 			damage = 30f
 			energy = 20f
 			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
@@ -101,7 +101,7 @@ builder.entity("playing") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				ownerId:data.ownerId,
-				reloadTime:100,
+				reloadTime:300,
 				damage:30f,
 				energy:20f,
 				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
