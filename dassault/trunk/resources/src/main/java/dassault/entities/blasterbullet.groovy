@@ -101,46 +101,9 @@ builder.entity {
 		propertyRef("position", "position")
 		property("image", utils.resources.image("blasterbullet"))
 		propertyRef("direction", "moveDirection")
-		property("layer", -1)
+		property("layer", -5)
 		property("size", utils.vector(0.6f, 0.6f))
 		property("color", utils.color(1f,1,1,1f))
 	}
 	
-//	component(utils.components.genericComponent(id:"bulletRenderer", messageId:"render"){ message ->
-//		
-//		def renderer = message.renderer
-//		
-//		def position = entity.position
-//		
-//		def size = 8.0f
-//		def layer = 0
-//		def color = utils.color(1f,1f,1f,1f)
-//		// def shape = utils.rectangle(-2, -2, 4, 4)
-//		
-//		def theta = (float) entity.moveDirection.theta
-//		
-//		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
-//			g.setColor(color)
-//			g.pushTransform()
-//			g.translate((float) position.x, (float)position.y)
-//			g.scale(size, size)
-//			g.rotate(0f, 0f, theta);
-//			
-//			SlickCallable.enterSafeBlock();
-//			glBegin(GL_QUADS);
-//			glColor4f(1.0f, 0.0f,  0.0f, 0.8f);
-//			glVertex2f(-0.5f, -0.4f);
-//			glColor4f(1.0f, 0.5f, 0.5f, 1.0f);
-//			glVertex2f(0.5f, -0.4f);
-//			glColor4f(1.0f, 0.5f, 0.5f, 1.0f);
-//			glVertex2f(0.5f, 0.4f);
-//			glColor4f(1.0f,  0.0f,  0.0f, 0.5f);
-//			glVertex2f(-0.5f, 0.4f);
-//			glEnd();
-//			SlickCallable.leaveSafeBlock();
-//			
-//			g.popTransform()
-//		}))
-//		
-//	})
 }

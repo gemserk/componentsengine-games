@@ -45,7 +45,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"startWalkAnimationHandler", messageId:"startWalkAnimation"){ message ->
 		if(!entity.id.equals(message.animationId))
-			return
+		return
 		entity.walkAnimations.each { animation -> 
 			animation.restart()
 		}
@@ -53,7 +53,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"stopWalkAnimationHandler", messageId:"stopWalkAnimation"){ message ->
 		if(!entity.id.equals(message.animationId))
-			return
+		return
 		entity.walkAnimations.each { animation -> 
 			animation.stop()
 		}
@@ -62,10 +62,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"updateAnimationsHandler", messageId:"update"){ message ->
 		entity.walkAnimations.each { animation ->
 			if (animation.paused)
-				return
+			return
 			animation.animate(entity, message.delta)
 			if (animation.finished)
-				animation.restart()
+			animation.restart()
 		}
 	})
 	
@@ -75,7 +75,21 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	// weapon type
 	
-	property("droidImage",  utils.resources.image("droid"))
+	property("droidHeadBackground",  utils.resources.image("droid_headbackground"))
+	property("droidHeadBorder",  utils.resources.image("droid_headborder"))
+	property("droidHeadShadow",  utils.resources.image("droid_headshadow"))
+	property("droidHeadEyes",  utils.resources.image("droid_headeyes"))
+	
+	
+	def imagerRenderableObject = { layer, image, x, y, size, color -> 
+		return new ClosureRenderObject(layer-1, { Graphics g ->
+			g.pushTransform()
+			g.translate(x, y)
+			g.scale(size, size)
+			g.drawImage(image, (float)-(image.getWidth() / 2), (float)-(image.getHeight() / 2), color)
+			g.popTransform()
+		})
+	}
 	
 	component(utils.components.genericComponent(id:"droidRenderer", messageId:"render"){ message ->
 		
@@ -85,23 +99,25 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		
 		def owner = entity.root.getEntityById(entity.ownerId)
 		
-		def size = entity.size
+		//		def size = entity.size
+		def size = 0.75f
+		
 		def layer = 0
 		def color = owner.color
 		def shape = utils.rectangle(-14, -14, 28, 28)
 		
-		def droidImage = entity.droidImage
-		
-		renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
-			g.setColor(color)
-			g.pushTransform()
-			g.translate((float) position.x + entity.headPosition.x, (float)position.y + entity.headPosition.y)
-			g.scale(size, size)
-			g.drawImage(droidImage, (float)-(droidImage.getWidth() / 2), (float)-(droidImage.getHeight() / 2))
-			// g.fill(shape)
-			g.popTransform()
-		}))
-		
+		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidHeadBackground, (float) position.x + entity.headPosition.x, //
+				(float)position.y + entity.headPosition.y, size, Color.white))
+
+		renderer.enqueue(imagerRenderableObject(layer-2, entity.droidHeadShadow, (float) position.x + entity.headPosition.x, //
+				(float)position.y + entity.headPosition.y, size, Color.white))
+
+		renderer.enqueue(imagerRenderableObject(layer, entity.droidHeadBorder, (float) position.x + entity.headPosition.x, //
+				(float)position.y + entity.headPosition.y, size, color))
+
+		renderer.enqueue(imagerRenderableObject(layer+1, entity.droidHeadEyes, (float) position.x + entity.headPosition.x, //
+				(float)position.y + entity.headPosition.y, size, Color.white))
+				
 		position = entity.position.copy()
 		def shadowImage = entity.shadowImage
 		def shadowSize = (float) size * 0.6f
@@ -143,7 +159,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		entity.bounds.centerX = entity.newPosition.x
 		entity.bounds.centerY = entity.newPosition.y 
 		
-		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), { obstacle -> obstacle.bounds.intersects(entity.bounds) } as Predicate))
+		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), { obstacle -> obstacle.bounds.intersects(entity.bounds)
+		} as Predicate))
 		
 		if (!obstacles.empty) {
 			entity."movementComponent.velocity".set(0,0)
@@ -164,7 +181,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"droidHittedHandler", messageId:"droidHitted"){ message ->
 		
 		if (entity != message.target)
-			return
+		return
 		
 		// delegate to component who recieve damage? another entity, a child?
 		
@@ -173,7 +190,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		hitpoints.remove(message.damage)
 		
 		if (!hitpoints.empty)
-			return
+		return
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("droidDead"){ newMessage ->
 			newMessage.droid = entity
@@ -183,7 +200,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"droidDeadHandler", messageId:"droidDead"){ message ->
 		if (entity != message.droid)
-			return
+		return
 		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 5.0f, 50f, 250f, 1f, Color.white, Color.white) 
@@ -216,7 +233,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			}
 		} else {
 			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) 
-				return
+			return
 			//			println "stop walking"
 			utils.custom.messageQueue.enqueue(utils.genericMessage("stopWalkAnimation"){ newMessage ->
 				newMessage.animationId = entity.id
@@ -240,10 +257,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		propertyRef("selectedDroid", "selectedDroid")
 		propertyRef("transfering", "transfering")
 	}
-		
+	
 	component(utils.components.genericComponent(id:"changeOwnerHandler", messageId:"changeOwner"){ message ->
 		if (entity != message.controlledDroid)
-			return
+		return
 		log.info("Droid has new owner - droid.id : $entity.id - owner.id : $message.ownerId")
 		entity.ownerId = message.ownerId
 	})

@@ -17,13 +17,13 @@ builder.entity("playing") {
 		position = utils.vector(0,0)
 		ownerId = "player"
 		screen = utils.rectangle(0,0, 800, 600)
-		followMouse = false
+		followMouse = true
 	}
 	
 	child(entity("player") {
 		
 		property("controlledDroidId", "droid1")
-		property("color", utils.color(0,0,1,1f))
+		property("color", utils.color(0.62f, 0.83f, 0.87f,1f))
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
 			entity.controlledDroidId = message.controlledDroid.id 
