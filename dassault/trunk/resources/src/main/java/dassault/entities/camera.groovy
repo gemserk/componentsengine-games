@@ -1,4 +1,5 @@
 package dassault.entities
+import com.gemserk.commons.animation.interpolators.Vector2fInterpolator;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import org.newdawn.slick.Graphics 
 
@@ -14,25 +15,54 @@ builder.entity {
 	property("mouseRelativePosition", utils.vector(0,0))
 	property("mousePosition", utils.vector(0,0))
 	
-	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:["update"]){ message ->
+	property("targetedPosition", utils.vector(0,0))
+	property("newTargetedPosition", utils.vector(0,0))
+	
+	component(utils.components.genericComponent(id:"changeTargetedPosition", messageId:"changeControlledDroid"){ message ->
+		entity.newTargetedPosition = message.controlledDroid.position
+		entity.interpolator = new Vector2fInterpolator(250, entity.targetedPosition.copy(), entity.newTargetedPosition.copy())
+	})
+	
+	component(utils.components.genericComponent(id:"updateTargetedPositionInterpolated", messageId:"update"){ message ->
+		def interpolator = entity.interpolator
+		if (!interpolator)
+			return
+		
+		interpolator.update(message.delta)
+		entity.targetedPosition = interpolator.interpolatedValue.copy()
+		if (interpolator.finished)
+			entity.interpolator = null
+	})
+	
+	component(utils.components.genericComponent(id:"updateTargetedPosition", messageId:"update"){ message ->
+		if (entity.interpolator)
+			return
+			
+		def player = entity.root.getEntityById(entity.ownerId)
+		def droid = entity.root.getEntityById(player.controlledDroidId)
+		
+		if (!droid) {
+			// lost control of main droid
+			//			entity.position = utils.vector(0,0)
+			// left the last droid position? 
+			return
+		}
+		
+		entity.targetedPosition = droid.position.copy()
+	})
+	
+	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:"update"){ message ->
 		
 		def screen = entity.screen
 		
 		// center screen, could be considered as start camera position
 		def centerPosition = utils.vector((float)screen.width * 0.5f, (float)screen.height * 0.5f)
 		
-		def player = entity.root.getEntityById(entity.ownerId)
-		def droid = entity.root.getEntityById(player.controlledDroidId)
-		
-		if (!droid) {
-			// lost control of main droid
-			entity.position = utils.vector(0,0)
-			return
-		}
-		
 		def input = utils.custom.gameContainer.input
 		
-		def targetPosition = droid.position.copy().sub(centerPosition).negate()
+		def targetedPosition = entity.targetedPosition.copy()
+		
+		def targetPosition = targetedPosition.copy().sub(centerPosition).negate()
 		entity.position =  targetPosition
 		
 		// if followMouse then mid point between mouse and owner position

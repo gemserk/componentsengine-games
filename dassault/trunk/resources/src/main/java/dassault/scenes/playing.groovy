@@ -61,13 +61,20 @@ builder.entity("playing") {
 			def controlledDroid = entity.root.getEntityById(controlledDroidId)
 			
 			if (controlledDroid)
-				return;
+				return
 			
 			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
 					{ droid -> droid.ownerId == entity.id} as Predicate))
 			
-			if (!controlledDroids.empty)
-				entity.controlledDroidId = controlledDroids[0].id
+			if (controlledDroids.empty)
+				return
+				
+			utils.custom.messageQueue.enqueue(utils.genericMessage("changeControlledDroid"){ newMessage ->
+				newMessage.controlledDroid = controlledDroids[0]
+			})
+			
+			// send changeControlledDroid!
+			//				entity.controlledDroidId = controlledDroids[0].id
 			
 		})
 		
