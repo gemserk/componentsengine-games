@@ -82,7 +82,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	
 	def imagerRenderableObject = { layer, image, x, y, size, color -> 
-		return new ClosureRenderObject(layer-1, { Graphics g ->
+		return new ClosureRenderObject(layer, { Graphics g ->
 			g.pushTransform()
 			g.translate(x, y)
 			g.scale(size, size)

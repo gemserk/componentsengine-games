@@ -20,6 +20,10 @@ builder.entity("playing") {
 		followMouse = true
 	}
 	
+	child(id:"hud", template:"dassault.entities.hud") {
+		playerId = "player"
+	}
+	
 	child(entity("gameLogic") {
 		
 		property("playerId", "player")
