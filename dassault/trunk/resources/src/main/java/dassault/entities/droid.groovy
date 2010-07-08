@@ -1,6 +1,9 @@
 package dassault.entities
 
 import com.gemserk.commons.animation.PropertyAnimation 
+import com.gemserk.commons.animation.interpolators.FloatInterpolator;
+import com.gemserk.componentsengine.commons.components.BarRendererComponent 
+import com.gemserk.componentsengine.commons.components.CursorOverDetector;
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
@@ -45,7 +48,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"startWalkAnimationHandler", messageId:"startWalkAnimation"){ message ->
 		if(!entity.id.equals(message.animationId))
-		return
+			return
 		entity.walkAnimations.each { animation -> 
 			animation.restart()
 		}
@@ -53,7 +56,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"stopWalkAnimationHandler", messageId:"stopWalkAnimation"){ message ->
 		if(!entity.id.equals(message.animationId))
-		return
+			return
 		entity.walkAnimations.each { animation -> 
 			animation.stop()
 		}
@@ -62,10 +65,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"updateAnimationsHandler", messageId:"update"){ message ->
 		entity.walkAnimations.each { animation ->
 			if (animation.paused)
-			return
+				return
 			animation.animate(entity, message.delta)
 			if (animation.finished)
-			animation.restart()
+				animation.restart()
 		}
 	})
 	
@@ -108,16 +111,16 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		
 		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidHeadBackground, (float) position.x + entity.headPosition.x, //
 				(float)position.y + entity.headPosition.y, size, Color.white))
-
+		
 		renderer.enqueue(imagerRenderableObject(layer-2, entity.droidHeadShadow, (float) position.x + entity.headPosition.x, //
 				(float)position.y + entity.headPosition.y, size, Color.white))
-
+		
 		renderer.enqueue(imagerRenderableObject(layer, entity.droidHeadBorder, (float) position.x + entity.headPosition.x, //
 				(float)position.y + entity.headPosition.y, size, color))
-
+		
 		renderer.enqueue(imagerRenderableObject(layer+1, entity.droidHeadEyes, (float) position.x + entity.headPosition.x, //
 				(float)position.y + entity.headPosition.y, size, Color.white))
-				
+		
 		position = entity.position.copy()
 		def shadowImage = entity.shadowImage
 		def shadowSize = (float) size * 0.6f
@@ -159,7 +162,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		entity.bounds.centerX = entity.newPosition.x
 		entity.bounds.centerY = entity.newPosition.y 
 		
-		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), { obstacle -> obstacle.bounds.intersects(entity.bounds)
+		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), { obstacle ->
+			obstacle.bounds.intersects(entity.bounds)
 		} as Predicate))
 		
 		if (!obstacles.empty) {
@@ -181,7 +185,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"droidHittedHandler", messageId:"droidHitted"){ message ->
 		
 		if (entity != message.target)
-		return
+			return
 		
 		// delegate to component who recieve damage? another entity, a child?
 		
@@ -190,7 +194,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		hitpoints.remove(message.damage)
 		
 		if (!hitpoints.empty)
-		return
+			return
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("droidDead"){ newMessage ->
 			newMessage.droid = entity
@@ -200,7 +204,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"droidDeadHandler", messageId:"droidDead"){ message ->
 		if (entity != message.droid)
-		return
+			return
 		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 5.0f, 50f, 250f, 1f, Color.white, Color.white) 
@@ -233,7 +237,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			}
 		} else {
 			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) 
-			return
+				return
 			//			println "stop walking"
 			utils.custom.messageQueue.enqueue(utils.genericMessage("stopWalkAnimation"){ newMessage ->
 				newMessage.animationId = entity.id
@@ -260,8 +264,59 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"changeOwnerHandler", messageId:"changeOwner"){ message ->
 		if (entity != message.controlledDroid)
-		return
+			return
 		log.info("Droid has new owner - droid.id : $entity.id - owner.id : $message.ownerId")
 		entity.ownerId = message.ownerId
 	})
+	
+	
+	// component? require hitpoints on the entity
+	
+	property("visible", 0.0f)
+	property("pointerposition", utils.vector(-10000f,-10000f))
+	
+	component(new CursorOverDetector("detectMouseOver")) {
+		propertyRef("position", "position")
+		property("bounds", utils.rectangle(-25, -25, 50, 50))
+		propertyRef("cursorPosition", "pointerposition")
+		property("onEnterTrigger", utils.custom.triggers.closureTrigger {
+			if (entity.visible == 1.0f)
+				return
+			entity.interpolator = new FloatInterpolator(100, entity.visible, 1.0f)
+		})
+		property("onLeaveTrigger", utils.custom.triggers.closureTrigger { 
+			if (entity.visible == 0.0f)
+				return
+			entity.interpolator = new FloatInterpolator(1000, entity.visible, 0.0f)
+		})
+	}
+	
+	component(utils.components.genericComponent(id:"updateHitpointsInterpolator", messageId:"update"){ message ->
+		def interpolator = entity.interpolator
+		if (!interpolator)
+			return
+		interpolator.update(message.delta)
+		entity.visible = interpolator.interpolatedValue
+		if (!interpolator.finished)
+			return
+		entity.interpolator = null
+	})
+	
+	component(utils.components.genericComponent(id:"updateCursorPosition", messageId:"update"){ message ->
+		def camera = entity.root.getEntityById("camera")
+		if (!camera)
+			return
+		entity.pointerposition = camera.mousePosition.copy()
+	})
+	
+	component(new BarRendererComponent("hitpointsRenderer") ){
+		property("position", {entity.position.copy().add(utils.vector(-22f, 20f))})
+		propertyRef("container", "hitpoints")
+		property("width", 44f)
+		property("height", 5f)
+		property("fullColor", {utils.color(0.3f, 0.6f, 0.9f, entity.visible)})
+		property("emptyColor", {utils.color(0.9f, 0.1f, 0.1f, entity.visible)})
+		property("layer", 20)
+	}
+	
 }

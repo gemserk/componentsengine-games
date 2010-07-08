@@ -81,17 +81,10 @@ builder.entity {
 		if (!entity.followMouse)
 			return
 		
-		//		println "oldCenter = $oldCenterPosition"
-		//		println "mousePositionRelativoAlNuevoZero = $mousePositionRelativoAlNuevoZero"
-		//		println "transformation = $transformation"
-		//		println "mouseAbsolutePosition = $mouseAbsolutePosition"
-		
 		mouseAbsolutePosition.sub(centerPosition)
 		mouseAbsolutePosition.negateLocal()
 		
 		targetPosition = targetPosition.add(mouseAbsolutePosition).scale(0.5f)
-		
-		//		println "targetPosition = $targetPosition"
 		
 		entity.position = targetPosition
 		
@@ -135,8 +128,6 @@ builder.entity {
 			press(button:"z",eventId:"toggleZoom")
 		}
 		mouse {
-			press(button:"right",eventId:"enableCamera")
-			release(button:"right",eventId:"disableCamera")
 		}
 	}
 	
