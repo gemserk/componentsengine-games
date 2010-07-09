@@ -16,7 +16,7 @@ builder.entity("playing") {
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)
 		ownerId = "player"
-		screen = utils.rectangle(0,0, 800, 600)
+		screen = utils.rectangle(0,0, 600, 600)
 		followMouse = true
 	}
 	
@@ -25,6 +25,7 @@ builder.entity("playing") {
 	child(entity("gameLogic") {
 		
 		property("playerId", "player")
+		property("pointsForKillingADroid", 100)
 		
 		component(utils.components.genericComponent(id:"detectGameOver", messageId:"update"){ message ->
 			
@@ -40,12 +41,26 @@ builder.entity("playing") {
 			
 		})
 		
+		component(utils.components.genericComponent(id:"incrementPlayerPointsWhenDroidDies", messageId:"droidDead"){ message ->
+		
+			def droid = message.droid
+
+			if (droid.ownerId == entity.playerId) 
+				return
+			
+			def player = entity.root.getEntityById(entity.playerId)
+			player.points += entity.pointsForKillingADroid
+		
+//			println "points: $player.points"
+		})
+		
 	})
 	
 	child(entity("player") {
 		
 		property("controlledDroidId", "droid1")
 		property("color", utils.color(0.62f, 0.83f, 0.87f,1f))
+		property("points", 0)
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
 			entity.controlledDroidId = message.controlledDroid.id 
@@ -211,7 +226,6 @@ builder.entity("playing") {
 		entity.zoomIn = !entity.zoomIn
 		
 		def time = 200
-		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
 			newMessage.cameraId = entity.cameraId
 			newMessage.end = zoomTo

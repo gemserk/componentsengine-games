@@ -4,10 +4,15 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 
 builder.entity("helpscreen") {
 	
+	// TODO: parameter for screen size
+	
+	property("screen", utils.rectangle(0,0, 600, 600))
+	property("center", utils.vector(300, 300))
+	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("helpscreen"))
 		property("color", utils.color(1,1,1,1f))
-		property("position", utils.vector(400,300))
+		propertyRef("position", "center")
 		property("direction", utils.vector(1,0))
 		property("layer", 0)
 	}

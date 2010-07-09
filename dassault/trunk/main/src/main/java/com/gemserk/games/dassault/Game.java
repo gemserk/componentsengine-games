@@ -36,7 +36,7 @@ public class Game extends StateBasedGame {
 
 			AppGameContainer app = new AppGameContainer(game);
 
-			app.setDisplayMode(800, 600, false);
+			app.setDisplayMode(600, 600, false);
 			app.setAlwaysRender(true);
 
 			app.setMinimumLogicUpdateInterval(1);
