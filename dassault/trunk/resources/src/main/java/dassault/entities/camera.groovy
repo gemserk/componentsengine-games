@@ -1,4 +1,5 @@
 package dassault.entities
+import com.gemserk.commons.animation.interpolators.FloatInterpolator;
 import com.gemserk.commons.animation.interpolators.Vector2fInterpolator;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import org.newdawn.slick.Graphics 
@@ -9,7 +10,6 @@ builder.entity {
 	property("screen", parameters.screen)
 	
 	property("followMouse", parameters.followMouse)
-	property("zoom", false)
 	
 	property("position", utils.vector(0,0))
 	property("mouseRelativePosition", utils.vector(0,0))
@@ -37,7 +37,7 @@ builder.entity {
 	component(utils.components.genericComponent(id:"updateTargetedPosition", messageId:"update"){ message ->
 		if (entity.interpolator)
 			return
-			
+		
 		def player = entity.root.getEntityById(entity.ownerId)
 		def droid = entity.root.getEntityById(player.controlledDroidId)
 		
@@ -95,9 +95,27 @@ builder.entity {
 		entity.followMouse = !entity.followMouse
 	})
 	
-	component(utils.components.genericComponent(id:"toggleZoom", messageId:"toggleZoom"){ message ->
-		entity.zoom = !entity.zoom
+	// zoom component?
+	
+	property("zoom", 1.0f)
+	
+	component(utils.components.genericComponent(id:"zoomHandler", messageId:"zoom"){ message ->
+		if (message.cameraId != entity.id)
+			return
+		entity.zoomInterpolator = new FloatInterpolator(message.time ?: 0, entity.zoom, message.end)
 	})
+	
+	component(utils.components.genericComponent(id:"updateZoom", messageId:"update"){ message ->
+		def zoomInterpolator = entity.zoomInterpolator
+		if (zoomInterpolator == null)
+			return
+		zoomInterpolator.update(message.delta)
+		entity.zoom = zoomInterpolator.interpolatedValue
+		if (zoomInterpolator.finished) 
+			entity.zoomInterpolator = null
+	})
+	
+	//
 	
 	component(utils.components.genericComponent(id:"changePerspective", messageId:["render"]){ message ->
 		def renderer = message.renderer
@@ -105,14 +123,13 @@ builder.entity {
 		def screen = entity.screen
 		
 		def position = entity.position
+		def zoom = entity.zoom
 		
 		renderer.enqueue( new ClosureRenderObject(-100, { Graphics g ->
 			g.pushTransform()
-			if (entity.zoom) {
-				g.translate((float)screen.width * 0.5f, (float)screen.height * 0.5f)
-				g.scale(2.0f, 2.0f)
-				g.translate((float)screen.width * -0.5f, (float)screen.height * -0.5f)
-			}
+			g.translate((float)screen.width * 0.5f, (float)screen.height * 0.5f)
+			g.scale(zoom, zoom)
+			g.translate((float)screen.width * -0.5f, (float)screen.height * -0.5f)
 			g.translate(position.x, position.y)
 		}))
 		
@@ -125,7 +142,6 @@ builder.entity {
 	input("inputmapping"){
 		keyboard {
 			press(button:"e",eventId:"toggleFollowMouse")
-			press(button:"z",eventId:"toggleZoom")
 		}
 		mouse {
 		}

@@ -20,9 +20,7 @@ builder.entity("playing") {
 		followMouse = true
 	}
 	
-	child(id:"hud", template:"dassault.entities.hud") {
-		playerId = "player"
-	}
+	child(id:"hud", template:"dassault.entities.hud") { playerId = "player" }
 	
 	child(entity("gameLogic") {
 		
@@ -72,7 +70,7 @@ builder.entity("playing") {
 			
 			if (controlledDroids.empty)
 				return
-				
+			
 			utils.custom.messageQueue.enqueue(utils.genericMessage("changeControlledDroid"){ newMessage ->
 				newMessage.controlledDroid = controlledDroids[0]
 			})
@@ -200,12 +198,35 @@ builder.entity("playing") {
 	
 	component(new ExplosionComponent("explosions")) { }
 	
+	property("zoomIn", true)
+	property("cameraId", "camera")
+	
+	component(utils.components.genericComponent(id:"toggleZoom", messageId:"toggleZoom"){ message ->
+		
+		def zoomTo = 1.0f
+		
+		if (entity.zoomIn) 
+			zoomTo = 1.7f
+		
+		entity.zoomIn = !entity.zoomIn
+		
+		def time = 200
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
+			newMessage.cameraId = entity.cameraId
+			newMessage.end = zoomTo
+			newMessage.time = time
+		})		
+		
+	})
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
 			press(button:"space",eventId:"pauseGame")
 			press(button:"h",eventId:"helpscreen")
+			press(button:"z",eventId:"toggleZoom")
 		}
 		mouse {
 			press(button:"left", eventId:"leftmouse")
