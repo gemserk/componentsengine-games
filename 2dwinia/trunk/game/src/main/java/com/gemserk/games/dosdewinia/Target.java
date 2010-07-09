@@ -7,11 +7,13 @@ public class Target {
 	Vector2f position;
 	float wanderRadius;
 	float arrivalRadius;
+	int zoneId;
 	
-	public Target(Vector2f position, float wanderRadius, float arrivalRadius) {
+	public Target(Vector2f position, float wanderRadius, float arrivalRadius, int zoneId) {
 		this.position = position;
 		this.wanderRadius = wanderRadius;
 		this.arrivalRadius = arrivalRadius;
+		this.zoneId = zoneId;
 	}
 
 	public Vector2f getPosition() {
@@ -24,6 +26,10 @@ public class Target {
 
 	public float getArrivalRadius() {
 		return arrivalRadius;
+	}
+	
+	public int getZoneId() {
+		return zoneId;
 	}
 	
 	

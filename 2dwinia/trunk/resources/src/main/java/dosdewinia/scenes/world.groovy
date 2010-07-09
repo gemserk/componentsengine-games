@@ -1,5 +1,5 @@
-
 package dosdewinia.scenes
+import com.gemserk.games.dosdewinia.ZonesMap;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
@@ -14,28 +14,18 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.games.dosdewinia.Target;
+import com.gemserk.games.dosdewinia.TraversalMap 
 import com.google.common.base.Predicates 
 
 builder.entity {
-	
-	
-	def traversableColor = utils.color(1,1,1,1)
-	def traversable = { terrainMap, position ->
-		def x = (int)position.x
-		def y = (int)position.y
-		if(x < 0 || y < 0 || x > terrainMap.width || y > terrainMap.height)
-			return false
-		
-		def terrainColor = terrainMap.getColor((int)position.x, (int)position.y)
-		return terrainColor == traversableColor
-	}
-	
 	
 	property("bounds",utils.rectangle(0,0,800,600))
 	property("level", parameters.level)
 	
 	property("started",false)
-	property("terrainMap",utils.resources.image("terrainMap"))
+	property("mapData",[traversableMap:new TraversalMap(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/passage/terrainMap.png")),
+			zoneMap:new ZonesMap(Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/passage/zoneMap.png"))
+			])
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("background"))
@@ -54,27 +44,31 @@ builder.entity {
 			return
 		
 		entity.started = true
-		messageQueue.enqueue(utils.genericMessage("spawnDarwinians"){newMessage -> newMessage.quantity = 100})
+		messageQueue.enqueue(utils.genericMessage("spawnDarwinians"){newMessage -> newMessage.quantity = 1})
 	})
 	
 	child(entity("darwinianSpawner"){
+		property("mapData",{entity.parent.mapData})
 		
 		property("darwinianTemplate",new InstantiationTemplateImpl(
-		utils.custom.templateProvider.getTemplate("dosdewinia.entities.darwinian"), 
-		utils.custom.genericprovider.provide{ data ->
-			[
-			position:data.position, 
-			speed:0.04f,
-			target: data.target
-			]
-		}))
+				utils.custom.templateProvider.getTemplate("dosdewinia.entities.darwinian"), 
+				utils.custom.genericprovider.provide{ data ->
+					[
+					position:data.position, 
+					speed:0.04f,
+					target: data.target,
+					mapData: data.mapData
+					]
+				}))
 		
 		
 		component(utils.components.genericComponent(id:"spawnDarwinians", messageId:"spawnDarwinians"){ message ->
 			log.info("Adding first darwinian")
 			def iniTime = System.currentTimeMillis()
+			def mapData = entity.mapData
+			def zoneMap = mapData.zoneMap
 			message.quantity.times {
-				def darwinian = entity.darwinianTemplate.get([position:utils.vector(500,300), target:new Target(utils.vector(600,400),100,10)])
+				def darwinian = entity.darwinianTemplate.get([position:utils.vector(500,300), target:new Target(utils.vector(600,400),100,10,zoneMap.getZoneValue(utils.vector(600,400))),mapData:mapData])
 				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(darwinian,entity))
 			}
 			
@@ -127,7 +121,7 @@ builder.entity {
 			entity.selectedEntity = candidate
 			log.info("Selected entity - $candidate.id")
 		}
-	
+		
 		
 	})
 	
@@ -141,7 +135,7 @@ builder.entity {
 		def toRenderList =[]
 		if(selectedEntity)
 			toRenderList << [entity:selectedEntity, color:utils.color(1,0,1,1)]
-			                 
+		
 		if(selectedEntityCandidate && selectedEntity != selectedEntityCandidate)
 			toRenderList <<[entity:selectedEntityCandidate, color:utils.color(1,1,1,1)]
 		
@@ -188,7 +182,8 @@ builder.entity {
 	
 	child(entity("officialPlacer"){
 		property("placementPoint", null)
-		
+		property("traversableMap",{entity.parent.mapData.traversableMap})
+		property("zoneMap",{entity.parent.mapData.zoneMap})
 		
 		property("officerTemplate",new InstantiationTemplateImpl(
 				utils.custom.templateProvider.getTemplate("dosdewinia.entities.officer"), 
@@ -205,8 +200,8 @@ builder.entity {
 			
 			if(entity.parent.selectedEntityCandidate)
 				return
-				
-		
+			
+			
 			def input = utils.custom.gameContainer.input
 			def position = utils.vector(input.getMouseX(),input.getMouseY())
 			
@@ -217,43 +212,25 @@ builder.entity {
 		
 		
 		component(utils.components.genericComponent(id:"selectDestination", messageId:["mouse.right.press"]){ message ->
-		
+			
 			def selectedEntity = entity.parent.selectedEntity
-		
+			
 			if(!selectedEntity)
 				return
 			
 			if(!selectedEntity.tags.contains("officer"))
 				return
-		
+			
 			def input = utils.custom.gameContainer.input
 			def destination = utils.vector(input.getMouseX(),input.getMouseY())
 			
-			if(traversable(entity.parent.terrainMap,destination))
+			if(entity.traversableMap.getTraversable(destination)){
 				selectedEntity.destinationPoint = destination
-			
-			
+				selectedEntity.destinationPointZoneId = entity.zoneMap.getZoneValue(destination)
+			}
 		})
 		
-		component(utils.components.genericComponent(id:"endOfficial", messageId:["mouse.left.release"]){ message ->
-			def placementPoint = entity.placementPoint
-			
-			if(!placementPoint)
-				return
-			
-			entity.placementPoint = null
-			
-			def input = utils.custom.gameContainer.input
-			def destinationPoint = utils.vector(input.getMouseX(),input.getMouseY())
-			log.info("POS: $entity.placementPoint - DIR: $destinationPoint")
-			if(destinationPoint == placementPoint)
-				return 
-			
-			def direction = destinationPoint.copy().sub(placementPoint).normalise()
-			
-			def officer = entity.officerTemplate.get([position:placementPoint, destinationPoint:destinationPoint ,direction:direction])
-			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(officer,entity))
-		})
+		
 		
 		
 	})
@@ -306,42 +283,33 @@ builder.entity {
 		
 	})
 	
-	component(utils.components.genericComponent(id:"debug-officers", messageId:["render"]){ message ->
+	component(utils.components.genericComponent(id:"debug-zoneMap", messageId:["render"]){ message ->
 		
 		if(!utils.custom.gameContainer.input.isKeyDown(Input.KEY_3))
 			return
 		
 		def renderer = message.renderer
 		
-		def officers = entity.getEntities(EntityPredicates.withAllTags("officer"))
+		def image = utils.resources.image("zoneMap")
 		
-		officers.each { officer ->
-			def start = officer.position.copy()
-			def end = officer.destinationPoint.copy()
-			
-			renderer.enqueue( new ClosureRenderObject(5, { Graphics g ->
-				g.drawLine( start.x, start.y, end.x, end.y)
-			}))
-		}
-		
+		renderer.enqueue( new ClosureRenderObject(5, { Graphics g ->
+			g.drawImage(image,0,0,utils.color(1,1,1,0.5f))
+		}))
 		
 	})
 	
 	component(utils.components.genericComponent(id:"debug-terrainMap", messageId:["render"]){ message ->
 		
-		if(!utils.custom.gameContainer.input.isKeyDown(Input.KEY_0))
+		if(!utils.custom.gameContainer.input.isKeyDown(Input.KEY_4))
 			return
 		
 		def renderer = message.renderer
-		def terrainMap = entity.terrainMap
-		renderer.enqueue( new ClosureRenderObject(1000, { Graphics g ->
-			def oldColor = g.getColor()
-			g.setColor(utils.color(1,1,1,0.0f))
-			g.drawImage(terrainMap, 0,0)
-			g.setColor(oldColor)
+		
+		def image = utils.resources.image("terrainMap")
+		
+		renderer.enqueue( new ClosureRenderObject(5, { Graphics g ->
+			g.drawImage(image,0,0,utils.color(1,1,1,0.5f))
 		}))
 		
-		
 	})
-	
 }

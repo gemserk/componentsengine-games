@@ -37,3 +37,10 @@ DONE:
 add darwinians
 Show background
 
+
+
+REFERENCIAS:
+
+Line-Drawing Algorithms http://www.cs.unc.edu/~mcmillan/comp136/Lecture6/Lines.html
+NavigationMeshes - http://code.google.com/p/critterai/
+NavigationMeshes - http://www.critterai.org/nmgen

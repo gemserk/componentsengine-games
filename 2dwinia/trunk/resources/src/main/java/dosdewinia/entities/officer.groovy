@@ -10,13 +10,16 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.gemserk.games.dosdewinia.Target;
 
+
 builder.entity("officer-${Math.random()}") {
 	
+	def random = new Random();
 	
 	tags("officer","selectable")
 	
 	property("position", parameters.position)
 	property("destinationPoint",parameters.destinationPoint)
+	property("destinationPointZoneId",parameters.destinationPointZoneId)
 	property("radius",20)
 	
 	
@@ -33,15 +36,18 @@ builder.entity("officer-${Math.random()}") {
 	
 	component(new DisablerComponent(new GenericHitComponent("bullethitComponent"))){
 		property("targetTag", "darwinian")
-		property("predicate",{Predicates.and({darwinian -> !darwinian.outsideOfBounds} as Predicate,EntityPredicates.isNear(entity.position, (float)100))})
+		property("predicate",{Predicates.and(/*{darwinian -> !darwinian.outsideOfBounds} as Predicate,*/EntityPredicates.isNear(entity.position, (float)100))})
 		property("trigger", utils.custom.triggers.closureTrigger { data ->
 			def source = data.source
 			def targets = data.targets
 			targets.each { target ->
 				if(target.state != "goTowardsTarget"){
-					target.targetPosition = null
-					target.target = new Target(source.destinationPoint,100,20)
-					target.state = "goTowardsTarget"
+					//log.info("BOUND: $target.outsideOfBounds")
+					if(random.nextFloat() < 0.001f){
+						target.targetPosition = null
+						target.target = new Target(source.destinationPoint,100,20,source.destinationPointZoneId)
+						target.state = "goTowardsTarget"
+					}
 				}
 			}
 		})

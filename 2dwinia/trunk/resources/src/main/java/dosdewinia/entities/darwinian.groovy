@@ -1,22 +1,15 @@
 package dosdewinia.entities
 
+import org.newdawn.slick.Color;
+
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 import com.gemserk.games.dosdewinia.Target;
 
+import dosdewinia.components.BoundsTriggers;
+
 builder.entity("darwinian-${Math.random()}") {
-	
-	def traversableColor = utils.color(1,1,1,1)
-	def traversable = { terrainMap, position ->
-		def x = (int)position.x
-		def y = (int)position.y
-		if(x < 0 || y < 0 || x > terrainMap.width || y > terrainMap.height)
-			return false
-		
-		def terrainColor = terrainMap.getColor((int)position.x, (int)position.y)
-		return terrainColor == traversableColor
-	}
 	
 	
 	Random random = new Random()
@@ -24,13 +17,16 @@ builder.entity("darwinian-${Math.random()}") {
 	tags("darwinian","nofriction")
 	
 	property("position", parameters.position)
+	property("nextPosition",parameters.position)
 	
 	property("targetSelectionRadius",40)
 	
 	property("targetPosition",null)
 	
 	propertyRef("direction", "movement.velocity")
-	property("terrainMap",utils.resources.image("terrainMap"))
+	property("mapData",parameters.mapData)
+	property("zoneMap",parameters.mapData.zoneMap)
+	property("traversableMap",parameters.mapData.traversableMap)
 	
 	property("speed", parameters.speed)
 	
@@ -40,7 +36,7 @@ builder.entity("darwinian-${Math.random()}") {
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.resources.image("darwinian"))
-		property("color", utils.color(1,1,1,1))
+		property("color", {new Color(entity.zoneMap.getZoneValue(entity.position))})//utils.color(1,1,1,1))
 		propertyRef("position", "position")
 		property("direction", utils.vector(1,0))
 		property("size",utils.vector(0.5f,0.5f))
@@ -50,7 +46,7 @@ builder.entity("darwinian-${Math.random()}") {
 	component(new SuperMovementComponent("movement")){
 		property("velocity",utils.vector(entity.speed,0))
 		propertyRef("maxVelocity", "speed")
-		propertyRef("position", "position")
+		propertyRef("position", "nextPosition")
 	}
 	
 	component(new WorldBoundsComponent("bounds")){
@@ -81,13 +77,14 @@ builder.entity("darwinian-${Math.random()}") {
 		if(entity.state != "wander")
 			return
 		
-		def terrainMap = entity.terrainMap
+		def zoneMap = entity.zoneMap
 		def direction
 		def randomTargetPosition
 		def target = entity.target
 		def targetCenter = target.position
+		def zoneId = target.zoneId
 		def targetWanderRadiusSquared = (float)target.wanderRadius * target.wanderRadius
-		while(randomTargetPosition == null || !traversable(terrainMap, randomTargetPosition) || targetCenter.distanceSquared(randomTargetPosition) > targetWanderRadiusSquared){
+		while(randomTargetPosition == null ){//|| zoneMap.getZoneValue(randomTargetPosition) != zoneId){
 			direction = utils.vector(1,0).add((float)random.nextFloat()*360)
 			randomTargetPosition = position.copy().add(direction.copy().scale((float)random.nextFloat()*100))
 		}
@@ -106,13 +103,13 @@ builder.entity("darwinian-${Math.random()}") {
 		if(entity.state != "goTowardsTarget")
 			return
 		
-		def terrainMap = entity.terrainMap
+		def traversableMap = entity.traversableMap
 		def direction
 		def randomTargetPosition
 		def target = entity.target
 		def targetCenter = target.position
 		def targetWanderRadiusSquared = (float)target.wanderRadius * target.wanderRadius
-		while(randomTargetPosition == null || !traversable(terrainMap, randomTargetPosition) ){
+		while(randomTargetPosition == null || !traversableMap.getTraversable(randomTargetPosition) ){
 			direction = utils.vector(1,0).add((float)random.nextFloat()*360)
 			randomTargetPosition = targetCenter.copy().add(direction.copy().scale((float)random.nextFloat()*target.arrivalRadius))
 		}
@@ -122,26 +119,41 @@ builder.entity("darwinian-${Math.random()}") {
 		
 	})
 	
+//	component(utils.components.genericComponent(id:"7879", messageId:"update"){ message ->
+//		log.info("STATE_BOUND: $entity.outsideOfBounds")
+//	})
 	
-	
-	property("outsideOfBounds",false)
-	component(utils.components.genericComponent(id:"islandboundchecker", messageId:"update"){ message ->
+	property("wentOutsideLogic",{{ ->
 		def position = entity.position
-		if( !traversable(entity.terrainMap, position)){
-			if(!entity.outsideOfBounds){
-				entity."movement.velocity"=utils.vector(0,0)
-				entity.targetPosition = null
-				entity.state = "wander"
-				entity.target = new Target(position, 30,10)
-				entity.outsideOfBounds = true
-			}
-		}else{
-			entity.outsideOfBounds = false
+		entity."movement.velocity"=utils.vector(0,0)
+		entity.targetPosition = null
+		entity.state = "wander"
+		def zoneId = entity.zoneMap.getZoneValue(position)
+		entity.target = new Target(position, 30,10,zoneId)
+	}})
+	
+	
+	component(utils.components.genericComponent(id:"detectOutOfBounds", messageId:"update"){ message ->
+		def nextPosition = entity.nextPosition
+		def position = entity.position
+		//log.info("POS: $position - NPOS: $nextPosition")
+		def traversableMap = entity.traversableMap
+		if(traversableMap.getTraversable(nextPosition)){
+			entity.position = nextPosition
+		} else {
+			entity.nextPosition = entity.position
+			def wentOutsideLogic = entity.wentOutsideLogic
+			if(wentOutsideLogic)
+				wentOutsideLogic.call()	
 		}
-		
 	})
 	
+//	component(utils.components.genericComponent(id:"debugZoneInfo", messageId:"update"){ message ->
+//		def position = entity.position
+//		def zoneMap = entity.zoneMap
+//		println zoneMap.getZoneValue(position)
+//		
+//	})
 	
-	
-	
+
 }

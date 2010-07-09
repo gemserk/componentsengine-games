@@ -28,18 +28,21 @@ builder.entity("scene") {
 			gameover:"gameover",
 			paused:"paused",
 			resume:"playing",
+			editor:"editor"
 			])
 	
 	property("stateEntities",[
 			entity("playing"){
 				parent("dosdewinia.scenes.playing", [:])
 			},
-			entity("paused"){ parent("dosdewinia.scenes.paused") },entity("gameover"){  parent("dosdewinia.scenes.gameover") }
+			entity("paused"){ parent("dosdewinia.scenes.paused") },
+			entity("gameover"){  parent("dosdewinia.scenes.gameover") },
+			entity("editor"){  parent("dosdewinia.scenes.editor") }
 			])
 	
 	property("currentNodeState", null)
 	
-	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume"]){ message ->
+	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume","editor"]){ message ->
 		
 		String messageId = message.getId();
 		String transition = entity.transitions.get(messageId);
@@ -71,6 +74,7 @@ builder.entity("scene") {
 	input("inputmapping"){
 		keyboard {
 			press(button:"x",eventId:"dumpEntities")
+			press(button:"e",eventId:"editor")
 		}
 	}
 	component(utils.components.genericComponent(id:"dumpEntitiesHandler", messageId:"dumpEntities"){ message ->
