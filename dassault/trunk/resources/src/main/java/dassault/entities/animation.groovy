@@ -3,7 +3,6 @@ package dassault.entities
 builder.entity {
 	
 	property("animations", parameters.animations)
-	property("target", parameters.target)
 	
 	component(utils.components.genericComponent(id:"restartAnimationsHandler", messageId:"restartAnimations"){ message ->
 		if(!entity.id.equals(message.animationId))
@@ -15,7 +14,11 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"updateAnimationsHandler", messageId:"update"){ message ->
 		entity.animations.each { animation -> 
-			animation.animate(entity.target, message.delta);
+			if (animation.paused)
+				return
+			animation.animate(entity, message.delta)
+			if (animation.finished)
+				animation.restart()
 		}
 	})
 	

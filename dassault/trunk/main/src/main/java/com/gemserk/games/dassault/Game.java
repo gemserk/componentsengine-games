@@ -68,7 +68,7 @@ public class Game extends StateBasedGame {
 		GemserkGameState menuState = new GameGameState(0, "dassault.scenes.scene");
 		addState(menuState);
 		
-		gameProperties.put("screenshot", new Image(800,600));
+		gameProperties.put("screenshot", new Image(600,600));
 	}
 
 	class GameGameState extends GemserkGameState {
@@ -77,6 +77,7 @@ public class Game extends StateBasedGame {
 		public void onInit() {
 			super.onInit();
 			images("assets/images.properties");
+			animations("assets/animations.properties");
 		}
 
 		public GameGameState(int id) {

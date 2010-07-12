@@ -78,11 +78,14 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	// weapon type
 	
-	property("droidHeadBackground",  utils.resources.image("droid_headbackground"))
-	property("droidHeadBorder",  utils.resources.image("droid_headborder"))
-	property("droidHeadShadow",  utils.resources.image("droid_headshadow"))
-	property("droidHeadEyes",  utils.resources.image("droid_headeyes"))
+	property("droidBackground",  utils.resources.image("droid_background"))
+	property("droidEyes",  utils.resources.image("droid_eyes"))
+	property("droidEyesBlur",  utils.resources.image("droid_eyes_blur"))
+	property("droidBorder",  utils.resources.image("droid_border"))
+	property("droidLegs",  {entity.droidLegsAnimation.currentFrame})
+	property("droidShadow",  utils.resources.image("droid_shadow"))
 	
+	property("droidLegsAnimation", utils.resources.animation("droid_legs_animation"))
 	
 	def imagerRenderableObject = { layer, image, x, y, size, color -> 
 		return new ClosureRenderObject(layer, { Graphics g ->
@@ -109,30 +112,18 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		def color = owner.color
 		def shape = utils.rectangle(-14, -14, 28, 28)
 		
-		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidHeadBackground, (float) position.x + entity.headPosition.x, //
-				(float)position.y + entity.headPosition.y, size, Color.white))
-		
-		renderer.enqueue(imagerRenderableObject(layer-2, entity.droidHeadShadow, (float) position.x + entity.headPosition.x, //
-				(float)position.y + entity.headPosition.y, size, Color.white))
-		
-		renderer.enqueue(imagerRenderableObject(layer, entity.droidHeadBorder, (float) position.x + entity.headPosition.x, //
-				(float)position.y + entity.headPosition.y, size, color))
-		
-		renderer.enqueue(imagerRenderableObject(layer+1, entity.droidHeadEyes, (float) position.x + entity.headPosition.x, //
-				(float)position.y + entity.headPosition.y, size, Color.white))
-		
-		position = entity.position.copy()
-		def shadowImage = entity.shadowImage
-		def shadowSize = (float) size * 0.6f
-		
-		renderer.enqueue( new ClosureRenderObject(layer-1, { Graphics g ->
-			g.setColor(utils.color(1f, 1f, 1f, 0.3f))
-			g.pushTransform()
-			g.translate((float) position.x, (float)position.y + 20)
-			g.scale(shadowSize, shadowSize)
-			g.drawImage(shadowImage, (float)-(shadowImage.getWidth() / 2), (float)-(shadowImage.getHeight() / 2))
-			g.popTransform()
-		}))
+		renderer.enqueue(imagerRenderableObject(layer-2, entity.droidBackground, position.x, //
+				position.y, size, Color.white))
+		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidBorder, position.x, //
+				position.y, size, color))
+		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidEyesBlur, position.x, //
+				position.y, size, Color.red))
+		renderer.enqueue(imagerRenderableObject(layer, entity.droidEyes, position.x, //
+				position.y, size, Color.white))
+		renderer.enqueue(imagerRenderableObject(layer-3, entity.droidLegs, position.x, //
+				position.y, size, color))
+		renderer.enqueue(imagerRenderableObject(layer-4, entity.droidShadow, position.x, //
+				position.y, size, Color.white))			
 		
 	})
 	
@@ -142,7 +133,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	}
 	
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
-		
+	
+		def droidLegsAnimation= entity.droidLegsAnimation
+		droidLegsAnimation.update(message.delta)
+	
 		def moveDirection = entity.moveDirection ?: utils.vector(0,0)
 		
 		if (moveDirection.lengthSquared() > 0f) {

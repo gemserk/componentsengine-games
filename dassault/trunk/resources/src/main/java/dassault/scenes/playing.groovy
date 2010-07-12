@@ -13,6 +13,24 @@ builder.entity("playing") {
 	
 	new GroovyBootstrapper();
 	
+	child(id:"light1", template:"dassault.entities.pointlight") { 
+		position = utils.vector(100,100)
+		layer = 10
+		size = 5f
+		time = 1500
+		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
+		endColor = utils.color(0.2f,0.2f,0.7f,0.6f)
+	}
+	
+	child(id:"light2", template:"dassault.entities.pointlight") { 
+		position = utils.vector(700,100)
+		layer = 10
+		size = 5f
+		time = 750
+		startColor = utils.color(0.7f,0.2f,0.6f,0.2f)
+		endColor = utils.color(0.7f,0.2f,0.6f,0.8f)
+	}
+	
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)
 		ownerId = "player"
@@ -42,16 +60,16 @@ builder.entity("playing") {
 		})
 		
 		component(utils.components.genericComponent(id:"incrementPlayerPointsWhenDroidDies", messageId:"droidDead"){ message ->
-		
+			
 			def droid = message.droid
-
+			
 			if (droid.ownerId == entity.playerId) 
 				return
 			
 			def player = entity.root.getEntityById(entity.playerId)
 			player.points += entity.pointsForKillingADroid
-		
-//			println "points: $player.points"
+			
+			//			println "points: $player.points"
 		})
 		
 	})
@@ -59,7 +77,7 @@ builder.entity("playing") {
 	child(entity("player") {
 		
 		property("controlledDroidId", "droid1")
-		property("color", utils.color(0.62f, 0.83f, 0.87f,1f))
+		property("color", utils.color(0.22f, 0.43f, 0.47f,1f))
 		property("points", 0)
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
