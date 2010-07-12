@@ -18,12 +18,31 @@ builder.entity {
 	property("targetedPosition", utils.vector(0,0))
 	property("newTargetedPosition", utils.vector(0,0))
 	
-	component(utils.components.genericComponent(id:"changeTargetedPosition", messageId:"changeControlledDroid"){ message ->
-		entity.newTargetedPosition = message.controlledDroid.position
-		entity.interpolator = new Vector2fInterpolator(250, entity.targetedPosition.copy(), entity.newTargetedPosition.copy())
+	// linear movement component
+	
+	property("moving", false)
+	
+	component(utils.components.genericComponent(id:"moveToHandler", messageId:"moveTo"){ message ->
+		if (entity.id != message.entityId)
+			return
+			
+		if (entity.moving)
+			return
+		
+		def time = message.time
+		
+		if (time == null) {
+			entity.targetedPosition = message.target.copy()
+			return
+		}
+		
+		entity.moving = true
+		
+		entity.newTargetedPosition = message.target.copy()
+		entity.interpolator = new Vector2fInterpolator(time, entity.targetedPosition.copy(), entity.newTargetedPosition.copy())
 	})
 	
-	component(utils.components.genericComponent(id:"updateTargetedPositionInterpolated", messageId:"update"){ message ->
+	component(utils.components.genericComponent(id:"updatePosition", messageId:"update"){ message ->
 		def interpolator = entity.interpolator
 		if (!interpolator)
 			return
@@ -32,24 +51,11 @@ builder.entity {
 		entity.targetedPosition = interpolator.interpolatedValue.copy()
 		if (interpolator.finished)
 			entity.interpolator = null
+		
+		entity.moving = false
 	})
 	
-	component(utils.components.genericComponent(id:"updateTargetedPosition", messageId:"update"){ message ->
-		if (entity.interpolator)
-			return
-		
-		def player = entity.root.getEntityById(entity.ownerId)
-		def droid = entity.root.getEntityById(player.controlledDroidId)
-		
-		if (!droid) {
-			// lost control of main droid
-			//			entity.position = utils.vector(0,0)
-			// left the last droid position? 
-			return
-		}
-		
-		entity.targetedPosition = droid.position.copy()
-	})
+	//
 	
 	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:"update"){ message ->
 		

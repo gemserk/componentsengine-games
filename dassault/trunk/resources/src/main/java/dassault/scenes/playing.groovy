@@ -27,8 +27,26 @@ builder.entity("playing") {
 		layer = 10
 		size = 5f
 		time = 750
-		startColor = utils.color(0.7f,0.2f,0.6f,0.2f)
-		endColor = utils.color(0.7f,0.2f,0.6f,0.8f)
+		startColor = utils.color(0.7f,0.2f,0.2f,0.2f)
+		endColor = utils.color(0.7f,0.2f,0.2f,0.8f)
+	}
+	
+	child(id:"light3", template:"dassault.entities.pointlight") { 
+		position = utils.vector(100,500)
+		layer = 10
+		size = 8f
+		time = 1000
+		startColor = utils.color(0.2f,0.7f,0.2f,0.2f)
+		endColor = utils.color(0.2f,0.7f,0.2f,0.8f)
+	}
+	
+	child(id:"light4", template:"dassault.entities.pointlight") { 
+		position = utils.vector(700,500)
+		layer = 10
+		size = 8f
+		time = 3000
+		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
+		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
 	}
 	
 	child(id:"camera", template:"dassault.entities.camera") { 
@@ -36,6 +54,11 @@ builder.entity("playing") {
 		ownerId = "player"
 		screen = utils.rectangle(0,0, 600, 600)
 		followMouse = true
+	}
+	
+	child(id:"cameracontroller", template:"dassault.entities.cameracontroller") { 
+		cameraId = "camera"
+		controlledDroidId = "droid1"
 	}
 	
 	child(id:"hud", template:"dassault.entities.hud") { playerId = "player" }

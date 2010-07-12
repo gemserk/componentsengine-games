@@ -26,14 +26,14 @@ builder.entity("paused") {
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", {utils.custom.gameStateManager.gameProperties.screenshot})
 		property("color", utils.color(1,1,1,1))
-		property("position", utils.vector(400,300))
+		property("position", utils.vector(300,300))
 		property("direction", utils.vector(1,0))
 		property("layer", 900)
 	}
 	
 	component(new RectangleRendererComponent("background")) {
 		property("position",utils.vector(0,0))
-		property("rectangle", utils.rectangle(0,0, 800, 600))
+		property("rectangle", utils.rectangle(0,0, 600, 600))
 		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
 		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
 		property("layer",1000)
@@ -59,7 +59,7 @@ builder.entity("paused") {
 	component(utils.components.genericComponent(id:"gameOverLabelRenderer", messageId:"render"){ message ->
 		
 		def renderer = message.renderer
-		def position = utils.vector(400.0f, 300.0f);
+		def position = utils.vector(300.0f, 300.0f);
 		def size = entity.size
 		
 		renderer.enqueue(imagerRenderableObject(1001, entity.gameOverImage, position.x, //

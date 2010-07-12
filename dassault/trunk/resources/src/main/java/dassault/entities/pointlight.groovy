@@ -39,7 +39,7 @@ builder.entity {
 		def renderer = message.renderer
 		def position = entity.position
 		
-		def size = 10f
+		def size = entity.size.x 
 		def color = entity.color
 		def layer = -5
 		
