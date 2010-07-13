@@ -15,7 +15,11 @@ builder.entity {
 	property("maxTime", parameters.maxTime)
 	
 	property("ownerId", parameters.ownerId)
+	
 	property("droidFactory", parameters.droidFactory)
+	property("weaponFactory", parameters.weaponFactory)
+	
+	property("droidTypes", parameters.droidTypes)
 	
 	component(utils.components.genericComponent(id:"updateTimer", messageId:"update"){ message ->
 		def timer = entity.timer
@@ -32,16 +36,23 @@ builder.entity {
 		entity.timer = timer
 	})
 	
+	def random = utils.random
+	
 	component(utils.components.genericComponent(id:"spawnDroid", messageId:"spawnDroid"){ message ->
 		
 		if (entity.id != message.spawnerId)
 			return
 		
+		def droidTypes = entity.droidTypes
+		def droidType =droidTypes[random.nextInt(droidTypes.size)]
+		                           
 //		def droidId = "droid-${utils.random.nextInt()}"
-//		def weaponId = "weapon-${utils.random.nextInt()}" 
+//		def weaponId = "weapon-${utils.random.nextInt()}"
+		                           
+		def templateClosure = entity.droidFactory[droidType]
+		def droid = templateClosure([position:entity.position.copy(), ownerId:entity.ownerId])
 		
-		def droid = entity.droidFactory.basicDroid([position:entity.position.copy(), ownerId:entity.ownerId])
-		def weapon = entity.droidFactory.blasterWeapon([ownerId:droid.id])
+		def weapon = entity.weaponFactory.blasterWeapon([ownerId:droid.id])
 		
 		// def droid = entity.droidTemplate.instantiate(droidId, [position:entity.position.copy(), ownerId:entity.ownerId])
 		

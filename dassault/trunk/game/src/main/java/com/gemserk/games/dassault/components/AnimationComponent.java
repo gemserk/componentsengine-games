@@ -13,9 +13,9 @@ public class AnimationComponent extends FieldsReflectionComponent {
 
 	@EntityProperty
 	List<PropertyAnimation> animations;
-	
+
 	@EntityProperty
-	String id ;
+	String id;
 
 	public AnimationComponent(String id) {
 		super(id);
@@ -23,32 +23,38 @@ public class AnimationComponent extends FieldsReflectionComponent {
 
 	@Handles
 	public void startAnimation(Message message) {
+		String entityId = Properties.getValue(message, "entityId");
+		if (!entity.getId().equals(entityId))
+			return;
 		String animationId = Properties.getValue(message, "animationId");
 		if (!id.equals(animationId))
 			return;
-		for (PropertyAnimation animation : animations) 
+		for (PropertyAnimation animation : animations)
 			animation.play();
 	}
 
 	@Handles
 	public void stopAnimation(Message message) {
+		String entityId = Properties.getValue(message, "entityId");
+		if (!entity.getId().equals(entityId))
+			return;
 		String animationId = Properties.getValue(message, "animationId");
 		if (!id.equals(animationId))
 			return;
-		for (PropertyAnimation animation : animations) 
+		for (PropertyAnimation animation : animations)
 			animation.stop();
 	}
-	
+
 	@Handles
 	public void update(Message message) {
-		int delta = (Integer) Properties.getValue(message, "delta"); 
+		int delta = (Integer) Properties.getValue(message, "delta");
 		for (PropertyAnimation animation : animations) {
 			if (animation.isPaused())
 				continue;
 			animation.animate(entity, delta);
-			
+
 			// it depends if animation.loop?
-			
+
 			if (animation.isFinished())
 				animation.restart();
 		}

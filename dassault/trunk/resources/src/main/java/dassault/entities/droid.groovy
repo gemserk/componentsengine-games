@@ -1,6 +1,5 @@
 package dassault.entities
 
-import com.gemserk.commons.animation.PropertyAnimation 
 import com.gemserk.commons.animation.interpolators.FloatInterpolator;
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.CursorOverDetector;
@@ -8,14 +7,11 @@ import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.gemserk.componentsengine.render.ClosureRenderObject 
-import com.gemserk.games.dassault.components.AnimationComponent;
 import com.gemserk.games.dassault.components.TransferComponent;
 import com.gemserk.games.dassault.components.TransferRendererComponent;
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates;
 import org.newdawn.slick.Color 
-import org.newdawn.slick.Graphics 
 
 
 builder.entity(entityName ?: "droid-${Math.random()}") {
@@ -28,113 +24,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	property("position", parameters.position.copy())
 	property("newPosition", parameters.position)
 	property("direction",utils.vector(1,0))
-	property("size", 1.0f)
+	property("size", parameters.size ?: 1.0f)
 	property("speed", parameters.speed ?: 0.1f)
 	
 	property("bounds", utils.rectangle(-15, -15, 30, 30))
-	
-	// walk animation
-	
-	property("headPosition", utils.vector(0,0))
-	
-	def headAnimation = new PropertyAnimation("headPosition");
-	
-	headAnimation.addKeyFrame 0, utils.vector(0,0)
-	headAnimation.addKeyFrame 60, utils.vector(0,-2)
-	headAnimation.addKeyFrame 120, utils.vector(0,-4)
-	headAnimation.addKeyFrame 180, utils.vector(0,-2)
-	headAnimation.addKeyFrame 240, utils.vector(0, 0)
-	headAnimation.addKeyFrame 300, utils.vector(0,-2)
-	headAnimation.addKeyFrame 360, utils.vector(0,-4)
-	headAnimation.addKeyFrame 420, utils.vector(0,-2)
-	headAnimation.addKeyFrame 480, utils.vector(0,0)
-	
-	property("leftLegPosition", utils.vector(0,0))
-	
-	def leftLegAnimation = new PropertyAnimation("leftLegPosition");
-	
-	leftLegAnimation.addKeyFrame 0, utils.vector(0,0)
-	leftLegAnimation.addKeyFrame 60, utils.vector(0,-2)
-	leftLegAnimation.addKeyFrame 120, utils.vector(0,-4)
-	leftLegAnimation.addKeyFrame 180, utils.vector(0,-2)
-	leftLegAnimation.addKeyFrame 240, utils.vector(0,0)
-	leftLegAnimation.addKeyFrame 480, utils.vector(0,0)
-	
-	property("rightLegPosition", utils.vector(0,0))
-	
-	def rightLegAnimation = new PropertyAnimation("rightLegPosition");
-	
-	rightLegAnimation.addKeyFrame 0, utils.vector(0,0)
-	rightLegAnimation.addKeyFrame 240, utils.vector(0,0)
-	rightLegAnimation.addKeyFrame 300, utils.vector(0,-2)
-	rightLegAnimation.addKeyFrame 360, utils.vector(0,-4)
-	rightLegAnimation.addKeyFrame 420, utils.vector(0,-2)
-	rightLegAnimation.addKeyFrame 480, utils.vector(0,0)
-	
-	component(new AnimationComponent("walkAnimationComponent") ) {
-		property("id", "walk")
-		property("animations", [headAnimation, leftLegAnimation, rightLegAnimation])
-	}
-	
-	property("shadowImage", utils.resources.image("droidshadow"))
-	
-	// render type
-	
-	// weapon type
-	
-	property("droidBackground",  utils.resources.image("droid_background"))
-	property("droidEyes",  utils.resources.image("droid_eyes"))
-	property("droidEyesBlur",  utils.resources.image("droid_eyes_blur"))
-	property("droidBorder",  utils.resources.image("droid_border"))
-	property("droidLeftLeg",  utils.resources.image("droid_left_leg"))
-	property("droidRightLeg",  utils.resources.image("droid_right_leg"))
-	property("droidShadow",  utils.resources.image("droid_shadow"))
-	
-	def imagerRenderableObject = { layer, image, x, y, size, color -> 
-		return new ClosureRenderObject(layer, { Graphics g ->
-			g.pushTransform()
-			g.translate(x, y)
-			g.scale(size, size)
-			g.drawImage(image, (float)-(image.getWidth() / 2), (float)-(image.getHeight() / 2), color)
-			g.popTransform()
-		})
-	}
-	
-	component(utils.components.genericComponent(id:"droidRenderer", messageId:"render"){ message ->
-		
-		def renderer = message.renderer
-		
-		def position = entity.position
-		
-		def owner = entity.root.getEntityById(entity.ownerId)
-		
-		//		def size = entity.size
-		def size = 0.75f
-		
-		def layer = 0
-		def color = owner.color
-		def shape = utils.rectangle(-14, -14, 28, 28)
-		
-		def headPosition = position.copy().add(entity.headPosition).add(utils.vector(0,2f))
-		def rightLegPosition = position.copy().add(entity.rightLegPosition)
-		def leftLegPosition = position.copy().add(entity.leftLegPosition)
-		
-		renderer.enqueue(imagerRenderableObject(layer-2, entity.droidBackground, headPosition.x, //
-				headPosition.y, size, Color.white))
-		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidBorder, headPosition.x, //
-				headPosition.y, size, color))
-		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidEyesBlur, headPosition.x, //
-				headPosition.y, size, Color.red))
-		renderer.enqueue(imagerRenderableObject(layer, entity.droidEyes, headPosition.x, //
-				headPosition.y, size, Color.white))
-		renderer.enqueue(imagerRenderableObject(layer-3, entity.droidLeftLeg, leftLegPosition.x, //
-				leftLegPosition.y, size, color))
-		renderer.enqueue(imagerRenderableObject(layer-3, entity.droidRightLeg, rightLegPosition.x, //
-				rightLegPosition.y, size, color))
-		renderer.enqueue(imagerRenderableObject(layer-4, entity.droidShadow, position.x, //
-				position.y, size, Color.white))			
-		
-	})
 	
 	component(new SuperMovementComponent("movementComponent")) {
 		propertyRef("position", "newPosition")
@@ -236,6 +129,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 				//				println "starting walk animation"
 				utils.custom.messageQueue.enqueue(utils.genericMessage("startAnimation"){ newMessage ->
 					newMessage.animationId = "walk"
+					newMessage.entityId = entity.id
 				})
 			}
 		} else {
@@ -244,6 +138,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			//			println "stop walking"
 			utils.custom.messageQueue.enqueue(utils.genericMessage("stopAnimation"){ newMessage ->
 				newMessage.animationId = "walk"
+				newMessage.entityId = entity.id
 			})
 			entity.isMoving = false
 		}
@@ -299,12 +194,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		property("bounds", utils.rectangle(-25, -25, 50, 50))
 		propertyRef("cursorPosition", "pointerposition")
 		
-		property("onEnterTrigger", utils.custom.triggers.genericMessage("droidFocused") { message ->
-			message.droidId = entity.id
-		})
-
-		property("onEnterTrigger", utils.custom.triggers.genericMessage("droidFocused") { message ->
-			message.droidId = entity.id
+		property("onEnterTrigger", utils.custom.triggers.closureTrigger { 
+			utils.custom.messageQueue.enqueue(utils.genericMessage("droidFocused"){ newMessage ->
+				newMessage.droidId = entity.id
+			})
 		})
 		
 		property("onLeaveTrigger", utils.custom.triggers.closureTrigger { 

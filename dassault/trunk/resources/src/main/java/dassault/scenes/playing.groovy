@@ -80,7 +80,7 @@ builder.entity("playing") {
 		position = utils.vector(0,0)
 		ownerId = "player"
 		screen = utils.rectangle(0,0, 600, 600)
-		followMouse = true
+		followMouse = false
 	}
 	
 	child(id:"cameracontroller", template:"dassault.entities.cameracontroller") { 
@@ -158,9 +158,6 @@ builder.entity("playing") {
 				newMessage.controlledDroid = controlledDroids[0]
 			})
 			
-			// send changeControlledDroid!
-			//				entity.controlledDroidId = controlledDroids[0].id
-			
 		})
 		
 	})
@@ -181,7 +178,7 @@ builder.entity("playing") {
 	child(id:"playerAiHelperController", template:"dassault.entities.aicontroller") {  ownerId = "player"  }
 	
 	child(entity("droid1") {
-		parent("dassault.entities.droid",[ownerId:"player",position:utils.vector(400,300), 
+		parent("dassault.entities.floatingdroid",[ownerId:"player",position:utils.vector(400,300), 
 		speed:0.2f, 
 		energy:utils.container(10000f,10000f),
 		regenerationSpeed:0.02f])
@@ -244,8 +241,8 @@ builder.entity("playing") {
 				]
 			})
 	
-	def droidInstantiationTemplate = new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("dassault.entities.droid"), 
+	def basicDroidInstantiationTemplate = new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("dassault.entities.basicdroid"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
 				ownerId:data.ownerId,
@@ -256,23 +253,41 @@ builder.entity("playing") {
 				]
 			})
 	
-	def enemyDroidFactory = [basicDroid:{ params -> droidInstantiationTemplate.get(params) }, 
-	blasterWeapon:{ params -> blasterWeaponInstantiationTemplate.get(params) }]
+	def floatingDroidInstantiationTemplate = new InstantiationTemplateImpl(
+			utils.custom.templateProvider.getTemplate("dassault.entities.floatingdroid"), 
+			utils.custom.genericprovider.provide{ data ->
+				[
+				ownerId:data.ownerId,
+				position:data.position,
+				speed:0.2f,
+				energy:utils.container(70f,70f),
+				regenerationSpeed:0.02f
+				]
+			})
+	
+	def globalDroidFactory = [basicDroid:{ params -> basicDroidInstantiationTemplate.get(params) }, 
+	                         floatingDroid:{ params -> floatingDroidInstantiationTemplate.get(params) }]
+
+	def globalWeaponFactory = [blasterWeapon:{ params -> blasterWeaponInstantiationTemplate.get(params) }]
 	
 	child(id:"spawner1", template:"dassault.entities.droidspawner") { 
 		position = utils.vector(100,100)
 		minTime = 5000
 		maxTime = 5000
-		droidFactory = enemyDroidFactory
+		droidFactory = globalDroidFactory
+		weaponFactory = globalWeaponFactory
 		ownerId = "cpu"
+		droidTypes = ["basicDroid", "floatingDroid"]
 	}
 	
 	child(id:"spawner2", template:"dassault.entities.droidspawner") { 
 		position = utils.vector(700,100)
 		minTime = 8000
 		maxTime = 1000
-		droidFactory = enemyDroidFactory
+		droidFactory = globalDroidFactory
+		weaponFactory = globalWeaponFactory
 		ownerId = "cpu"
+		droidTypes = ["basicDroid", "floatingDroid"]
 	}
 	
 	child(id:"cursor", template:"dassault.entities.cursor") {
