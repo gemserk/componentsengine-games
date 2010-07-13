@@ -52,7 +52,7 @@ builder.entity("playing") {
 		endColor: utils.color(0.2f,0.2f,0.7f,0.8f),
 		])
 		
-		component(new LinearMovementComponent()) {
+		component(new LinearMovementComponent("linearMovementComponent")) {
 			propertyRef("position", "position")
 		}
 		
