@@ -39,26 +39,54 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	def headAnimation = new PropertyAnimation("headPosition");
 	
 	headAnimation.addKeyFrame 0, utils.vector(0,0)
-	headAnimation.addKeyFrame 150, utils.vector(0,-3)
-	headAnimation.addKeyFrame 300, utils.vector(0,0)
-	headAnimation.addKeyFrame 450, utils.vector(0,3)
-	headAnimation.addKeyFrame 600, utils.vector(0,0)
+	headAnimation.addKeyFrame 60, utils.vector(0,-2)
+	headAnimation.addKeyFrame 120, utils.vector(0,-4)
+	headAnimation.addKeyFrame 180, utils.vector(0,-2)
+	headAnimation.addKeyFrame 240, utils.vector(0, 0)
+	headAnimation.addKeyFrame 300, utils.vector(0,-2)
+	headAnimation.addKeyFrame 360, utils.vector(0,-4)
+	headAnimation.addKeyFrame 420, utils.vector(0,-2)
+	headAnimation.addKeyFrame 480, utils.vector(0,0)
 	
-	property("walkAnimations", [headAnimation])
+	property("leftLegPosition", utils.vector(0,0))
+	
+	def leftLegAnimation = new PropertyAnimation("leftLegPosition");
+	
+	leftLegAnimation.addKeyFrame 0, utils.vector(0,0)
+	leftLegAnimation.addKeyFrame 60, utils.vector(0,-2)
+	leftLegAnimation.addKeyFrame 120, utils.vector(0,-4)
+	leftLegAnimation.addKeyFrame 180, utils.vector(0,-2)
+	leftLegAnimation.addKeyFrame 240, utils.vector(0,0)
+	leftLegAnimation.addKeyFrame 480, utils.vector(0,0)
+	
+	property("rightLegPosition", utils.vector(0,0))
+	
+	def rightLegAnimation = new PropertyAnimation("rightLegPosition");
+	
+	rightLegAnimation.addKeyFrame 0, utils.vector(0,0)
+	rightLegAnimation.addKeyFrame 240, utils.vector(0,0)
+	rightLegAnimation.addKeyFrame 300, utils.vector(0,-2)
+	rightLegAnimation.addKeyFrame 360, utils.vector(0,-4)
+	rightLegAnimation.addKeyFrame 420, utils.vector(0,-2)
+	rightLegAnimation.addKeyFrame 480, utils.vector(0,0)
+	
+	property("walkAnimations", [headAnimation, leftLegAnimation, rightLegAnimation])
 	
 	component(utils.components.genericComponent(id:"startWalkAnimationHandler", messageId:"startWalkAnimation"){ message ->
 		if(!entity.id.equals(message.animationId))
 			return
 		entity.walkAnimations.each { animation -> 
-			animation.restart()
+			// animation.restart()
+			animation.play()
 		}
 	})
 	
 	component(utils.components.genericComponent(id:"stopWalkAnimationHandler", messageId:"stopWalkAnimation"){ message ->
 		if(!entity.id.equals(message.animationId))
 			return
+		println "stop animations!"
 		entity.walkAnimations.each { animation -> 
-			animation.stop()
+			animation.pause()
 		}
 	})
 	
@@ -82,10 +110,9 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	property("droidEyes",  utils.resources.image("droid_eyes"))
 	property("droidEyesBlur",  utils.resources.image("droid_eyes_blur"))
 	property("droidBorder",  utils.resources.image("droid_border"))
-	property("droidLegs",  {entity.droidLegsAnimation.currentFrame})
+	property("droidLeftLeg",  utils.resources.image("droid_left_leg"))
+	property("droidRightLeg",  utils.resources.image("droid_right_leg"))
 	property("droidShadow",  utils.resources.image("droid_shadow"))
-	
-	property("droidLegsAnimation", utils.resources.animation("droid_legs_animation"))
 	
 	def imagerRenderableObject = { layer, image, x, y, size, color -> 
 		return new ClosureRenderObject(layer, { Graphics g ->
@@ -112,16 +139,22 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		def color = owner.color
 		def shape = utils.rectangle(-14, -14, 28, 28)
 		
-		renderer.enqueue(imagerRenderableObject(layer-2, entity.droidBackground, position.x, //
-				position.y, size, Color.white))
-		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidBorder, position.x, //
-				position.y, size, color))
-		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidEyesBlur, position.x, //
-				position.y, size, Color.red))
-		renderer.enqueue(imagerRenderableObject(layer, entity.droidEyes, position.x, //
-				position.y, size, Color.white))
-		renderer.enqueue(imagerRenderableObject(layer-3, entity.droidLegs, position.x, //
-				position.y, size, color))
+		def headPosition = position.copy().add(entity.headPosition).add(utils.vector(0,2f))
+		def rightLegPosition = position.copy().add(entity.rightLegPosition)
+		def leftLegPosition = position.copy().add(entity.leftLegPosition)
+		
+		renderer.enqueue(imagerRenderableObject(layer-2, entity.droidBackground, headPosition.x, //
+				headPosition.y, size, Color.white))
+		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidBorder, headPosition.x, //
+				headPosition.y, size, color))
+		renderer.enqueue(imagerRenderableObject(layer-1, entity.droidEyesBlur, headPosition.x, //
+				headPosition.y, size, Color.red))
+		renderer.enqueue(imagerRenderableObject(layer, entity.droidEyes, headPosition.x, //
+				headPosition.y, size, Color.white))
+		renderer.enqueue(imagerRenderableObject(layer-3, entity.droidLeftLeg, leftLegPosition.x, //
+				leftLegPosition.y, size, color))
+		renderer.enqueue(imagerRenderableObject(layer-3, entity.droidRightLeg, rightLegPosition.x, //
+				rightLegPosition.y, size, color))
 		renderer.enqueue(imagerRenderableObject(layer-4, entity.droidShadow, position.x, //
 				position.y, size, Color.white))			
 		
@@ -133,10 +166,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	}
 	
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
-	
-		def droidLegsAnimation= entity.droidLegsAnimation
-		droidLegsAnimation.update(message.delta)
-	
+		
 		def moveDirection = entity.moveDirection ?: utils.vector(0,0)
 		
 		if (moveDirection.lengthSquared() > 0f) {
