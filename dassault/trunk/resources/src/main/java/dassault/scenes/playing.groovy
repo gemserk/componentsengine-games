@@ -5,6 +5,7 @@ import org.newdawn.slick.Input;
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.games.dassault.components.LinearMovementComponent;
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
 import gemserk.utils.GroovyBootstrapper 
@@ -40,14 +41,49 @@ builder.entity("playing") {
 		endColor = utils.color(0.2f,0.7f,0.2f,0.8f)
 	}
 	
-	child(id:"light4", template:"dassault.entities.pointlight") { 
-		position = utils.vector(700,500)
-		layer = 10
-		size = 8f
-		time = 3000
-		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
-		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
-	}
+	child(entity("light4") {
+		
+		parent("dassault.entities.pointlight", [
+		position: utils.vector(700,500),
+		layer: 10,
+		size: 8f,
+		time: 3000,
+		startColor: utils.color(0.2f,0.2f,0.7f,0.2f),
+		endColor: utils.color(0.2f,0.2f,0.7f,0.8f),
+		])
+		
+		component(new LinearMovementComponent()) {
+			propertyRef("position", "position")
+		}
+		
+		component(utils.components.genericComponent(id:"moveLightHandler", messageId:"moveLight"){ message ->
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("moveTo"){ newMessage ->
+				newMessage.target = utils.vector(100,100)
+				newMessage.time = 10000
+				newMessage.entityId = entity.id
+			})
+			
+		})
+		
+		input("inputmapping"){
+			keyboard {
+				press(button:"m",eventId:"moveLight")
+			}
+			mouse {
+			}
+		}
+		
+	} )
+	
+//	child(id:"light4", template:"dassault.entities.pointlight") { 
+//		position = utils.vector(700,500)
+//		layer = 10
+//		size = 8f
+//		time = 3000
+//		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
+//		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
+//	}
 	
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)

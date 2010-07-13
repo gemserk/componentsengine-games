@@ -1,7 +1,8 @@
 package dassault.entities
 import com.gemserk.commons.animation.interpolators.FloatInterpolator;
-import com.gemserk.commons.animation.interpolators.Vector2fInterpolator;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
+import com.gemserk.games.dassault.components.LinearMovementComponent;
+
 import org.newdawn.slick.Graphics 
 
 builder.entity {
@@ -16,46 +17,12 @@ builder.entity {
 	property("mousePosition", utils.vector(0,0))
 	
 	property("targetedPosition", utils.vector(0,0))
-	property("newTargetedPosition", utils.vector(0,0))
 	
 	// linear movement component
 	
-	property("moving", false)
-	
-	component(utils.components.genericComponent(id:"moveToHandler", messageId:"moveTo"){ message ->
-		if (entity.id != message.entityId)
-			return
-			
-		if (entity.moving)
-			return
-		
-		def time = message.time
-		
-		if (time == null) {
-			entity.targetedPosition = message.target.copy()
-			return
-		}
-		
-		entity.moving = true
-		
-		entity.newTargetedPosition = message.target.copy()
-		entity.interpolator = new Vector2fInterpolator(time, entity.targetedPosition.copy(), entity.newTargetedPosition.copy())
-	})
-	
-	component(utils.components.genericComponent(id:"updatePosition", messageId:"update"){ message ->
-		def interpolator = entity.interpolator
-		if (!interpolator)
-			return
-		
-		interpolator.update(message.delta)
-		entity.targetedPosition = interpolator.interpolatedValue.copy()
-		if (interpolator.finished)
-			entity.interpolator = null
-		
-		entity.moving = false
-	})
-	
-	//
+	component (new LinearMovementComponent("linearMovementComponent")) {
+		propertyRef("position", "targetedPosition")
+	}
 	
 	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:"update"){ message ->
 		
