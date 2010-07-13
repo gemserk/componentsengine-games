@@ -76,15 +76,6 @@ builder.entity("playing") {
 		
 	} )
 	
-//	child(id:"light4", template:"dassault.entities.pointlight") { 
-//		position = utils.vector(700,500)
-//		layer = 10
-//		size = 8f
-//		time = 3000
-//		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
-//		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
-//	}
-	
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)
 		ownerId = "player"
@@ -136,7 +127,7 @@ builder.entity("playing") {
 	child(entity("player") {
 		
 		property("controlledDroidId", "droid1")
-		property("color", utils.color(0.22f, 0.43f, 0.47f,1f))
+		property("color", utils.color(0.22f, 0.43f, 0.67f,1f))
 		property("points", 0)
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->

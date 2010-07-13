@@ -144,7 +144,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
 		
 		def moveDirection = entity.moveDirection ?: utils.vector(0,0)
-				
+		
 		if (moveDirection.lengthSquared() > 0f) {
 			def desiredDirection = moveDirection.normalise().scale(0.01f)
 			entity."movementComponent.force".add(desiredDirection)
@@ -278,19 +278,39 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	property("visible", 0.0f)
 	property("pointerposition", utils.vector(-10000f,-10000f))
 	
+	component(utils.components.genericComponent(id:"droidLostFocusHandler", messageId:"droidLostFocus"){ message ->
+		if (entity.id != message.droidId)
+			return
+		if (entity.visible == 0.0f)
+			return
+		entity.interpolator = new FloatInterpolator(1000, entity.visible, 0.0f)
+	})
+	
+	component(utils.components.genericComponent(id:"droidFocusedHandler", messageId:"droidFocused"){ message ->
+		if (entity.id != message.droidId)
+			return
+		if (entity.visible == 1.0f)
+			return
+		entity.interpolator = new FloatInterpolator(100, entity.visible, 1.0f)
+	})
+	
 	component(new CursorOverDetector("detectMouseOver")) {
 		propertyRef("position", "position")
 		property("bounds", utils.rectangle(-25, -25, 50, 50))
 		propertyRef("cursorPosition", "pointerposition")
-		property("onEnterTrigger", utils.custom.triggers.closureTrigger {
-			if (entity.visible == 1.0f)
-				return
-			entity.interpolator = new FloatInterpolator(100, entity.visible, 1.0f)
+		
+		property("onEnterTrigger", utils.custom.triggers.genericMessage("droidFocused") { message ->
+			message.droidId = entity.id
 		})
+
+		property("onEnterTrigger", utils.custom.triggers.genericMessage("droidFocused") { message ->
+			message.droidId = entity.id
+		})
+		
 		property("onLeaveTrigger", utils.custom.triggers.closureTrigger { 
-			if (entity.visible == 0.0f)
-				return
-			entity.interpolator = new FloatInterpolator(1000, entity.visible, 0.0f)
+			utils.custom.messageQueue.enqueue(utils.genericMessage("droidLostFocus"){ newMessage ->
+				newMessage.droidId = entity.id
+			})
 		})
 	}
 	
