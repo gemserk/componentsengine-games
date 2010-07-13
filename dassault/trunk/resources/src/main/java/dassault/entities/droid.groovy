@@ -9,6 +9,7 @@ import com.gemserk.componentsengine.effects.EffectFactory
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
+import com.gemserk.games.dassault.components.AnimationComponent;
 import com.gemserk.games.dassault.components.TransferComponent;
 import com.gemserk.games.dassault.components.TransferRendererComponent;
 import com.google.common.base.Predicate 
@@ -70,35 +71,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	rightLegAnimation.addKeyFrame 420, utils.vector(0,-2)
 	rightLegAnimation.addKeyFrame 480, utils.vector(0,0)
 	
-	property("walkAnimations", [headAnimation, leftLegAnimation, rightLegAnimation])
-	
-	component(utils.components.genericComponent(id:"startWalkAnimationHandler", messageId:"startWalkAnimation"){ message ->
-		if(!entity.id.equals(message.animationId))
-			return
-		entity.walkAnimations.each { animation -> 
-			// animation.restart()
-			animation.play()
-		}
-	})
-	
-	component(utils.components.genericComponent(id:"stopWalkAnimationHandler", messageId:"stopWalkAnimation"){ message ->
-		if(!entity.id.equals(message.animationId))
-			return
-		println "stop animations!"
-		entity.walkAnimations.each { animation -> 
-			animation.pause()
-		}
-	})
-	
-	component(utils.components.genericComponent(id:"updateAnimationsHandler", messageId:"update"){ message ->
-		entity.walkAnimations.each { animation ->
-			if (animation.paused)
-				return
-			animation.animate(entity, message.delta)
-			if (animation.finished)
-				animation.restart()
-		}
-	})
+	component(new AnimationComponent("walkAnimationComponent") ) {
+		property("id", "walk")
+		property("animations", [headAnimation, leftLegAnimation, rightLegAnimation])
+	}
 	
 	property("shadowImage", utils.resources.image("droidshadow"))
 	
@@ -168,13 +144,15 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"updateMoveDirection", messageId:"update"){ message ->
 		
 		def moveDirection = entity.moveDirection ?: utils.vector(0,0)
-		
+				
 		if (moveDirection.lengthSquared() > 0f) {
 			def desiredDirection = moveDirection.normalise().scale(0.01f)
 			entity."movementComponent.force".add(desiredDirection)
 		} else {
 			entity."movementComponent.force".add(entity."movementComponent.velocity".copy().negate().scale(0.01f))
 		}
+		
+		entity.shouldBeMoving = moveDirection.length() > 0f
 		
 		entity.moveDirection = utils.vector(0,0)
 	})
@@ -201,7 +179,6 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		}
 		
 		entity.position = entity.newPosition
-		
 	})
 	
 	property("hitpoints", parameters.hitpoints ?: utils.container(100f,100f))
@@ -251,20 +228,22 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"animationsHandler", messageId:"update"){ message ->
 		def isMoving = entity.isMoving
 		
+		def shouldBeMoving = entity.shouldBeMoving ?: false
+		
 		if (!isMoving) {
-			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) {
+			if (shouldBeMoving) {
 				entity.isMoving = true
 				//				println "starting walk animation"
-				utils.custom.messageQueue.enqueue(utils.genericMessage("startWalkAnimation"){ newMessage ->
-					newMessage.animationId = entity.id
+				utils.custom.messageQueue.enqueue(utils.genericMessage("startAnimation"){ newMessage ->
+					newMessage.animationId = "walk"
 				})
 			}
 		} else {
-			if (entity."movementComponent.velocity".lengthSquared() > 0.001f) 
+			if (shouldBeMoving) 
 				return
 			//			println "stop walking"
-			utils.custom.messageQueue.enqueue(utils.genericMessage("stopWalkAnimation"){ newMessage ->
-				newMessage.animationId = entity.id
+			utils.custom.messageQueue.enqueue(utils.genericMessage("stopAnimation"){ newMessage ->
+				newMessage.animationId = "walk"
 			})
 			entity.isMoving = false
 		}
