@@ -25,7 +25,7 @@ builder.entity {
 		def position = entity.position
 		
 		def size = 1f
-		def layer = 0
+		def layer = 20
 		def color = entity.color
 		def shape = entity.bounds
 		

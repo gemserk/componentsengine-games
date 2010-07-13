@@ -52,9 +52,7 @@ builder.entity("playing") {
 		endColor: utils.color(0.2f,0.2f,0.7f,0.8f),
 		])
 		
-		component(new LinearMovementComponent("linearMovementComponent")) {
-			propertyRef("position", "position")
-		}
+		component(new LinearMovementComponent("linearMovementComponent")) { propertyRef("position", "position") }
 		
 		component(utils.components.genericComponent(id:"moveLightHandler", messageId:"moveLight"){ message ->
 			
@@ -97,11 +95,35 @@ builder.entity("playing") {
 		
 		component(utils.components.genericComponent(id:"detectGameOver", messageId:"update"){ message ->
 			
+			//			utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
+			//				newMessage.cameraId = "camera"
+			//				newMessage.end = 0.5f
+			//				newMessage.time = 500
+			//			})	
+			//			
+			//			return
+			
+			// TODO: "game over message, press ... key to restart"
+		
 			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
 			{ droid -> droid.ownerId == entity.playerId} as Predicate))
 			
 			if (!controlledDroids.empty)
 				return
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
+				newMessage.cameraId = "camera"
+				newMessage.end = 0.5f
+				newMessage.time = 500
+			})	
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("moveTo"){ newMessage ->
+				newMessage.entityId = "camera"
+				newMessage.target = utils.vector(400, 300)
+				newMessage.time = 300
+			})
+			
+			return
 			
 			utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){ newMessage ->
 				// newMessage.points = ...
@@ -127,7 +149,7 @@ builder.entity("playing") {
 	child(entity("player") {
 		
 		property("controlledDroidId", "droid1")
-		property("color", utils.color(0.22f, 0.43f, 0.67f,1f))
+		property("color", utils.color(0.42f, 0.43f, 0.67f,1f))
 		property("points", 0)
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
@@ -185,18 +207,27 @@ builder.entity("playing") {
 		
 		child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
 			ownerId = "droid1"
-			reloadTime = 400
+			reloadTime = 200
 			damage = 30f
-			energy = 20f
+			energy = 10f
 			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
 		}
 	} )
 	
-	child(entity("cpu") {
+	child(entity("cpu1") {
+		property("color", utils.color(0,0,1,1f))
+	})
+	child(id:"cpuController1", template:"dassault.entities.aicontroller") {  ownerId = "cpu1"  }
+	
+	child(entity("cpu2") {
 		property("color", utils.color(1,0,0,1f))
 	})
+	child(id:"cpuController2", template:"dassault.entities.aicontroller") {  ownerId = "cpu2"  }
 	
-	child(id:"cpuController", template:"dassault.entities.aicontroller") {  ownerId = "cpu"  }
+	child(entity("cpu3") {
+		property("color", utils.color(0,1,0,1f))
+	})
+	child(id:"cpuController3", template:"dassault.entities.aicontroller") {  ownerId = "cpu3"  }
 	
 	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
 		position = utils.vector(400,100)
@@ -206,26 +237,26 @@ builder.entity("playing") {
 	// scene limits as obstacles
 	
 	child(id:"sceneLimit1", template:"dassault.entities.obstacle") { 
-		position = utils.vector(0,300)
-		bounds = utils.rectangle(-10, -300, 20, 600)
+		position = utils.vector(-1000,300)
+		bounds = utils.rectangle(-1010, -2000, 2020, 4000)
 		color = utils.color(0,0,0,1)
 	}
 	
 	child(id:"sceneLimit2", template:"dassault.entities.obstacle") { 
-		position = utils.vector(800,300)
-		bounds = utils.rectangle(-10, -300, 20, 600)
+		position = utils.vector(1800,300)
+		bounds = utils.rectangle(-1010, -2000, 2020, 4000)
 		color = utils.color(0,0,0,1)
 	}
 	
 	child(id:"sceneLimit3", template:"dassault.entities.obstacle") { 
-		position = utils.vector(400,0)
-		bounds = utils.rectangle(-400, -10, 800, 20)
+		position = utils.vector(400,-1000)
+		bounds = utils.rectangle(-400, -1010, 800, 2020)
 		color = utils.color(0,0,0,1)
 	}
 	
 	child(id:"sceneLimit4", template:"dassault.entities.obstacle") { 
-		position = utils.vector(400,600)
-		bounds = utils.rectangle(-400, -10, 800, 20)
+		position = utils.vector(400,1600)
+		bounds = utils.rectangle(-400, -1010, 800, 2020)
 		color = utils.color(0,0,0,1)
 	}
 	
@@ -234,7 +265,7 @@ builder.entity("playing") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				ownerId:data.ownerId,
-				reloadTime:500,
+				reloadTime:250,
 				damage:30f,
 				energy:20f,
 				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
@@ -266,8 +297,8 @@ builder.entity("playing") {
 			})
 	
 	def globalDroidFactory = [basicDroid:{ params -> basicDroidInstantiationTemplate.get(params) }, 
-	                         floatingDroid:{ params -> floatingDroidInstantiationTemplate.get(params) }]
-
+	floatingDroid:{ params -> floatingDroidInstantiationTemplate.get(params) }]
+	
 	def globalWeaponFactory = [blasterWeapon:{ params -> blasterWeaponInstantiationTemplate.get(params) }]
 	
 	child(id:"spawner1", template:"dassault.entities.droidspawner") { 
@@ -276,17 +307,27 @@ builder.entity("playing") {
 		maxTime = 5000
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
-		ownerId = "cpu"
+		ownerId = "cpu1"
 		droidTypes = ["basicDroid", "floatingDroid"]
 	}
 	
 	child(id:"spawner2", template:"dassault.entities.droidspawner") { 
 		position = utils.vector(700,100)
-		minTime = 8000
-		maxTime = 1000
+		minTime = 5000
+		maxTime = 5000
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
-		ownerId = "cpu"
+		ownerId = "cpu2"
+		droidTypes = ["basicDroid", "floatingDroid"]
+	}
+	
+	child(id:"spawner3", template:"dassault.entities.droidspawner") { 
+		position = utils.vector(100,500)
+		minTime = 5000
+		maxTime = 5000
+		droidFactory = globalDroidFactory
+		weaponFactory = globalWeaponFactory
+		ownerId = "cpu3"
 		droidTypes = ["basicDroid", "floatingDroid"]
 	}
 	

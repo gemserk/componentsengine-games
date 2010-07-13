@@ -12,16 +12,16 @@ def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", {utils.custom.gameStateManager.gameProperties.screenshot})
 		property("color", utils.color(1,1,1,1))
-		property("position", utils.vector(400,300))
+		property("position", utils.vector(300,300))
 		property("direction", utils.vector(1,0))
 		property("layer", 900)
 	}
 	
 	component(new RectangleRendererComponent("background")) {
 		property("position",utils.vector(0,0))
-		property("rectangle", utils.rectangle(0,0, 800, 600))
+		property("rectangle", utils.rectangle(0,0, 600, 600))
 		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
-		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
+		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.3f))
 		property("layer",1000)
 	}
 	
@@ -29,7 +29,7 @@ def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 		
 		parent("gemserk.gui.label", [
 		font:font,
-		position:utils.vector(400f, 280),
+		position:utils.vector(300f, 280),
 		fontColor:utils.color(0f,0f,0f,1f),
 		bounds:labelRectangle,
 		align:"center",
@@ -44,7 +44,7 @@ def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 		
 		parent("gemserk.gui.label", [
 		font:font,
-		position:utils.vector(400f, 320f),
+		position:utils.vector(300f, 320f),
 		fontColor:utils.color(0f,0f,0f,1f),
 		bounds:labelRectangle,
 		align:"center",
