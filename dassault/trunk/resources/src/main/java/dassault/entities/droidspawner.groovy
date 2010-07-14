@@ -20,6 +20,7 @@ builder.entity {
 	property("weaponFactory", parameters.weaponFactory)
 	
 	property("droidTypes", parameters.droidTypes)
+	property("weaponTypes", parameters.weaponTypes)
 	
 	component(utils.components.genericComponent(id:"updateTimer", messageId:"update"){ message ->
 		def timer = entity.timer
@@ -44,15 +45,16 @@ builder.entity {
 			return
 		
 		def droidTypes = entity.droidTypes
-		def droidType =droidTypes[random.nextInt(droidTypes.size)]
+		def droidType = droidTypes[random.nextInt(droidTypes.size)]
 		                           
-//		def droidId = "droid-${utils.random.nextInt()}"
-//		def weaponId = "weapon-${utils.random.nextInt()}"
-		                           
-		def templateClosure = entity.droidFactory[droidType]
-		def droid = templateClosure([position:entity.position.copy(), ownerId:entity.ownerId])
+		def droidTemplate = entity.droidFactory[droidType]
+		def droid = droidTemplate.get([position:entity.position.copy(), ownerId:entity.ownerId])
+
+		def weaponTypes = entity.weaponTypes
+		def weaponType = weaponTypes[random.nextInt(weaponTypes.size)]
 		
-		def weapon = entity.weaponFactory.blasterWeapon([ownerId:droid.id])
+		def weaponTemplate = entity.weaponFactory[weaponType]
+		def weapon = weaponTemplate.get([ownerId:droid.id])
 		
 		// def droid = entity.droidTemplate.instantiate(droidId, [position:entity.position.copy(), ownerId:entity.ownerId])
 		

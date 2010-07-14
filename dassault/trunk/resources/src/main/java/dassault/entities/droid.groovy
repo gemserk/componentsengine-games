@@ -116,34 +116,6 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		entity.energy.add((float)regenerationSpeed * message.delta)
 	})
 	
-	property("isMoving", false)
-	
-	component(utils.components.genericComponent(id:"animationsHandler", messageId:"update"){ message ->
-		def isMoving = entity.isMoving
-		
-		def shouldBeMoving = entity.shouldBeMoving ?: false
-		
-		if (!isMoving) {
-			if (shouldBeMoving) {
-				entity.isMoving = true
-				//				println "starting walk animation"
-				utils.custom.messageQueue.enqueue(utils.genericMessage("startAnimation"){ newMessage ->
-					newMessage.animationId = "walk"
-					newMessage.entityId = entity.id
-				})
-			}
-		} else {
-			if (shouldBeMoving) 
-				return
-			//			println "stop walking"
-			utils.custom.messageQueue.enqueue(utils.genericMessage("stopAnimation"){ newMessage ->
-				newMessage.animationId = "walk"
-				newMessage.entityId = entity.id
-			})
-			entity.isMoving = false
-		}
-	})
-	
 	// transfer component
 	
 	property("selectedDroid", null)

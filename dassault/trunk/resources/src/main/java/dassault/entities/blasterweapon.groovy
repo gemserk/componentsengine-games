@@ -22,7 +22,7 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 		def loaded = entity.loaded ?: false
 		
 		if (owner == null) {
-			log.error("Owner is null - weapon.id = $entity.id")
+			log.error("Owner is null - ownerId : $entity.ownerId - weapon.id : $entity.id")
 			return
 		}
 			

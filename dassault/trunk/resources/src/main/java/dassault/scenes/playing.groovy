@@ -104,7 +104,7 @@ builder.entity("playing") {
 			//			return
 			
 			// TODO: "game over message, press ... key to restart"
-		
+			
 			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
 			{ droid -> droid.ownerId == entity.playerId} as Predicate))
 			
@@ -200,7 +200,7 @@ builder.entity("playing") {
 	child(id:"playerAiHelperController", template:"dassault.entities.aicontroller") {  ownerId = "player"  }
 	
 	child(entity("droid1") {
-		parent("dassault.entities.floatingdroid",[ownerId:"player",position:utils.vector(400,300), 
+		parent("dassault.entities.basicdroid",[ownerId:"player",position:utils.vector(400,300), 
 		speed:0.2f, 
 		energy:utils.container(10000f,10000f),
 		regenerationSpeed:0.02f])
@@ -296,10 +296,13 @@ builder.entity("playing") {
 				]
 			})
 	
-	def globalDroidFactory = [basicDroid:{ params -> basicDroidInstantiationTemplate.get(params) }, 
-	floatingDroid:{ params -> floatingDroidInstantiationTemplate.get(params) }]
+	def globalDroidFactory = [basicDroid:basicDroidInstantiationTemplate, 
+			floatingDroid:floatingDroidInstantiationTemplate]
 	
-	def globalWeaponFactory = [blasterWeapon:{ params -> blasterWeaponInstantiationTemplate.get(params) }]
+	def globalWeaponFactory = [blasterWeapon:blasterWeaponInstantiationTemplate]
+	
+	def globalDroidTypes = globalDroidFactory.keySet().collect { it }
+	def globalWeaponTypes = globalWeaponFactory.keySet().collect { it }
 	
 	child(id:"spawner1", template:"dassault.entities.droidspawner") { 
 		position = utils.vector(100,100)
@@ -308,7 +311,8 @@ builder.entity("playing") {
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
 		ownerId = "cpu1"
-		droidTypes = ["basicDroid", "floatingDroid"]
+		droidTypes = globalDroidTypes
+		weaponTypes = globalWeaponTypes
 	}
 	
 	child(id:"spawner2", template:"dassault.entities.droidspawner") { 
@@ -318,7 +322,8 @@ builder.entity("playing") {
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
 		ownerId = "cpu2"
-		droidTypes = ["basicDroid", "floatingDroid"]
+		droidTypes = globalDroidTypes
+		weaponTypes = globalWeaponTypes
 	}
 	
 	child(id:"spawner3", template:"dassault.entities.droidspawner") { 
@@ -328,7 +333,8 @@ builder.entity("playing") {
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
 		ownerId = "cpu3"
-		droidTypes = ["basicDroid", "floatingDroid"]
+		droidTypes = globalDroidTypes
+		weaponTypes = globalWeaponTypes
 	}
 	
 	child(id:"cursor", template:"dassault.entities.cursor") {

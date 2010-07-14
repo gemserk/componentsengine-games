@@ -18,13 +18,18 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	def headAnimation = new PropertyAnimation("headPosition");
 	
-	headAnimation.addKeyFrame 0, utils.vector(0,0)
-	headAnimation.addKeyFrame 320, utils.vector(0,-4)
-	headAnimation.addKeyFrame 640, utils.vector(0,0)
+	headAnimation.addKeyFrame 0, utils.vector(0,2)
+	headAnimation.addKeyFrame 320, utils.vector(0,-2)
+	headAnimation.addKeyFrame 640, utils.vector(0,2)
+	
+	def animations = [
+			idle:[], 
+			walk:[headAnimation]
+			]
 	
 	component(new AnimationComponent("walkAnimationComponent") ) {
-		property("id", "walk")
-		property("animations", [headAnimation])
+		property("current", "idle")
+		property("animations", animations)
 	}
 	
 	property("shadowImage", utils.resources.image("droidshadow"))
@@ -47,8 +52,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		
 		def layer = 0
 		def color = owner.color
-
-		def headPosition = position.copy().add(entity.headPosition).add(utils.vector(0,2f))
+		
+		def headPosition = position.copy().add(entity.headPosition)
 		
 		renderer.enqueue(new SlickImageRenderObject(layer-2, entity.droidBackground, headPosition, //
 				size, 0f, Color.white))
@@ -61,5 +66,33 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		renderer.enqueue(new SlickImageRenderObject(layer-4, entity.droidShadow, position, //
 				size, 0f, Color.white))			
 		
+	})
+	
+	property("isMoving", false)
+	
+	component(utils.components.genericComponent(id:"animationsHandler", messageId:"update"){ message ->
+		def isMoving = entity.isMoving
+		
+		def shouldBeMoving = entity.shouldBeMoving ?: false
+		
+		if (!isMoving) {
+			if (shouldBeMoving) {
+				entity.isMoving = true
+				//				println "starting walk animation"
+				utils.custom.messageQueue.enqueue(utils.genericMessage("startAnimation"){ newMessage ->
+					newMessage.animationId = "walk"
+					newMessage.entityId = entity.id
+				})
+			}
+		} else {
+			if (shouldBeMoving) 
+				return
+			//			println "stop walking"
+			utils.custom.messageQueue.enqueue(utils.genericMessage("startAnimation"){ newMessage ->
+				newMessage.animationId = "idle"
+				newMessage.entityId = entity.id
+			})
+			entity.isMoving = false
+		}
 	})
 }
