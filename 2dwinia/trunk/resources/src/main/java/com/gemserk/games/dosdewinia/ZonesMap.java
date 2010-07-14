@@ -37,7 +37,7 @@ public class ZonesMap {
 	
 	
 	int getZoneValue(int x, int y){
-		if(x < 0 || y < 0 || x > width || y > height)
+		if(x < 0 || y < 0 || x >= width || y >= height)
 			return baseValue;
 		
 		return zoneData[getOffset(x,y)];

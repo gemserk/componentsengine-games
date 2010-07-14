@@ -5,6 +5,7 @@ import org.newdawn.slick.Color;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
+import com.gemserk.componentsengine.timers.CountDownTimer;
 import com.gemserk.games.dosdewinia.Target;
 
 import dosdewinia.components.BoundsTriggers;
@@ -62,8 +63,11 @@ builder.entity("darwinian-${Math.random()}") {
 			if(targetPosition.distanceSquared(position) < 9){
 				entity."movement.velocity"=utils.vector(0,0)
 				entity.targetPosition = null
-				if(entity.state=="goTowardsTarget")
+				if(entity.state=="goTowardsTarget"){
 					entity.state = "wander"
+				} else if(entity.state=="avoidObstacle"){
+					entity.state = "goTowardsTarget"
+				}
 			}
 		} 
 	})
@@ -83,8 +87,7 @@ builder.entity("darwinian-${Math.random()}") {
 		def target = entity.target
 		def targetCenter = target.position
 		def zoneId = target.zoneId
-		def targetWanderRadiusSquared = (float)target.wanderRadius * target.wanderRadius
-		while(randomTargetPosition == null ){//|| zoneMap.getZoneValue(randomTargetPosition) != zoneId){
+		while(randomTargetPosition == null || zoneMap.getZoneValue(randomTargetPosition) != zoneId){
 			direction = utils.vector(1,0).add((float)random.nextFloat()*360)
 			randomTargetPosition = position.copy().add(direction.copy().scale((float)random.nextFloat()*100))
 		}
@@ -93,6 +96,35 @@ builder.entity("darwinian-${Math.random()}") {
 		
 		
 	})
+	
+	
+	component(utils.components.genericComponent(id:"wanderBehaviour-avoidobstacle", messageId:"update"){ message ->
+		def position = entity.position
+		def targetPosition = entity.targetPosition
+		if(targetPosition)
+			return
+		
+		if(entity.state != "avoidObstacle")
+			return
+			
+			
+		
+		def zoneMap = entity.zoneMap
+		def direction
+		def randomTargetPosition
+		def target = entity.target
+		def targetCenter = target.position
+		def zoneId = zoneMap.getZoneValue(position)
+		while(randomTargetPosition == null || zoneMap.getZoneValue(randomTargetPosition) != zoneId){
+			direction = utils.vector(1,0).add((float)random.nextFloat()*360)
+			randomTargetPosition = position.copy().add(direction.copy().scale((float)random.nextFloat()*100))
+		}
+		entity.targetPosition = randomTargetPosition
+		entity."movement.velocity" = direction.copy().scale(entity.speed)
+		
+		
+	})
+	
 	
 	component(utils.components.genericComponent(id:"goTowardsTarget", messageId:"update"){ message ->
 		def position = entity.position
@@ -108,7 +140,6 @@ builder.entity("darwinian-${Math.random()}") {
 		def randomTargetPosition
 		def target = entity.target
 		def targetCenter = target.position
-		def targetWanderRadiusSquared = (float)target.wanderRadius * target.wanderRadius
 		while(randomTargetPosition == null || !traversableMap.getTraversable(randomTargetPosition) ){
 			direction = utils.vector(1,0).add((float)random.nextFloat()*360)
 			randomTargetPosition = targetCenter.copy().add(direction.copy().scale((float)random.nextFloat()*target.arrivalRadius))
@@ -127,9 +158,9 @@ builder.entity("darwinian-${Math.random()}") {
 		def position = entity.position
 		entity."movement.velocity"=utils.vector(0,0)
 		entity.targetPosition = null
-		entity.state = "wander"
-		def zoneId = entity.zoneMap.getZoneValue(position)
-		entity.target = new Target(position, 30,10,zoneId)
+		if(entity.state == "goTowardsTarget"){
+			entity.state = "avoidObstacle"
+		}
 	}})
 	
 	
