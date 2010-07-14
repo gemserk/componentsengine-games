@@ -60,6 +60,4 @@ builder.entity {
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(weapon,droid))
 	})
 	
-	// properties for the renderer, or the renderer itself should be received as parameters
-	
 }
