@@ -63,7 +63,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 				size, 0f, Color.red))
 		renderer.enqueue(new SlickImageRenderObject(layer, entity.droidEyes, headPosition, //
 				size, 0f, Color.white))
-		renderer.enqueue(new SlickImageRenderObject(layer-4, entity.droidShadow, position, //
+		renderer.enqueue(new SlickImageRenderObject(layer-10, entity.droidShadow, position, //
 				size, 0f, Color.white))			
 		
 	})

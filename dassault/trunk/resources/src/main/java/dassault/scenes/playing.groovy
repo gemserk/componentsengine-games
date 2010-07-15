@@ -1,6 +1,8 @@
 package dassault.scenes;
 
 import org.newdawn.slick.Input;
+import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.geom.Transform;
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
@@ -88,6 +90,23 @@ builder.entity("playing") {
 	
 	child(id:"hud", template:"dassault.entities.hud") { playerId = "player" }
 	
+	child(entity("restartLabel"){
+		
+		parent("gemserk.gui.label", [
+		font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+		position:utils.vector(300f, 520f),
+		fontColor:utils.color(1f,1f,1f,0f),
+		bounds:utils.rectangle(-220,-50,440,100),
+		align:"center",
+		valign:"center",
+		layer:1010
+		])
+		
+		property("message", "GAME OVER: press ESCAPE to restart")
+	})
+	
+	property("gameOver", false)
+	
 	child(entity("gameLogic") {
 		
 		property("playerId", "player")
@@ -95,40 +114,37 @@ builder.entity("playing") {
 		
 		component(utils.components.genericComponent(id:"detectGameOver", messageId:"update"){ message ->
 			
-			//			utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
-			//				newMessage.cameraId = "camera"
-			//				newMessage.end = 0.5f
-			//				newMessage.time = 500
-			//			})	
-			//			
-			//			return
-			
-			// TODO: "game over message, press ... key to restart"
-			
 			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
 			{ droid -> droid.ownerId == entity.playerId} as Predicate))
 			
 			if (!controlledDroids.empty)
 				return
 			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){ newMessage ->
+				// newMessage.points = ...
+			})
+			
+		})
+		
+		component(utils.components.genericComponent(id:"gameOverHandler", messageId:"gameover"){ message ->
 			utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
 				newMessage.cameraId = "camera"
 				newMessage.end = 0.5f
 				newMessage.time = 500
 			})	
-			
 			utils.custom.messageQueue.enqueue(utils.genericMessage("moveTo"){ newMessage ->
 				newMessage.entityId = "camera"
 				newMessage.target = utils.vector(400, 300)
 				newMessage.time = 300
 			})
 			
-			return
+			// TODO: "game over message, press ... key to restart"
+			// show label!
 			
-			utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){ newMessage ->
-				// newMessage.points = ...
-			})
+			def label = entity.root.getEntityById("restartLabel")
+			label.color.a = 1f
 			
+			entity.parent.gameOver = true
 		})
 		
 		component(utils.components.genericComponent(id:"incrementPlayerPointsWhenDroidDies", messageId:"droidDead"){ message ->
@@ -143,6 +159,8 @@ builder.entity("playing") {
 			
 			//			println "points: $player.points"
 		})
+		
+		
 		
 	})
 	
@@ -229,9 +247,39 @@ builder.entity("playing") {
 	})
 	child(id:"cpuController3", template:"dassault.entities.aicontroller") {  ownerId = "cpu3"  }
 	
+	def obstacleForm = new Polygon([1f, 1f, 4f, 1f, 4f, 4f, 2.5f, 5f, 1f, 4f] as float[])
+	def obstacleForm2 = new Polygon([6.49f, -22.29f, 25.25f, 1.13f, 1.84f, 19.88f, -15.35f, 14.43f, -16.92f, -3.53f, -1.31f, -9.63f] as float[])
+
+	obstacleForm.centerX = 0f
+	obstacleForm.centerY = 0f
+	
+	obstacleForm2.centerX = 0f
+	obstacleForm2.centerY = 0f
+
+	Transform rotationMatrix = Transform.createRotateTransform(30);
+
 	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
-		position = utils.vector(400,100)
-		bounds = utils.rectangle(-50, -10, 100, 20)
+		position = utils.vector(200,200)
+		// bounds = utils.rectangle(-50, -10, 100, 20)
+		bounds = obstacleForm.transform(Transform.createScaleTransform(30f, 30f))
+		color = utils.color(0.1f,0f,0f,1f)
+		layer = 20
+	}
+	
+	child(id:"obstacle2", template:"dassault.entities.obstacle") { 
+		position = utils.vector(400,400)
+		// bounds = utils.rectangle(-50, -10, 100, 20)
+		bounds = obstacleForm2.transform(rotationMatrix).transform(Transform.createScaleTransform(2f, 2f))
+		color = utils.color(0.1f,0f,0f,1f)
+		layer = 20
+	}
+	
+	child(id:"obstacle3", template:"dassault.entities.obstacle") { 
+		position = utils.vector(600,200)
+		// bounds = utils.rectangle(-50, -10, 100, 20)
+		bounds = obstacleForm.transform(Transform.createRotateTransform((float)Math.PI)).transform(Transform.createScaleTransform(25f, 25f))
+		color = utils.color(0.1f,0.1f,0f,1f)
+		layer = 20
 	}
 	
 	// scene limits as obstacles
@@ -411,7 +459,10 @@ builder.entity("playing") {
 	})
 	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
-		messageQueue.enqueue(utils.genericMessage("paused"){})
+		if(!entity.gameOver)
+			messageQueue.enqueue(utils.genericMessage("paused"){})
+		else
+			messageQueue.enqueue(utils.genericMessage("restartLevel"){})
 	})
 	
 }

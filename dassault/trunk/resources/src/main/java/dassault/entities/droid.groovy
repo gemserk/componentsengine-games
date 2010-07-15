@@ -207,4 +207,15 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		property("layer", 20)
 	}
 	
+	////
+	
+	child(id:"${entity.id}-light1".toString(), template:"dassault.entities.pointlight") { 
+		position = {entity.parent.position}
+		layer = -4
+		size = 5f
+		time = 1500
+		startColor = utils.color(1f,1f,1f,0.2f)
+		endColor = utils.color(1f,1f,1f,0.8f)
+	}
+	
 }
