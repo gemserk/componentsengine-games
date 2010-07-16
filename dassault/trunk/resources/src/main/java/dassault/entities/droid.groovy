@@ -1,6 +1,7 @@
 package dassault.entities
 
 import com.gemserk.commons.animation.interpolators.FloatInterpolator;
+import com.gemserk.commons.slick.geom.ShapeUtils 
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.CursorOverDetector;
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
@@ -16,7 +17,7 @@ import org.newdawn.slick.Color
 
 builder.entity(entityName ?: "droid-${Math.random()}") {
 	
-	tags("droid", "nofriction")
+	tags("droid", "nofriction", "collidable")
 	
 	// TODO: use owner instead of id
 	property("ownerId", parameters.ownerId)
@@ -57,9 +58,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		entity.bounds.centerX = entity.newPosition.x
 		entity.bounds.centerY = entity.newPosition.y 
 		
-		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), { obstacle ->
-			obstacle.bounds.intersects(entity.bounds)
-		} as Predicate))
+		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), // 
+				{ collidable ->	new ShapeUtils(collidable.bounds).collides(entity.bounds)} as Predicate))
 		
 		if (!obstacles.empty) {
 			entity."movementComponent.velocity".set(0,0)
@@ -76,7 +76,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	property("hitpoints", parameters.hitpoints ?: utils.container(100f,100f))
 	
-	component(utils.components.genericComponent(id:"droidHittedHandler", messageId:"droidHitted"){ message ->
+	component(utils.components.genericComponent(id:"droidHittedHandler", messageId:"collidableHitted"){ message ->
 		
 		if (entity != message.target)
 			return

@@ -7,7 +7,7 @@ import org.newdawn.slick.Graphics
 
 builder.entity {
 	
-	tags("obstacle")
+	tags("obstacle", "collidable")
 	
 	property("position", parameters.position)
 	property("bounds", parameters.bounds)

@@ -404,7 +404,7 @@ builder.entity("playing") {
 	
 	property("cameraId", "camera")
 	
-	property("zooms", [1.0f, 1.7f, 0.3f])
+	property("zooms", [1.0f, 1.7f, 0.6f, 0.3f])
 	property("currentZoom", 0)
 	
 	component(utils.components.genericComponent(id:"toggleZoom", messageId:"toggleZoom"){ message ->
@@ -462,10 +462,10 @@ builder.entity("playing") {
 		graphics.copyArea(utils.custom.gameStateManager.gameProperties.screenshot, 0, 0); 
 	})
 	
-	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
-		if(!utils.custom.gameContainer.hasFocus())
-			messageQueue.enqueue(utils.genericMessage("paused"){})
-	})
+//	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
+//		if(!utils.custom.gameContainer.hasFocus())
+//			messageQueue.enqueue(utils.genericMessage("paused"){})
+//	})
 	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
 		if(!entity.gameOver)

@@ -4,6 +4,7 @@ package dassault.entities
 import static org.lwjgl.opengl.GL11.*;
 
 
+import com.gemserk.commons.slick.geom.ShapeUtils;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
@@ -17,7 +18,7 @@ builder.entity {
 	
 	tags("blasterbullet")
 	
-	property("position", utils.vector(0,0))
+	property("position", utils.vector(-1000,-1000))
 	property("newPosition", parameters.position)
 	property("moveDirection", parameters.moveDirection)
 	property("speed", parameters.speed)
@@ -47,8 +48,8 @@ builder.entity {
 		entity.bounds.centerX = entity.newPosition.x
 		entity.bounds.centerY = entity.newPosition.y 
 		
-		def obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle", "droid"), // 
-				{ collidable -> collidable.bounds.intersects(entity.bounds) } as Predicate, // 
+		def obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("collidable"), // 
+				{ collidable -> new ShapeUtils(collidable.bounds).collides(entity.bounds) } as Predicate, // 
 				{ collidable -> entity.owner != collidable } as Predicate))
 		
 		if (obstacles.empty) {
@@ -79,7 +80,7 @@ builder.entity {
 		
 		def target = message.target
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("droidHitted"){ newMessage ->
+		utils.custom.messageQueue.enqueue(utils.genericMessage("collidableHitted"){ newMessage ->
 			newMessage.bullet = entity
 			newMessage.target = target
 			newMessage.damage = entity.damage
