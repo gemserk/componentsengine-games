@@ -1,5 +1,6 @@
 package dassault.entities
 import com.gemserk.commons.animation.interpolators.FloatInterpolator;
+import com.gemserk.commons.slick.util.SlickCameraTransformImpl;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import com.gemserk.games.dassault.components.LinearMovementComponent;
 
@@ -18,64 +19,62 @@ builder.entity {
 	
 	property("targetedPosition", utils.vector(0,0))
 	
+	property("camera", new SlickCameraTransformImpl((float)parameters.screen.width/2f, (float)parameters.screen.height/2f))
+	
 	// linear movement component
 	
-	component (new LinearMovementComponent("linearMovementComponent")) {
-		propertyRef("position", "targetedPosition")
-	}
+	component (new LinearMovementComponent("linearMovementComponent")) { propertyRef("position", "targetedPosition") }
 	
 	component(utils.components.genericComponent(id:"updateCameraPosition", messageId:"update"){ message ->
+		
+		def camera = entity.camera
 		
 		def screen = entity.screen
 		
 		// center screen, could be considered as start camera position
-		def centerPosition = utils.vector((float)screen.width * 0.5f, (float)screen.height * 0.5f)
-		
 		def input = utils.custom.gameContainer.input
+		
+		def centerPosition = utils.vector((float)screen.width * 0.5f, (float)screen.height * 0.5f)
+		def mousePosition = utils.vector((float) input.getMouseX(), (float) input.getMouseY())
 		
 		def targetedPosition = entity.targetedPosition.copy()
 		
-		def targetPosition = targetedPosition.copy().sub(centerPosition).negate()
-		entity.position =  targetPosition
+		if (!entity.followMouse) {
+			
+			camera.moveTo(targetedPosition.copy())
+			
+			def mouseWorldPosition = camera.getWorldPositionFromScreenPosition(mousePosition)
+			
+			entity.mouseWorldPosition = mouseWorldPosition
+			entity.mouseRelativePosition = mouseWorldPosition.copy().sub(targetedPosition)
+			entity.mousePosition = mouseWorldPosition
+			
+		} else {
+			
+			def mouseWorldPosition = camera.getWorldPositionFromScreenPosition(mousePosition)
+			def midPoint = targetedPosition.copy().add(mouseWorldPosition).scale(0.5f)
+			
+			camera.moveTo(midPoint)
+			
+			entity.mouseWorldPosition = mouseWorldPosition
+			entity.mouseRelativePosition = mouseWorldPosition.copy().sub(targetedPosition)
+			entity.mousePosition = mouseWorldPosition
+			
+		}
 		
-		// if followMouse then mid point between mouse and owner position
-		
-		// current position of the mouse, based on current camera
-		def mousePosition = utils.vector((float) input.getMouseX(), (float) input.getMouseY())
-		entity.mouseRelativePosition = mousePosition.copy().sub(centerPosition)
-		
-		def mouseNewRelative = utils.vector((float) input.getMouseX(), (float) input.getMouseY())
-		
-		def transformation = entity.position
-		def mouseAbsolutePosition = mouseNewRelative.copy().sub(transformation)
-		
-		entity.mousePosition = mouseNewRelative.copy().sub(transformation)
-		
-		if (!entity.followMouse)
-			return
-		
-		mouseAbsolutePosition.sub(centerPosition)
-		mouseAbsolutePosition.negateLocal()
-		
-		targetPosition = targetPosition.add(mouseAbsolutePosition).scale(0.5f)
-		
-		entity.position = targetPosition
-		
-		entity.mousePosition = mouseNewRelative.copy().sub(transformation)
 	})
 	
 	component(utils.components.genericComponent(id:"toggleFollow", messageId:["toggleFollowMouse"]){ message ->
 		entity.followMouse = !entity.followMouse
 	})
 	
-	// zoom component?
-	
-	property("zoom", 1.0f)
-	
 	component(utils.components.genericComponent(id:"zoomHandler", messageId:"zoom"){ message ->
 		if (message.cameraId != entity.id)
 			return
-		entity.zoomInterpolator = new FloatInterpolator(message.time ?: 0, entity.zoom, message.end)
+		
+		def zoom = entity.camera.zoom.x
+		
+		entity.zoomInterpolator = new FloatInterpolator(message.time ?: 0, zoom, message.end)
 	})
 	
 	component(utils.components.genericComponent(id:"updateZoom", messageId:"update"){ message ->
@@ -83,7 +82,10 @@ builder.entity {
 		if (zoomInterpolator == null)
 			return
 		zoomInterpolator.update(message.delta)
-		entity.zoom = zoomInterpolator.interpolatedValue
+		
+		def zoom = zoomInterpolator.interpolatedValue
+		entity.camera.zoomTo(utils.vector(zoom, zoom))
+		
 		if (zoomInterpolator.finished) 
 			entity.zoomInterpolator = null
 	})
@@ -98,16 +100,14 @@ builder.entity {
 		def position = entity.position
 		def zoom = entity.zoom
 		
+		def camera = entity.camera
+		
 		renderer.enqueue( new ClosureRenderObject(-100, { Graphics g ->
-			g.pushTransform()
-			g.translate((float)screen.width * 0.5f, (float)screen.height * 0.5f)
-			g.scale(zoom, zoom)
-			g.translate((float)screen.width * -0.5f, (float)screen.height * -0.5f)
-			g.translate(position.x, position.y)
+			camera.pushTransform(g)
 		}))
 		
 		renderer.enqueue( new ClosureRenderObject(100, { Graphics g ->
-			g.popTransform()
+			camera.popTransform(g)
 		}))
 		
 	})

@@ -87,11 +87,8 @@ builder.entity {
 		
 		// set entity instead of id
 		def camera = entity.root.getEntityById(entity.camera)
-		
-		def mousePosition = utils.vector(input.mouseX, input.mouseY)
-		
-		def cameraPosition = camera.position
-		def mouseAbsolutePosition = mousePosition.copy().sub(cameraPosition)
+
+		def mouseWorldPosition = camera.mouseWorldPosition 
 		
 		def transferEnabled = input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)
 		
@@ -101,7 +98,7 @@ builder.entity {
 				return
 			
 			def droids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // 
-					{ droid -> droid.bounds.contains(mouseAbsolutePosition.x, mouseAbsolutePosition.y)} as Predicate))
+					{ droid -> droid.bounds.contains(mouseWorldPosition.x, mouseWorldPosition.y)} as Predicate))
 			if (droids.isEmpty())
 				return
 			
