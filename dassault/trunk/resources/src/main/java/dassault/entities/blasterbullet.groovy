@@ -16,17 +16,16 @@ import com.google.common.base.Predicates
 
 builder.entity {
 	
-	tags("blasterbullet", "collidable")
+	tags("bullet", "blasterbullet", "collidable")
 	
 	property("position", parameters.position)
-	property("newPosition", parameters.position)
 	property("moveDirection", parameters.moveDirection)
 	property("speed", parameters.speed)
 	property("damage", parameters.damage)
 	property("owner", parameters.owner)
 	
 	component(new SuperMovementComponent("movementComponent")) {
-		propertyRef("position", "newPosition")
+		propertyRef("position", "position")
 		propertyRef("maxVelocity", "speed")
 	}
 	
@@ -36,46 +35,51 @@ builder.entity {
 		entity."movementComponent.force".add(desiredDirection)
 	})
 	
-	property("collisionDetected", false)
-	property("bounds", utils.rectangle(-2, -2, 4, 4))
+	// collidable component
 	
-	component(utils.components.genericComponent(id:"updatePositionHandler", messageId:"update"){ message ->
-		
-		if (entity.collisionDetected)
-			return
-		
-		// update collision bounds
-		entity.bounds.centerX = entity.newPosition.x
-		entity.bounds.centerY = entity.newPosition.y 
-		
-		def obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("collidable"), // 
-				{ collidable -> new ShapeUtils(collidable.bounds).collides(entity.bounds) } as Predicate, // 
-				{ collidable -> entity.owner != collidable } as Predicate, // 
-				{ collidable -> entity != collidable && !collidable.tags.contains("blasterbullet") } as Predicate))
-		
-		if (obstacles.empty) {
-			entity.position = entity.newPosition
-			return
-		}
-		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletCollision"){ newMessage ->
-			newMessage.bullet = entity
-			newMessage.target = obstacles[0]
-		})
-		
-		entity.collisionDetected = true
+	property("collisionDetected", {!entity.collisions.isEmpty()})
+	property("bounds", utils.rectangle(-2, -2, 4, 4))
+	property("collisions", [])
+	
+	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
+		entity.bounds.centerX = entity.position.x
+		entity.bounds.centerY = entity.position.y 
 	})
 	
-	component(utils.components.genericComponent(id:"bulletCollisionHandler", messageId:"bulletCollision"){ message ->
+	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
 		
-		// call hit
+		def obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("collidable"), // 
+		{ collidable -> new ShapeUtils(collidable.bounds).collides(entity.bounds) } as Predicate, // 
+		{ collidable -> entity.owner != collidable } as Predicate, // 
+		{ collidable -> entity != collidable && !collidable.tags.contains("bullet") } as Predicate))
 		
-		if (entity != message.bullet)
+		entity.collisions = new ArrayList(obstacles)
+//		if (obstacles.empty) {
+//			entity.collisions = []
+//			return
+//		}
+		
+		// trigger collision detected! ? source = entity, targets = collisions, 
+	})
+	
+	component(utils.components.genericComponent(id:"collisionDetectedHandler", messageId:"collisionDetected"){ message ->
+		if (entity != message.target)
 			return 
+		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
+			newMessage.bullet = entity
+		})
+	})
+	
+	//
+	
+	component(utils.components.genericComponent(id:"hitWhenCollisionDetected", messageId:"update"){ message ->
+		if (!entity.collisionDetected)
+			return
 		
-		def target = message.target
+		def collisions = entity.collisions
+		def target = collisions[0]
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("collidableHitted"){ newMessage ->
+		utils.custom.messageQueue.enqueue(utils.genericMessage("collisionDetected"){ newMessage ->
 			newMessage.bullet = entity
 			newMessage.target = target
 			newMessage.damage = entity.damage
@@ -86,13 +90,7 @@ builder.entity {
 		})
 	})
 	
-	component(utils.components.genericComponent(id:"collidableHittedHandler", messageId:"collidableHitted"){ message ->
-		if (entity != message.target)
-			return 
-		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
-			newMessage.bullet = entity
-		})
-	})
+	
 	
 	component(utils.components.genericComponent(id:"bulletDeadHandler", messageId:"bulletDead"){ message ->
 		if (entity != message.bullet)

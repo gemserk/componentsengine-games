@@ -10,16 +10,21 @@ builder.entity {
 	tags("obstacle", "collidable")
 	
 	property("position", parameters.position)
-	property("bounds", parameters.bounds)
-	
 	property("color", parameters.color ?: utils.color(1,1,1,1))
 	property("layer", parameters.layer ?: 20)
 	
+	// update collision bounds, should do nothing if the points are the same as before (inside shape class)
+	
+	// collision component
+	
+	property("bounds", parameters.bounds)
+	
 	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
-		// update collision bounds
 		entity.bounds.centerX = entity.position.x
 		entity.bounds.centerY = entity.position.y 
 	})
+	
+	//
 	
 	component(utils.components.genericComponent(id:"obstacleRenderer", messageId:"render"){ message ->
 		

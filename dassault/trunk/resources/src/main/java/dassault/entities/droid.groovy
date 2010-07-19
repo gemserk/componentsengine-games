@@ -28,7 +28,6 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	property("size", parameters.size ?: 1.0f)
 	property("speed", parameters.speed ?: 0.1f)
 	
-	property("bounds", utils.rectangle(-15, -15, 30, 30))
 	
 	component(new SuperMovementComponent("movementComponent")) {
 		propertyRef("position", "newPosition")
@@ -51,7 +50,11 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		entity.moveDirection = utils.vector(0,0)
 	})
 	
-	component(utils.components.genericComponent(id:"updatePositionHandler", messageId:"update"){ message ->
+	property("collisionDetected", {!entity.collisions.isEmpty()})
+	property("bounds", utils.rectangle(-15, -15, 30, 30))
+	property("collisions", [])
+	
+	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
 		// check collisions
 		
 		// update collision bounds
@@ -61,22 +64,22 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), // 
 				{ collidable ->	new ShapeUtils(collidable.bounds).collides(entity.bounds)} as Predicate))
 		
-		if (!obstacles.empty) {
+		entity.collisions = new ArrayList(obstacles)
+		
+		if (!entity.collisions.empty) {
 			entity."movementComponent.velocity".set(0,0)
 			entity.newPosition = entity.position.copy()
-			
 			entity.bounds.centerX = entity.position.x
 			entity.bounds.centerY = entity.position.y 
-			
-			return
+		} else {
+			entity.position = entity.newPosition.copy()
 		}
 		
-		entity.position = entity.newPosition
 	})
 	
 	property("hitpoints", parameters.hitpoints ?: utils.container(100f,100f))
 	
-	component(utils.components.genericComponent(id:"droidHittedHandler", messageId:"collidableHitted"){ message ->
+	component(utils.components.genericComponent(id:"droidHittedHandler", messageId:"collisionDetected"){ message ->
 		
 		if (entity != message.target)
 			return
@@ -209,14 +212,14 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	//// temporal
 	
-	child(id:"${entity.id}-light1".toString(), template:"dassault.entities.pointlight") { 
-		position = {entity.parent.position}
-		layer = -4
-		size = 5f
-		time = 1500
-		startColor = utils.color(1f,1f,1f,0.2f)
-		endColor = utils.color(1f,1f,1f,0.8f)
-	}
+	//	child(id:"${entity.id}-light1".toString(), template:"dassault.entities.pointlight") { 
+	//		position = {entity.parent.position}
+	//		layer = -4
+	//		size = 5f
+	//		time = 1500
+	//		startColor = utils.color(1f,1f,1f,0.2f)
+	//		endColor = utils.color(1f,1f,1f,0.8f)
+	//	}
 	
 	//// 
 	

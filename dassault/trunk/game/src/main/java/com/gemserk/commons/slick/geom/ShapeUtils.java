@@ -1,6 +1,7 @@
 package com.gemserk.commons.slick.geom;
 
 import org.newdawn.slick.geom.Shape;
+import org.newdawn.slick.geom.Transform;
 
 /**
  * Slick shapes utilities
@@ -43,6 +44,15 @@ public class ShapeUtils {
 				return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Return a clone of the shape
+	 * @param shape
+	 * @return
+	 */
+	public Shape clone(Shape shape) {
+		return shape.transform(new Transform());
 	}
 
 }

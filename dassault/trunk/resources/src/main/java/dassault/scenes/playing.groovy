@@ -253,7 +253,17 @@ builder.entity("playing") {
 	// def obstacleForm3 = new Polygon([-13.18f, -19.1f, 16.82f, -18.87f, 45f, -26f, 101f, -66f, 169f, -75f, 175f, -12f, 77f, -17f, 47f, -3f, 16.58f, 11.13f, 38f, 18f, 135f, 65f, 52f, 41f, 33f, 57f, 29f, 32f, 7f, 41f, 1.5f, 21.01f, -13.42f, 10.89f, -8.29f, -5.07f] as float[])
 	def obstacleForm3 = new Polygon([58.05f, 46.16f, 30.43f, 34.46f, 0.74f, 29.88f, -19.3f, 12.92f, -45.41f, 36.74f, -36.27f, 64.34f, -23.31f, 82.7f, -5.43f, 63.05f, 15.03f, 60.7f, 23.15f, 80.29f, 5.15f, 79.33f, -2.35f, 100.04f, -28.48f, 110.86f, -44.37f, 89.13f, -50.19f, 63.99f, -85.88f, 66.52f, -108.5f, 63.65f, -117.48f, 38.28f, -117.38f, 14.51f, -123.29f, -18.25f, -110.82f, -50.97f, -108.96f, -81.59f, -73.41f, -73.35f, -54.89f, -84.08f, -31.15f, -96.98f, 1.19f, -83.59f, 19.89f, -79.09f, 46.05f, -76.91f, 71.44f, -72.89f, 96.07f, -67.01f, 120.48f, -57.99f, 146.91f, -32.97f, 152.51f, -4.67f, 160.25f, 15.85f, 135.51f, 33.75f, 112.19f, 27.34f, 97.92f, 9.52f, 120.68f, 1.63f, 113.48f, -17.59f, 93.45f, -34.55f, 69.74f, -40.04f, 42.89f, -45.75f, 18.1f, -53.85f, -2.77f, -63.58f, -27.49f, -77.06f, -49.23f, -61.17f, -69.37f, -54.36f, -89.82f, -52.01f, -92.38f, -24.93f, -102.56f, 2.25f, -100.43f, 25.86f, -94.61f, 51f, -65.55f, 43.56f, -63.59f, 20.55f, -59.06f, -16.54f, -9.89f, -12.41f, 7.08f, 11.94f, 24.58f, -6.79f, 42.13f, 6.83f, 59.84f, 3.47f, 69.75f, 18.53f, 58.91f, 31.31f] as float[])
 	
+	def obstacleForm4 = new Polygon([-7.95f, -29.29f, 5.24f, -4.43f, 29.24f, 6.57f, 14.24f, 28.57f, -40.76f, -1.43f] as float[]) 
+	
+	def obstacleForm5 = new Polygon([-51.14f, -14.78f, 19.81f, -26.48f, 55.81f, -66.48f, 94.81f, -9.48f, 44.81f, 37.52f, -13.95f, 21.09f, -66.19f, 45.52f, -83.95f, 13.09f] as float[])
+	def obstacleForm6 = new Polygon([37.83f, -43.08f, 76.54f, 7.08f, 18.54f, 95.54f, -35.17f, 70.91f, -30.97f, 37.87f, -51.3f, 34.47f, -68.73f, -18.85f, 9.25f, -98.26f, 44.02f, -85.68f] as float[])
+	def obstacleForm7 = new Polygon([-94.26f, 0.23f, -61.09f, -32.84f, -24.24f, -40.54f, 9.17f, -10.84f, 28.63f, -17.65f, 47.7f, -54.99f, 71.58f, -51f, 66.09f, 3.37f, 78.97f, 35.1f, 19.36f, 67.74f, -17.66f, 29.93f, -49.41f, 22.72f, -74.85f, 48.76f] as float[])
+	
+	//def obstacleForm5 = new Polygon([] as float[])
+	
 	// def obstacleForm =
+
+	def obstacleForms = [obstacleForm, obstacleForm2, obstacleForm3, obstacleForm4, obstacleForm5, obstacleForm6, obstacleForm7]
 	
 	obstacleForm.centerX = 0f
 	obstacleForm.centerY = 0f
@@ -261,12 +271,23 @@ builder.entity("playing") {
 	obstacleForm2.centerX = 0f
 	obstacleForm2.centerY = 0f
 	
-	Transform rotationMatrix = Transform.createRotateTransform(30);
-	
 	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
 		position = utils.vector(-700, 0)
-		// bounds = utils.rectangle(-50, -10, 100, 20)
 		bounds = obstacleForm.transform(Transform.createScaleTransform(40f, 40f))
+		color = utils.color(0.0f,0f,0f,1f)
+		layer = 19
+	}
+	
+	child(id:"obstacle2", template:"dassault.entities.obstacle") { 
+		position = utils.vector(135, 720)
+		bounds = obstacleForm4.transform(Transform.createRotateTransform(1.5f)).transform(Transform.createScaleTransform(3f, 3f))
+		color = utils.color(0.0f,0f,0f,1f)
+		layer = 19
+	}
+
+	child(id:"obstacle3", template:"dassault.entities.obstacle") { 
+		position = utils.vector(430, -270)
+		bounds = obstacleForm5.transform(Transform.createScaleTransform(3f, 3f))
 		color = utils.color(0.0f,0f,0f,1f)
 		layer = 19
 	}
