@@ -16,9 +16,9 @@ import com.google.common.base.Predicates
 
 builder.entity {
 	
-	tags("blasterbullet")
+	tags("blasterbullet", "collidable")
 	
-	property("position", utils.vector(-1000,-1000))
+	property("position", parameters.position)
 	property("newPosition", parameters.position)
 	property("moveDirection", parameters.moveDirection)
 	property("speed", parameters.speed)
@@ -50,15 +50,13 @@ builder.entity {
 		
 		def obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("collidable"), // 
 				{ collidable -> new ShapeUtils(collidable.bounds).collides(entity.bounds) } as Predicate, // 
-				{ collidable -> entity.owner != collidable } as Predicate))
+				{ collidable -> entity.owner != collidable } as Predicate, // 
+				{ collidable -> entity != collidable && !collidable.tags.contains("blasterbullet") } as Predicate))
 		
 		if (obstacles.empty) {
 			entity.position = entity.newPosition
 			return
 		}
-		
-		
-		// collides, should do something about it
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletCollision"){ newMessage ->
 			newMessage.bullet = entity
@@ -66,9 +64,6 @@ builder.entity {
 		})
 		
 		entity.collisionDetected = true
-		
-		return
-		
 	})
 	
 	component(utils.components.genericComponent(id:"bulletCollisionHandler", messageId:"bulletCollision"){ message ->
@@ -86,16 +81,34 @@ builder.entity {
 			newMessage.damage = entity.damage
 		})
 		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
+			newMessage.bullet = entity
+		})
+	})
+	
+	component(utils.components.genericComponent(id:"collidableHittedHandler", messageId:"collidableHitted"){ message ->
+		if (entity != message.target)
+			return 
+		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
+			newMessage.bullet = entity
+		})
+	})
+	
+	component(utils.components.genericComponent(id:"bulletDeadHandler", messageId:"bulletDead"){ message ->
+		if (entity != message.bullet)
+			return
+		
 		def startColor = utils.color(1f, 1f, 1f, 1f)
 		def endColor = utils.color(1f, 1f, 1f, 0.2f)
 		
+		def position = entity.position
+		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
-			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, startColor, endColor) 
+			newMessage.explosion =EffectFactory.explosionEffect(30, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, startColor, endColor) 
 			newMessage.layer = 1
 		})
 		
 		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
-		
 	})
 	
 	component(new ImageRenderableComponent("renderBullet")) {

@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-	        <groupId>com.gemserk.games.dassault</groupId>
-        	<artifactId>dassault</artifactId>
+		<groupId>com.gemserk.games.dassault</groupId>
+		<artifactId>dassault</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>main</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Dassault - Game Jolt Demake Contest - Droid Assault</name>
 	<description>Dassault - Game Jolt Demake Contest - Droid Assault</description>
-	
+
 	<url>http://www.gemserk.com</url>
 
 	<properties>
-	
+
 		<webstartName>${project.name}</webstartName>
 		<webstartCodebase>http://www.gemserk.com/prototipos/${project.parent.artifactId}-webstart-latest/</webstartCodebase>
-	
+
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
@@ -54,7 +55,14 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>game</artifactId>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.3</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>

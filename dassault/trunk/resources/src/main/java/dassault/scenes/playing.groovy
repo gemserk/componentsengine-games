@@ -271,21 +271,12 @@ builder.entity("playing") {
 		layer = 19
 	}
 	
-	//	
-	//	child(id:"obstacle2", template:"dassault.entities.obstacle") { 
-	//		position = utils.vector(400,400)
-	//		// bounds = utils.rectangle(-50, -10, 100, 20)
-	//		bounds = obstacleForm2.transform(rotationMatrix).transform(Transform.createScaleTransform(2f, 2f))
-	//		color = utils.color(0.1f,0f,0f,1f)
-	//		layer = 19
-	//	}
-	
-	child(id:"obstacleForm3", template:"dassault.entities.obstacle") { 
-		position = utils.vector(200,-100)
-		bounds = obstacleForm3.transform(Transform.createScaleTransform(5f, 5f)).transform(Transform.createRotateTransform(1f))
-		color = utils.color(0.0f,0.0f,0f,1f)
-		layer = 19
-	}
+//	child(id:"obstacleForm3", template:"dassault.entities.obstacle") { 
+//		position = utils.vector(200,-100)
+//		bounds = obstacleForm3.transform(Transform.createScaleTransform(5f, 5f)).transform(Transform.createRotateTransform(1f))
+//		color = utils.color(0.0f,0.0f,0f,1f)
+//		layer = 19
+//	}
 	
 	// scene limits as obstacles
 	
@@ -400,6 +391,10 @@ builder.entity("playing") {
 		camera = {entity.root.getEntityById("camera")}
 	}
 	
+	child(id:"boundingboxesdebug", template:"dassault.entities.boundingboxesdebug") {
+		
+	}
+	
 	component(new ExplosionComponent("explosions")) { }
 	
 	property("cameraId", "camera")
@@ -462,10 +457,10 @@ builder.entity("playing") {
 		graphics.copyArea(utils.custom.gameStateManager.gameProperties.screenshot, 0, 0); 
 	})
 	
-//	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
-//		if(!utils.custom.gameContainer.hasFocus())
-//			messageQueue.enqueue(utils.genericMessage("paused"){})
-//	})
+	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
+		if(!utils.custom.gameContainer.hasFocus())
+			messageQueue.enqueue(utils.genericMessage("paused"){})
+	})
 	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
 		if(!entity.gameOver)
