@@ -27,7 +27,8 @@ builder.entity {
 		entity.bounds.centerY = entity.position.y
 		
 		entity.collidable.entity = entity
-		entity.collidable.aabb.setCenter(entity.position.x, entity.position.y)
+		entity.collidable.setCenter(entity.position.x, entity.position.y)
+		entity.collidable.update()
 	})
 	
 	//

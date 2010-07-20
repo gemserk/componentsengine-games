@@ -65,7 +65,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		entity.bounds.centerY = entity.newPosition.y 
 		
 		entity.collidable.entity = entity
-		entity.collidable.aabb.setCenter(entity.newPosition.x, entity.newPosition.y)
+		entity.collidable.setCenter(entity.newPosition.x, entity.newPosition.y)
+		entity.collidable.update()
 		
 		def collisionTree = entity.collidable.quadTree
 		
@@ -90,7 +91,9 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			entity.bounds.centerX = entity.position.x
 			entity.bounds.centerY = entity.position.y 
 			
-			entity.collidable.aabb.setCenter(entity.position.x, entity.position.y)
+			entity.collidable.setCenter(entity.position.x, entity.position.y)
+			entity.collidable.update()
+			
 		} else {
 			entity.position = entity.newPosition.copy()
 		}
@@ -122,7 +125,9 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"droidDeadHandler", messageId:"droidDead"){ message ->
 		if (entity != message.droid)
 			return
-		
+
+		entity.collidable.remove()
+			
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 5.0f, 50f, 250f, 1f, Color.white, Color.white) 
 			newMessage.layer = 1

@@ -5,7 +5,7 @@ import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Transform;
 
 import com.gemserk.commons.collisions.AABB;
-import com.gemserk.commons.collisions.QuadTreeNode;
+import com.gemserk.commons.collisions.QuadTreeImpl 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
@@ -303,12 +303,11 @@ builder.entity("playing") {
 	
 	// scene limits as obstacles
 	
-	property("collisionQuadtree", new QuadTreeNode(new AABB(-1100, -1100, 1100, 1100), 4))
+	property("collisionQuadtree", new QuadTreeImpl(new AABB(-1100, -1100, 1100, 1100), 4))
 	
 	component(utils.components.genericComponent(id:"updateQuadtree", messageId:"update"){ message ->
 		
 		def quadtree = entity.collisionQuadtree
-		quadtree.clear()
 		
 		def collidables = entity.root.getEntities(EntityPredicates.withAllTags("collidable"))
 		
@@ -318,14 +317,9 @@ builder.entity("playing") {
 			if (collidable == null)
 				return
 			
-			//			println "entity with collidable $collidableEntity.id $collidable"
-			
-			// for now, without any check if the collidable is dirty or others...
-			
-			//			quadtree.remove(collidable)
-			quadtree.insert(collidable)
-			collidable.quadTree = quadtree
-			
+			if (collidable.quadTree == null)
+				quadtree.insert(collidable)
+				
 		}
 		
 	})

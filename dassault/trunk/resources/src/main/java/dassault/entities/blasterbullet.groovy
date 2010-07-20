@@ -12,7 +12,7 @@ import com.gemserk.componentsengine.effects.EffectFactory
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
-import com.google.common.collect.Collections2;
+import com.google.common.collect.Collections2 
 
 
 builder.entity {
@@ -48,28 +48,28 @@ builder.entity {
 		entity.bounds.centerY = entity.position.y 
 		
 		entity.collidable.entity = entity
-		entity.collidable.aabb.setCenter(entity.position.x, entity.position.y)
+		entity.collidable.setCenter(entity.position.x, entity.position.y)
+		entity.collidable.update()
 	})
 	
 	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
-
+		
 		def collisionTree = entity.collidable.quadTree
 		
 		if (collisionTree == null)
 			return
-			
+		
 		def collidables = collisionTree.getCollidables(entity.collidable)
 		
 		collidables = Collections2.filter(collidables, Predicates.and({collidable -> entity != collidable.entity } as Predicate, //
-				{ collidable -> entity.owner != collidable.entity } as Predicate,//
-				{ collidable -> collidable.entity != null } as Predicate,//
-				{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
-				{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate, //
-				{ collidable -> !collidable.entity.tags.contains("bullet") } as Predicate))
+		{ collidable -> entity.owner != collidable.entity } as Predicate,//
+		{ collidable -> collidable.entity != null } as Predicate,//
+		{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
+		{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate, //
+		{ collidable -> !collidable.entity.tags.contains("bullet") } as Predicate))
 		
 		entity.collisions = new ArrayList(collidables)
 		
-		// trigger collision detected! ? source = entity, targets = collisions, 
 	})
 	
 	component(utils.components.genericComponent(id:"collisionDetectedHandler", messageId:"collisionDetected"){ message ->
@@ -108,6 +108,8 @@ builder.entity {
 		def endColor = utils.color(1f, 1f, 1f, 0.2f)
 		
 		def position = entity.position
+		
+		entity.collidable.remove()
 		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(30, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, startColor, endColor) 
