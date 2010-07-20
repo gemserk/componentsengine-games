@@ -17,7 +17,7 @@ builder.entity("ball-${Math.random()}") {
 	property("color", parameters.definition.color)
 	property("animation", utils.resources.animation(parameters.definition.animation))
 	
-	property("direction", utils.vector(1,0))
+//	property("direction", utils.vector(1,0))
 	property("radius", parameters.radius)
 	property("finalRadius", parameters.finalRadius ?: parameters.radius)
 	property("state",parameters.state)
@@ -48,14 +48,16 @@ builder.entity("ball-${Math.random()}") {
 	property("layer", 0)
 	property("collisionMask", 0)
 	
-	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", {entity.animation.currentFrame})
-		propertyRef("color", "color")
-		propertyRef("position", "position")
-		property("direction", {entity.direction.copy().add(-90)})
-		propertyRef("size", "size")
-		propertyRef("layer", "layer")
-	}
+	property("currentFrame",{entity.animation.currentFrame})
+	
+//	component(new ImageRenderableComponent("imagerenderer")) {
+//		propertyRef("image", "currentFrame")
+//		propertyRef("color", "color")
+//		propertyRef("position", "position")
+//		property("direction", {entity.direction.copy().add(-90)})
+//		propertyRef("size", "size")
+//		propertyRef("layer", "layer")
+//	}
 	
 	component(utils.components.genericComponent(id:"updatePositionHandler", messageId:["update"]){ message ->
 		def newPathTraversal = entity.newPathTraversal

@@ -86,6 +86,8 @@ public class Game extends StateBasedGame {
 		GemserkGameState menuState = new GameGameState(0, "zombierockers.scenes.scene");
 		addState(menuState);
 		gameProperties.put("screenshot", new Image(800,600));
+		
+		
 	}
 
 	class GameGameState extends GemserkGameState {

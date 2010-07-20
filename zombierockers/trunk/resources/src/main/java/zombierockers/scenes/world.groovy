@@ -1,4 +1,6 @@
 package zombierockers.scenes
+import org.newdawn.slick.Image 
+
 
 import org.newdawn.slick.Graphics;
 
@@ -18,6 +20,7 @@ import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.entities.Entity 
+import com.gemserk.games.zombierockers.ImagesWithAlphaMaskRenderer;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
 
@@ -281,6 +284,12 @@ builder.entity {
 			newMessage.win = win
 		})
 	})
+	
+	
+	
+	component(new ImagesWithAlphaMaskRenderer("ballrenderer")){
+		property("transparencyMap",new Image("levels/level01/transparencyMap.png"));
+	}
 	
 	//	component(utils.components.genericComponent(id:"mergeSegmentsBugProvider", messageId:["mergeSegments"]){ message ->
 	//		def template = new InstantiationTemplateImpl(
