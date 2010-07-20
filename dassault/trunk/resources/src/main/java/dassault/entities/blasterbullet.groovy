@@ -4,7 +4,7 @@ package dassault.entities
 import static org.lwjgl.opengl.GL11.*;
 
 
-import com.gemserk.commons.collisions.CollidableImpl 
+import com.gemserk.commons.collisions.EntityCollidableImpl 
 import com.gemserk.commons.slick.geom.ShapeUtils;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
@@ -41,7 +41,7 @@ builder.entity {
 	property("collisionDetected", {!entity.collisions.isEmpty()})
 	property("bounds", utils.rectangle(-2, -2, 4, 4))
 	property("collisions", [])
-	property("collidable", new CollidableImpl(entity, new ShapeUtils(entity.bounds).getAABB() ))
+	property("collidable", new EntityCollidableImpl(entity, new ShapeUtils(entity.bounds).getAABB() ))
 	
 	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
 		entity.bounds.centerX = entity.position.x

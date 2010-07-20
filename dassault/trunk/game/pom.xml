@@ -44,6 +44,11 @@
 			<artifactId>animation</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.gemserk.commons.collisions</groupId>
+			<artifactId>collisions</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 </project>

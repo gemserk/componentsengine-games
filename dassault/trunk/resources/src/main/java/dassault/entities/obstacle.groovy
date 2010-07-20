@@ -2,7 +2,7 @@ package dassault.entities
 
 import com.gemserk.commons.slick.geom.ShapeUtils;
 
-import com.gemserk.commons.collisions.CollidableImpl 
+import com.gemserk.commons.collisions.EntityCollidableImpl 
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics 
@@ -20,7 +20,7 @@ builder.entity {
 	// collision component
 	
 	property("bounds", parameters.bounds)
-	property("collidable", new CollidableImpl(null, new ShapeUtils(entity.bounds).getAABB() ))
+	property("collidable", new EntityCollidableImpl(null, new ShapeUtils(entity.bounds).getAABB() ))
 	
 	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
 		entity.bounds.centerX = entity.position.x

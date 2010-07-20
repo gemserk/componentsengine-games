@@ -1,7 +1,7 @@
 package dassault.entities
 
 import com.gemserk.commons.animation.interpolators.FloatInterpolator;
-import com.gemserk.commons.collisions.CollidableImpl;
+import com.gemserk.commons.collisions.EntityCollidableImpl 
 import com.gemserk.commons.slick.geom.ShapeUtils 
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.CursorOverDetector;
@@ -55,7 +55,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	property("bounds", utils.rectangle(-15, -15, 30, 30))
 	property("collisions", [])
 	
-	property("collidable", new CollidableImpl(entity, new ShapeUtils(entity.bounds).getAABB()))
+	property("collidable", new EntityCollidableImpl(entity, new ShapeUtils(entity.bounds).getAABB()))
 	
 	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
 		// check collisions
