@@ -6,13 +6,14 @@ import static org.lwjgl.opengl.GL11.*;
 
 import com.gemserk.commons.collisions.EntityCollidableImpl 
 import com.gemserk.commons.slick.geom.ShapeUtils;
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
+import com.gemserk.componentsengine.render.SlickImageRenderObject 
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
 import com.google.common.collect.Collections2 
+import org.newdawn.slick.Color 
 
 
 builder.entity {
@@ -23,6 +24,8 @@ builder.entity {
 	property("moveDirection", parameters.moveDirection)
 	property("speed", parameters.speed)
 	property("damage", parameters.damage)
+	
+	property("player", parameters.player)
 	property("owner", parameters.owner)
 	
 	component(new SuperMovementComponent("movementComponent")) {
@@ -119,13 +122,32 @@ builder.entity {
 		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
 	
-	component(new ImageRenderableComponent("renderBullet")) {
-		propertyRef("position", "position")
-		property("image", utils.resources.image("blasterbullet"))
-		propertyRef("direction", "moveDirection")
-		property("layer", -5)
-		property("size", utils.vector(0.6f, 0.6f))
-		property("color", utils.color(1f,1,1,1f))
-	}
+	property("headImage", utils.resources.image("blasterbullet_head"))
+	property("bodyImage", utils.resources.image("blasterbullet_body"))
+	property("auraImage", utils.resources.image("blasterbullet_aura"))
+	
+	component(utils.components.genericComponent(id:"bulletRenderer", messageId:"render"){ message ->
+		
+		def renderer = message.renderer
+
+		def position = entity.position
+		
+		def player = entity.player
+		
+		def angle = (float) entity.moveDirection.theta
+		
+		def size = utils.vector(0.6f, 0.6f)
+		
+		def layer = -5
+		def color = player.color
+		
+		renderer.enqueue(new SlickImageRenderObject(layer-2, entity.auraImage, position, //
+				size, angle, Color.black))
+		renderer.enqueue(new SlickImageRenderObject(layer-1, entity.bodyImage, position, //
+				size, angle, color))
+		renderer.enqueue(new SlickImageRenderObject(layer, entity.headImage, position, //
+				size, angle, Color.white))
+		
+	})
 	
 }

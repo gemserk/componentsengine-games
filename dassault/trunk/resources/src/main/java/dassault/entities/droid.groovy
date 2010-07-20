@@ -29,6 +29,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	property("size", parameters.size ?: 1.0f)
 	property("speed", parameters.speed ?: 0.1f)
 	
+	property("player", {entity.root.getEntityById(entity.ownerId)})
 	
 	component(new SuperMovementComponent("movementComponent")) {
 		propertyRef("position", "newPosition")

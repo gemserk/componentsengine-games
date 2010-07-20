@@ -220,17 +220,19 @@ builder.entity("playing") {
 	child(id:"playerAiHelperController", template:"dassault.entities.aicontroller") {  ownerId = "player"  }
 	
 	child(entity("droid1") {
+		
 		parent("dassault.entities.basicdroid",[ownerId:"player",position:utils.vector(400,300), 
 		speed:0.2f, 
 		energy:utils.container(10000f,10000f),
 		regenerationSpeed:0.02f])
 		
 		child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
-			ownerId = "droid1"
+			// ownerId = "droid1"
 			reloadTime = 200
 			damage = 30f
 			energy = 10f
 			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
+			droid = {entity.parent}
 		}
 	} )
 	
@@ -309,17 +311,12 @@ builder.entity("playing") {
 		
 		def quadtree = entity.collisionQuadtree
 		
-		def collidables = entity.root.getEntities(EntityPredicates.withAllTags("collidable"))
+		def collidables = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("collidable"),//
+				{collidableEntity -> collidableEntity.collidable != null} as Predicate, //
+				{collidableEntity -> collidableEntity.collidable.quadTree == null} as Predicate ))
 		
 		collidables.each { collidableEntity -> 
-			
-			def collidable = collidableEntity.collidable
-			if (collidable == null)
-				return
-			
-			if (collidable.quadTree == null)
-				quadtree.insert(collidable)
-				
+			quadtree.insert(collidableEntity.collidable)
 		}
 		
 	})
@@ -362,7 +359,7 @@ builder.entity("playing") {
 			utils.custom.templateProvider.getTemplate("dassault.entities.blasterweapon"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				ownerId:data.ownerId,
+				droid:data.droid,
 				reloadTime:250,
 				damage:30f,
 				energy:20f,

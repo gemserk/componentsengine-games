@@ -54,7 +54,7 @@ builder.entity {
 		def weaponType = weaponTypes[random.nextInt(weaponTypes.size)]
 		
 		def weaponTemplate = entity.weaponFactory[weaponType]
-		def weapon = weaponTemplate.get([ownerId:droid.id])
+		def weapon = weaponTemplate.get([droid:droid])
 		
 		// def droid = entity.droidTemplate.instantiate(droidId, [position:entity.position.copy(), ownerId:entity.ownerId])
 		
