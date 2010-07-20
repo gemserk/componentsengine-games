@@ -1,4 +1,6 @@
 package zombierockers.scenes
+import java.util.ArrayList;
+
 import org.newdawn.slick.Image 
 
 
@@ -20,7 +22,8 @@ import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.entities.Entity 
-import com.gemserk.games.zombierockers.ImagesWithAlphaMaskRenderer;
+import com.gemserk.games.zombierockers.renderer.AlphaMaskedSprite 
+import com.gemserk.games.zombierockers.renderer.AlphaMaskedSpritesRenderObject 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates 
 
@@ -54,30 +57,30 @@ builder.entity {
 	
 	property("ballShadowImage", utils.resources.image("ballshadow"))
 	
-	component(utils.components.genericComponent(id:"drawBallShadows", messageId:["render"]){ message ->
-		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
-		
-		def ballShadowImage = entity.ballShadowImage
-		
-		def renderer = message.renderer
-		
-		balls.each { ball ->
-			
-			def position = ball.position
-			def layer = ball.layer-1
-			def size = ball.size
-			
-			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
-				g.pushTransform()
-				g.translate((float) position.x + 3, (float)position.y + 3)
-				g.scale(size.x, size.y)
-				g.drawImage(ballShadowImage, (float)-(ballShadowImage.getWidth() / 2), (float)-(ballShadowImage.getHeight() / 2))
-				g.popTransform()
-			}))
-			
-		}
-		
-	})
+//	component(utils.components.genericComponent(id:"drawBallShadows", messageId:["render"]){ message ->
+//		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
+//		
+//		def ballShadowImage = entity.ballShadowImage
+//		
+//		def renderer = message.renderer
+//		
+//		balls.each { ball ->
+//			
+//			def position = ball.position
+//			def layer = ball.layer-1
+//			def size = ball.size
+//			
+//			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
+//				g.pushTransform()
+//				g.translate((float) position.x + 3, (float)position.y + 3)
+//				g.scale(size.x, size.y)
+//				g.drawImage(ballShadowImage, (float)-(ballShadowImage.getWidth() / 2), (float)-(ballShadowImage.getHeight() / 2))
+//				g.popTransform()
+//			}))
+//			
+//		}
+//		
+//	})
 	
 	component(utils.components.genericComponent(id:"placeablesRender", messageId:["render"]){ message ->
 		
@@ -287,9 +290,47 @@ builder.entity {
 	
 	
 	
-	component(new ImagesWithAlphaMaskRenderer("ballrenderer")){
-		property("transparencyMap",new Image("levels/level01/transparencyMap.png"));
-	}
+//	component(new ImagesWithAlphaMaskRenderer("ballrenderer")){
+//		property("transparencyMap",new Image("levels/level01/transparencyMap.png"));
+//	}
+	property("alphaMask",new Image("levels/level01/transparencyMap.png"));
+	component(utils.components.genericComponent(id:"ballRenderer", messageId:["render"]){ message ->
+		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
+	
+		if(balls.isEmpty())
+			return
+			
+		def renderer = message.renderer
+		def alphaMask = entity.alphaMask
+		def ballShadowImage = entity.ballShadowImage
+		
+		int layer = balls[0].layer
+		
+		AlphaMaskedSpritesRenderObject ballsRenderer = new AlphaMaskedSpritesRenderObject(layer, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
+		AlphaMaskedSpritesRenderObject shadowRenderer = new AlphaMaskedSpritesRenderObject(layer -1, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
+		
+		def ballsSprites = ballsRenderer.sprites
+		def shadowSprites = shadowRenderer.sprites
+		def shadowColor = utils.color(1,1,1,1)
+		
+		def shadowDisplacement = utils.vector(3,3)
+		
+		balls.each { ball ->
+			
+			def image = ball.currentFrame
+			def position = ball.position
+			def direction = ball.direction
+			def color = ball.color
+			
+			ballsSprites << new AlphaMaskedSprite(image,position,direction,color) 	
+			shadowSprites << new AlphaMaskedSprite(ballShadowImage, position.copy().add(shadowDisplacement),direction,shadowColor)
+		}
+		
+		renderer.enqueue(ballsRenderer)
+		renderer.enqueue(shadowRenderer)
+	})
+	
+	
 	
 	//	component(utils.components.genericComponent(id:"mergeSegmentsBugProvider", messageId:["mergeSegments"]){ message ->
 	//		def template = new InstantiationTemplateImpl(
