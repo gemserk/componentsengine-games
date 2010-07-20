@@ -75,8 +75,8 @@ public class AlphaMaskedSpritesRenderObject extends SlickCallableRenderObject {
 						double transMapX = alphaMask.getTextureOffsetX() + pixelsCoords[i] / alphaMask.getWidth();
 						double transMapY = alphaMask.getTextureOffsetY() + pixelsCoords[i + 1] / alphaMask.getHeight();
 						GL13.glMultiTexCoord2d(GL13.GL_TEXTURE1, transMapX * alphaMask.getTextureWidth(), transMapY * alphaMask.getTextureHeight());
-						GL11.glVertex2f(pixelsCoords[i], pixelsCoords[i + 1]);
 					}
+					GL11.glVertex2f(pixelsCoords[i], pixelsCoords[i + 1]);
 				}
 			}
 			GL11.glEnd();

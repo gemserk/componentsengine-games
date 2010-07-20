@@ -3,6 +3,7 @@ package zombierockers.scenes
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
+import org.newdawn.slick.Image 
 
 import com.gemserk.games.zombierockers.SubPathDefinition;
 
@@ -94,7 +95,7 @@ class ScenesDefinitions {
 				placeables:[],
 				subPathDefinitions:segmentsMetadataConvertor([], defaultElement)
 				]	
-		
+	
 		def level06 = [background:"level06", path:"levels/level06/path.svg",ballsQuantity:100, 
 				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
 				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
@@ -109,10 +110,19 @@ class ScenesDefinitions {
 				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
 				placeables:[[image:"level07-tunnel",position:utils.vector(305f,206f),layer:-2000]],
 				//collisionMap:collisionMap("levels/level07/collisionMap.png"),
-				subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(1374.4f,1639.9f, [layer:-1500, collisionMask:7]) ], defaultElement)
+				subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(1374.4f,1639.9f, [layer:-1500, collisionMask:7]) ], defaultElement),
+				//alphaMasks:[(-1500):new Image("levels/level07/alphaMask1.png")]
 				]	
-				
-		def levels = [level01, level02, level03, level04, level05,level07,level06]
+		
+		def level08 = [background:"level08", path:"levels/level08/path.svg",ballsQuantity:100,
+			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
+			ballDefinitions:ballDefinitions(["red","blue","green","white"]),
+			placeables:[],
+			//collisionMap:collisionMap("levels/level07/collisionMap.png"),
+			subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(412.8999f,706.1004f, [layer:15, collisionMask:7]) ], defaultElement),
+			alphaMasks:[(15):new Image("levels/level08/alphaMask1.png")]
+			]
+		def levels = [level01, level02, level03, level04, level05,level07,level06,level08]
 		return levels
 	}
 	

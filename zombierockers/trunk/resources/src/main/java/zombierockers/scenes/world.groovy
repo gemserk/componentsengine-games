@@ -293,41 +293,51 @@ builder.entity {
 //	component(new ImagesWithAlphaMaskRenderer("ballrenderer")){
 //		property("transparencyMap",new Image("levels/level01/transparencyMap.png"));
 //	}
-	property("alphaMask",new Image("levels/level01/transparencyMap.png"));
+	//property("alphaMask",new Image("levels/level01/transparencyMap.png"));
 	component(utils.components.genericComponent(id:"ballRenderer", messageId:["render"]){ message ->
-		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
+		def allBalls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
 	
-		if(balls.isEmpty())
+		if(allBalls.isEmpty())
 			return
 			
 		def renderer = message.renderer
-		def alphaMask = entity.alphaMask
 		def ballShadowImage = entity.ballShadowImage
 		
-		int layer = balls[0].layer
+		def level = entity.level
 		
-		AlphaMaskedSpritesRenderObject ballsRenderer = new AlphaMaskedSpritesRenderObject(layer, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
-		AlphaMaskedSpritesRenderObject shadowRenderer = new AlphaMaskedSpritesRenderObject(layer -1, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
+		ballsByLayer = allBalls.groupBy {it.layer}
 		
-		def ballsSprites = ballsRenderer.sprites
-		def shadowSprites = shadowRenderer.sprites
-		def shadowColor = utils.color(1,1,1,1)
-		
-		def shadowDisplacement = utils.vector(3,3)
-		
-		balls.each { ball ->
+		ballsByLayer.each { layer, balls ->
+			log.info("Rendering balls of layer $layer")
+			def alphaMask = level.alphaMasks?.get(layer)
 			
-			def image = ball.currentFrame
-			def position = ball.position
-			def direction = ball.direction
-			def color = ball.color
 			
-			ballsSprites << new AlphaMaskedSprite(image,position,direction,color) 	
-			shadowSprites << new AlphaMaskedSprite(ballShadowImage, position.copy().add(shadowDisplacement),direction,shadowColor)
+			AlphaMaskedSpritesRenderObject ballsRenderer = new AlphaMaskedSpritesRenderObject(layer, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
+			AlphaMaskedSpritesRenderObject shadowRenderer = new AlphaMaskedSpritesRenderObject(layer -1, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
+			
+			def ballsSprites = ballsRenderer.sprites
+			def shadowSprites = shadowRenderer.sprites
+			def shadowColor = utils.color(1,1,1,1)
+			
+			def shadowDisplacement = utils.vector(3,3)
+			
+			balls.each { ball ->
+				
+				def image = ball.currentFrame
+				def position = ball.position
+				def direction = ball.direction
+				def color = ball.color
+				
+				ballsSprites << new AlphaMaskedSprite(image,position,direction,color)
+				shadowSprites << new AlphaMaskedSprite(ballShadowImage, position.copy().add(shadowDisplacement),direction,shadowColor)
+			}
+			
+			renderer.enqueue(ballsRenderer)
+			renderer.enqueue(shadowRenderer)
+			
 		}
+			
 		
-		renderer.enqueue(ballsRenderer)
-		renderer.enqueue(shadowRenderer)
 	})
 	
 	
