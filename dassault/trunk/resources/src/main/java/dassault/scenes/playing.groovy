@@ -4,6 +4,8 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Transform;
 
+import com.gemserk.commons.collisions.AABB;
+import com.gemserk.commons.collisions.QuadTreeNode;
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
@@ -262,7 +264,7 @@ builder.entity("playing") {
 	//def obstacleForm5 = new Polygon([] as float[])
 	
 	// def obstacleForm =
-
+	
 	def obstacleForms = [obstacleForm, obstacleForm2, obstacleForm3, obstacleForm4, obstacleForm5, obstacleForm6, obstacleForm7]
 	
 	obstacleForm.centerX = 0f
@@ -284,7 +286,7 @@ builder.entity("playing") {
 		color = utils.color(0.0f,0f,0f,1f)
 		layer = 19
 	}
-
+	
 	child(id:"obstacle3", template:"dassault.entities.obstacle") { 
 		position = utils.vector(430, -270)
 		bounds = obstacleForm5.transform(Transform.createScaleTransform(3f, 3f))
@@ -292,14 +294,45 @@ builder.entity("playing") {
 		layer = 19
 	}
 	
-//	child(id:"obstacleForm3", template:"dassault.entities.obstacle") { 
-//		position = utils.vector(200,-100)
-//		bounds = obstacleForm3.transform(Transform.createScaleTransform(5f, 5f)).transform(Transform.createRotateTransform(1f))
-//		color = utils.color(0.0f,0.0f,0f,1f)
-//		layer = 19
-//	}
+	//	child(id:"obstacleForm3", template:"dassault.entities.obstacle") { 
+	//		position = utils.vector(200,-100)
+	//		bounds = obstacleForm3.transform(Transform.createScaleTransform(5f, 5f)).transform(Transform.createRotateTransform(1f))
+	//		color = utils.color(0.0f,0.0f,0f,1f)
+	//		layer = 19
+	//	}
 	
 	// scene limits as obstacles
+	
+	property("collisionQuadtree", new QuadTreeNode(new AABB(-1100, -1100, 1100, 1100), 4))
+	
+	component(utils.components.genericComponent(id:"updateQuadtree", messageId:"update"){ message ->
+		
+		def quadtree = entity.collisionQuadtree
+		quadtree.clear()
+		
+		def collidables = entity.root.getEntities(EntityPredicates.withAllTags("collidable"))
+		
+		collidables.each { collidableEntity -> 
+			
+			def collidable = collidableEntity.collidable
+			if (collidable == null)
+				return
+			
+			//			println "entity with collidable $collidableEntity.id $collidable"
+			
+			// for now, without any check if the collidable is dirty or others...
+			
+			//			quadtree.remove(collidable)
+			quadtree.insert(collidable)
+			collidable.quadTree = quadtree
+			
+		}
+		
+	})
+	
+	child(id:"quadtreedebug", template:"dassault.entities.quadtreedebug") {
+		quadtree = entity.collisionQuadtree
+	}
 	
 	def lowerBound = utils.vector(-1000, -1000)
 	def upperBound = utils.vector(1000, 1000)

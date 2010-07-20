@@ -4,14 +4,15 @@ package dassault.entities
 import static org.lwjgl.opengl.GL11.*;
 
 
+import com.gemserk.commons.collisions.CollidableImpl 
 import com.gemserk.commons.slick.geom.ShapeUtils;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
-import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
+import com.google.common.collect.Collections2;
 
 
 builder.entity {
@@ -40,24 +41,33 @@ builder.entity {
 	property("collisionDetected", {!entity.collisions.isEmpty()})
 	property("bounds", utils.rectangle(-2, -2, 4, 4))
 	property("collisions", [])
+	property("collidable", new CollidableImpl(entity, new ShapeUtils(entity.bounds).getAABB() ))
 	
 	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
 		entity.bounds.centerX = entity.position.x
 		entity.bounds.centerY = entity.position.y 
+		
+		entity.collidable.entity = entity
+		entity.collidable.aabb.setCenter(entity.position.x, entity.position.y)
 	})
 	
 	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
+
+		def collisionTree = entity.collidable.quadTree
 		
-		def obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("collidable"), // 
-		{ collidable -> new ShapeUtils(collidable.bounds).collides(entity.bounds) } as Predicate, // 
-		{ collidable -> entity.owner != collidable } as Predicate, // 
-		{ collidable -> entity != collidable && !collidable.tags.contains("bullet") } as Predicate))
+		if (collisionTree == null)
+			return
+			
+		def collidables = collisionTree.getCollidables(entity.collidable)
 		
-		entity.collisions = new ArrayList(obstacles)
-//		if (obstacles.empty) {
-//			entity.collisions = []
-//			return
-//		}
+		collidables = Collections2.filter(collidables, Predicates.and({collidable -> entity != collidable.entity } as Predicate, //
+				{ collidable -> entity.owner != collidable.entity } as Predicate,//
+				{ collidable -> collidable.entity != null } as Predicate,//
+				{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
+				{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate, //
+				{ collidable -> !collidable.entity.tags.contains("bullet") } as Predicate))
+		
+		entity.collisions = new ArrayList(collidables)
 		
 		// trigger collision detected! ? source = entity, targets = collisions, 
 	})
@@ -77,7 +87,7 @@ builder.entity {
 			return
 		
 		def collisions = entity.collisions
-		def target = collisions[0]
+		def target = collisions[0].entity
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("collisionDetected"){ newMessage ->
 			newMessage.bullet = entity
@@ -89,8 +99,6 @@ builder.entity {
 			newMessage.bullet = entity
 		})
 	})
-	
-	
 	
 	component(utils.components.genericComponent(id:"bulletDeadHandler", messageId:"bulletDead"){ message ->
 		if (entity != message.bullet)

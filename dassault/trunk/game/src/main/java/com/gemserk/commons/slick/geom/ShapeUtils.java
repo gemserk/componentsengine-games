@@ -3,10 +3,12 @@ package com.gemserk.commons.slick.geom;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Transform;
 
+import com.gemserk.commons.collisions.AABB;
+
 /**
  * Slick shapes utilities
  * 
- * @author acoppes
+ * @author arielsan
  * 
  */
 public class ShapeUtils {
@@ -38,16 +40,36 @@ public class ShapeUtils {
 	 * @return
 	 */
 	public boolean contains(Shape otherShape) {
-		for (int i = 0; i < shape.getPointCount(); i++) {
-			float[] pt = shape.getPoint(i);
-			if (!otherShape.contains(pt[0], pt[1]))
+		for (int i = 0; i < otherShape.getPointCount(); i++) {
+			float[] pt = otherShape.getPoint(i);
+			if (!shape.contains(pt[0], pt[1]))
 				return false;
 		}
 		return true;
 	}
-	
+
+	/**
+	 * Returns an AABB containing all the points of the shape.
+	 * @return
+	 */
+	public AABB getAABB() {
+		AABB aabb = new AABB();
+
+		for (int i = 0; i < shape.getPointCount(); i++) {
+			float[] pt = shape.getPoint(i);
+
+			float x = pt[0];
+			float y = pt[1];
+
+			aabb.include(x, y);
+		}
+		
+		return aabb;
+	}
+
 	/**
 	 * Return a clone of the shape
+	 * 
 	 * @param shape
 	 * @return
 	 */

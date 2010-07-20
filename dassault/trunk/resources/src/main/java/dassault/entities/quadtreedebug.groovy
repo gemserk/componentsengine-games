@@ -10,9 +10,9 @@ builder.entity {
 	tags("debug")
 	
 	property("enabled", false)
-	property("collidables", [])
+	property("quadtree", parameters.quadtree)
 	
-	component(utils.components.genericComponent(id:"toggleDebugHandler", messageId:"toggleDebug"){ message ->
+	component(utils.components.genericComponent(id:"toggleDebugHandler", messageId:"toggleQuadtreeDebug"){ message ->
 		entity.enabled = !entity.enabled
 	})
 	
@@ -26,25 +26,27 @@ builder.entity {
 		if (!entity.enabled)
 			return
 		
+		def quadtree = entity.quadtree
+		
 		def renderer = message.renderer
 		
-		def collidables = entity.collidables
+		def nodes = quadtree.leafs
 		
-		collidables.each { collidableEntity ->
-			def aabb = collidableEntity.collidable.aabb
+		nodes.each { node ->
+			def color = Color.white
 			
-			def position = entity.position
+			if (!node.collidables.empty) {
+				color = Color.red
+			}
 			
-			def layer = entity.layer
-			def shape = entity.bounds
-			
-			def bounds = utils.rectangle(aabb.minX, aabb.minY, aabb.width, aabb.height)
+			def aabb = node.aabb
+			def rectangle = utils.rectangle(aabb.getMinX(), aabb.getMinY(), aabb.getWidth(), aabb.getHeight())
 			
 			renderer.enqueue( new ClosureRenderObject(99, { Graphics g ->
-				g.setColor(Color.white)
+				g.setColor(color)
 				g.pushTransform()
 				g.scale(1f, 1f)
-				g.draw(bounds)
+				g.draw(rectangle);
 				g.popTransform()
 			}))
 		}
@@ -53,7 +55,7 @@ builder.entity {
 	
 	input("inputmapping"){
 		keyboard {
-			press(button:"1",eventId:"toggleDebug")
+			press(button:"2",eventId:"toggleQuadtreeDebug")
 		}
 	}	
 }

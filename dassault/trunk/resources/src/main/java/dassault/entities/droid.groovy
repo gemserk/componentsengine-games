@@ -1,17 +1,18 @@
 package dassault.entities
 
 import com.gemserk.commons.animation.interpolators.FloatInterpolator;
+import com.gemserk.commons.collisions.CollidableImpl;
 import com.gemserk.commons.slick.geom.ShapeUtils 
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.CursorOverDetector;
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.games.dassault.components.TransferComponent;
 import com.gemserk.games.dassault.components.TransferRendererComponent;
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2 
 import org.newdawn.slick.Color 
 
 
@@ -54,6 +55,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	property("bounds", utils.rectangle(-15, -15, 30, 30))
 	property("collisions", [])
 	
+	property("collidable", new CollidableImpl(entity, new ShapeUtils(entity.bounds).getAABB()))
+	
 	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
 		// check collisions
 		
@@ -61,16 +64,33 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		entity.bounds.centerX = entity.newPosition.x
 		entity.bounds.centerY = entity.newPosition.y 
 		
-		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), // 
-				{ collidable ->	new ShapeUtils(collidable.bounds).collides(entity.bounds)} as Predicate))
+		entity.collidable.entity = entity
+		entity.collidable.aabb.setCenter(entity.newPosition.x, entity.newPosition.y)
 		
-		entity.collisions = new ArrayList(obstacles)
+		def collisionTree = entity.collidable.quadTree
+		
+		if (collisionTree == null)
+			return
+		
+		def collidables = collisionTree.getCollidables(entity.collidable)
+		
+		collidables = Collections2.filter(collidables, Predicates.and({collidable -> collidable.entity != null } as Predicate, //
+				{collidable -> collidable.entity.tags.contains("obstacle")} as Predicate, // 
+				{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
+				{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate))
+		
+		//		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), // 
+		//				{ collidable ->	new ShapeUtils(collidable.bounds).collides(entity.bounds)} as Predicate))
+		
+		entity.collisions = new ArrayList(collidables)
 		
 		if (!entity.collisions.empty) {
 			entity."movementComponent.velocity".set(0,0)
 			entity.newPosition = entity.position.copy()
 			entity.bounds.centerX = entity.position.x
 			entity.bounds.centerY = entity.position.y 
+			
+			entity.collidable.aabb.setCenter(entity.position.x, entity.position.y)
 		} else {
 			entity.position = entity.newPosition.copy()
 		}

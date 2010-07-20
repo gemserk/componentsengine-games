@@ -1,6 +1,8 @@
 package dassault.entities
 
+import com.gemserk.commons.slick.geom.ShapeUtils;
 
+import com.gemserk.commons.collisions.CollidableImpl 
 import com.gemserk.componentsengine.render.ClosureRenderObject 
 import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics 
@@ -18,10 +20,14 @@ builder.entity {
 	// collision component
 	
 	property("bounds", parameters.bounds)
+	property("collidable", new CollidableImpl(null, new ShapeUtils(entity.bounds).getAABB() ))
 	
 	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
 		entity.bounds.centerX = entity.position.x
-		entity.bounds.centerY = entity.position.y 
+		entity.bounds.centerY = entity.position.y
+		
+		entity.collidable.entity = entity
+		entity.collidable.aabb.setCenter(entity.position.x, entity.position.y)
 	})
 	
 	//
