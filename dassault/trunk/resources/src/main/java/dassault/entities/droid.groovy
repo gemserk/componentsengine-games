@@ -71,22 +71,19 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		
 		def collisionTree = entity.collidable.quadTree
 		
-		if (collisionTree == null)
-			return
-		
-		def collidables = collisionTree.getCollidables(entity.collidable)
-		
-		collidables = Collections2.filter(collidables, Predicates.and({collidable -> collidable.entity != null } as Predicate, //
-				{collidable -> collidable.entity.tags.contains("obstacle")} as Predicate, // 
+		if (collisionTree != null) {
+			
+			def collidables = collisionTree.getCollidables(entity.collidable)
+			
+			collidables = Collections2.filter(collidables, Predicates.and({collidable -> collidable.entity != null } as Predicate, //
+				{ collidable -> collidable.entity.tags.contains("obstacle")} as Predicate, // 
 				{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
 				{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate))
+			
+			entity.collisions = new ArrayList(collidables)
+		}
 		
-		//		obstacles = entity.root.getEntities(Predicates.and(EntityPredicates.withAnyTag("obstacle"), // 
-		//				{ collidable ->	new ShapeUtils(collidable.bounds).collides(entity.bounds)} as Predicate))
-		
-		entity.collisions = new ArrayList(collidables)
-		
-		if (!entity.collisions.empty) {
+		if (!entity.collisions.empty || entity.collidable.outside ) {
 			entity."movementComponent.velocity".set(0,0)
 			entity.newPosition = entity.position.copy()
 			entity.bounds.centerX = entity.position.x
@@ -126,9 +123,9 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"droidDeadHandler", messageId:"droidDead"){ message ->
 		if (entity != message.droid)
 			return
-
+		
 		entity.collidable.remove()
-			
+		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(30, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 5.0f, 50f, 250f, 1f, Color.white, Color.white) 
 			newMessage.layer = 1

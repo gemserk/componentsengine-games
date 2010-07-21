@@ -6,7 +6,7 @@ import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory
 
 builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 	
-	property("droid", parameters.droid)
+	property("owner", parameters.owner)
 	
 	property("totalReloadTime", parameters.reloadTime)
 	property("reloadTime", parameters.reloadTime)
@@ -19,34 +19,34 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"weaponComponent", messageId:"update"){ message ->
 		// def droid = entity.root.getEntityById(entity.ownerId)
-		def droid = entity.droid
+		def owner = entity.owner
 		
 		def loaded = entity.loaded ?: false
 		
-		if (droid == null) {
+		if (owner == null) {
 			log.error("Owner is null - ownerId : $entity.ownerId - weapon.id : $entity.id")
 			return
 		}
 			
-		def energy = droid.energy
+		def energy = owner.energy
 		
 		def weaponEnergy = entity.weaponEnergy
 		
 		// owner hasEnergy?
-		if (droid.shouldFire && loaded && energy.current > weaponEnergy) {
+		if (owner.shouldFire && loaded && energy.current > weaponEnergy) {
 			
 			def bulletTemplate = entity.bulletTemplate
 			
-			def fireDirection = droid.fireDirection
-			def position = droid.position
+			def fireDirection = owner.fireDirection
+			def position = owner.position
 			
 			def bulletSpeed = 0.5f
 			
 			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
-					[position:position, moveDirection:fireDirection, owner:droid, speed:bulletSpeed, damage:entity.damage, player:droid.player])
+					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage, player:owner.player])
 			
 			// I dont like the entity.parent.parent to point to world
-			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent.parent))
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent.parent.id))
 			
 			// owner.reduceEnergy(...)
 			energy.remove(weaponEnergy)

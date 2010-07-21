@@ -7,6 +7,7 @@ import org.newdawn.slick.geom.Transform;
 import com.gemserk.commons.collisions.AABB;
 import com.gemserk.commons.collisions.QuadTreeImpl 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
+import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.gemserk.games.dassault.components.LinearMovementComponent;
@@ -131,7 +132,7 @@ builder.entity("playing") {
 		component(utils.components.genericComponent(id:"gameOverHandler", messageId:"gameover"){ message ->
 			utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
 				newMessage.cameraId = "camera"
-				newMessage.end = 0.3f
+				newMessage.end = 0.28f
 				newMessage.time = 500
 			})	
 			utils.custom.messageQueue.enqueue(utils.genericMessage("moveTo"){ newMessage ->
@@ -232,7 +233,7 @@ builder.entity("playing") {
 			damage = 30f
 			energy = 10f
 			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
-			droid = {entity.parent}
+			owner = {entity.parent}
 		}
 	} )
 	
@@ -296,16 +297,7 @@ builder.entity("playing") {
 		layer = 19
 	}
 	
-	//	child(id:"obstacleForm3", template:"dassault.entities.obstacle") { 
-	//		position = utils.vector(200,-100)
-	//		bounds = obstacleForm3.transform(Transform.createScaleTransform(5f, 5f)).transform(Transform.createRotateTransform(1f))
-	//		color = utils.color(0.0f,0.0f,0f,1f)
-	//		layer = 19
-	//	}
-	
-	// scene limits as obstacles
-	
-	property("collisionQuadtree", new QuadTreeImpl(new AABB(-1100, -1100, 1100, 1100), 4))
+	property("collisionQuadtree", new QuadTreeImpl(new AABB(-1000, -1000, 1000, 1000), 4))
 	
 	component(utils.components.genericComponent(id:"updateQuadtree", messageId:"update"){ message ->
 		
@@ -331,35 +323,27 @@ builder.entity("playing") {
 	def xmidpoint = (float)((lowerBound.x + upperBound.x) / 2f)
 	def ymidpoint = (float)((lowerBound.y + upperBound.y) / 2f)
 	
-	child(id:"sceneLimit1", template:"dassault.entities.obstacle") { 
-		position = utils.vector(lowerBound.x, ymidpoint)
-		bounds = utils.rectangle(-20, 0, 40, (float)(upperBound.y - lowerBound.y))
-		color = utils.color(0,0,0,1)
+	component(new RectangleRendererComponent("background")) {
+		property("position", utils.vector(0,0))
+		property("lineColor", utils.color(0f, 0f, 0f, 0f))
+		property("fillColor", utils.color(0f, 0f, 0f, 1f))
+		property("rectangle", utils.rectangle(-0, 0, 600, 600))
+		property("layer", -101)
 	}
 	
-	child(id:"sceneLimit2", template:"dassault.entities.obstacle") { 
-		position = utils.vector(upperBound.x, ymidpoint)
-		bounds = utils.rectangle(-20, 0, 40, (float)(upperBound.y - lowerBound.y))
-		color = utils.color(0,0,0,1)
-	}
-	
-	child(id:"sceneLimit3", template:"dassault.entities.obstacle") { 
-		position = utils.vector(xmidpoint, lowerBound.y)
-		bounds = utils.rectangle(0, -20,(float)(upperBound.x - lowerBound.x), 40)
-		color = utils.color(0,0,0,1)
-	}
-	
-	child(id:"sceneLimit4", template:"dassault.entities.obstacle") { 
-		position = utils.vector(xmidpoint, upperBound.y)
-		bounds = utils.rectangle(0, -20, (float)(upperBound.x - lowerBound.x), 40)
-		color = utils.color(0,0,0,1)
+	component(new RectangleRendererComponent("floor")) {
+		property("position", utils.vector(0,0))
+		property("lineColor", utils.color(0f, 0f, 0f, 0f))
+		property("fillColor", utils.color(0.1f, 0.1f, 0.1f, 1f))
+		property("rectangle", utils.rectangle(-1000, -1000, 2000, 2000))
+		property("layer", -99)
 	}
 	
 	def blasterWeaponInstantiationTemplate = new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("dassault.entities.blasterweapon"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				droid:data.droid,
+				owner:data.owner,
 				reloadTime:250,
 				damage:30f,
 				energy:20f,

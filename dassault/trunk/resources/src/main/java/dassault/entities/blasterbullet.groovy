@@ -59,6 +59,13 @@ builder.entity {
 		
 		def collisionTree = entity.collidable.quadTree
 		
+		if (entity.collidable.outside) {
+			utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
+				newMessage.bullet = entity
+			})
+			return
+		}
+		
 		if (collisionTree == null)
 			return
 		
@@ -129,7 +136,7 @@ builder.entity {
 	component(utils.components.genericComponent(id:"bulletRenderer", messageId:"render"){ message ->
 		
 		def renderer = message.renderer
-
+		
 		def position = entity.position
 		
 		def player = entity.player
