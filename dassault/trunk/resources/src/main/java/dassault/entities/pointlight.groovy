@@ -3,6 +3,7 @@ package dassault.entities
 import com.gemserk.commons.animation.PropertyAnimation 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
+import com.gemserk.games.dassault.components.AnimationComponent 
 import org.newdawn.slick.Graphics 
 
 builder.entity {
@@ -31,7 +32,12 @@ builder.entity {
 	
 	colorAnimation.play()
 	
-	parent("dassault.entities.animation", [animations:[colorAnimation]])
+	def animations = [idle:[colorAnimation]]
+	
+	component(new AnimationComponent("laserAnimation") ) {
+		property("current", "idle")
+		property("animations", animations)
+	}
 	
 	// remove this to other entity
 	component(utils.components.genericComponent(id:"lightRenderer", messageId:"render"){ message ->

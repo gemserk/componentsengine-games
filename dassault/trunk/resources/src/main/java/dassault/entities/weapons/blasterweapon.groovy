@@ -1,8 +1,6 @@
-package dassault.entities
+package dassault.entities.weapons
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-
-
 
 builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 	

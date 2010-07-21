@@ -229,12 +229,11 @@ builder.entity("playing") {
 		regenerationSpeed:0.02f,
 		hitpoints:utils.container(100000f, 100000f)])
 		
-		child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
-			// ownerId = "droid1"
+		child(id:"blasterWeapon1", template:"dassault.entities.weapons.blasterweapon") { 
 			reloadTime = 200
 			damage = 30f
 			energy = 10f
-			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
+			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.weapons.blasterbullet")
 			owner = {entity.parent}
 		}
 	} )
@@ -340,14 +339,14 @@ builder.entity("playing") {
 	}
 	
 	def blasterWeaponInstantiationTemplate = new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("dassault.entities.blasterweapon"), 
+			utils.custom.templateProvider.getTemplate("dassault.entities.weapons.blasterweapon"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
 				owner:data.owner,
 				reloadTime:250,
 				damage:30f,
 				energy:20f,
-				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.blasterbullet")
+				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.weapons.blasterbullet")
 				]
 			})
 	

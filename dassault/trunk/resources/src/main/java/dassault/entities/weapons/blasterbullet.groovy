@@ -1,8 +1,4 @@
-package dassault.entities
-
-
-import static org.lwjgl.opengl.GL11.*;
-
+package dassault.entities.weapons
 
 import com.gemserk.commons.collisions.EntityCollidableImpl 
 import com.gemserk.commons.slick.geom.ShapeUtils;
@@ -15,8 +11,7 @@ import com.google.common.base.Predicates
 import com.google.common.collect.Collections2 
 import org.newdawn.slick.Color 
 
-
-builder.entity {
+builder.entity(entityName ?: "blasterbullet-${Math.random()}") {
 	
 	tags("bullet", "blasterbullet")
 	

@@ -96,7 +96,7 @@ builder.entity {
 		
 		def start = entity.startPosition
 		def end = entity.endPosition
-		def width = entity.width // based on energy left?
+		def width = entity.width 
 		
 		renderer.enqueue(new ClosureRenderObject(layer, { Graphics g ->
 			SlickCallable.enterSafeBlock();
