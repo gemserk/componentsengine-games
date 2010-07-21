@@ -450,7 +450,7 @@ builder.entity("playing") {
 		
 		def laserBullet = utils.custom.templateProvider.getTemplate("dassault.entities.weapons.laserbullet").instantiate("LASERBULLET", // 
 				[owner:owner, player:owner.player, range:500f, // 
-				energy:100f, consumeEnergySpeed:0.1f])
+				energy:100f, consumeEnergySpeed:0.1f, damage:50f])
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(laserBullet,owner))
 		

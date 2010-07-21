@@ -109,8 +109,10 @@ builder.entity(entityName ?: "blasterbullet-${Math.random()}") {
 		if (entity != message.bullet)
 			return
 		
-		def startColor = utils.color(1f, 1f, 1f, 1f)
-		def endColor = utils.color(1f, 1f, 1f, 0.2f)
+		def playerColor = entity.player.color
+			
+		def startColor = utils.color(playerColor.r, playerColor.g, playerColor.b, 1f)
+		def endColor = utils.color(playerColor.r, playerColor.g, playerColor.b, 0.2f)
 		
 		def position = entity.position
 		

@@ -37,7 +37,11 @@ builder.entity {
 	property("width", 0f)
 	property("color", utils.color(0,0,0,0f))
 	
+	property("damage", parameters.damage)
+	
 	def consumeTime = (int)(parameters.energy / parameters.consumeEnergySpeed)
+	
+	property("damagePerTime", (float) parameters.damage / consumeTime)
 	
 	PropertyAnimation widthAnimation = new PropertyAnimation("width")
 	
@@ -163,6 +167,27 @@ builder.entity {
 					entity.hitPosition = hit.pt.copy()
 				}
 			}
+			
+		}
+		
+	})
+	
+	component(utils.components.genericComponent(id:"damageWhenCollisionDetection", messageId:"update"){ message ->
+		
+		def collisions = entity.collisions
+		def delta = message.delta
+		
+		def damage = (float) entity.damagePerTime * message.delta 
+		
+		collisions.each { collidable ->
+			
+			def collidableEntity = collidable.entity
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("collisionDetected"){ newMessage ->
+				newMessage.bullet = entity
+				newMessage.target = collidableEntity
+				newMessage.damage = damage
+			})
 		}
 		
 	})
@@ -176,7 +201,7 @@ builder.entity {
 		
 		def startColor = utils.color(playerColor.r, playerColor.g, playerColor.b, 1.0f)
 		def endColor = utils.color(playerColor.r, playerColor.g, playerColor.b, 0.3f)
-
+		
 		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(2, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, startColor, endColor) 
 			newMessage.layer = 1
