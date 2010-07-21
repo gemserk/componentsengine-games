@@ -55,32 +55,7 @@ builder.entity {
 		property("layer", -1000)
 	}
 	
-	property("ballShadowImage", utils.resources.image("ballshadow"))
 	
-//	component(utils.components.genericComponent(id:"drawBallShadows", messageId:["render"]){ message ->
-//		def balls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
-//		
-//		def ballShadowImage = entity.ballShadowImage
-//		
-//		def renderer = message.renderer
-//		
-//		balls.each { ball ->
-//			
-//			def position = ball.position
-//			def layer = ball.layer-1
-//			def size = ball.size
-//			
-//			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
-//				g.pushTransform()
-//				g.translate((float) position.x + 3, (float)position.y + 3)
-//				g.scale(size.x, size.y)
-//				g.drawImage(ballShadowImage, (float)-(ballShadowImage.getWidth() / 2), (float)-(ballShadowImage.getHeight() / 2))
-//				g.popTransform()
-//			}))
-//			
-//		}
-//		
-//	})
 	
 	component(utils.components.genericComponent(id:"placeablesRender", messageId:["render"]){ message ->
 		
@@ -289,11 +264,8 @@ builder.entity {
 	})
 	
 	
+	property("ballShadowImage", utils.resources.image("ballshadow"))
 	
-//	component(new ImagesWithAlphaMaskRenderer("ballrenderer")){
-//		property("transparencyMap",new Image("levels/level01/transparencyMap.png"));
-//	}
-	//property("alphaMask",new Image("levels/level01/transparencyMap.png"));
 	component(utils.components.genericComponent(id:"ballRenderer", messageId:["render"]){ message ->
 		def allBalls = entity.getEntities(Predicates.and(EntityPredicates.withAllTags("ball"), {ball -> ball.alive } as Predicate))
 	
@@ -308,7 +280,6 @@ builder.entity {
 		ballsByLayer = allBalls.groupBy {it.layer}
 		
 		ballsByLayer.each { layer, balls ->
-			log.info("Rendering balls of layer $layer")
 			def alphaMask = level.alphaMasks?.get(layer)
 			
 			
@@ -327,9 +298,10 @@ builder.entity {
 				def position = ball.position
 				def direction = ball.direction
 				def color = ball.color
+				def size = ball.size
 				
-				ballsSprites << new AlphaMaskedSprite(image,position,direction,color)
-				shadowSprites << new AlphaMaskedSprite(ballShadowImage, position.copy().add(shadowDisplacement),direction,shadowColor)
+				ballsSprites << new AlphaMaskedSprite(image,position,direction,size, color)
+				shadowSprites << new AlphaMaskedSprite(ballShadowImage, position.copy().add(shadowDisplacement),direction,size, shadowColor)
 			}
 			
 			renderer.enqueue(ballsRenderer)
@@ -339,82 +311,4 @@ builder.entity {
 			
 		
 	})
-	
-	
-	
-	//	component(utils.components.genericComponent(id:"mergeSegmentsBugProvider", messageId:["mergeSegments"]){ message ->
-	//		def template = new InstantiationTemplateImpl(
-	//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
-	//		utils.custom.genericprovider.provide{ data ->
-	//			[
-	//			radius:16.0f,
-	//			color:data.color,
-	//			state:"inWorld"
-	//			]
-	//		})
-	//		
-	//		
-	//		def segment = message.masterSegment
-	//		def lastBall = segment.lastBall
-	//		//def ball = template.get([color:lastBall.color])
-	//		def ball = template.get([color:utils.color(1,0,1)])
-	//		
-	//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
-	//			newMessage.source = [ball:ball,position:lastBall.pathTraversal.add(10f).position]
-	//			newMessage.targets = [lastBall]
-	//		})
-	//		
-	//	})
-	
-	//	component(utils.components.genericComponent(id:"concurrentHitHandler", messageId:["concurrentHit"]){ message ->
-	//		def template = new InstantiationTemplateImpl(
-	//		utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
-	//		utils.custom.genericprovider.provide{ data ->
-	//			[
-	//			radius:0.0f,
-	//			color:data.color,
-	//			state:"inWorld",
-	//			finalRadius:16.0f
-	//			]
-	//		})
-	//		
-	//		def segment = entity.root.getEntities(EntityPredicates.withAllTags("segment"))[0]
-	//		
-	//		                                                                               
-	//		def serieses = []
-	//		segment.balls.each({ball -> 
-	//			def balls = segment.balls
-	//			def forwardIterator = balls.listIterator(balls.indexOf(ball))
-	//			def newBall = forwardIterator.next()
-	//			def ballsToRemove = [newBall]
-	//			
-	//			while(forwardIterator.hasNext()){
-	//				def ballToCheck = forwardIterator.next()
-	//				if(ballToCheck.color != newBall.color)
-	//					break;
-	//				
-	//				ballsToRemove << ballToCheck			
-	//			}
-	//			
-	//			if(ballsToRemove.size > 2)
-	//				serieses << ball
-	//		})  
-	//		
-	//		if(serieses.isEmpty()){
-	//			log.info("CONCURRENTHITCHECK CANT FIND SERIES")
-	//			return
-	//			
-	//		}
-	//		def firstHitBall = serieses[-1]
-	//		                                                                               
-	//		                                                                               
-	//		//def ball = template.get([color:lastBall.color])
-	//		def ball = template.get([color:firstHitBall.color])
-	//		
-	//		messageQueue.enqueue(utils.genericMessage("bulletHit"){newMessage -> 
-	//			newMessage.source = [ball:ball,position:firstHitBall.pathTraversal.add(10f).position]
-	//			newMessage.targets = [firstHitBall]
-	//		})
-	//		
-	//	})
 }

@@ -49,12 +49,14 @@ public class AlphaMaskedSpritesRenderObject extends SlickCallableRenderObject {
 			Image image = sprite.getImage();
 			Vector2f position = sprite.getPosition();
 			Vector2f direction = sprite.getDirection();
+			Vector2f scale = sprite.getScale() != null ? sprite.getScale() : new Vector2f(1,1);
 			Color color = sprite.getColor();
 
 			Shape pixels = new Rectangle(-image.getWidth() / 2f, -image.getHeight() / 2f, image.getWidth(), image.getHeight());
 			Transform translation = Transform.createTranslateTransform(position.x, position.y);
 			Transform rotation = Transform.createRotateTransform((float) (direction.getTheta() * Math.PI / 180));
-			Transform finalTransform = translation.concatenate(rotation);
+			Transform scaleTransform = Transform.createScaleTransform(scale.x, scale.y);
+			Transform finalTransform = translation.concatenate(rotation).concatenate(scaleTransform);
 
 			pixels = pixels.transform(finalTransform);
 
