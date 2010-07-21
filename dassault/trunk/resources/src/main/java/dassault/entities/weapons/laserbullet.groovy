@@ -1,12 +1,16 @@
 package dassault.entities.weapons
 
 import com.gemserk.commons.animation.PropertyAnimation;
+import com.gemserk.commons.collisions.AABB;
+import com.gemserk.commons.collisions.EntityCollidableImpl 
+import com.gemserk.commons.slick.geom.ShapeUtils 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.render.ClosureRenderObject;
 import com.gemserk.componentsengine.utils.OpenGlUtils;
 import com.gemserk.games.dassault.components.AnimationComponent 
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.opengl.SlickCallable;
 
 
@@ -84,6 +88,7 @@ builder.entity {
 	component(utils.components.genericComponent(id:"removeWhenBulletDead", messageId:"bulletDead"){ message ->
 		if (entity != message.bullet)
 			return
+		entity.collidable.remove()
 		utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
 	})
 	
@@ -107,5 +112,49 @@ builder.entity {
 		}))
 		
 	})
+	
+	property("collisionDetected", {!entity.collisions.isEmpty()})
+	property("bounds", utils.rectangle(0, 0, 0, 0))
+	property("collisions", [])
+	property("collidable", new EntityCollidableImpl(entity, new AABB(0,0,0,0) ))
+	
+	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
+		def startPosition = entity.startPosition
+		def endPosition = entity.endPosition 
+		
+		def bounds = new Line(startPosition.x, startPosition.y, endPosition.x, endPosition.y)
+		entity.bounds = bounds
+		
+		entity.collidable.entity = entity
+		entity.collidable.aabb = new ShapeUtils(bounds).getAABB()
+		entity.collidable.update()
+	})
+	
+//	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
+//		
+//		def collisionTree = entity.collidable.quadTree
+//		
+//		if (entity.collidable.outside) {
+//			utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
+//				newMessage.bullet = entity
+//			})
+//			return
+//		}
+//		
+//		if (collisionTree == null)
+//			return
+//		
+//		def collidables = collisionTree.getCollidables(entity.collidable)
+//		
+//		collidables = Collections2.filter(collidables, Predicates.and({collidable -> entity != collidable.entity } as Predicate, //
+//		{ collidable -> entity.owner != collidable.entity } as Predicate,//
+//		{ collidable -> collidable.entity != null } as Predicate,//
+//		{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
+//		{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate, //
+//		{ collidable -> collidable.entity.tags.contains("collidable") } as Predicate))
+//		
+//		entity.collisions = new ArrayList(collidables)
+//		
+//	})
 	
 }

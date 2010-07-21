@@ -1,9 +1,6 @@
 package dassault.entities
 
-import com.gemserk.componentsengine.predicates.EntityPredicates;
-import com.gemserk.componentsengine.render.ClosureRenderObject 
-import org.newdawn.slick.Color 
-import org.newdawn.slick.Graphics 
+import com.gemserk.commons.collisions.QuadTreeRenderObject;
 
 builder.entity {
 	
@@ -16,13 +13,7 @@ builder.entity {
 		entity.enabled = !entity.enabled
 	})
 	
-	component(utils.components.genericComponent(id:"updateCollidables", messageId:"update"){ message ->
-		if (!entity.enabled)
-			return
-		entity.collidables = entity.root.getEntities(EntityPredicates.withAllTags("collidable"))
-	})
-	
-	component(utils.components.genericComponent(id:"renderCollidables", messageId:"render"){ message ->
+	component(utils.components.genericComponent(id:"renderQuadtreeNodes", messageId:"render"){ message ->
 		if (!entity.enabled)
 			return
 		
@@ -32,24 +23,8 @@ builder.entity {
 		
 		def nodes = quadtree.leafs
 		
-		nodes.each { node ->
-			def color = Color.white
-			
-			if (!node.collidables.empty) {
-				color = Color.red
-			}
-			
-			def aabb = node.aabb
-			def rectangle = utils.rectangle(aabb.getMinX(), aabb.getMinY(), aabb.getWidth(), aabb.getHeight())
-			
-			renderer.enqueue( new ClosureRenderObject(99, { Graphics g ->
-				g.setColor(color)
-				g.pushTransform()
-				g.scale(1f, 1f)
-				g.draw(rectangle);
-				g.popTransform()
-			}))
-		}
+		// TODO: color and widths as parameters.
+		renderer.enqueue(new QuadTreeRenderObject(99, quadtree));
 		
 	})
 	

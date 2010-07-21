@@ -278,7 +278,7 @@ builder.entity("playing") {
 	obstacleForm2.centerY = 0f
 	
 	child(id:"obstacle1", template:"dassault.entities.obstacle") { 
-		position = utils.vector(-700, 0)
+		position = utils.vector(-700, 150)
 		bounds = obstacleForm.transform(Transform.createScaleTransform(40f, 40f))
 		color = utils.color(0.0f,0f,0f,1f)
 		layer = 19

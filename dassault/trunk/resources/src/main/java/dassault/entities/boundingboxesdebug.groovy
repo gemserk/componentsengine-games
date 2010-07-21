@@ -1,7 +1,9 @@
 package dassault.entities
 
-import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.render.ClosureRenderObject 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics 
 
@@ -19,7 +21,7 @@ builder.entity {
 	component(utils.components.genericComponent(id:"updateCollidables", messageId:"update"){ message ->
 		if (!entity.enabled)
 			return
-		entity.collidables = entity.root.getEntities(EntityPredicates.withAllTags("collidable"))
+		entity.collidables = entity.root.getEntities(Predicates.and({ collidableEntity -> collidableEntity.collidable != null } as Predicate))
 	})
 	
 	component(utils.components.genericComponent(id:"renderCollidables", messageId:"render"){ message ->

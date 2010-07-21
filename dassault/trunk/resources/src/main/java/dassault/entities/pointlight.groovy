@@ -34,7 +34,7 @@ builder.entity {
 	
 	def animations = [idle:[colorAnimation]]
 	
-	component(new AnimationComponent("laserAnimation") ) {
+	component(new AnimationComponent("lightAnimation") ) {
 		property("current", "idle")
 		property("animations", animations)
 	}
