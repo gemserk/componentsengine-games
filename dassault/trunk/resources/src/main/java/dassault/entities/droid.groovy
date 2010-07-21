@@ -76,7 +76,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			def collidables = collisionTree.getCollidables(entity.collidable)
 			
 			collidables = Collections2.filter(collidables, Predicates.and({collidable -> collidable.entity != null } as Predicate, //
-				{ collidable -> collidable.entity.tags.contains("obstacle")} as Predicate, // 
+				{ collidable -> collidable.entity.tags.contains("collidable")} as Predicate, // 
+				{ collidable -> collidable.entity != entity } as Predicate, //
 				{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
 				{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate))
 			

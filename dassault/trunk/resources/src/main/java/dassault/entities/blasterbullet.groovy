@@ -18,7 +18,7 @@ import org.newdawn.slick.Color
 
 builder.entity {
 	
-	tags("bullet", "blasterbullet", "collidable")
+	tags("bullet", "blasterbullet")
 	
 	property("position", parameters.position)
 	property("moveDirection", parameters.moveDirection)
@@ -76,7 +76,7 @@ builder.entity {
 		{ collidable -> collidable.entity != null } as Predicate,//
 		{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
 		{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate, //
-		{ collidable -> !collidable.entity.tags.contains("bullet") } as Predicate))
+		{ collidable -> collidable.entity.tags.contains("collidable") } as Predicate))
 		
 		entity.collisions = new ArrayList(collidables)
 		

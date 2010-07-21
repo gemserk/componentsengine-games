@@ -9,6 +9,7 @@ import com.gemserk.commons.collisions.QuadTreeImpl
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
 import com.gemserk.games.dassault.components.LinearMovementComponent;
 import com.google.common.base.Predicate 
@@ -225,7 +226,8 @@ builder.entity("playing") {
 		parent("dassault.entities.basicdroid",[ownerId:"player",position:utils.vector(400,300), 
 		speed:0.2f, 
 		energy:utils.container(10000f,10000f),
-		regenerationSpeed:0.02f])
+		regenerationSpeed:0.02f,
+		hitpoints:utils.container(100000f, 100000f)])
 		
 		child(id:"blasterWeapon1", template:"dassault.entities.blasterweapon") { 
 			// ownerId = "droid1"
@@ -303,7 +305,7 @@ builder.entity("playing") {
 		
 		def quadtree = entity.collisionQuadtree
 		
-		def collidables = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("collidable"),//
+		def collidables = entity.root.getEntities(Predicates.and(// EntityPredicates.withAllTags("collidable"),//
 				{collidableEntity -> collidableEntity.collidable != null} as Predicate, //
 				{collidableEntity -> collidableEntity.collidable.quadTree == null} as Predicate ))
 		
@@ -313,9 +315,7 @@ builder.entity("playing") {
 		
 	})
 	
-	child(id:"quadtreedebug", template:"dassault.entities.quadtreedebug") {
-		quadtree = entity.collisionQuadtree
-	}
+	child(id:"quadtreedebug", template:"dassault.entities.quadtreedebug") { quadtree = entity.collisionQuadtree }
 	
 	def lowerBound = utils.vector(-1000, -1000)
 	def upperBound = utils.vector(1000, 1000)
@@ -445,6 +445,18 @@ builder.entity("playing") {
 		
 	})
 	
+	component(utils.components.genericComponent(id:"newLaserBulletHandler", messageId:"newLaserBullet"){ message ->
+		
+		def owner = entity.getEntityById("droid1")
+		
+		def laserBullet = utils.custom.templateProvider.getTemplate("dassault.entities.weapons.laserbullet").instantiate("LASERBULLET", // 
+				[owner:owner, player:owner.player, range:1000f, // 
+				energy:100f, consumeEnergySpeed:0.1f])
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(laserBullet,owner))
+		
+	})
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"escape",eventId:"pauseGame")
@@ -452,6 +464,8 @@ builder.entity("playing") {
 			press(button:"space",eventId:"pauseGame")
 			press(button:"h",eventId:"helpscreen")
 			press(button:"z",eventId:"toggleZoom")
+			
+			press(button:"b",eventId:"newLaserBullet")
 		}
 		mouse {
 			press(button:"left", eventId:"leftmouse")

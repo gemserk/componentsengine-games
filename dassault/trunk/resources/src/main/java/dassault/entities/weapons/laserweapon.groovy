@@ -1,10 +1,8 @@
-package dassault.entities
+package dassault.entities.weapons
 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 
-
-
-builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
+builder.entity(entityName ?: "laserweapon-${Math.random()}") {
 	
 	property("owner", parameters.owner)
 	
@@ -18,18 +16,13 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 	property("bulletTemplate", parameters.bulletTemplate)
 	
 	component(utils.components.genericComponent(id:"weaponComponent", messageId:"update"){ message ->
+		// def droid = entity.root.getEntityById(entity.ownerId)
 		def owner = entity.owner
 		
 		def loaded = entity.loaded ?: false
 		
 		if (owner == null) {
 			log.error("Owner is null - ownerId : $entity.ownerId - weapon.id : $entity.id")
-			return
-		}
-		
-		def world = entity.parent.parent
-		if (world == null) {
-			log.error("An update came when I am not on the world: weapon.id : $entity.id")
 			return
 		}
 			
@@ -51,8 +44,7 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage, player:owner.player])
 			
 			// I dont like the entity.parent.parent to point to world
-			// IT FAILS IF THE DROID IS REMOVED AND AN UPDATE CAME, THE PARENT.PARENT IS NULL
-			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, world.id))
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet,entity.parent.parent.id))
 			
 			// owner.reduceEnergy(...)
 			energy.remove(weaponEnergy)
