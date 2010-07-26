@@ -47,7 +47,6 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 			
 //			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
 //					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage, player:owner.player])
-					
 			
 			def entityFactory = utils.custom.entityFactory
 			
@@ -55,7 +54,6 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage, player:owner.player])
 			
 			// I dont like the entity.parent.parent to point to world
-			// IT FAILS IF THE DROID IS REMOVED AND AN UPDATE CAME, THE PARENT.PARENT IS NULL
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, world.id))
 			
 			// owner.reduceEnergy(...)

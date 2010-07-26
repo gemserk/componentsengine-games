@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
+import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.properties.SimpleProperty;
 import com.google.inject.Injector;
@@ -33,6 +34,10 @@ public class EntityBuilderFactory {
 
 		public void propertyRef(String key, String ref) {
 			entity.addProperty(key, new ReferenceProperty<Object>(ref, entity));
+		}
+		
+		public void property(String key, Property property) {
+			entity.addProperty(key, property);
 		}
 
 		public ComponentPropertiesReceiver component(Component component) {
@@ -68,6 +73,17 @@ public class EntityBuilderFactory {
 
 		public abstract class ExecutableWithEntityAndId {
 			public abstract void execute(Entity entity, String componentId);
+		}
+		
+		public void property(final String key, final Property<Object> property) {
+			commands.add(new ExecutableWithEntityAndId() {
+
+				@Override
+				public void execute(Entity entity, String componentId) {
+					entity.addProperty(componentId + "." + key, property);
+
+				}
+			});
 		}
 
 		public void property(final String key, final Object value) {

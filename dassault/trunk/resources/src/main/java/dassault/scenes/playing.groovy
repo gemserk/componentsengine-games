@@ -343,7 +343,7 @@ builder.entity("playing") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				owner:data.owner,
-				reloadTime:250,
+				reloadTime:100,
 				damage:30f,
 				energy:20f,
 				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.weapons.blasterbullet")
@@ -357,8 +357,9 @@ builder.entity("playing") {
 				ownerId:data.ownerId,
 				position:data.position,
 				speed:0.1f,
-				energy:utils.container(50f,50f),
-				regenerationSpeed:0.02f
+				energy:utils.container(500f,500f),
+				regenerationSpeed:0.1f,
+				hitpoints:utils.container(100000f, 100000f)
 				]
 			})
 	
@@ -369,8 +370,9 @@ builder.entity("playing") {
 				ownerId:data.ownerId,
 				position:data.position,
 				speed:0.2f,
-				energy:utils.container(70f,70f),
-				regenerationSpeed:0.02f
+				energy:utils.container(700f,700f),
+				regenerationSpeed:0.1f,
+				hitpoints:utils.container(100000f, 100000f)
 				]
 			})
 	

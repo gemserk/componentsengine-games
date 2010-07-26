@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -14,6 +13,7 @@ import com.gemserk.commons.collisions.EntityCollidableImpl;
 import com.gemserk.componentsengine.annotations.EntityProperty;
 import com.gemserk.componentsengine.builders.BuilderUtils;
 import com.gemserk.componentsengine.commons.components.FieldsReflectionComponent;
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.effects.EffectFactory;
@@ -23,10 +23,9 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
-import com.gemserk.componentsengine.render.Renderer;
-import com.gemserk.componentsengine.render.SlickImageRenderObject;
 import com.gemserk.games.dassault.EntityBuilderFactory.ComponentProperties;
 import com.gemserk.games.dassault.EntityBuilderFactory.EntityBuilder;
+import com.gemserk.games.dassault.InnerProperty.PropertyGetter;
 import com.gemserk.games.dassault.components.blasterbullet.UpdateCollisionsComponent;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -34,7 +33,7 @@ import com.google.inject.Injector;
 public class DassaultEntityFactory {
 
 	private final Injector injector;
-	
+
 	private final BuilderUtils builderUtils;
 
 	public DassaultEntityFactory(Injector injector, BuilderUtils builderUtils) {
@@ -44,8 +43,11 @@ public class DassaultEntityFactory {
 
 	public class UpdateMoveDirection extends FieldsReflectionComponent {
 
+		@EntityProperty(readOnly = true)
+		Vector2f direction;
+
 		@EntityProperty
-		Vector2f moveDirection;
+		Vector2f force;
 
 		public UpdateMoveDirection(String id) {
 			super(id);
@@ -53,8 +55,7 @@ public class DassaultEntityFactory {
 
 		@Handles
 		public void update(Message message) {
-			Vector2f desiredDirection = moveDirection.copy().normalise().scale(0.01f);
-			Vector2f force = Properties.getValue(entity, "movementComponent.force");
+			Vector2f desiredDirection = direction.copy().normalise().scale(0.01f);
 			force.add(desiredDirection);
 		}
 	}
@@ -64,10 +65,10 @@ public class DassaultEntityFactory {
 		@Inject
 		MessageQueue messageQueue;
 
-		@EntityProperty
+		@EntityProperty(readOnly = true)
 		Collidable collidable;
 
-		@EntityProperty
+		@EntityProperty(readOnly = true)
 		Entity player;
 
 		public BulletDeadHandler(String id) {
@@ -106,10 +107,10 @@ public class DassaultEntityFactory {
 		@Inject
 		MessageQueue messageQueue;
 
-		@EntityProperty
+		@EntityProperty(readOnly = true)
 		List<EntityCollidableImpl> collisions;
 
-		@EntityProperty
+		@EntityProperty(readOnly = true)
 		Float damage;
 
 		public HitWhenCollisionDetected(String id) {
@@ -138,54 +139,53 @@ public class DassaultEntityFactory {
 			}.build()));
 		}
 	}
-	
-	public class BulletRendererComponent extends FieldsReflectionComponent {
-		
-		@EntityProperty
-		Image headImage;
 
-		@EntityProperty
-		Image bodyImage;
-
-		@EntityProperty
-		Image auraImage;
-		
-		@EntityProperty
-		Vector2f position;
-		
-		@EntityProperty
-		Entity player;
-
-		public BulletRendererComponent(String id) {
-			super(id);
-		}
-
-		@Handles
-		public void render(Message message) {
-			
-			Renderer renderer = Properties.getValue(message, "renderer");
-			
-			Vector2f moveDirection = Properties.getValue(entity, "moveDirection");
-			
-			float angle = (float) moveDirection.getTheta();
-			
-			Vector2f size = new Vector2f(0.6f, 0.6f);
-			
-			int layer = -5;
-			Color playerColor = Properties.getValue(player, "color");
-			
-			renderer.enqueue(new SlickImageRenderObject(layer-2, auraImage, position, size, angle, Color.black));
-			renderer.enqueue(new SlickImageRenderObject(layer-1, bodyImage, position, size, angle, playerColor));
-			renderer.enqueue(new SlickImageRenderObject(layer, headImage, position, size, angle, Color.white));
-		}
-	}
+//	public class BulletRendererComponent extends FieldsReflectionComponent {
+//
+//		@EntityProperty(readOnly = true)
+//		Image headImage;
+//
+//		@EntityProperty(readOnly = true)
+//		Image bodyImage;
+//
+//		@EntityProperty(readOnly = true)
+//		Image auraImage;
+//
+//		@EntityProperty(readOnly = true)
+//		Vector2f position;
+//
+//		@EntityProperty(readOnly = true)
+//		Color color;
+//		
+//		public BulletRendererComponent(String id) {
+//			super(id);
+//		}
+//
+//		@Handles
+//		public void render(Message message) {
+//
+//			Renderer renderer = Properties.getValue(message, "renderer");
+//
+//			Vector2f moveDirection = Properties.getValue(entity, "moveDirection");
+//
+//			float angle = (float) moveDirection.getTheta();
+//
+//			Vector2f size = new Vector2f(0.6f, 0.6f);
+//
+//			int layer = -5;
+//
+//			renderer.enqueue(new SlickImageRenderObject(layer - 2, auraImage, position, size, angle, Color.black));
+//			renderer.enqueue(new SlickImageRenderObject(layer - 1, bodyImage, position, size, angle, color));
+//			renderer.enqueue(new SlickImageRenderObject(layer, headImage, position, size, angle, Color.white));
+//		}
+//	}
 
 	public Entity blasterBullet(String id, final Map<String, Object> parameters) {
 		return new EntityBuilderFactory().entity(id).with(new EntityBuilder(injector) {
 
 			@Override
 			public void build() {
-				
+
 				tags("bullet", "blasterbullet");
 
 				property("position", parameters.get("position"));
@@ -199,10 +199,12 @@ public class DassaultEntityFactory {
 				property("bounds", new Rectangle(-2, -2, 4, 4));
 
 				property("collisions", new ArrayList<EntityCollidableImpl>());
-				
+
 				property("headImage", builderUtils.getResources().image("blasterbullet_head"));
 				property("bodyImage", builderUtils.getResources().image("blasterbullet_body"));
 				property("auraImage", builderUtils.getResources().image("blasterbullet_aura"));
+
+				property("force", new Vector2f());
 
 				component(new UpdateCollisionsComponent("updateCollisions")).withProperties(new ComponentProperties() {
 					{
@@ -216,6 +218,14 @@ public class DassaultEntityFactory {
 					{
 						propertyRef("position", "position");
 						propertyRef("maxVelocity", "speed");
+						propertyRef("force", "force");
+					}
+				});
+
+				component(new UpdateMoveDirection("updateMoveDirection")).withProperties(new ComponentProperties() {
+					{
+						propertyRef("direction", "moveDirection");
+						propertyRef("force", "force");
 					}
 				});
 
@@ -233,22 +243,45 @@ public class DassaultEntityFactory {
 					}
 				});
 
-				component(new UpdateMoveDirection("updateMoveDirection")).withProperties(new ComponentProperties() {
-					{
-						propertyRef("moveDirection", "moveDirection");
-					}
-				});
-				
-				component(new BulletRendererComponent("bulletRenderer")).withProperties(new ComponentProperties() {
+				component(new ImageRenderableComponent("headImageRenderer")).withProperties(new ComponentProperties() {
 					{
 						propertyRef("position", "position");
-						propertyRef("player", "player");
-						propertyRef("headImage", "headImage");
-						propertyRef("bodyImage", "bodyImage");
-						propertyRef("auraImage", "auraImage");
+						propertyRef("image", "headImage");
+						propertyRef("direction", "moveDirection");
+						property("layer", -5);
+						property("size", new Vector2f(0.6f, 0.6f));
+						property("color", Color.white);
 					}
 				});
 				
+				component(new ImageRenderableComponent("auraImageRenderer")).withProperties(new ComponentProperties() {
+					{
+						propertyRef("position", "position");
+						propertyRef("image", "auraImage");
+						propertyRef("direction", "moveDirection");
+						property("layer", -7);
+						property("size", new Vector2f(0.6f, 0.6f));
+						property("color", Color.black);
+					}
+				});
+				
+				component(new ImageRenderableComponent("bodyImageRenderer")).withProperties(new ComponentProperties() {
+					{
+						propertyRef("position", "position");
+						propertyRef("image", "bodyImage");
+						propertyRef("direction", "moveDirection");
+						property("layer", -6);
+						property("size", new Vector2f(0.6f, 0.6f));
+
+						property("color", new InnerProperty(entity, new PropertyGetter() {
+							@Override
+							public Object get(Entity entity) {
+								Entity player = Properties.getValue(entity, "player");
+								return Properties.getValue(player, "color");
+							}
+						}));
+					}
+				});
 
 			}
 		});
