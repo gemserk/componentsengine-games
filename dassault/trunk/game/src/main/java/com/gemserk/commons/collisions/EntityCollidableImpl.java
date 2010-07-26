@@ -9,6 +9,10 @@ public class EntityCollidableImpl extends CollidableImpl {
 		return entity;
 	}
 	
+	public void setEntity(Entity entity) {
+		this.entity = entity;
+	}
+	
 	public EntityCollidableImpl(Entity entity, AABB aabb) {
 		super(aabb);
 		this.entity = entity;

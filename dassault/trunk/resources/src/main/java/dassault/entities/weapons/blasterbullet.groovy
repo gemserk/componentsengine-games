@@ -1,14 +1,10 @@
 package dassault.entities.weapons
 
-import com.gemserk.commons.collisions.EntityCollidableImpl 
-import com.gemserk.commons.slick.geom.ShapeUtils;
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.render.SlickImageRenderObject 
-import com.google.common.base.Predicate 
-import com.google.common.base.Predicates 
-import com.google.common.collect.Collections2 
+import com.gemserk.games.dassault.components.blasterbullet.UpdateCollisionsComponent;
 import org.newdawn.slick.Color 
 
 builder.entity(entityName ?: "blasterbullet-${Math.random()}") {
@@ -39,51 +35,12 @@ builder.entity(entityName ?: "blasterbullet-${Math.random()}") {
 	property("collisionDetected", {!entity.collisions.isEmpty()})
 	property("bounds", utils.rectangle(-2, -2, 4, 4))
 	property("collisions", [])
-	property("collidable", new EntityCollidableImpl(entity, new ShapeUtils(entity.bounds).getAABB() ))
 	
-	component(utils.components.genericComponent(id:"updateBoundsHandler", messageId:"update"){ message ->
-		entity.bounds.centerX = entity.position.x
-		entity.bounds.centerY = entity.position.y 
-		
-		entity.collidable.entity = entity
-		entity.collidable.setCenter(entity.position.x, entity.position.y)
-		entity.collidable.update()
-	})
-	
-	component(utils.components.genericComponent(id:"updateCollisionsHandler", messageId:"update"){ message ->
-		
-		def collisionTree = entity.collidable.quadTree
-		
-		if (entity.collidable.outside) {
-			utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
-				newMessage.bullet = entity
-			})
-			return
-		}
-		
-		if (collisionTree == null)
-			return
-		
-		def collidables = collisionTree.getCollidables(entity.collidable)
-		
-		collidables = Collections2.filter(collidables, Predicates.and({collidable -> entity != collidable.entity } as Predicate, //
-		{ collidable -> entity.owner != collidable.entity } as Predicate,//
-		{ collidable -> collidable.entity != null } as Predicate,//
-		{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
-		{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate, //
-		{ collidable -> collidable.entity.tags.contains("collidable") } as Predicate))
-		
-		entity.collisions = new ArrayList(collidables)
-		
-	})
-	
-	component(utils.components.genericComponent(id:"collisionDetectedHandler", messageId:"collisionDetected"){ message ->
-		if (entity != message.target)
-			return 
-		utils.custom.messageQueue.enqueue(utils.genericMessage("bulletDead"){ newMessage ->
-			newMessage.bullet = entity
-		})
-	})
+	component(new UpdateCollisionsComponent("updateCollisions")) {
+		propertyRef("collidable", "collidable")
+		propertyRef("bounds", "bounds")
+		propertyRef("position", "position")
+	}
 	
 	//
 	

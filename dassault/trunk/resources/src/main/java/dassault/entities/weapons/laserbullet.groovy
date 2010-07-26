@@ -45,17 +45,17 @@ builder.entity {
 	
 	PropertyAnimation widthAnimation = new PropertyAnimation("width")
 	
-	widthAnimation.addKeyFrame (0, 0f)
-	widthAnimation.addKeyFrame (((int)consumeTime/2), 10f)
-	widthAnimation.addKeyFrame (consumeTime, 0f)
+	widthAnimation.addKeyFrame (0, 2f)
+	widthAnimation.addKeyFrame (((int)consumeTime/2), 8f)
+	widthAnimation.addKeyFrame (consumeTime, 2f)
 	
 	def playerColor = parameters.player.color
 	
 	PropertyAnimation colorAnimation = new PropertyAnimation("color")
 	
-	colorAnimation.addKeyFrame (0, utils.color(playerColor.r, playerColor.g, playerColor.b, 0.0f))
+	colorAnimation.addKeyFrame (0, utils.color(playerColor.r, playerColor.g, playerColor.b, 0.1f))
 	colorAnimation.addKeyFrame (((int)consumeTime * 0.5f), utils.color(playerColor.r, playerColor.g, playerColor.b, 1.0f))
-	colorAnimation.addKeyFrame (consumeTime, utils.color(playerColor.r, playerColor.g, playerColor.b, 0.0f))
+	colorAnimation.addKeyFrame (consumeTime, utils.color(playerColor.r, playerColor.g, playerColor.b, 0.1f))
 	
 	def animations = [fire:[widthAnimation, colorAnimation]]
 	
@@ -91,7 +91,9 @@ builder.entity {
 		def renderer = message.renderer
 		
 		def layer = -5
-		def color = entity.color
+		
+		def startColor = entity.color
+		def endColor = utils.color(startColor.r, startColor.g, startColor.b, 0.1f)
 		
 		def start = entity.startPosition
 		def end = entity.hitPosition ?: entity.endPosition
@@ -100,7 +102,8 @@ builder.entity {
 		renderer.enqueue(new ClosureRenderObject(layer, { Graphics g ->
 			SlickCallable.enterSafeBlock();
 			
-			OpenGlUtils.renderLine(start, end, width, color)
+			// OpenGlUtils.renderLine(start, end, width, color)
+			OpenGlUtils.renderTrapezoid(start, end, width, 2f, startColor, endColor)
 			
 			SlickCallable.leaveSafeBlock();
 		}))

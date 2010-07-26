@@ -45,7 +45,13 @@ builder.entity(entityName ?: "blasterweapon-${Math.random()}") {
 			
 			def bulletSpeed = 0.5f
 			
-			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
+//			def bullet = bulletTemplate.instantiate("blasterbullet-${utils.random.nextInt()}", // 
+//					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage, player:owner.player])
+					
+			
+			def entityFactory = utils.custom.entityFactory
+			
+			def bullet = entityFactory.blasterBullet("blasterbullet-${utils.random.nextInt()}", //
 					[position:position, moveDirection:fireDirection, owner:owner, speed:bulletSpeed, damage:entity.damage, player:owner.player])
 			
 			// I dont like the entity.parent.parent to point to world

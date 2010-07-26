@@ -15,6 +15,7 @@ import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.builders.BuilderUtils;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
@@ -78,6 +79,9 @@ public class Game extends StateBasedGame {
 			super.onInit();
 			images("assets/images.properties");
 			animations("assets/animations.properties");
+			
+			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
+			builderUtils.addCustomUtil("entityFactory", new DassaultEntityFactory(injector, builderUtils));
 		}
 
 		public GameGameState(int id) {
