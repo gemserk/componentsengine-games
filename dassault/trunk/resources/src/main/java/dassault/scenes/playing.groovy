@@ -54,7 +54,7 @@ builder.entity("playing") {
 		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
 		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
 	}
-
+	
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)
 		ownerId = "player"
@@ -156,6 +156,17 @@ builder.entity("playing") {
 				newMessage.controlledDroid = message.controlledDroid
 				newMessage.ownerId = entity.id
 			})
+			
+		})
+		
+		component(utils.components.genericComponent(id:"updateEnergyForPlayer", messageId:"update"){ message ->
+		
+			def droid = entity.root.getEntityById(entity.controlledDroidId)
+			
+			if (droid == null)
+				return
+				
+			def droidEnergy = droid.energy.add(100f)
 			
 		})
 		
@@ -318,7 +329,7 @@ builder.entity("playing") {
 			utils.custom.genericprovider.provide{ data ->
 				[
 				owner:data.owner,
-				reloadTime:100,
+				reloadTime:130,
 				damage:10f,
 				energy:20f,
 				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.weapons.blasterbullet")
@@ -346,8 +357,8 @@ builder.entity("playing") {
 				position:data.position,
 				speed:0.2f,
 				energy:utils.container(70f,70f),
-				regenerationSpeed:0.02f,
-				hitpoints:utils.container(80f, 80f)
+				regenerationSpeed:0.03f,
+				hitpoints:utils.container(70f, 70f)
 				]
 			})
 	
