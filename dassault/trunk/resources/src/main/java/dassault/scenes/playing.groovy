@@ -11,7 +11,6 @@ import com.gemserk.componentsengine.commons.components.RectangleRendererComponen
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
-import com.gemserk.games.dassault.components.LinearMovementComponent;
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
 import gemserk.utils.GroovyBootstrapper 
@@ -47,39 +46,15 @@ builder.entity("playing") {
 		endColor = utils.color(0.2f,0.7f,0.2f,0.8f)
 	}
 	
-	child(entity("light4") {
-		
-		parent("dassault.entities.pointlight", [
-		position: utils.vector(0, 0),
-		layer: 10,
-		size: 8f,
-		time: 3000,
-		startColor: utils.color(0.2f,0.2f,0.7f,0.2f),
-		endColor: utils.color(0.2f,0.2f,0.7f,0.8f),
-		])
-		
-		component(new LinearMovementComponent("linearMovementComponent")) { propertyRef("position", "position") }
-		
-		component(utils.components.genericComponent(id:"moveLightHandler", messageId:"moveLight"){ message ->
-			
-			utils.custom.messageQueue.enqueue(utils.genericMessage("moveTo"){ newMessage ->
-				newMessage.target = utils.vector(100,100)
-				newMessage.time = 10000
-				newMessage.entityId = entity.id
-			})
-			
-		})
-		
-		input("inputmapping"){
-			keyboard {
-				press(button:"m",eventId:"moveLight")
-			}
-			mouse {
-			}
-		}
-		
-	} )
-	
+	child(id:"light4", template:"dassault.entities.pointlight") { 
+		position = utils.vector(900,900)
+		layer = 10
+		size = 8f
+		time = 3000
+		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
+		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
+	}
+
 	child(id:"camera", template:"dassault.entities.camera") { 
 		position = utils.vector(0,0)
 		ownerId = "player"
@@ -224,14 +199,14 @@ builder.entity("playing") {
 	child(entity("droid1") {
 		
 		parent("dassault.entities.basicdroid",[ownerId:"player",position:utils.vector(400,300), 
-		speed:0.2f, 
+		speed:0.25f, 
 		energy:utils.container(10000f,10000f),
 		regenerationSpeed:0.02f,
-		hitpoints:utils.container(100000f, 100000f)])
+		hitpoints:utils.container(200f, 200f)])
 		
 		child(id:"blasterWeapon1", template:"dassault.entities.weapons.blasterweapon") { 
 			reloadTime = 200
-			damage = 30f
+			damage = 10f
 			energy = 10f
 			bulletTemplate = utils.custom.templateProvider.getTemplate("dassault.entities.weapons.blasterbullet")
 			owner = {entity.parent}
@@ -344,7 +319,7 @@ builder.entity("playing") {
 				[
 				owner:data.owner,
 				reloadTime:100,
-				damage:30f,
+				damage:10f,
 				energy:20f,
 				bulletTemplate:utils.custom.templateProvider.getTemplate("dassault.entities.weapons.blasterbullet")
 				]
@@ -357,9 +332,9 @@ builder.entity("playing") {
 				ownerId:data.ownerId,
 				position:data.position,
 				speed:0.1f,
-				energy:utils.container(500f,500f),
-				regenerationSpeed:0.1f,
-				hitpoints:utils.container(100000f, 100000f)
+				energy:utils.container(50f,50f),
+				regenerationSpeed:0.02f,
+				hitpoints:utils.container(100f, 100f)
 				]
 			})
 	
@@ -370,9 +345,9 @@ builder.entity("playing") {
 				ownerId:data.ownerId,
 				position:data.position,
 				speed:0.2f,
-				energy:utils.container(700f,700f),
-				regenerationSpeed:0.1f,
-				hitpoints:utils.container(100000f, 100000f)
+				energy:utils.container(70f,70f),
+				regenerationSpeed:0.02f,
+				hitpoints:utils.container(80f, 80f)
 				]
 			})
 	
