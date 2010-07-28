@@ -18,7 +18,7 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
-import com.gemserk.games.dassault.predicates.DassaultPredicates;
+import com.gemserk.games.dassault.predicates.CollidablesPredicates;
 import com.google.common.collect.Collections2;
 import com.google.inject.Inject;
 
@@ -76,7 +76,7 @@ public class UpdateCollisionsComponent extends FieldsReflectionComponent {
 			return;
 
 		List collidables = quadTree.getCollidables(collidable);
-		Collection filteredCollidables = Collections2.filter(collidables, DassaultPredicates.collidingWith(entity));
+		Collection filteredCollidables = Collections2.filter(collidables, CollidablesPredicates.collidingWith(entity));
 
 		Properties.setValue(entity, "collisions", new ArrayList(filteredCollidables));
 

@@ -13,8 +13,12 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"updateTargetsForPlayer", messageId:"update"){ message ->
 		
-		entity.enemies = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // could be another entity, not only droids 
-		{ droid -> droid.player != entity} as Predicate))
+		def entity = entity
+	
+		entity.enemies = entity.root.getEntities(Predicates.and( //
+			EntityPredicates.withAllTags("droid"), // could be another entity, not only droids 
+			{ droid -> droid.player != entity} as Predicate, //
+		))
 		
 	})
 	

@@ -10,8 +10,7 @@ import com.gemserk.componentsengine.effects.EffectFactory
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.games.dassault.components.TransferComponent;
 import com.gemserk.games.dassault.components.TransferRendererComponent;
-import com.google.common.base.Predicate 
-import com.google.common.base.Predicates;
+import com.gemserk.games.dassault.predicates.CollidablesPredicates 
 import com.google.common.collect.Collections2 
 import org.newdawn.slick.Color 
 
@@ -75,11 +74,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			
 			def collidables = collisionTree.getCollidables(entity.collidable)
 			
-			collidables = Collections2.filter(collidables, Predicates.and({collidable -> collidable.entity != null } as Predicate, //
-			{ collidable -> collidable.entity.tags.contains("collidable")} as Predicate, // 
-			{ collidable -> collidable.entity != entity } as Predicate, //
-			{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
-			{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate))
+			collidables = Collections2.filter(collidables, CollidablesPredicates.collidingWith2(entity))
 			
 			entity.collisions = new ArrayList(collidables)
 		}
