@@ -1,6 +1,7 @@
 package dassault.scenes;
 
 
+import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Transform;
@@ -433,7 +434,7 @@ builder.entity("playing") {
 		entity.zoom = (float) (entity.zoom + change * 0.002f)
 		entity.zoom = truncateValue(entity.zoom, 0.3f, 1.7f)
 		
-//		println "wheelChange: $change, zoom: $entity.zoom"
+		//		println "wheelChange: $change, zoom: $entity.zoom"
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
 			newMessage.cameraId = entity.cameraId
@@ -469,6 +470,8 @@ builder.entity("playing") {
 			press(button:"h",eventId:"helpscreen")
 			press(button:"k",eventId:"makeScreenshot")
 			press(button:"b",eventId:"newLaserBullet")
+			
+			press(button:"g",eventId:"toggleGrabMouse")
 		}
 		mouse {
 			press(button:"left", eventId:"leftmouse")
@@ -483,11 +486,22 @@ builder.entity("playing") {
 		}
 	}
 	
+	component(utils.components.genericComponent(id:"toggleGrabMouseHandler", messageId:"toggleGrabMouse"){ message ->
+		entity.grabEnabled = !entity.grabEnabled
+	})
+	
 	property("shouldGrabMouse",true)
+	property("grabEnabled", !utils.custom.gameStateManager.gameProperties.runningInDebug)
 	
 	component(utils.components.genericComponent(id:"grabMouse", messageId:"update"){ message ->
-		if(entity.shouldGrabMouse && !utils.custom.gameStateManager.gameProperties.runningInDebug)
-			utils.custom.gameContainer.setMouseGrabbed(true)
+		if(entity.shouldGrabMouse && entity.grabEnabled) {
+			if (!Mouse.isGrabbed())
+				utils.custom.gameContainer.setMouseGrabbed(true)
+		}
+		else { 
+			if (Mouse.isGrabbed())
+				utils.custom.gameContainer.setMouseGrabbed(false)
+		}
 	})
 	
 	component(utils.components.genericComponent(id:"grabMouse-enternodestate", messageId:"enterNodeState"){ message ->
@@ -519,3 +533,4 @@ builder.entity("playing") {
 	})
 	
 }
+
