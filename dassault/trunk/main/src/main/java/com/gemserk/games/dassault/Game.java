@@ -15,6 +15,8 @@ import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.commons.slick.util.ScreenshotGrabber;
+import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
 import com.gemserk.componentsengine.builders.BuilderUtils;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -73,7 +75,7 @@ public class Game extends StateBasedGame {
 	}
 
 	class GameGameState extends GemserkGameState {
-
+		
 		@Override
 		public void onInit() {
 			super.onInit();
@@ -82,6 +84,10 @@ public class Game extends StateBasedGame {
 			
 			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
 			builderUtils.addCustomUtil("entityFactory", new DassaultEntityFactory(injector, builderUtils));
+			
+			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
+			injector.injectMembers(screenshotGrabber);
+			builderUtils.addCustomUtil("screenshotGrabber", screenshotGrabber);
 		}
 
 		public GameGameState(int id) {

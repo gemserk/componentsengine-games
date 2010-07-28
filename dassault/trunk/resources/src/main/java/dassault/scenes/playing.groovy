@@ -1,5 +1,6 @@
 package dassault.scenes;
 
+
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Transform;
@@ -160,12 +161,12 @@ builder.entity("playing") {
 		})
 		
 		component(utils.components.genericComponent(id:"updateEnergyForPlayer", messageId:"update"){ message ->
-		
+			
 			def droid = entity.root.getEntityById(entity.controlledDroidId)
 			
 			if (droid == null)
 				return
-				
+			
 			def droidEnergy = droid.energy.add(100f)
 			
 		})
@@ -415,21 +416,30 @@ builder.entity("playing") {
 	
 	property("cameraId", "camera")
 	
-	property("zooms", [1.0f, 1.7f, 0.6f, 0.3f])
-	property("currentZoom", 0)
+	property("zoom", 1f)
 	
-	component(utils.components.genericComponent(id:"toggleZoom", messageId:"toggleZoom"){ message ->
+	def truncateValue = { value, min, max -> 
+		if (value < min)
+			return min
+		if (value > max)
+			return max
+		return value
+	}
+	
+	component(utils.components.genericComponent(id:"mouseWheelChanged", messageId:"wheelChanged"){ message ->
 		
-		entity.currentZoom = (entity.currentZoom + 1) % entity.zooms.size() 
-		def zoomTo = entity.zooms[entity.currentZoom]
+		def change = message.wheel.change
 		
-		def time = 200
+		entity.zoom = (float) (entity.zoom + change * 0.002f)
+		entity.zoom = truncateValue(entity.zoom, 0.3f, 1.7f)
+		
+//		println "wheelChange: $change, zoom: $entity.zoom"
+		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
 			newMessage.cameraId = entity.cameraId
-			newMessage.end = zoomTo
-			newMessage.time = time
-		})		
-		
+			newMessage.end = entity.zoom
+			newMessage.time = 200
+		})	
 	})
 	
 	component(utils.components.genericComponent(id:"newLaserBulletHandler", messageId:"newLaserBullet"){ message ->
@@ -444,14 +454,20 @@ builder.entity("playing") {
 		
 	})
 	
+	component(utils.components.genericComponent(id:"makeScreenshotHandler", messageId:"makeScreenshot"){ message ->
+		
+		def screenshotGrabber = utils.custom.screenshotGrabber
+		screenshotGrabber.saveScreenshot("dassault-", "png")
+		
+	})
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
 			press(button:"space",eventId:"pauseGame")
 			press(button:"h",eventId:"helpscreen")
-			press(button:"z",eventId:"toggleZoom")
-			
+			press(button:"k",eventId:"makeScreenshot")
 			press(button:"b",eventId:"newLaserBullet")
 		}
 		mouse {
@@ -460,6 +476,9 @@ builder.entity("playing") {
 			move(eventId:"movemouse") { message ->
 				message.x = position.x
 				message.y = position.y
+			}
+			wheel(eventId:"wheelChanged") { message -> 
+				message.wheel = wheel
 			}
 		}
 	}
