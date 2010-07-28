@@ -76,10 +76,10 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 			def collidables = collisionTree.getCollidables(entity.collidable)
 			
 			collidables = Collections2.filter(collidables, Predicates.and({collidable -> collidable.entity != null } as Predicate, //
-				{ collidable -> collidable.entity.tags.contains("collidable")} as Predicate, // 
-				{ collidable -> collidable.entity != entity } as Predicate, //
-				{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
-				{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate))
+			{ collidable -> collidable.entity.tags.contains("collidable")} as Predicate, // 
+			{ collidable -> collidable.entity != entity } as Predicate, //
+			{ collidable -> entity.collidable.aabb.collide(collidable.aabb) } as Predicate, // 
+			{ collidable -> new ShapeUtils(collidable.entity.bounds).collides(entity.bounds) } as Predicate))
 			
 			entity.collisions = new ArrayList(collidables)
 		}
@@ -247,4 +247,54 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	//// 
 	
+	component(utils.components.genericComponent(id:"defaultDroidBehaviour", messageId:"update"){ message ->
+		
+		def player = entity.player
+		
+		// this never should happend
+		if (player == null) {
+			log.error("player is null for droid: droid.id $entity.id")
+			return
+		}
+		
+		if (entity == player.controlledDroid)
+			return
+			
+		def delta = message.delta
+		
+		def enemies = player.enemies
+		
+//		def enemyTargets = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // could be another entity, not only droids 
+//				{ enemyTarget -> enemyTarget.player != player} as Predicate))
+		
+		// better strategy to select a target...
+		def target = enemies.empty ? null : enemies[0]
+		
+		def wanderDirection = entity.wanderDirection ?: utils.vector(1,0)
+		def wanderTime = entity.wanderTime ?: 0
+		
+		if (wanderTime <= 0) {
+			wanderDirection.x = (float) utils.random.nextFloat() - 0.5f
+			wanderDirection.y = (float) utils.random.nextFloat() - 0.5f
+			wanderDirection.normalise()
+			
+			wanderTime = utils.random.nextInt(1000) + 1000
+			//				println "wanderDirection : $wanderDirection , wanderTime : $wanderTime"
+		} else {
+			wanderTime = wanderTime - delta
+		}
+		
+		entity.wanderDirection = wanderDirection.copy()
+		entity.moveDirection = wanderDirection.copy()
+		entity.wanderTime = wanderTime
+		
+		entity.shouldFire = false
+		
+		if (!target)
+			return
+		
+		entity.shouldFire = true
+		entity.fireDirection = target.position.copy().sub(entity.position).normalise()
+		
+	})
 }

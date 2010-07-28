@@ -141,14 +141,31 @@ builder.entity("playing") {
 			//			println "points: $player.points"
 		})
 		
-		
-		
 	})
+	
+	child(id:"cpu1", template:"dassault.entities.player") {  
+		ownerId = "cpu1"
+		color = utils.color(0,0,1,1f)
+	}
+	
+	child(id:"cpu2", template:"dassault.entities.player") {  
+		ownerId = "cpu2"
+		color = utils.color(1,0,0,1f)
+	}
+	
+	child(id:"cpu3", template:"dassault.entities.player") {  
+		ownerId = "cpu3"  
+		color = utils.color(0,1,0,1f)
+	}
 	
 	child(entity("player") {
 		
+		parent("dassault.entities.player", [
+		   color:utils.color(0.42f, 0.43f, 0.67f,1f)])
+		
 		property("controlledDroidId", "droid1")
-		property("color", utils.color(0.42f, 0.43f, 0.67f,1f))
+		property("controlledDroid", {entity.root.getEntityById(entity.controlledDroidId)})
+		
 		property("points", 0)
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
@@ -163,7 +180,8 @@ builder.entity("playing") {
 		
 		component(utils.components.genericComponent(id:"updateEnergyForPlayer", messageId:"update"){ message ->
 			
-			def droid = entity.root.getEntityById(entity.controlledDroidId)
+			// def droid = entity.root.getEntityById(entity.controlledDroidId)
+			def droid = entity.controlledDroid
 			
 			if (droid == null)
 				return
@@ -207,8 +225,6 @@ builder.entity("playing") {
 		secondaryDownKey = Input.KEY_DOWN
 	}
 	
-	child(id:"playerAiHelperController", template:"dassault.entities.aicontroller") {  ownerId = "player"  }
-	
 	child(entity("droid1") {
 		
 		parent("dassault.entities.basicdroid",[ownerId:"player",position:utils.vector(400,300), 
@@ -225,21 +241,6 @@ builder.entity("playing") {
 			owner = {entity.parent}
 		}
 	} )
-	
-	child(entity("cpu1") {
-		property("color", utils.color(0,0,1,1f))
-	})
-	child(id:"cpuController1", template:"dassault.entities.aicontroller") {  ownerId = "cpu1"  }
-	
-	child(entity("cpu2") {
-		property("color", utils.color(1,0,0,1f))
-	})
-	child(id:"cpuController2", template:"dassault.entities.aicontroller") {  ownerId = "cpu2"  }
-	
-	child(entity("cpu3") {
-		property("color", utils.color(0,1,0,1f))
-	})
-	child(id:"cpuController3", template:"dassault.entities.aicontroller") {  ownerId = "cpu3"  }
 	
 	def obstacleForm = new Polygon([1f, 1f, 4f, 1f, 4f, 4f, 2.5f, 5f, 1f, 4f] as float[])
 	def obstacleForm2 = new Polygon([6.49f, -22.29f, 25.25f, 1.13f, 1.84f, 19.88f, -15.35f, 14.43f, -16.92f, -3.53f, -1.31f, -9.63f] as float[])
