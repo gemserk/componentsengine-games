@@ -112,6 +112,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("droidDead"){ newMessage ->
 			newMessage.droid = entity
+			newMessage.source = message.source // who kill the droid.
 		})
 		
 	})
@@ -228,20 +229,7 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		property("emptyColor", {utils.color(0.9f, 0.1f, 0.1f, entity.visible)})
 		property("layer", 20)
 	}
-	
-	//// temporal
-	
-	//	child(id:"${entity.id}-light1".toString(), template:"dassault.entities.pointlight") { 
-	//		position = {entity.parent.position}
-	//		layer = -4
-	//		size = 5f
-	//		time = 1500
-	//		startColor = utils.color(1f,1f,1f,0.2f)
-	//		endColor = utils.color(1f,1f,1f,0.8f)
-	//	}
-	
-	//// 
-	
+
 	component(utils.components.genericComponent(id:"defaultDroidBehaviour", messageId:"update"){ message ->
 		
 		def player = entity.player
@@ -258,9 +246,6 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		def delta = message.delta
 		
 		def enemies = player.enemies
-		
-//		def enemyTargets = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), // could be another entity, not only droids 
-//				{ enemyTarget -> enemyTarget.player != player} as Predicate))
 		
 		// better strategy to select a target...
 		def target = enemies.empty ? null : enemies[0]

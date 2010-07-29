@@ -11,6 +11,8 @@ builder.entity {
 	property("color", parameters.color)
 	property("enemies", [])
 	
+	property("points", 0)
+	
 	component(utils.components.genericComponent(id:"updateTargetsForPlayer", messageId:"update"){ message ->
 		
 		def entity = entity

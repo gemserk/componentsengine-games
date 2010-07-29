@@ -126,7 +126,7 @@ public class DassaultEntityFactory {
 
 			messageQueue.enqueue(new Message("collisionDetected", new PropertiesMapBuilder() {
 				{
-					property("bullet", entity);
+					property("source", entity);
 					property("target", target);
 					property("damage", damage);
 				}
@@ -139,46 +139,6 @@ public class DassaultEntityFactory {
 			}.build()));
 		}
 	}
-
-//	public class BulletRendererComponent extends FieldsReflectionComponent {
-//
-//		@EntityProperty(readOnly = true)
-//		Image headImage;
-//
-//		@EntityProperty(readOnly = true)
-//		Image bodyImage;
-//
-//		@EntityProperty(readOnly = true)
-//		Image auraImage;
-//
-//		@EntityProperty(readOnly = true)
-//		Vector2f position;
-//
-//		@EntityProperty(readOnly = true)
-//		Color color;
-//		
-//		public BulletRendererComponent(String id) {
-//			super(id);
-//		}
-//
-//		@Handles
-//		public void render(Message message) {
-//
-//			Renderer renderer = Properties.getValue(message, "renderer");
-//
-//			Vector2f moveDirection = Properties.getValue(entity, "moveDirection");
-//
-//			float angle = (float) moveDirection.getTheta();
-//
-//			Vector2f size = new Vector2f(0.6f, 0.6f);
-//
-//			int layer = -5;
-//
-//			renderer.enqueue(new SlickImageRenderObject(layer - 2, auraImage, position, size, angle, Color.black));
-//			renderer.enqueue(new SlickImageRenderObject(layer - 1, bodyImage, position, size, angle, color));
-//			renderer.enqueue(new SlickImageRenderObject(layer, headImage, position, size, angle, Color.white));
-//		}
-//	}
 
 	public Entity blasterBullet(String id, final Map<String, Object> parameters) {
 		return new EntityBuilderFactory().entity(id).with(new EntityBuilder(injector) {

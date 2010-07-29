@@ -131,12 +131,23 @@ builder.entity("playing") {
 		component(utils.components.genericComponent(id:"incrementPlayerPointsWhenDroidDies", messageId:"droidDead"){ message ->
 			
 			def droid = message.droid
+			def source = message.source // who killed the droid
 			
-			if (droid.ownerId == entity.playerId) 
+			if (droid.player == source.player) {
+				// a player's droid killed another player's droid... (I need extract method here :( )
+				// ¿should remove points?
 				return
+			}
 			
-			def player = entity.root.getEntityById(entity.playerId)
+			def player = source.player // the player who deserve the points
 			player.points += entity.pointsForKillingADroid
+		
+			
+//			if (droid.ownerId == entity.playerId) 
+//				return
+//			
+//			def player = entity.root.getEntityById(entity.playerId)
+//			player.points += entity.pointsForKillingADroid
 			
 			//			println "points: $player.points"
 		})
@@ -165,8 +176,6 @@ builder.entity("playing") {
 		
 		property("controlledDroidId", "droid1")
 		property("controlledDroid", {entity.root.getEntityById(entity.controlledDroidId)})
-		
-		property("points", 0)
 		
 		component(utils.components.genericComponent(id:"changeControlledDroid", messageId:"changeControlledDroid"){ message ->
 			entity.controlledDroidId = message.controlledDroid.id 
