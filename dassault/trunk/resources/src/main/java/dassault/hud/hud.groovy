@@ -1,4 +1,5 @@
-package dassault.entities
+package dassault.hud
+
 
 import com.gemserk.componentsengine.commons.components.BarRendererComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
@@ -34,44 +35,20 @@ builder.entity {
 		property("color", utils.color(1f,1,1,1f))
 	}
 	
-	child(id:"playerPointsLabel", template:"gemserk.gui.label") { 
-		font = pointsLabelsFont
-		position = utils.vector(520,20)
-		message = "POINTS: {0}"
-		bounds = utils.rectangle(-50, -10, 100, 20)
-		value = {entity.parent.players[0].points}
-		fontColor = {entity.parent.players[0].color}
-		layer = 1500 
-	}
+	def players = parameters.players
+	def y = 20f
 	
-	child(id:"playerPointsLabel2", template:"gemserk.gui.label") { 
-		font = pointsLabelsFont
-		position = utils.vector(520,35)
-		message = "POINTS: {0}"
-		bounds = utils.rectangle(-50, -10, 100, 20)
-		value = {entity.parent.players[1].points}
-		fontColor = {entity.parent.players[1].color}
-		layer = 1500 
-	}
-	
-	child(id:"playerPointsLabel3", template:"gemserk.gui.label") { 
-		font = pointsLabelsFont
-		position = utils.vector(520,50)
-		message = "POINTS: {0}"
-		bounds = utils.rectangle(-50, -10, 100, 20)
-		value = {entity.parent.players[2].points}
-		fontColor = {entity.parent.players[2].color}
-		layer = 1500 
-	}
-	
-	child(id:"playerPointsLabel4", template:"gemserk.gui.label") { 
-		font = pointsLabelsFont
-		position = utils.vector(520,65)
-		message = "POINTS: {0}"
-		bounds = utils.rectangle(-50, -10, 100, 20)
-		value = {entity.parent.players[3].points}
-		fontColor = {entity.parent.players[3].color}
-		layer = 1500 
+	players.each { player -> 
+		
+		child(entity("$player.id-pointsLabel".toString()){
+			parent("dassault.hud.pointslabel", [
+			position:utils.vector(520f,(float)y), 
+			message: "Points: {0}", 
+			player: player, 
+			layer: 1500])
+		})
+		
+		y+=15f
 	}
 	
 	component(new BarRendererComponent("healthRenderer") ){
@@ -85,11 +62,13 @@ builder.entity {
 	}
 	
 	child(id:"healthLabel", template:"gemserk.gui.label") { 
-		position = utils.vector(70,585)
-		message = "HEALTH"
-		bounds = utils.rectangle(-50, -10, 100, 20)
-		layer = 1500 
+		font = utils.resources.fonts.font([italic:false, bold:false, size:14])
+		position = utils.vector(20,560)
+		message = "Health"
+		bounds = utils.rectangle(0, 0, 100, 20)
+		layer = 1501 
 		align = "left"
+		valign = "top"
 	}
 	
 }

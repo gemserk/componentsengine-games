@@ -187,7 +187,7 @@ builder.entity {
 			def collidableEntity = collidable.entity
 			
 			utils.custom.messageQueue.enqueue(utils.genericMessage("collisionDetected"){ newMessage ->
-				newMessage.bullet = entity
+				newMessage.source = entity
 				newMessage.target = collidableEntity
 				newMessage.damage = damage
 			})

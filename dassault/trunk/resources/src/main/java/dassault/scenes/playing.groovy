@@ -213,7 +213,7 @@ builder.entity("playing") {
 	
 	child(entity("hud"){
 		
-		parent("dassault.entities.hud", [
+		parent("dassault.hud.hud", [
 		players: players,
 		playerId: "player"
 		])
