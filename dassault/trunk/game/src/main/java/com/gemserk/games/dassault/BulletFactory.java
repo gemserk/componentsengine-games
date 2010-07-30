@@ -30,13 +30,13 @@ import com.gemserk.games.dassault.components.blasterbullet.UpdateCollisionsCompo
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public class DassaultEntityFactory {
+public class BulletFactory {
 
 	private final Injector injector;
 
 	private final BuilderUtils builderUtils;
 
-	public DassaultEntityFactory(Injector injector, BuilderUtils builderUtils) {
+	public BulletFactory(Injector injector, BuilderUtils builderUtils) {
 		this.injector = injector;
 		this.builderUtils = builderUtils;
 	}

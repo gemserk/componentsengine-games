@@ -229,6 +229,8 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		property("emptyColor", {utils.color(0.9f, 0.1f, 0.1f, entity.visible)})
 		property("layer", 20)
 	}
+	
+	// move and attack behaviour
 
 	component(utils.components.genericComponent(id:"defaultDroidBehaviour", messageId:"update"){ message ->
 		

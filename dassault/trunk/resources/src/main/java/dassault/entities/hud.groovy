@@ -6,10 +6,14 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 
 builder.entity {
 	
+	def pointsLabelsFont = utils.resources.fonts.font([italic:false, bold:false, size:16])
+	
 	tags("hud")
 	
 	property("playerId", parameters.playerId)
 	property("player", {entity.root.getEntityById(entity.playerId)})
+	
+	property("players", parameters.players)
 	
 	component(utils.components.genericComponent(id:"updateHudValues", messageId:"update"){ message ->
 		
@@ -31,10 +35,42 @@ builder.entity {
 	}
 	
 	child(id:"playerPointsLabel", template:"gemserk.gui.label") { 
+		font = pointsLabelsFont
 		position = utils.vector(520,20)
 		message = "POINTS: {0}"
 		bounds = utils.rectangle(-50, -10, 100, 20)
-		value = {entity.parent.player.points}
+		value = {entity.parent.players[0].points}
+		fontColor = {entity.parent.players[0].color}
+		layer = 1500 
+	}
+	
+	child(id:"playerPointsLabel2", template:"gemserk.gui.label") { 
+		font = pointsLabelsFont
+		position = utils.vector(520,35)
+		message = "POINTS: {0}"
+		bounds = utils.rectangle(-50, -10, 100, 20)
+		value = {entity.parent.players[1].points}
+		fontColor = {entity.parent.players[1].color}
+		layer = 1500 
+	}
+	
+	child(id:"playerPointsLabel3", template:"gemserk.gui.label") { 
+		font = pointsLabelsFont
+		position = utils.vector(520,50)
+		message = "POINTS: {0}"
+		bounds = utils.rectangle(-50, -10, 100, 20)
+		value = {entity.parent.players[2].points}
+		fontColor = {entity.parent.players[2].color}
+		layer = 1500 
+	}
+	
+	child(id:"playerPointsLabel4", template:"gemserk.gui.label") { 
+		font = pointsLabelsFont
+		position = utils.vector(520,65)
+		message = "POINTS: {0}"
+		bounds = utils.rectangle(-50, -10, 100, 20)
+		value = {entity.parent.players[3].points}
+		fontColor = {entity.parent.players[3].color}
 		layer = 1500 
 	}
 	

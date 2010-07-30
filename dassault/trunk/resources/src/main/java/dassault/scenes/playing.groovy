@@ -69,8 +69,6 @@ builder.entity("playing") {
 		controlledDroidId = "droid1"
 	}
 	
-	child(id:"hud", template:"dassault.entities.hud") { playerId = "player" }
-	
 	child(entity("restartLabel"){
 		
 		parent("gemserk.gui.label", [
@@ -136,43 +134,31 @@ builder.entity("playing") {
 			if (droid.player == source.player) {
 				// a player's droid killed another player's droid... (I need extract method here :( )
 				// ¿should remove points?
-				return
+					return
 			}
 			
 			def player = source.player // the player who deserve the points
 			player.points += entity.pointsForKillingADroid
-		
-			
-//			if (droid.ownerId == entity.playerId) 
-//				return
-//			
-//			def player = entity.root.getEntityById(entity.playerId)
-//			player.points += entity.pointsForKillingADroid
-			
-			//			println "points: $player.points"
 		})
 		
 	})
 	
-	child(id:"cpu1", template:"dassault.entities.player") {  
-		ownerId = "cpu1"
-		color = utils.color(0,0,1,1f)
+	def cpuPlayer1 = entity("cpu1") {
+		parent("dassault.entities.player", [color:utils.color(0,0,1,1f)])
 	}
 	
-	child(id:"cpu2", template:"dassault.entities.player") {  
-		ownerId = "cpu2"
-		color = utils.color(1,0,0,1f)
+	def cpuPlayer2 = entity("cpu2") {
+		parent("dassault.entities.player", [color:utils.color(1,0,0,1f)])
 	}
 	
-	child(id:"cpu3", template:"dassault.entities.player") {  
-		ownerId = "cpu3"  
-		color = utils.color(0,1,0,1f)
+	def cpuPlayer3 = entity("cpu3") {
+		parent("dassault.entities.player", [color:utils.color(0,1,0,1f)])
 	}
 	
-	child(entity("player") {
+	def humanPlayer = entity("player") {
 		
 		parent("dassault.entities.player", [
-		   color:utils.color(0.42f, 0.43f, 0.67f,1f)])
+		color:utils.color(0.42f, 0.43f, 0.67f,1f)])
 		
 		property("controlledDroidId", "droid1")
 		property("controlledDroid", {entity.root.getEntityById(entity.controlledDroidId)})
@@ -218,6 +204,19 @@ builder.entity("playing") {
 			})
 			
 		})
+		
+	}
+	
+	def players = [humanPlayer, cpuPlayer1, cpuPlayer2, cpuPlayer3]
+	
+	players.each { player -> child(player) }
+	
+	child(entity("hud"){
+		
+		parent("dassault.entities.hud", [
+		players: players,
+		playerId: "player"
+		])
 		
 	})
 	

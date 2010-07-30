@@ -83,7 +83,7 @@ public class Game extends StateBasedGame {
 			animations("assets/animations.properties");
 			
 			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
-			builderUtils.addCustomUtil("entityFactory", new DassaultEntityFactory(injector, builderUtils));
+			builderUtils.addCustomUtil("bulletFactory", new BulletFactory(injector, builderUtils));
 			
 			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
 			injector.injectMembers(screenshotGrabber);
