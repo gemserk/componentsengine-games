@@ -68,12 +68,12 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 		
 		def position = entity.position
 		
-		def owner = entity.root.getEntityById(entity.ownerId)
+		def player = entity.player
 		
 		def size = utils.vector(entity.size, entity.size)
 		
 		def layer = 0
-		def color = owner.color
+		def color = player.color
 		
 		def headPosition = position.copy().add(entity.headPosition)
 		def rightLegPosition = position.copy().add(entity.rightLegPosition)

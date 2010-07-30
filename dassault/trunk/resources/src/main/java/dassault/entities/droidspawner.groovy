@@ -14,13 +14,15 @@ builder.entity {
 	property("minTime", parameters.minTime)
 	property("maxTime", parameters.maxTime)
 	
-	property("ownerId", parameters.ownerId)
+	property("player", parameters.player)
 	
 	property("droidFactory", parameters.droidFactory)
 	property("weaponFactory", parameters.weaponFactory)
 	
 	property("droidTypes", parameters.droidTypes)
 	property("weaponTypes", parameters.weaponTypes)
+	
+	property("droidsLimit", parameters.droidsLimit) // should be a property of the player?
 	
 	component(utils.components.genericComponent(id:"updateTimer", messageId:"update"){ message ->
 		def timer = entity.timer
@@ -43,23 +45,32 @@ builder.entity {
 		
 		if (entity.id != message.spawnerId)
 			return
+			
+		def player = entity.player
+		def droidsLimit = entity.droidsLimit
+		
+		// disable spawner until droids < limit?
+		if (player.droidCount >= droidsLimit) 
+			return
 		
 		def droidTypes = entity.droidTypes
 		def droidType = droidTypes[random.nextInt(droidTypes.size)]
-		                           
+		
 		def droidTemplate = entity.droidFactory[droidType]
-		def droid = droidTemplate.get([position:entity.position.copy(), ownerId:entity.ownerId])
-
+		def droid = droidTemplate.get([position:entity.position.copy(), player:entity.player])
+		
 		def weaponTypes = entity.weaponTypes
 		def weaponType = weaponTypes[random.nextInt(weaponTypes.size)]
 		
 		def weaponTemplate = entity.weaponFactory[weaponType]
 		def weapon = weaponTemplate.get([owner:droid])
 		
-		// def droid = entity.droidTemplate.instantiate(droidId, [position:entity.position.copy(), ownerId:entity.ownerId])
-		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(droid,entity.parent))
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(weapon,droid))
+		
+		utils.custom.messageQueue.enqueue(utils.genericMessage("droidSpawned"){ newMessage ->
+			newMessage.droid = droid
+		})
 	})
 	
 }

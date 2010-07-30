@@ -16,12 +16,36 @@ builder.entity {
 	component(utils.components.genericComponent(id:"updateTargetsForPlayer", messageId:"update"){ message ->
 		
 		def entity = entity
-	
-		entity.enemies = entity.root.getEntities(Predicates.and( //
-			EntityPredicates.withAllTags("droid"), // could be another entity, not only droids 
-			{ droid -> droid.player != entity} as Predicate, //
-		))
 		
+		entity.enemies = entity.root.getEntities(Predicates.and( //
+				EntityPredicates.withAllTags("droid"), // could be another entity, not only droids 
+				{ droid -> droid.player != entity} as Predicate, //
+				))
+		
+	})
+	
+	property("droidCount", 0)
+	
+	component(utils.components.genericComponent(id:"incrementDroidsCountWhenDroidSpawned", messageId:"droidSpawned"){ message ->
+		def droid = message.droid
+		
+		if (droid.player != entity)
+			return
+		
+		entity.droidCount = entity.droidCount + 1 
+		
+		log.debug("Droid spawned : player $entity.id - count $entity.droidCount")
+	})
+	
+	component(utils.components.genericComponent(id:"decrementDroidsCountWhenDroidDies", messageId:"droidDead"){ message ->
+		def droid = message.droid
+		
+		if (droid.player != entity)
+			return
+		
+		entity.droidCount = entity.droidCount - 1
+		
+		log.debug("Droid died: player $entity.id - count $entity.droidCount")
 	})
 	
 }

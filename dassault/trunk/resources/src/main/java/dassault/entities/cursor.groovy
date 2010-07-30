@@ -27,12 +27,12 @@ builder.entity {
 	component(utils.components.genericComponent(id:"droidFocusedHandler", messageId:"droidFocused"){ message ->
 		def droidId = message.droidId
 		def droid = entity.root.getEntityById(droidId)
-		def owner = entity.root.getEntityById(droid.ownerId)
+		def player = droid.player
 		
 		entity.droidId = droidId
 		
 		entity.zoomInterpolator = new FloatInterpolator(300, entity.zoom, 0.7f)
-		entity.colorInterpolator = new ColorInterpolator(300, entity.color, owner.color)
+		entity.colorInterpolator = new ColorInterpolator(300, entity.color, player.color)
 	})
 	
 	component(utils.components.genericComponent(id:"droidLostFocusHandler", messageId:"droidLostFocus"){ message ->

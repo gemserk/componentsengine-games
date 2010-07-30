@@ -19,16 +19,13 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	
 	tags("droid", "nofriction", "collidable")
 	
-	// TODO: use owner instead of id
-	property("ownerId", parameters.ownerId)
-	
 	property("position", parameters.position.copy())
 	property("newPosition", parameters.position)
 	property("direction",utils.vector(1,0))
 	property("size", parameters.size ?: 1.0f)
 	property("speed", parameters.speed ?: 0.1f)
 	
-	property("player", {entity.root.getEntityById(entity.ownerId)})
+	property("player", parameters.player)
 	
 	component(new SuperMovementComponent("movementComponent")) {
 		propertyRef("position", "newPosition")
@@ -158,8 +155,9 @@ builder.entity(entityName ?: "droid-${Math.random()}") {
 	component(utils.components.genericComponent(id:"changeOwnerHandler", messageId:"changeOwner"){ message ->
 		if (entity != message.controlledDroid)
 			return
-		log.info("Droid has new owner - droid.id : $entity.id - owner.id : $message.ownerId")
-		entity.ownerId = message.ownerId
+		def newPlayer = message.player
+		log.info("Droid has new owner - droid.id : $entity.id - owner.id : $newPlayer.id")
+		entity.player = newPlayer
 	})
 	
 	

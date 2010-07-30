@@ -94,7 +94,7 @@ builder.entity("playing") {
 		component(utils.components.genericComponent(id:"detectGameOver", messageId:"update"){ message ->
 			
 			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
-			{ droid -> droid.ownerId == entity.playerId} as Predicate))
+			{ droid -> droid.player.id == entity.playerId} as Predicate))
 			
 			if (!controlledDroids.empty)
 				return
@@ -168,7 +168,7 @@ builder.entity("playing") {
 			
 			utils.custom.messageQueue.enqueue(utils.genericMessage("changeOwner"){ newMessage ->
 				newMessage.controlledDroid = message.controlledDroid
-				newMessage.ownerId = entity.id
+				newMessage.player = entity
 			})
 			
 		})
@@ -194,7 +194,7 @@ builder.entity("playing") {
 				return
 			
 			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
-					{ droid -> droid.ownerId == entity.id} as Predicate))
+					{ droid -> droid.player == entity} as Predicate))
 			
 			if (controlledDroids.empty)
 				return
@@ -235,7 +235,7 @@ builder.entity("playing") {
 	
 	child(entity("droid1") {
 		
-		parent("dassault.entities.basicdroid",[ownerId:"player",position:utils.vector(400,300), 
+		parent("dassault.entities.basicdroid",[player:humanPlayer,position:utils.vector(400,300), 
 		speed:0.25f, 
 		energy:utils.container(10000f,10000f),
 		regenerationSpeed:0.02f,
@@ -351,7 +351,7 @@ builder.entity("playing") {
 			utils.custom.templateProvider.getTemplate("dassault.entities.basicdroid"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				ownerId:data.ownerId,
+				player:data.player,
 				position:data.position,
 				speed:0.1f,
 				energy:utils.container(50f,50f),
@@ -364,7 +364,7 @@ builder.entity("playing") {
 			utils.custom.templateProvider.getTemplate("dassault.entities.floatingdroid"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				ownerId:data.ownerId,
+				player:data.player,
 				position:data.position,
 				speed:0.2f,
 				energy:utils.container(70f,70f),
@@ -387,9 +387,10 @@ builder.entity("playing") {
 		maxTime = 5000
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
-		ownerId = "cpu1"
+		player=cpuPlayer1
 		droidTypes = globalDroidTypes
 		weaponTypes = globalWeaponTypes
+		droidsLimit = 4
 	}
 	
 	child(id:"spawner2", template:"dassault.entities.droidspawner") { 
@@ -398,9 +399,10 @@ builder.entity("playing") {
 		maxTime = 5000
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
-		ownerId = "cpu2"
+		player=cpuPlayer2
 		droidTypes = globalDroidTypes
 		weaponTypes = globalWeaponTypes
+		droidsLimit = 4
 	}
 	
 	child(id:"spawner3", template:"dassault.entities.droidspawner") { 
@@ -409,9 +411,10 @@ builder.entity("playing") {
 		maxTime = 5000
 		droidFactory = globalDroidFactory
 		weaponFactory = globalWeaponFactory
-		ownerId = "cpu3"
+		player=cpuPlayer3
 		droidTypes = globalDroidTypes
 		weaponTypes = globalWeaponTypes
+		droidsLimit = 4
 	}
 	
 	child(id:"cursor", template:"dassault.entities.cursor") {
