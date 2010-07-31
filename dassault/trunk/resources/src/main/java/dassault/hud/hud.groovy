@@ -42,7 +42,7 @@ builder.entity {
 		
 		child(entity("$player.id-pointsLabel".toString()){
 			parent("dassault.hud.pointslabel", [
-			position:utils.vector(520f,(float)y), 
+			position:utils.vector(530f,(float)y), 
 			message: "Points: {0}", 
 			player: player, 
 			layer: 1500])

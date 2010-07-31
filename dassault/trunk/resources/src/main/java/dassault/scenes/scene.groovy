@@ -16,14 +16,14 @@ builder.entity("game") {
 			paused:"paused",
 			resume:"playing",
 			helpscreen:"helpscreen",
-//			gameover:"gameover",
+			//			gameover:"gameover",
 			])
 	
 	property("stateEntities",[
 			entity("playing"){ parent("dassault.scenes.playing") },
 			entity("paused"){ parent("dassault.scenes.paused") }, 
 			entity("helpscreen"){ parent("dassault.scenes.helpscreen") },
-//			entity("gameover"){ parent("dassault.scenes.gameover") }
+			//			entity("gameover"){ parent("dassault.scenes.gameover") }
 			])
 	
 	property("currentNodeState", null)
@@ -67,4 +67,18 @@ builder.entity("game") {
 		})
 	})
 	
+	
+	component(utils.components.genericComponent(id:"toggleShowFps", messageId:"toggleShowFps"){ message ->
+		
+		def gameContainer = utils.custom.gameContainer
+		boolean isShowingFps = gameContainer.isShowingFPS()
+		gameContainer.setShowFPS(!isShowingFps)
+		
+	})
+	
+	input("inputmapping"){
+		keyboard {
+			press(button:"f",eventId:"toggleShowFps")
+		}
+	}
 }

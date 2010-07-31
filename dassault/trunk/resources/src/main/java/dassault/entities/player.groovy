@@ -24,6 +24,7 @@ builder.entity {
 		
 	})
 	
+	property("droidsLimit", parameters.droidsLimit)
 	property("droidCount", 0)
 	
 	component(utils.components.genericComponent(id:"incrementDroidsCountWhenDroidSpawned", messageId:"droidSpawned"){ message ->

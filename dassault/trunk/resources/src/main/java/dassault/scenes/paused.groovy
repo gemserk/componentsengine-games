@@ -1,11 +1,10 @@
 package dassault.scenes;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
 builder.entity("paused") {
 	
-def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
+	def font = utils.resources.fonts.font([italic:false, bold:false, size:16])
 	
 	def labelRectangle = utils.rectangle(-220,-50,440,100)
 	
@@ -17,27 +16,26 @@ def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 		property("layer", 900)
 	}
 	
-	component(new RectangleRendererComponent("background")) {
-		property("position",utils.vector(0,0))
-		property("rectangle", utils.rectangle(0,0, 600, 600))
-		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
-		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.3f))
-		property("layer",1000)
-	}
+//	component(new RectangleRendererComponent("background")) {
+//		property("position",utils.vector(0,0))
+//		property("rectangle", utils.rectangle(0,0, 600, 600))
+//		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
+//		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.3f))
+//		property("layer",1000)
+//	}
 	
 	child(entity("pausedLabel"){
 		
 		parent("gemserk.gui.label", [
 		font:font,
 		position:utils.vector(300f, 280),
-		fontColor:utils.color(0f,0f,0f,1f),
+		fontColor:utils.color(1f,1f,1f,1f),
 		bounds:labelRectangle,
 		align:"center",
 		valign:"center",
-		layer:1010
+		layer:1010,
+		message: "Game paused, click mouse to continue"
 		])
-		
-		property("message", "Paused, press click to continue...")
 	})
 	
 	child(entity("restartLabel"){
@@ -45,14 +43,15 @@ def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 		parent("gemserk.gui.label", [
 		font:font,
 		position:utils.vector(300f, 320f),
-		fontColor:utils.color(0f,0f,0f,1f),
+		fontColor:utils.color(1f,1f,1f,1f),
 		bounds:labelRectangle,
 		align:"center",
 		valign:"center",
-		layer:1010
+		layer:1010,
+		message: "or press R restart"
 		])
 		
-		property("message", "Press \"r\" to restart")
+		// property("message", "Press \"r\" to restart")
 	})
 	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->

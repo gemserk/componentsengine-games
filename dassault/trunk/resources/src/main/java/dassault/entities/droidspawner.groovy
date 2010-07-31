@@ -22,8 +22,6 @@ builder.entity {
 	property("droidTypes", parameters.droidTypes)
 	property("weaponTypes", parameters.weaponTypes)
 	
-	property("droidsLimit", parameters.droidsLimit) // should be a property of the player?
-	
 	component(utils.components.genericComponent(id:"updateTimer", messageId:"update"){ message ->
 		def timer = entity.timer
 		
@@ -47,10 +45,9 @@ builder.entity {
 			return
 			
 		def player = entity.player
-		def droidsLimit = entity.droidsLimit
 		
 		// disable spawner until droids < limit?
-		if (player.droidCount >= droidsLimit) 
+		if (player.droidCount >= player.droidsLimit) 
 			return
 		
 		def droidTypes = entity.droidTypes

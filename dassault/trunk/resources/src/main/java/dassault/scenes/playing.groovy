@@ -144,21 +144,21 @@ builder.entity("playing") {
 	})
 	
 	def cpuPlayer1 = entity("cpu1") {
-		parent("dassault.entities.player", [color:utils.color(0,0,1,1f)])
+		parent("dassault.entities.player", [color:utils.color(0,0,1,1f), droidsLimit:4])
 	}
 	
 	def cpuPlayer2 = entity("cpu2") {
-		parent("dassault.entities.player", [color:utils.color(1,0,0,1f)])
+		parent("dassault.entities.player", [color:utils.color(1,0,0,1f), droidsLimit:4])
 	}
 	
 	def cpuPlayer3 = entity("cpu3") {
-		parent("dassault.entities.player", [color:utils.color(0,1,0,1f)])
+		parent("dassault.entities.player", [color:utils.color(0,1,0,1f), droidsLimit:4])
 	}
 	
 	def humanPlayer = entity("player") {
 		
 		parent("dassault.entities.player", [
-		color:utils.color(0.42f, 0.43f, 0.67f,1f)])
+		color:utils.color(0.42f, 0.43f, 0.67f,1f), droidsLimit:4])
 		
 		property("controlledDroidId", "droid1")
 		property("controlledDroid", {entity.root.getEntityById(entity.controlledDroidId)})
@@ -390,7 +390,6 @@ builder.entity("playing") {
 		player=cpuPlayer1
 		droidTypes = globalDroidTypes
 		weaponTypes = globalWeaponTypes
-		droidsLimit = 4
 	}
 	
 	child(id:"spawner2", template:"dassault.entities.droidspawner") { 
@@ -402,7 +401,6 @@ builder.entity("playing") {
 		player=cpuPlayer2
 		droidTypes = globalDroidTypes
 		weaponTypes = globalWeaponTypes
-		droidsLimit = 4
 	}
 	
 	child(id:"spawner3", template:"dassault.entities.droidspawner") { 
@@ -414,7 +412,6 @@ builder.entity("playing") {
 		player=cpuPlayer3
 		droidTypes = globalDroidTypes
 		weaponTypes = globalWeaponTypes
-		droidsLimit = 4
 	}
 	
 	child(id:"cursor", template:"dassault.entities.cursor") {
