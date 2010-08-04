@@ -23,21 +23,43 @@ builder.entity("playing") {
 	new GroovyBootstrapper();
 	
 	def cpuPlayer1 = entity("cpu1") {
-		parent("dassault.entities.player", [color:utils.color(0,0,1,1f), droidsLimit:4])
+		parent("dassault.entities.player", [color:utils.color(0,0,1,1f), 
+		droidsLimit:4, 
+		name:"CPU-${Math.random()}".toString()])
 	}
 	
 	def cpuPlayer2 = entity("cpu2") {
-		parent("dassault.entities.player", [color:utils.color(1,0,0,1f), droidsLimit:4])
+		parent("dassault.entities.player", [color:utils.color(1,0,0,1f), 
+		droidsLimit:4, 
+		name:"CPU-${Math.random()}".toString()])
 	}
 	
 	def cpuPlayer3 = entity("cpu3") {
-		parent("dassault.entities.player", [color:utils.color(0,1,0,1f), droidsLimit:4])
+		parent("dassault.entities.player", [color:utils.color(0,1,0,1f), 
+		droidsLimit:4, 
+		name:"CPU-${Math.random()}".toString()])
+	}
+	
+	// on Game Init...
+	
+	def preferencesDataStore = utils.custom.gameStateManager.gameProperties.preferencesDataStore
+	def preferencesList = preferencesDataStore.get(["preference"] as Set)
+	
+	def storedData = null	
+	if (preferencesList.empty) {
+		storedData = new Data(["preference"] as Set, [name:"Guest-${Math.random()}".toString()])
+		preferencesDataStore.submit(storedData)
+		log.info("added new user ${storedData.values.name} to preferences storage")
+	} else {
+		storedData = preferencesList.toArray()[0]
+		log.info("using already generated user ${storedData.values.name} from preferences storage")
 	}
 	
 	def humanPlayer = entity("player") {
 		
 		parent("dassault.entities.player", [
-		color:utils.color(0.42f, 0.43f, 0.67f,1f), droidsLimit:4])
+		color:utils.color(0.42f, 0.43f, 0.67f,1f), droidsLimit:4, 
+		name:storedData.values.name])
 		
 		property("controlledDroidId", "droid1")
 		property("controlledDroid", {entity.root.getEntityById(entity.controlledDroidId)})

@@ -93,6 +93,9 @@ public class Game extends StateBasedGame {
 			
 			File storageFile = new File(System.getProperty("user.home") + "/.gemserk/dassault/storage.data");
 			gameProperties.put("dataStore", new DataStoreJSONInFileImpl(storageFile));
+
+			File preferencesStorageFile = new File(System.getProperty("user.home") + "/.gemserk/dassault/preferences.data");
+			gameProperties.put("preferencesDataStore", new DataStoreJSONInFileImpl(preferencesStorageFile));
 		}
 
 		public GameGameState(int id) {

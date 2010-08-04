@@ -9,6 +9,9 @@ builder.entity {
 	property("displayCount", parameters.displayCount ?: 10)
 	property("position", parameters.position)
 	
+	def normalScoreFont = utils.resources.fonts.font([italic:false, bold:false, size:16])
+	def selectedScoreFont = utils.resources.fonts.font([italic:false, bold:true, size:16])
+	
 	component(utils.components.genericComponent(id:"updateScoresHandler", messageId:"updateScores"){ message ->
 		
 		def newEntities = []
@@ -29,8 +32,7 @@ builder.entity {
 				return
 			
 			def fontColor = data.id != dataId ? utils.color(0.9f,0.9f,0.9f,0.9f) : utils.color(1f,1f,1f,1f)  
-			def font = data.id != dataId ? utils.resources.fonts.font([italic:false, bold:false, size:16]) : // 
-					utils.resources.fonts.font([italic:false, bold:true, size:16])
+			def font = data.id != dataId ? normalScoreFont : selectedScoreFont
 			
 			newEntities << entity("scoresLabel-name-${scoreIndex}".toString()){
 				
@@ -66,6 +68,21 @@ builder.entity {
 		createLabel.setResolveStrategy Closure.DELEGATE_FIRST
 		
 		scores.eachWithIndex(createLabel)
+		
+		if (newEntities.isEmpty() ) {
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity("noScoresLabel") {
+				parent("gemserk.gui.label", [
+				font:normalScoreFont,
+				position:utils.vector(position.x, (float)(position.y + 100f)),
+				fontColor:utils.color(1f,1f,1f,1f),
+				bounds:labelRectangle,
+				layer:layer,
+				message:"There are no scores yet",
+				align:"center",
+				valign:"center"
+				])
+			}, entity))
+		}
 		
 		newEntities.each { newEntity -> 
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newEntity, entity.parent))
