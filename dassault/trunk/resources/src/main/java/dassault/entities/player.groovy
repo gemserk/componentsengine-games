@@ -11,6 +11,7 @@ builder.entity {
 	property("color", parameters.color)
 	property("enemies", [])
 	
+	property("name", "Guest-${Math.random()}".toString())
 	property("points", 0)
 	
 	component(utils.components.genericComponent(id:"updateTargetsForPlayer", messageId:"update"){ message ->

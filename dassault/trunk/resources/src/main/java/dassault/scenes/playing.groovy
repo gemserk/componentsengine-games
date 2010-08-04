@@ -13,6 +13,7 @@ import com.gemserk.componentsengine.commons.components.RectangleRendererComponen
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.datastore.Data 
 import com.google.common.base.Predicate 
 import com.google.common.base.Predicates 
 import gemserk.utils.GroovyBootstrapper 
@@ -20,128 +21,6 @@ import gemserk.utils.GroovyBootstrapper
 builder.entity("playing") {
 	
 	new GroovyBootstrapper();
-	
-	child(id:"light1", template:"dassault.entities.pointlight") { 
-		position = utils.vector(-900,-900)
-		layer = 10
-		size = 5f
-		time = 1500
-		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
-		endColor = utils.color(0.2f,0.2f,0.7f,0.6f)
-	}
-	
-	child(id:"light2", template:"dassault.entities.pointlight") { 
-		position = utils.vector(900,-900)
-		layer = 10
-		size = 5f
-		time = 750
-		startColor = utils.color(0.7f,0.2f,0.2f,0.2f)
-		endColor = utils.color(0.7f,0.2f,0.2f,0.8f)
-	}
-	
-	child(id:"light3", template:"dassault.entities.pointlight") { 
-		position = utils.vector(-900,900)
-		layer = 10
-		size = 8f
-		time = 1000
-		startColor = utils.color(0.2f,0.7f,0.2f,0.2f)
-		endColor = utils.color(0.2f,0.7f,0.2f,0.8f)
-	}
-	
-	child(id:"light4", template:"dassault.entities.pointlight") { 
-		position = utils.vector(900,900)
-		layer = 10
-		size = 8f
-		time = 3000
-		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
-		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
-	}
-	
-	child(id:"camera", template:"dassault.entities.camera") { 
-		position = utils.vector(0,0)
-		ownerId = "player"
-		screen = utils.rectangle(0,0, 600, 600)
-		followMouse = false
-	}
-	
-	child(id:"cameracontroller", template:"dassault.entities.cameracontroller") { 
-		cameraId = "camera"
-		controlledDroidId = "droid1"
-	}
-	
-	child(entity("restartLabel"){
-		
-		parent("gemserk.gui.label", [
-		font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
-		position:utils.vector(300f, 520f),
-		fontColor:utils.color(1f,1f,1f,0f),
-		bounds:utils.rectangle(-220,-50,440,100),
-		align:"center",
-		valign:"center",
-		layer:1010
-		])
-		
-		property("message", "GAME OVER: press ESCAPE to restart")
-	})
-	
-	property("gameOver", false)
-	
-	child(entity("gameLogic") {
-		
-		property("playerId", "player")
-		property("pointsForKillingADroid", 100)
-		
-		component(utils.components.genericComponent(id:"detectGameOver", messageId:"update"){ message ->
-			
-			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
-			{ droid -> droid.player.id == entity.playerId} as Predicate))
-			
-			if (!controlledDroids.empty)
-				return
-			
-			utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){ newMessage ->
-				// newMessage.points = ...
-			})
-			
-		})
-		
-		component(utils.components.genericComponent(id:"gameOverHandler", messageId:"gameover"){ message ->
-			utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
-				newMessage.cameraId = "camera"
-				newMessage.end = 0.28f
-				newMessage.time = 500
-			})	
-			utils.custom.messageQueue.enqueue(utils.genericMessage("moveTo"){ newMessage ->
-				newMessage.entityId = "camera"
-				newMessage.target = utils.vector(0, 0)
-				newMessage.time = 300
-			})
-			
-			// TODO: "game over message, press ... key to restart"
-			// show label!
-			
-			def label = entity.root.getEntityById("restartLabel")
-			label.color.a = 1f
-			
-			entity.parent.gameOver = true
-		})
-		
-		component(utils.components.genericComponent(id:"incrementPlayerPointsWhenDroidDies", messageId:"droidDead"){ message ->
-			
-			def droid = message.droid
-			def source = message.source // who killed the droid
-			
-			if (droid.player == source.player) {
-				// a player's droid killed another player's droid... (I need extract method here :( )
-				// ¿should remove points?
-					return
-			}
-			
-			def player = source.player // the player who deserve the points
-			player.points += entity.pointsForKillingADroid
-		})
-		
-	})
 	
 	def cpuPlayer1 = entity("cpu1") {
 		parent("dassault.entities.player", [color:utils.color(0,0,1,1f), droidsLimit:4])
@@ -210,6 +89,165 @@ builder.entity("playing") {
 	def players = [humanPlayer, cpuPlayer1, cpuPlayer2, cpuPlayer3]
 	
 	players.each { player -> child(player) }
+	
+	// part of the scene: the lights
+	
+	child(id:"light1", template:"dassault.entities.pointlight") { 
+		position = utils.vector(-900,-900)
+		layer = 10
+		size = 5f
+		time = 1500
+		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
+		endColor = utils.color(0.2f,0.2f,0.7f,0.6f)
+	}
+	
+	child(id:"light2", template:"dassault.entities.pointlight") { 
+		position = utils.vector(900,-900)
+		layer = 10
+		size = 5f
+		time = 750
+		startColor = utils.color(0.7f,0.2f,0.2f,0.2f)
+		endColor = utils.color(0.7f,0.2f,0.2f,0.8f)
+	}
+	
+	child(id:"light3", template:"dassault.entities.pointlight") { 
+		position = utils.vector(-900,900)
+		layer = 10
+		size = 8f
+		time = 1000
+		startColor = utils.color(0.2f,0.7f,0.2f,0.2f)
+		endColor = utils.color(0.2f,0.7f,0.2f,0.8f)
+	}
+	
+	child(id:"light4", template:"dassault.entities.pointlight") { 
+		position = utils.vector(900,900)
+		layer = 10
+		size = 8f
+		time = 3000
+		startColor = utils.color(0.2f,0.2f,0.7f,0.2f)
+		endColor = utils.color(0.2f,0.2f,0.7f,0.8f)
+	}
+	
+	// the lights
+	
+	child(id:"camera", template:"dassault.entities.camera") { 
+		position = utils.vector(0,0)
+		ownerId = "player"
+		screen = utils.rectangle(0,0, 600, 600)
+		followMouse = false
+	}
+	
+	child(id:"cameracontroller", template:"dassault.entities.cameracontroller") { 
+		cameraId = "camera"
+		controlledDroidId = "droid1"
+	}
+	
+	def gameOverEntity = entity("gameOver") {
+		
+		child(entity("restartLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+			position:utils.vector(300f, 520f),
+			fontColor:utils.color(1f,1f,1f,1f),
+			bounds:utils.rectangle(-220,-50,440,100),
+			align:"center",
+			valign:"center",
+			layer:1010
+			])
+			
+			property("message", "GAME OVER: press ESCAPE to restart")
+		})
+		
+		/// highscores
+		
+		child(entity("hightsocres-table"){
+			parent("dassault.hud.highscoretable", [layer:1010, 
+			displayCount:10, 
+			position:utils.vector(300f, 100f)] )
+		})
+		
+	}
+	
+	property("gameOver", false)
+	
+	child(entity("gameLogic") {
+		
+		property("player", humanPlayer)
+		property("pointsForKillingADroid", 100)
+		
+		property("gameOver", {entity.parent.gameOver})
+		
+		component(utils.components.genericComponent(id:"detectGameOver", messageId:"update"){ message ->
+			
+			if (entity.gameOver)
+				return
+			
+			def controlledDroids = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("droid"), //
+					{ droid -> droid.player == entity.player} as Predicate))
+			
+			if (!controlledDroids.empty)
+				return
+			
+			def player = entity.player
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){ newMessage ->
+				newMessage.player = player
+			})
+			
+		})
+		
+		component(utils.components.genericComponent(id:"gameOverHandler", messageId:"gameover"){ message ->
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("zoom"){ newMessage ->
+				newMessage.cameraId = "camera"
+				newMessage.end = 0.28f
+				newMessage.time = 500
+			})	
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("moveTo"){ newMessage ->
+				newMessage.entityId = "camera"
+				newMessage.target = utils.vector(0, 0)
+				newMessage.time = 300
+			})
+			
+			// TODO: "game over message, press ... key to restart"
+			// show label!
+			
+			//			def label = entity.root.getEntityById("restartLabel")
+			//			label.color.a = 1f
+			
+			entity.parent.gameOver = true
+			
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(gameOverEntity, entity.parent.id))
+			
+			def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
+			def player = entity.player
+			def dataId = dataStore.submit(new Data(tags:["score"], values:[name:player.name, points:player.points]))
+			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("updateScores"){ newMessage ->
+				//				newMessage.player = entity.player
+				newMessage.dataId = dataId
+			})
+			
+		})
+		
+		component(utils.components.genericComponent(id:"incrementPlayerPointsWhenDroidDies", messageId:"droidDead"){ message ->
+			
+			def droid = message.droid
+			def source = message.source // who killed the droid
+			
+			if (droid.player == source.player) {
+				// a player's droid killed another player's droid... (I need extract method here :( )
+				// ¿should remove points?
+					return
+			}
+			
+			def player = source.player // the player who deserve the points
+			player.points += entity.pointsForKillingADroid
+		})
+		
+	})
 	
 	child(entity("hud"){
 		

@@ -16,19 +16,11 @@ builder.entity("paused") {
 		property("layer", 900)
 	}
 	
-//	component(new RectangleRendererComponent("background")) {
-//		property("position",utils.vector(0,0))
-//		property("rectangle", utils.rectangle(0,0, 600, 600))
-//		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
-//		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.3f))
-//		property("layer",1000)
-//	}
-	
 	child(entity("pausedLabel"){
 		
 		parent("gemserk.gui.label", [
 		font:font,
-		position:utils.vector(300f, 280),
+		position:utils.vector(300f, 480),
 		fontColor:utils.color(1f,1f,1f,1f),
 		bounds:labelRectangle,
 		align:"center",
@@ -42,7 +34,7 @@ builder.entity("paused") {
 		
 		parent("gemserk.gui.label", [
 		font:font,
-		position:utils.vector(300f, 320f),
+		position:utils.vector(300f, 520f),
 		fontColor:utils.color(1f,1f,1f,1f),
 		bounds:labelRectangle,
 		align:"center",
@@ -51,7 +43,16 @@ builder.entity("paused") {
 		message: "or press R restart"
 		])
 		
-		// property("message", "Press \"r\" to restart")
+	})
+	
+	child(entity("hightsocres-table"){
+		parent("dassault.hud.highscoretable", [layer:1010, 
+		displayCount:10, 
+		position:utils.vector(300f, 100f)] )
+	})
+	
+	component(utils.components.genericComponent(id:"grabMouse-enternodestate", messageId:"enterNodeState"){ message ->
+		utils.custom.messageQueue.enqueue(utils.genericMessage("updateScores"){ })
 	})
 	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->

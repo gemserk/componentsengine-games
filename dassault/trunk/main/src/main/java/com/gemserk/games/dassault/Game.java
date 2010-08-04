@@ -1,4 +1,5 @@
 package com.gemserk.games.dassault;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.SlickToSlf4j;
+import com.gemserk.datastore.DataStoreJSONInFileImpl;
 import com.google.inject.Key;
 
 public class Game extends StateBasedGame {
@@ -88,6 +90,9 @@ public class Game extends StateBasedGame {
 			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
 			injector.injectMembers(screenshotGrabber);
 			builderUtils.addCustomUtil("screenshotGrabber", screenshotGrabber);
+			
+			File storageFile = new File(System.getProperty("user.home") + "/.gemserk/dassault/storage.data");
+			gameProperties.put("dataStore", new DataStoreJSONInFileImpl(storageFile));
 		}
 
 		public GameGameState(int id) {
