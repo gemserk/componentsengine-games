@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
-import com.gemserk.datastore.DataStoreJSONInFileImpl;
+import com.gemserk.scores.ScoresFileImpl;
 
 public class Game extends StateBasedGame {
 
@@ -58,8 +58,12 @@ public class Game extends StateBasedGame {
 		addState(gamestate);
 		
 		//gameProperties.put("dataStore", new DataStoreInMemoryImpl());
-		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/storage.data");
-		gameProperties.put("dataStore", new DataStoreJSONInFileImpl(storageFile));
+//		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/storage.data");
+//		gameProperties.put("dataStore", new DataStoreJSONInFileImpl(storageFile));
+
+		File scoresFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/scores.data");
+		gameProperties.put("scores", new ScoresFileImpl(scoresFile));
+		
 	}
 	
 	class GameGameState extends GemserkGameState {

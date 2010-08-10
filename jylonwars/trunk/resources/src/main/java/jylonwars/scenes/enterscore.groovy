@@ -1,9 +1,9 @@
 package jylonwars.scenes;
 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
-import com.gemserk.datastore.Data 
 import com.gemserk.games.jylonwars.TextField 
 import com.gemserk.games.jylonwars.TextFieldComponent 
+import com.gemserk.scores.Score;
 
 builder.entity {
 	
@@ -53,7 +53,7 @@ builder.entity {
 	
 	child(entity("textField1") {
 		
-		property("textField", new TextField("", 30))
+		property("textField", new TextField("", 20))
 		property("text", {entity.textField.text})
 		
 		def textFieldRectangle = utils.rectangle(-220,-20,440,40)
@@ -86,24 +86,32 @@ builder.entity {
 		
 	})
 	
-	
 	component(utils.components.genericComponent(id:"enterNameGameStateEndHandler", messageId:"enterNameGameStateEnd"){ message ->
 		def textField = entity.children["textField1"]
-		def text = textField.text.trim()
+		def name = textField.text.trim()
 		
-		if (text == "") 
+		if (name == "") 
 			return
 		
-		def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
+		// def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
+		
+		def scores = utils.custom.gameStateManager.gameProperties.scores
 		
 		def playtime = entity.playtime
 		def crittersDead = entity.crittersdead
 		
+		//		def dataId = dataStore.submit(new Data(tags:["score"], values:[name:text, playtime:playtime, crittersdead:crittersDead]))
+		// long points = (long)(playtime * 1000 + crittersDead * 100)
 		
-		def dataId = dataStore.submit(new Data(tags:["score"], values:[name:text, playtime:playtime, crittersdead:crittersDead]))
+		long points = (long) playtime * 1000
+		
+		def tags = ["easy"] as Set
+		def data = [playtime:playtime, crittersdead:crittersDead]
+		
+		def scoreId = scores.submit( new Score(name, points, tags, data))
 		
 		messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
-			newMessage.scoreId = dataId			
+			newMessage.scoreId = scoreId			
 		})
 	})
 	
