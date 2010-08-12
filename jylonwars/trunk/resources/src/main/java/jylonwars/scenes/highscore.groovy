@@ -64,7 +64,6 @@ builder.entity {
 		def sourceMessage = message.message
 		
 		def scoreId = sourceMessage.scoreId
-		def submitted = sourceMessage.submitted
 		
 		if (scoreId)
 			entity.scoreId = scoreId
@@ -171,6 +170,7 @@ builder.entity {
 			property("message", message.reason)
 		}
 		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.refreshingScoresLabel))
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newLabel, entity.childPanel))
 		
 	})

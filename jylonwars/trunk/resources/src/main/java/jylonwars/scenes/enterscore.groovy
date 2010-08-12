@@ -117,7 +117,7 @@ builder.entity {
 	
 	property("failedToSubmitTimer", new CountDownTimer(5000))
 	
-	component(new ComponentFromListOfClosures("checkScoresAreRefreshed", [{UpdateMessage message ->
+	component(new ComponentFromListOfClosures("checkScoreIsSubmitted", [{UpdateMessage message ->
 		def future = entity.future
 		def timer = entity.failedToSubmitTimer
 		
@@ -135,13 +135,12 @@ builder.entity {
 				
 				messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
 					newMessage.scoreId = scoreId		
-					newMessage.submitted = true
 				})
 				
 			} catch (exception) {
 				println exception
-				messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
-					newMessage.submitted = false
+				messageQueue.enqueue(utils.genericMessage("failedToSubmitScore") { newMessage ->
+					newMessage.error = "Failed to submit the score, press any key to continue"
 				})
 			}
 			
@@ -151,8 +150,8 @@ builder.entity {
 				return
 			
 			println "timer triggered"
-			messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
-				newMessage.submitted = false
+			messageQueue.enqueue(utils.genericMessage("failedToSubmitScore") { newMessage ->
+				newMessage.error = "Failed to submit the score, press any key to continue"
 			})
 			
 		}
@@ -161,7 +160,37 @@ builder.entity {
 		
 	}]))
 	
+	component(utils.components.genericComponent(id:"failedToSubmitScoreHandler", messageId:"failedToSubmitScore"){ message ->
+		
+		// hide all panels
+		
+		def errorLabel = entity("errorLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:utils.resources.fonts.font([italic:false, bold:false, size:20]),
+			position:utils.vector(400f, 340f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:utils.rectangle(-220,-20,440,40),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", message.error )
+			
+			component(utils.components.genericComponent(id:"enterNameGameStateEndHandler", messageId:"submitScore"){ newMessage -> 
+				messageQueue.enqueue(utils.genericMessage("gameover") { })
+			})
+		}
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.submittingScorePanel))
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(errorLabel, entity))
+		
+	})
+	
 	component(utils.components.genericComponent(id:"enterNameGameStateEndHandler", messageId:"submitScore"){ message ->
+		
+		if (entity.submitting == true)
+			return
 		
 		def textField = entity.nameTextField
 		def name = textField.text.trim()
@@ -169,11 +198,13 @@ builder.entity {
 		if (name == "") 
 			return
 		
+		entity.submitting = true
+		
 		// hide the textfield and show a new label....
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.children["textField1"]))
 		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.children["label1"]))
-			
+		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity.submittingScorePanel, entity))
 		
 		def scores = utils.custom.gameStateManager.gameProperties.scores
