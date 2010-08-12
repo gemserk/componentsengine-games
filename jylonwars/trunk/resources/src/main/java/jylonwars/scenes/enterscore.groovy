@@ -1,9 +1,15 @@
 package jylonwars.scenes;
 
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
+
+import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
+import com.gemserk.componentsengine.messages.UpdateMessage 
+import com.gemserk.componentsengine.timers.CountDownTimer 
 import com.gemserk.games.jylonwars.TextField 
 import com.gemserk.games.jylonwars.TextFieldComponent 
 import com.gemserk.scores.Score;
+import java.util.concurrent.Callable 
 
 builder.entity {
 	
@@ -48,13 +54,13 @@ builder.entity {
 		valign:"center"
 		])
 		
-		property("message", {"Your killed $entity.parent.crittersdead critters in ${entity.parent.playtime}s, put your name:".toString()})
+		property("message", {"Your killed $entity.parent.crittersdead critters in ${entity.parent.playtime}s, put your name:".toString() })
 	})
 	
 	child(entity("textField1") {
 		
 		property("textField", new TextField("", 20))
-		property("text", {entity.textField.text})
+		property("text", {entity.textField.text })
 		
 		def textFieldRectangle = utils.rectangle(-220,-20,440,40)
 		def textFieldPosition = utils.vector(400f, 340f)
@@ -77,47 +83,94 @@ builder.entity {
 			valign:"center"
 			])
 			
-			property("message", {entity.parent.text + "|"})
+			property("message", {entity.parent.text + "|" })
 		})
 		
 		component(textFieldComponent) {
-			property("textField", {entity.textField})
+			property("textField", {entity.textField })
 		}
 		
 	})
 	
-	component(utils.components.genericComponent(id:"enterNameGameStateEndHandler", messageId:"enterNameGameStateEnd"){ message ->
-		def textField = entity.children["textField1"]
+	property("nameTextField", {entity.children["textField1"]})
+	
+	property("failedToSubmitTimer", new CountDownTimer(5000))
+	
+	component(new ComponentFromListOfClosures("checkScoresAreRefreshed", [{UpdateMessage message ->
+		def future = entity.future
+		def timer = entity.failedToSubmitTimer
+		
+		def messageQueue = utils.custom.messageQueue
+		
+		if (future == null)
+			return
+		
+		def triggered = timer.update(message.delta)
+		
+		if (future.done) {
+			
+			try {
+				def scoreId = future.get()
+				
+				messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
+					newMessage.scoreId = scoreId		
+					newMessage.submitted = true
+				})
+				
+			} catch (exception) {
+				println exception
+				messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
+					newMessage.submitted = false
+				})
+			}
+			
+		} else {
+			
+			if (!triggered)
+				return
+			
+			println "timer triggered"
+			messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
+				newMessage.submitted = false
+			})
+			
+		}
+		
+		entity.future = null
+		
+	}]))
+	
+	component(utils.components.genericComponent(id:"enterNameGameStateEndHandler", messageId:"submitScore"){ message ->
+		
+		def textField = entity.nameTextField
 		def name = textField.text.trim()
 		
 		if (name == "") 
 			return
-		
-		// def dataStore = utils.custom.gameStateManager.gameProperties.dataStore
-		
+			
 		def scores = utils.custom.gameStateManager.gameProperties.scores
+		def executor = utils.custom.gameStateManager.gameProperties.executor
 		
 		def playtime = entity.playtime
 		def crittersDead = entity.crittersdead
-		
-		//		def dataId = dataStore.submit(new Data(tags:["score"], values:[name:text, playtime:playtime, crittersdead:crittersDead]))
-		// long points = (long)(playtime * 1000 + crittersDead * 100)
 		
 		long points = (long) playtime * 1000
 		
 		def tags = ["easy"] as Set
 		def data = [playtime:playtime, crittersdead:crittersDead]
 		
-		def scoreId = scores.submit( new Score(name, points, tags, data))
+		def future = executor.submit({
+			return scores.submit( new Score(name, points, tags, data))
+		} as Callable )
 		
-		messageQueue.enqueue(utils.genericMessage("gameover") { newMessage ->
-			newMessage.scoreId = scoreId			
-		})
+		entity.future = future
+		entity.failedToSubmitTimer.reset()
+		
 	})
 	
 	input("inputmapping"){
 		keyboard {
-			press(button:"return",eventId:"enterNameGameStateEnd")
+			press(button:"return",eventId:"submitScore")
 		}
 	}
 }

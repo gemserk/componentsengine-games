@@ -1,7 +1,7 @@
 package com.gemserk.games.jylonwars;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.AppletGameContainer;
@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
-import com.gemserk.scores.ScoresFileImpl;
+import com.gemserk.scores.ScoresHttpImpl;
 
 public class Game extends StateBasedGame {
 
@@ -61,9 +61,12 @@ public class Game extends StateBasedGame {
 //		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/storage.data");
 //		gameProperties.put("dataStore", new DataStoreJSONInFileImpl(storageFile));
 
-		File scoresFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/scores.data");
-		gameProperties.put("scores", new ScoresFileImpl(scoresFile));
+//		File scoresFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/scores.data");
+//		gameProperties.put("scores", new ScoresFileImpl(scoresFile));
 		
+		gameProperties.put("scores", new ScoresHttpImpl("jylonwars-test", "http://localhost:8080"));
+		
+		gameProperties.put("executor", Executors.newCachedThreadPool());
 	}
 	
 	class GameGameState extends GemserkGameState {
