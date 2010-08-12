@@ -56,7 +56,7 @@ builder.entity {
 		
 		property("message", "POINTS")
 	})
-
+	
 	property("scoreId", null)
 	
 	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
@@ -68,7 +68,7 @@ builder.entity {
 		
 		if (scoreId)
 			entity.scoreId = scoreId
-			
+		
 		def childPanel = entity("childPanel") { }
 		entity.childPanel = childPanel
 		
@@ -110,7 +110,7 @@ builder.entity {
 			
 			if (!triggered)
 				return
-				
+			
 			println "timer triggered"
 			messageQueue.enqueue(utils.genericMessage("scoresFailedToRefresh") { newMessage ->
 				newMessage.reason = "Failed to load highscores from server"
@@ -137,6 +137,22 @@ builder.entity {
 		
 		entity.future = future
 		entity.refreshScoresTimer.reset()
+		
+		entity.refreshingScoresLabel = entity("refreshingScoresLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:font,
+			position:utils.vector(400f, 300f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:labelRectangle,
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "Updating scores, please wait...")
+		}
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity.refreshingScoresLabel, entity.childPanel))
 	})
 	
 	component(utils.components.genericComponent(id:"scoresFailedToRefreshHandler", messageId:"scoresFailedToRefresh"){ message ->
@@ -161,6 +177,8 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"scoresRefreshedHandler", messageId:"scoresRefreshed"){ message ->
 		def newEntities = []
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.refreshingScoresLabel))		                   
 		
 		def scoreList = message.scoreList
 		

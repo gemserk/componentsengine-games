@@ -4,6 +4,7 @@ import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosur
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
 import com.gemserk.componentsengine.timers.CountDownTimer 
 import com.gemserk.games.jylonwars.TextField 
@@ -42,6 +43,26 @@ builder.entity {
 		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
 		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
 	}
+	
+	def submittingScorePanel = entity("submittingScorePanel") {
+		
+		child(entity("waitingScoreLabel"){
+			
+			parent("gemserk.gui.label", [
+			font:utils.resources.fonts.font([italic:false, bold:false, size:24]),
+			position:utils.vector(400f, 300f),
+			fontColor:utils.color(0f,0f,0f,1f),
+			bounds:utils.rectangle(-220,-50,440,100),
+			align:"center",
+			valign:"center"
+			])
+			
+			property("message", "Wait a minute, your score is being submitted...")
+		})
+		
+	}
+	
+	property("submittingScorePanel", submittingScorePanel)
 	
 	child(entity("label1"){
 		
@@ -147,7 +168,14 @@ builder.entity {
 		
 		if (name == "") 
 			return
+		
+		// hide the textfield and show a new label....
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.children["textField1"]))
+		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.children["label1"]))
 			
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity.submittingScorePanel, entity))
+		
 		def scores = utils.custom.gameStateManager.gameProperties.scores
 		def executor = utils.custom.gameStateManager.gameProperties.executor
 		
