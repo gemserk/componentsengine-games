@@ -64,7 +64,7 @@ public class Game extends StateBasedGame {
 //		File scoresFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/scores.data");
 //		gameProperties.put("scores", new ScoresFileImpl(scoresFile));
 		
-		gameProperties.put("scores", new ScoresHttpImpl("jylonwars-test", "http://gemserkscores.appspot.com/"));
+		gameProperties.put("scores", new ScoresHttpImpl("90eb28f982882fb5def25d61c9420be9", "http://gemserkscores.appspot.com/"));
 		
 		gameProperties.put("executor", Executors.newCachedThreadPool());
 	}
