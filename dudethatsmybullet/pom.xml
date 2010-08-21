@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.gemserk.games.dudethatsmybullet</groupId>
+	<artifactId>dudethatsmybullet</artifactId>
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<description>Game using componentsengine</description>
+
+	<name>Game using componentsengine</name>
+
+	<organization>
+		<name>Gemserk</name>
+		<url>http://www.gemserk.com/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>acoppes</id>
+			<name>Ariel Coppes</name>
+			<email>ariel.coppes@gemserk.com</email>
+		</developer>
+
+		<developer>
+			<id>ruben.garat</id>
+			<name>Ruben Garat</name>
+			<email>ruben.garat@gemserk.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<compiler.version>1.6</compiler.version>
+		<componentsengine.version>0.0.7-SNAPSHOT</componentsengine.version>
+		<gemserk.datastore.version>0.0.2-SNAPSHOT</gemserk.datastore.version>
+	</properties>
+
+	<build>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.googlecode.mavennatives</groupId>
+					<artifactId>maven-nativedependencies-plugin</artifactId>
+					<version>0.0.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>${compiler.version}</source>
+					<target>${compiler.version}</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.0-beta-9</version>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-junit4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-legacy</artifactId>
+		</dependency>
+	</dependencies>
+
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.7</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jmock</groupId>
+				<artifactId>jmock</artifactId>
+				<version>2.5.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jmock</groupId>
+				<artifactId>jmock-junit4</artifactId>
+				<version>2.5.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jmock</groupId>
+				<artifactId>jmock-legacy</artifactId>
+				<version>2.5.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.gemserk.componentsengine</groupId>
+				<artifactId>core</artifactId>
+				<version>${componentsengine.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.gemserk.componentsengine</groupId>
+				<artifactId>commons</artifactId>
+				<version>${componentsengine.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>0.9.17</version>
+			</dependency>
+
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>resources</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>game</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.gemserk.datastore</groupId>
+				<artifactId>datastore</artifactId>
+				<version>${gemserk.datastore.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+  <modules>
+    <module>game</module>
+    <module>resources</module>
+    <module>main</module>
+  </modules>
+</project>
