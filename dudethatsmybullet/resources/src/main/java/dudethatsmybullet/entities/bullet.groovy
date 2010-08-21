@@ -6,7 +6,7 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.games.dudethatsmybullet.GamePredicates;
 
 builder.entity("bullet-${Math.random()}") {
 	
@@ -15,7 +15,7 @@ builder.entity("bullet-${Math.random()}") {
 	property("position", parameters.position);
 	propertyRef("direction", "movement.velocity");
 	property("damage", parameters.damage);
-	property("collisionDistance", parameters.radius);
+	property("radius", parameters.radius);
 	property("color",parameters.color)
 	//property("collisionLine",new Line)
 	
@@ -45,7 +45,7 @@ builder.entity("bullet-${Math.random()}") {
 	
 	component(new GenericHitComponent("bullethit")){
 		property("targetTag", "hittable")
-		property("predicate",{EntityPredicates.isNear(entity.position, entity.collisionDistance)})
+		property("predicate",{GamePredicates.isNearWithRadius(entity.position, entity.radius)})
 		property("trigger", utils.custom.triggers.genericMessage("hit") { 
 			def source = message.source
 			def damage = source.damage

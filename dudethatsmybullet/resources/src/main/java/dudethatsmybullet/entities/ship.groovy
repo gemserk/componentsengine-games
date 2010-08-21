@@ -15,7 +15,7 @@ builder.entity("ship") {
 	property("direction",utils.vector(1,0))
 	property("desiredDirection",utils.vector(0,0))
 	
-	property("radius",20)
+	property("radius",16f)
 	
 	
 	property("target",utils.vector(1,0))

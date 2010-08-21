@@ -14,7 +14,10 @@
    id="svg2818"
    version="1.1"
    inkscape:version="0.47 r22583"
-   sodipodi:docname="turret.svg">
+   sodipodi:docname="turret.svg"
+   inkscape:export-filename="/home/ruben01/workspace2/dudethatsmybullet/resources/src/main/resources/assets/images/turret-base.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs2820">
     <inkscape:perspective
@@ -98,6 +101,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

@@ -3,6 +3,8 @@ package dudethatsmybullet.scenes;
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.predicates.EntityPredicates 
 
 
 builder.entity("world") {
@@ -25,7 +27,8 @@ builder.entity("world") {
 				image:utils.resources.image("bullet"),
 				radius:10.0f,
 				maxVelocity:0.2f,
-				color:utils.color(1.0f, 0.2f, 0.2f, 1.0f)
+				color:utils.color(1.0f, 0.2f, 0.2f, 1.0f),
+				damage: data.damage
 				]
 			})
 	
@@ -44,6 +47,7 @@ builder.entity("world") {
 		position:utils.vector(200,300),
 		bulletTemplate: bulletTemplate,
 		target: hero,
+		damage: 25f,
 		])
 	})
 	
@@ -51,9 +55,34 @@ builder.entity("world") {
 		position:utils.vector(600,300),
 		bulletTemplate: bulletTemplate,
 		target: hero,
+		damage: 25f,
 		])
 	})
 	
+	component(utils.components.genericComponent(id:"endConditionChecker", messageId:["update",]){ message ->
+		def turrets = entity.root.getEntities(EntityPredicates.withAllTags("turret"))
+		if(turrets.size == 1){
+			def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
+			def label = entity("pausedLabel"){
+				
+				parent("gemserk.gui.label", [
+				position:utils.vector(400f, 300),
+				fontColor:utils.color(1f,1f,1f,1f),
+				bounds:utils.rectangle(-220,-50,440,100),
+				font: font,
+				align:"center",
+				valign:"center",
+				layer:100
+				])
+				
+				property("message", "You rock!!!!!!")
+			}
+			
+			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(label,entity))
+		}
+			
+	})
+		
 	
 	
 	component(utils.components.genericComponent(id:"moveShipHandler", messageId:["move.left","move.right","move.up","move.down",]){ message ->
