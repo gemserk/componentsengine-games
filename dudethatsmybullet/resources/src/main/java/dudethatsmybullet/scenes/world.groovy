@@ -1,5 +1,6 @@
 package dudethatsmybullet.scenes;
 
+import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 
@@ -23,7 +24,7 @@ builder.entity("world") {
 				direction:data.direction.copy(),
 				image:utils.resources.image("bullet"),
 				radius:10.0f,
-				maxVelocity:0.4f,
+				maxVelocity:0.2f,
 				color:utils.color(1.0f, 0.2f, 0.2f, 1.0f)
 				]
 			})
@@ -80,4 +81,6 @@ builder.entity("world") {
 			newMessage.target = moveDirection.copy()
 		})
 	})
+	
+	component(new ExplosionComponent("explosions")) { }
 }

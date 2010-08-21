@@ -40,7 +40,12 @@ builder.entity("turret-${Math.random()}") {
 			
 			def direction = target.position.copy().sub(turret.position).normalise()
 			
+			
 			def bullet = bulletTemplate.get([position:turret.position.copy(),direction:direction])
+			
+			float collisionDistance = bullet.collisionDistance
+			bullet.position.add(direction.copy().scale((float)collisionDistance * 2f))
+			
 				
 			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity.parent))
 		})
