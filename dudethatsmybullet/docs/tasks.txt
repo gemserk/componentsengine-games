@@ -1,0 +1,15 @@
+TODO:
+if a turret wants to fire it has to have enough energy
+the turrets follow the hero
+when a turret is hit by a bullet it receives damage which reduces the turret's health
+when the health of a turret reaches 0 it dies
+when a turret dies it explodes
+
+
+
+DONE:
+
+when a bullet goes out of bounds it dissapears
+the bullets fly in a straight line
+when a turret is in range of the hero it can fire
+the turrets should fire at the hero

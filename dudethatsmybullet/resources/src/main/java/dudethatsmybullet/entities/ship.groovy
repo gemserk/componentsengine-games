@@ -9,7 +9,7 @@ import com.gemserk.componentsengine.commons.components.WorldBoundsComponent
 
 builder.entity("ship") {
 	
-	tags("ship","nofriction")
+	tags("ship","nofriction","hittable")
 	
 	property("position", parameters.position)
 	property("direction",utils.vector(1,0))
