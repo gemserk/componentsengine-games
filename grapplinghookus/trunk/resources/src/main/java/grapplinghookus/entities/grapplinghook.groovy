@@ -14,8 +14,8 @@ builder.entity {
 	
 	tags("grapplinghook")
 	
-	property("player", parameters.player)
-
+	property("base", parameters.base)
+	
 	property("cursor", parameters.cursor)
 	
 	property("position", parameters.position)
@@ -78,12 +78,17 @@ builder.entity {
 			entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.endPosition, entity.position)
 			
 			def grapplinghook = entity
+			def targetedEnemy = entity.target
+			def base = entity.base
 			
-			entity.trappedEnemy = entity("trappedEnemy-$entity.id".toString()) {
-				parent("grapplinghookus.entities.trappedenemy", [grapplinghook:grapplinghook])
+			entity.trappedEnemy = entity("trappedEnemy-${Math.random()}".toString()) {
+				parent("grapplinghookus.entities.trappedenemy", [
+				grapplinghook:grapplinghook, 
+				enemy:targetedEnemy,
+				base:base])
 			}
 			
-			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.target))
+			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(targetedEnemy))
 			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity.trappedEnemy, entity))
 			
 			entity.target = null
@@ -109,7 +114,12 @@ builder.entity {
 			entity.state = "idle"
 			entity.endPositionInterpolator = null
 			
-			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.trappedEnemy))
+			utils.custom.messageQueue.enqueue(utils.genericMessage("trappedEnemyBaseReached") { newMessage ->
+				newMessage.trappedEnemyId = entity.trappedEnemy.id
+				newMessage.baseId = entity.base.id
+			}) 
+			
+			//			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.trappedEnemy))
 			entity.trappedEnemy = null
 		}
 		

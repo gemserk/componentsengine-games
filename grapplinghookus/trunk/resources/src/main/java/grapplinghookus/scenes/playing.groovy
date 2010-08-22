@@ -34,15 +34,24 @@ builder.entity("playing") {
 	
 	child(cursor)	
 	
-	def player = entity("player") {
+	def base = entity("base") {
+		property("position", utils.vector(320f, 470f))
+		property("bullets", 0)
 		
+		component(utils.components.genericComponent(id:"trappedEnemyBaseReachedHandler", messageId:"trappedEnemyBaseReached"){ message ->
+			if (message.baseId != entity.id) 
+				return
+			entity.bullets = entity.bullets + 1
+		})
 	}
+	
+	child(base)
 	
 	child(entity("grappplingHook") {
 		parent("grapplinghookus.entities.grapplinghook", [
 		position:utils.vector(320f, 470f),
 		cursor:cursor,
-		player: player,
+		base: base,
 		])
 	})	
 	
