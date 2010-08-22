@@ -1,16 +1,19 @@
 
+
 package dudethatsmybullet.entities
 
 
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.DisablerComponent 
+import com.gemserk.componentsengine.commons.components.GenericHitComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.IncrementValueComponent 
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.games.dudethatsmybullet.GamePredicates 
 
 
 builder.entity("ship") {
@@ -131,5 +134,18 @@ builder.entity("ship") {
 		propertyRef("bounds","bounds")
 		propertyRef("position","position")
 	}
+	
+//	component(new DisablerComponent(new GenericHitComponent("bullethit"))){
+//		property("targetTag", "bullet")
+//		property("predicate",{GamePredicates.isNearWithRadius(entity.position, entity.shieldRadius)})
+//		property("trigger", utils.custom.triggers.clsoureTrigger { data 
+//			def source = message.source
+//			def damage = source.damage
+//			message.damage = damage;
+//			
+//			def targets = message.targets
+//			message.targets = [targets[0]]
+//		})
+//	}
 	
 }
