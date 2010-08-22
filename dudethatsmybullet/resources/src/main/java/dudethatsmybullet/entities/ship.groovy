@@ -35,10 +35,10 @@ builder.entity("ship") {
 		def distanceVector = entity.target.copy().sub(entity.position)
 		
 		
-		if(distanceVector.lengthSquared() > 0){
+		if(distanceVector.lengthSquared() > 10f){
 			entity."movement.force".add(distanceVector.copy().normalise().scale(0.1f))
 		}else {
-			entity."movement.force".add(entity."movement.velocity".copy().negate().scale(0.01f))
+			entity."movement.velocity" = utils.vector(0,0)
 		}
 		
 	})
