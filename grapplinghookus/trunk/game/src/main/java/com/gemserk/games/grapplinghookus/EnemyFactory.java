@@ -150,7 +150,7 @@ public class EnemyFactory {
 				property("moveDirection", parameters.get("moveDirection"));
 				property("speed", parameters.get("speed"));
 
-				property("bounds", new Rectangle(-2, -2, 4, 4));
+				property("bounds", new Rectangle(-10, -5, 20, 10));
 
 				property("image", builderUtils.getResources().image("enemy01"));
 

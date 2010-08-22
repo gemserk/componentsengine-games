@@ -22,17 +22,25 @@ builder.entity("playing") {
 			position:utils.vector(100, 100),
 			moveDirection:utils.vector(0,1), 
 			speed:0.03f]))
-			
-			/*
-			 * 		imageProperty = Properties.property(id, "image");
-		positionProperty = Properties.property(id, "position");
-		directionProperty = Properties.property(id, "direction");
-		renderColorProperty = Properties.property(id, "color");
-		sizeProperty = Properties.property(id, "size");
-		rendererProperty = Properties.property("renderer");
-		layerProperty = Properties.property(id, "layer");
-			 * */
-			
+	
+	child(enemyFactory.enemy("enemy2", [
+			position:utils.vector(400, 50),
+			moveDirection:utils.vector(0,1), 
+			speed:0.02f]))		
+	
+	def cursor = entity("cursor") {
+		parent("grapplinghookus.entities.cursor", [:])
+	}
+	
+	child(cursor)	
+	
+	child(entity("grappplingHook") {
+		parent("grapplinghookus.entities.grapplinghook", [
+		position:utils.vector(320f, 470f),
+		cursor:cursor, 
+		])
+	})	
+	
 	component(new ImageRenderableComponent("background")) {
 		property("position", utils.vector(320,240))
 		property("image", utils.resources.image("background"))
