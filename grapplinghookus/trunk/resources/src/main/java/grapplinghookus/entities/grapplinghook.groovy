@@ -1,6 +1,7 @@
 package grapplinghookus.entities
 
 import com.gemserk.commons.animation.interpolators.Vector2fInterpolator;
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.render.ClosureRenderObject;
 import com.gemserk.componentsengine.utils.OpenGlUtils;
@@ -13,6 +14,8 @@ builder.entity {
 	
 	tags("grapplinghook")
 	
+	property("player", parameters.player)
+
 	property("cursor", parameters.cursor)
 	
 	property("position", parameters.position)
@@ -73,6 +76,19 @@ builder.entity {
 		if (interpolator.finished) {
 			entity.state = "reachingBase"
 			entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.endPosition, entity.position)
+			
+			def grapplinghook = entity
+			
+			entity.trappedEnemy = entity("trappedEnemy-$entity.id".toString()) {
+				parent("grapplinghookus.entities.trappedenemy", [grapplinghook:grapplinghook])
+			}
+			
+			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.target))
+			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity.trappedEnemy, entity))
+			
+			entity.target = null
+			
+			// send message to enemy to set him as it is being absorbed
 		}
 		
 	})
@@ -92,6 +108,9 @@ builder.entity {
 		if (interpolator.finished) {
 			entity.state = "idle"
 			entity.endPositionInterpolator = null
+			
+			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.trappedEnemy))
+			entity.trappedEnemy = null
 		}
 		
 	})

@@ -34,10 +34,15 @@ builder.entity("playing") {
 	
 	child(cursor)	
 	
+	def player = entity("player") {
+		
+	}
+	
 	child(entity("grappplingHook") {
 		parent("grapplinghookus.entities.grapplinghook", [
 		position:utils.vector(320f, 470f),
-		cursor:cursor, 
+		cursor:cursor,
+		player: player,
 		])
 	})	
 	
