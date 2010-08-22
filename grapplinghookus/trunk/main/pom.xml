@@ -22,7 +22,7 @@
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
-		<webstartMain>com.gemserk.games.dassault.Game</webstartMain>
+		<webstartMain>com.gemserk.games.grapplinghookus.Game</webstartMain>
 
 		<appletGameParameter>com.gemserk.games.grapplinghookus.Game</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>

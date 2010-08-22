@@ -28,6 +28,13 @@ builder.entity("playing") {
 			moveDirection:utils.vector(0,1), 
 			speed:0.02f]))		
 	
+	child(entity("spawner") {
+		parent("grapplinghookus.entities.spawner", [
+		minTime:3000,
+		maxTime:4000,
+		])
+	})
+	
 	def cursor = entity("cursor") {
 		parent("grapplinghookus.entities.cursor", [:])
 	}
@@ -35,14 +42,9 @@ builder.entity("playing") {
 	child(cursor)	
 	
 	def base = entity("base") {
-		property("position", utils.vector(320f, 470f))
-		property("bullets", 0)
-		
-		component(utils.components.genericComponent(id:"trappedEnemyBaseReachedHandler", messageId:"trappedEnemyBaseReached"){ message ->
-			if (message.baseId != entity.id) 
-				return
-			entity.bullets = entity.bullets + 1
-		})
+		parent("grapplinghookus.entities.base", [
+		position:utils.vector(320f, 470f)
+		])
 	}
 	
 	child(base)
