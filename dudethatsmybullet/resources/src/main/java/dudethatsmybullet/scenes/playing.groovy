@@ -24,6 +24,9 @@ builder.entity("playing") {
 			hold(button:"s",eventId:"move.down")
 		}
 		mouse {
+			press(button:"left",eventId:"raiseShield")
+			release(button:"left",eventId:"lowerShield")
+			
 			move(eventId:"lookAt") { message ->
 				message.x = position.x
 				message.y = position.y

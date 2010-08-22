@@ -38,7 +38,7 @@ builder.entity("turret-${Math.random()}") {
 	component(new WeaponComponent("shooter")) {
 		property("reloadTime", 300)
 		propertyRef("position", "position")
-		property("shouldFire", {entity.target.position.distance(entity.position) < entity.fireRadius})
+		property("shouldFire", {entity.target != null && !entity.target.isDead && entity.target.position.distance(entity.position) < entity.fireRadius})
 		
 		property("trigger", utils.custom.triggers.closureTrigger { turret ->
 			def bulletTemplate = entity.bulletTemplate
@@ -73,7 +73,9 @@ builder.entity("turret-${Math.random()}") {
 			}
 		}
 	})
-	
+	component(utils.components.genericComponent(id:"gameOverHandler", messageId:"gameOver"){ message ->
+		entity.target = null
+	})
 	component(new BarRendererComponent("hitpointsRenderer") ){
 		property("position", {entity.position.copy().add(utils.vector(-22f, -25f))})
 		propertyRef("container", "hitpoints")

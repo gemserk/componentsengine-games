@@ -11,6 +11,8 @@ builder.entity("world") {
 	
 	property("bounds",utils.rectangle(0,0,800,600))
 	
+	property("gameOver",false)
+	
 	component(new OutOfBoundsRemover("outofboundsremover")) {//usa enqueueDelay
 		property("tags", ["bullet"] as String[] );
 		propertyRef("bounds", "bounds");
@@ -61,27 +63,46 @@ builder.entity("world") {
 	
 	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	component(utils.components.genericComponent(id:"endConditionChecker", messageId:["update",]){ message ->
-		def turrets = entity.root.getEntities(EntityPredicates.withAllTags("turret"))
-		if(turrets.size == 1){
+		if(entity.gameOver)
+			return
 			
-			def label = entity("pausedLabel"){
-				
-				parent("gemserk.gui.label", [
-				position:utils.vector(400f, 300),
-				fontColor:utils.color(1f,1f,1f,1f),
-				bounds:utils.rectangle(-220,-50,440,100),
-				font: font,
-				align:"center",
-				valign:"center",
-				layer:100
-				])
-				
-				property("message", "You rock!!!!!!")
-			}
-			
-			messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(label,entity))
+		def resultMessage = ""			
+		def heroEntity = entity.getEntityById("hero")
+		if(!heroEntity || heroEntity.isDead){
+			resultMessage = "You suck!!!"
+			entity.gameOver = true
 		}
+		
+		
+		def turrets = entity.root.getEntities(EntityPredicates.withAllTags("turret"))
+		if(!entity.gameOver && turrets.size == 1){
+			resultMessage = "You rock!!!"
+			entity.gameOver = true
+		}
+		
+		if(!entity.gameOver)
+			return
+		
+		log.info("Llego a gameover")
+		
+		def label = entity("gameover"){
 			
+			parent("gemserk.gui.label", [
+			position:utils.vector(400f, 300),
+			fontColor:utils.color(1f,1f,1f,1f),
+			bounds:utils.rectangle(-220,-50,440,100),
+			font: font,
+			align:"center",
+			valign:"center",
+			layer:100
+			])
+			
+			property("message", resultMessage)
+		}
+		
+		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(label,entity))
+		
+		messageQueue.enqueue(utils.genericMessage("gameOver") {})
 	})
 		
 	
