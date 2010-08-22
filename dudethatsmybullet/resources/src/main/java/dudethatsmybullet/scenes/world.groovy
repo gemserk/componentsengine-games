@@ -59,10 +59,11 @@ builder.entity("world") {
 		])
 	})
 	
+	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	component(utils.components.genericComponent(id:"endConditionChecker", messageId:["update",]){ message ->
 		def turrets = entity.root.getEntities(EntityPredicates.withAllTags("turret"))
 		if(turrets.size == 1){
-			def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
+			
 			def label = entity("pausedLabel"){
 				
 				parent("gemserk.gui.label", [
