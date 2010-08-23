@@ -214,7 +214,7 @@ public class EnemyFactory {
 
 						messageQueue.enqueue(new Message("explosion", new PropertiesMapBuilder() {
 							{
-								property("explosion", EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 100f, 300f, 3f, startColor, endColor));
+								property("explosion", EffectFactory.explosionEffect(100, (int) position.x, (int) position.y, 0f, 360f, 800, 5.0f, 100f, 400f, 2f, startColor, endColor));
 								property("layer", 5);
 							}
 						}.build()));

@@ -153,7 +153,7 @@ builder.entity {
 		renderer.enqueue(new ClosureRenderObject(layer,  { Graphics g ->
 			
 			SlickCallable.enterSafeBlock();
-			OpenGlUtils.renderLine(startPosition, endPosition, 3f, utils.color(0f,0f,0f,0.9f))
+			OpenGlUtils.renderLine(startPosition, endPosition, 3f, utils.color(1f,1f,1f,0.9f))
 			SlickCallable.leaveSafeBlock();
 			
 		}));
