@@ -149,11 +149,13 @@ public class EnemyFactory {
 				property("moveDirection", parameters.get("moveDirection"));
 				property("speed", parameters.get("speed"));
 
-				property("bounds", new Rectangle(-10, -5, 20, 10));
+				property("bounds", new Rectangle(-20, -20, 40, 40));
 
 				property("image", builderUtils.getResources().image("enemy01"));
 
 				property("force", new Vector2f());
+				
+				property("targeted", false);
 
 				component(new UpdateCollisionsComponent("updateCollisions")).withProperties(new ComponentProperties() {
 					{
@@ -303,6 +305,7 @@ public class EnemyFactory {
 							
 							Entity enemy = Properties.getValue(entity, "enemy");
 							Properties.setValue(enemy, "position", position.copy());
+							Properties.setValue(enemy, "targeted", false);
 							
 							messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(enemy, entity.getParent()));
 							messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity));

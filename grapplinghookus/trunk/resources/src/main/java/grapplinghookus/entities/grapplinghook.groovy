@@ -2,11 +2,8 @@ package grapplinghookus.entities
 
 import com.gemserk.commons.animation.interpolators.Vector2fInterpolator;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
-import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.render.ClosureRenderObject;
 import com.gemserk.componentsengine.utils.OpenGlUtils;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.opengl.SlickCallable;
 
@@ -26,39 +23,18 @@ builder.entity {
 	property("state", "idle")
 	property("time", 1000)
 	
-	component(utils.components.genericComponent(id:"updateTargetOnUpdate", messageId:"update"){ message ->
-		def cursorPosition = entity.cursor.position
+	component(utils.components.genericComponent(id:"grapplingHookShootedHandler", messageId:"grapplingHookShooted"){ message ->
+		if (message.grapplinghook != entity)
+			return
 		
 		if (entity.state != "idle")
-			return
-		
-		entity.target = null
-		
-		def enemies = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("enemy"), // 
-				{enemy -> enemy.bounds.contains(cursorPosition.x, cursorPosition.y) } as Predicate))
-		
-		if (enemies.isEmpty()) 
-			return
-		
-		entity.target = enemies[0]
-	})
-	
-	
-	component(utils.components.genericComponent(id:"shootGrapplingHookHandler", messageId:"shootGrapplingHook"){ message ->
-		
-		if (entity.state != "idle")
-			return
-		
-		def target = entity.target
-		
-		if (target == null) 
 			return
 		
 		entity.state = "reachingEnemy"
-		entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.position, target.position)
+		entity.target = message.targetEnemy
+		entity.target.targeted = true
 		
-		log.debug("shooting grappling hook to targeted enemy")
-		
+		entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.position, entity.target.position)
 	})
 	
 	component(utils.components.genericComponent(id:"updateUntilItReachesTheEnemy", messageId:"update"){ message ->
@@ -91,8 +67,6 @@ builder.entity {
 			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(targetedEnemy))
 			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity.trappedEnemy, entity))
 			
-			entity.target = null
-			
 			// send message to enemy to set him as it is being absorbed
 		}
 		
@@ -111,7 +85,10 @@ builder.entity {
 		entity.endPosition = interpolator.interpolatedValue
 		
 		if (interpolator.finished) {
-			entity.state = "waitingToShoot"
+			if (entity.target != null)
+				entity.state = "waitingToShoot"
+			else 
+				entity.state = "idle"
 			entity.endPositionInterpolator = null
 		}
 		
@@ -122,18 +99,31 @@ builder.entity {
 			return
 		
 		log.debug("grappling hook is now free: grapplinghook.id - $entity.id")
-			
+		
 		entity.state = "idle"
 		entity.trappedEnemy = null
+		entity.target = null
 	})
 	
-	input("inputmapping"){
-		mouse {
-			press(button:"right", eventId:"shootGrapplingHook")
+	component(utils.components.genericComponent(id:"removeTargetWhenEnemyKilled", messageId:"enemyKilled"){ message ->
+		
+		if (entity.state!="reachingEnemy")
+			return
+		
+		def enemy = message.enemy
+		
+		if (entity.target == enemy) {
+			
+			entity.state = "reachingBase"
+			entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.endPosition, entity.position)
+			
+			entity.target = null
+			
 		}
-	}
+		
+	})
 	
-	component(utils.components.genericComponent(id:"droidRenderer", messageId:"render"){ message ->
+	component(utils.components.genericComponent(id:"renderer", messageId:"render"){ message ->
 		
 		if (entity.state == "idle")
 			return

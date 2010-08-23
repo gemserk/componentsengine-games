@@ -29,7 +29,9 @@ builder.entity {
 			def endPosition = grapplinghook.endPosition
 			
 			entity.position = endPosition
-			entity.direction = endPosition.copy().sub(grapplinghook.position).normalise().add(-90f)
+			
+			if (grapplinghook.position.distance(entity.position) > 2f)
+				entity.direction = endPosition.copy().sub(grapplinghook.position).normalise().add(-90f)
 		} 
 		
 	})
