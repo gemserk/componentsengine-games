@@ -205,12 +205,12 @@ public class EnemyFactory {
 
 						final Vector2f position = Properties.getValue(entity, "position");
 
-						final Color startColor = new Color(0f, 0f, 0f, 1f);
-						final Color endColor = new Color(0f, 0f, 0f, 0.5f);
+						final Color startColor = new Color(1f, 1f, 1f, 1f);
+						final Color endColor = new Color(0.7f, 0.7f, 0.7f, 1f);
 
 						messageQueue.enqueue(new Message("explosion", new PropertiesMapBuilder() {
 							{
-								property("explosion", EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 20f, 100f, 1.5f, startColor, endColor));
+								property("explosion", EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 100f, 300f, 3f, startColor, endColor));
 								property("layer", 5);
 							}
 						}.build()));

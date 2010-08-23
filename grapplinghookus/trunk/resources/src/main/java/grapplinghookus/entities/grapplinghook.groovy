@@ -1,5 +1,6 @@
 package grapplinghookus.entities
 
+import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.commons.animation.interpolators.Vector2fInterpolator;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.render.ClosureRenderObject;
@@ -34,8 +35,15 @@ builder.entity {
 		entity.target = message.targetEnemy
 		entity.target.targeted = true
 		
-		entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.position, entity.target.position)
+		entity.timeToReach = entity.time
 	})
+		
+	// time is float between 0 and 1
+	def interpolate = { Vector2f a, Vector2f b, float time -> 
+		def x = (float) (a.x * time + b.x * (1-time))
+		def y = (float) (a.y * time + b.y * (1-time))
+		return new Vector2f(x,y)
+	}	
 	
 	component(utils.components.genericComponent(id:"updateUntilItReachesTheEnemy", messageId:"update"){ message ->
 		
@@ -43,13 +51,12 @@ builder.entity {
 		
 		if (entity.state != "reachingEnemy")
 			return
-		
-		def interpolator = entity.endPositionInterpolator
-		
-		interpolator.update(message.delta)
-		entity.endPosition = interpolator.interpolatedValue
-		
-		if (interpolator.finished) {
+
+		float w = (float)( entity.timeToReach / entity.time)
+		entity.endPosition = interpolate(entity.position, entity.target.position, w)
+		entity.timeToReach = entity.timeToReach - message.delta
+			
+		if (entity.timeToReach <= 0) {
 			entity.state = "reachingBase"
 			entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.endPosition, entity.position)
 			
@@ -71,7 +78,7 @@ builder.entity {
 		}
 		
 	})
-	
+
 	component(utils.components.genericComponent(id:"updateUntilItReachesTheBase", messageId:"update"){ message ->
 		
 		// updates the grappling hook until it reaches the base with the enemy with it
