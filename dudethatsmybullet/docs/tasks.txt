@@ -1,9 +1,14 @@
+CRAZY IDEAS:
+Linked Turrets: some turrets are linked, that is you cant reduce their HP under 50% until all of them are at 50%.
+Damage Type: There are different damage types, some turrets are inmune to their own fire type, you cant use their own bullets.
+Obstacles: (requirement: Damage Type) there are obstacles that force you to reflect bullets between two turrets because each are inmune to their own bullets. and there is no straight path between them
+ShieldedTurrets: some turrets generate a shield and should all of them receive damage in a small period of time
+Moving turrets: the turrets move
+
+
 TODO:
 if a turret wants to fire it has to have enough energy
 the turrets follow the hero
-when a turret is hit by a bullet it receives damage which reduces the turret's health
-when the health of a turret reaches 0 it dies
-when a turret dies it explodes
 
 
 
@@ -13,3 +18,6 @@ when a bullet goes out of bounds it dissapears
 the bullets fly in a straight line
 when a turret is in range of the hero it can fire
 the turrets should fire at the hero
+when a turret is hit by a bullet it receives damage which reduces the turret's health
+when the health of a turret reaches 0 it dies
+when a turret dies it explodes

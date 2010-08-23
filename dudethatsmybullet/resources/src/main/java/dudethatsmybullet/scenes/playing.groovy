@@ -16,6 +16,7 @@ builder.entity("playing") {
 		keyboard {
 			press(button:"escape",eventId:"pauseGame")
 			press(button:"p",eventId:"pauseGame")
+			press(button:"n",eventId:"nextLevel")
 		}
 		mouse {
 			press(button:"left",eventId:"raiseShield")

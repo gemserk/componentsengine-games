@@ -14,6 +14,8 @@ builder.entity("world") {
 	
 	property("gameOver",false)
 	
+	property("level",parameters.level)
+	
 	component(new OutOfBoundsRemover("outofboundsremover")) {//usa enqueueDelay
 		property("tags", ["bullet"] as String[] );
 		propertyRef("bounds", "bounds");
@@ -42,9 +44,9 @@ builder.entity("world") {
 		position:utils.vector(400,300),
 		bounds:utils.rectangle(0,0,800,600),
 		hitpoints: 250f,
-		maxShield: 1000f,
+		maxShield: 150f,
 		shieldDischargeRate: (float)200f/1000f,
-		shieldRechargeRate: (float)1000f/(40f*1000f),
+		shieldRechargeRate: (float)1000f/(80f*1000f),
 		])
 	}
 	
@@ -57,9 +59,9 @@ builder.entity("world") {
 			utils.vector(400,450),
 		]
 	
-	turretPositions.eachWithIndex { position, index ->
+	parameters.level.turrets.eachWithIndex { turretDefinition, index ->
 		child(entity("turret$index"){ parent("dudethatsmybullet.entities.turret",[
-			position:position,
+			position:turretDefinition.position,
 			bulletTemplate: bulletTemplate,
 			target: hero,
 			damage: 25f,

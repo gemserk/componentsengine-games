@@ -10,11 +10,14 @@ builder.entity("scene") {
 	
 	new GroovyBootstrapper();
 	
-	//	child(entity("playing"){ parent("dudethatsmybullet.scenes.playing",parameters) })
 	
 	
 	property("gameState", "playing");
+	property("currentLevelIndex", parameters.levelIndex ?: 0)
 	
+	def levels = ScenesDefinitions.scenes(utils)
+	
+	def currentLevel = levels[entity.currentLevelIndex]
 	
 	property("transitions",[
 			gameover:"gameover",
@@ -25,7 +28,7 @@ builder.entity("scene") {
 	
 	property("stateEntities",[
 			entity("playing"){
-				parent("dudethatsmybullet.scenes.playing", [:])
+				parent("dudethatsmybullet.scenes.playing", [level:currentLevel])
 			},
 			entity("paused"){ parent("dudethatsmybullet.scenes.paused") },
 			entity("gameover"){  parent("dudethatsmybullet.scenes.gameover") },
@@ -64,11 +67,18 @@ builder.entity("scene") {
 	
 	property("sceneTemplate",new InstantiationTemplateImpl(
 			utils.custom.templateProvider.getTemplate("dudethatsmybullet.scenes.scene"),
-			utils.custom.genericprovider.provide{ data ->[:]}))
+			utils.custom.genericprovider.provide{ data ->[levelIndex:data.levelIndex]}))
+	
+	component(utils.components.genericComponent(id:"nextLevelHandler", messageId:"nextLevel"){ message ->
+		def	levelIndex = (entity.currentLevelIndex + 1) % levels.size
+		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
+		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
+	})
 	
 	component(utils.components.genericComponent(id:"restartLevelHandler", messageId:"restartLevel"){ message ->
 		def levelIndex = entity.currentLevelIndex
-		def scene = entity.sceneTemplate.get([:])
+		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
 		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
 	})
