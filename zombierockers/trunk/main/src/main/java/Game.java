@@ -23,6 +23,8 @@ import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.commons.slick.util.ScreenshotGrabber;
+import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
 import com.gemserk.componentsengine.builders.BuilderUtils;
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
 import com.gemserk.componentsengine.components.Component;
@@ -128,6 +130,10 @@ public class Game extends StateBasedGame {
 					return points;
 				}
 			});
+			
+			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
+			injector.injectMembers(screenshotGrabber);
+			builderUtils.addCustomUtil("screenshotGrabber", screenshotGrabber);
 
 		}
 

@@ -1,7 +1,6 @@
 package zombierockers.scenes;
 
 
-import com.gemserk.componentsengine.commons.components.states.NodeStateTransitionManagerComponent;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.Message;
@@ -70,10 +69,18 @@ builder.entity("game") {
 		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
 	})
 	
+	component(utils.components.genericComponent(id:"makeScreenshotHandler", messageId:"makeScreenshot"){ message ->
+		
+		def screenshotGrabber = utils.custom.screenshotGrabber
+		screenshotGrabber.saveScreenshot("zombierockers-", "png")
+		
+	})
+	
 	input("inputmapping"){
 		keyboard {
 			press(button:"x",eventId:"dumpEntities")
 			press(button:"n",eventId:"nextLevel")
+			press(button:"k",eventId:"makeScreenshot")
 		}
 	}
 	component(utils.components.genericComponent(id:"dumpEntitiesHandler", messageId:"dumpEntities"){ message ->
