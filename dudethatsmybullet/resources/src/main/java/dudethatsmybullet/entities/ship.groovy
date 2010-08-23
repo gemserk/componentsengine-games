@@ -13,6 +13,7 @@ import com.gemserk.componentsengine.commons.components.SuperMovementComponent
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.utils.AngleUtils;
 import com.gemserk.games.dudethatsmybullet.GamePredicates 
 
 
@@ -135,17 +136,25 @@ builder.entity("ship") {
 		propertyRef("position","position")
 	}
 	
-//	component(new DisablerComponent(new GenericHitComponent("bullethit"))){
-//		property("targetTag", "bullet")
-//		property("predicate",{GamePredicates.isNearWithRadius(entity.position, entity.shieldRadius)})
-//		property("trigger", utils.custom.triggers.clsoureTrigger { data 
-//			def source = message.source
-//			def damage = source.damage
-//			message.damage = damage;
-//			
-//			def targets = message.targets
-//			message.targets = [targets[0]]
-//		})
-//	}
+	component(new DisablerComponent(new GenericHitComponent("bulletDeflector"))){
+		property("targetTag", "bullet")
+		property("predicate",{GamePredicates.isNearWithRadius(entity.position, entity.shieldRadius)})
+		property("trigger", utils.custom.triggers.closureTrigger { data ->
+			def source = data.source
+			def targets = data.targets
+			def sourcePosition = source.position
+			
+			targets.each { bullet ->
+				def currentVelocity = bullet."movement.velocity"
+				def distanceVector = bullet.position.copy().sub(sourcePosition)
+				bullet.position = sourcePosition.copy().add(distanceVector.copy().normalise().scale((float)source.shieldRadius + bullet.radius + 1))
+				def newAngle = distanceVector.getTheta()
+				def newVelocity = utils.vector(currentVelocity.length(),0).add(newAngle)
+				bullet."movement.velocity" = newVelocity
+				
+			}
+		})
+		propertyRef("enabled","shieldEnabled")
+	}
 	
 }
