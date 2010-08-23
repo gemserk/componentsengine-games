@@ -5,6 +5,9 @@ import org.lwjgl.input.Mouse;
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
+import com.gemserk.componentsengine.predicates.EntityPredicates;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 import gemserk.utils.GroovyBootstrapper 
 
@@ -24,7 +27,7 @@ builder.entity("playing") {
 	child(entity("gameLogic") {
 		
 		property("player", player)
-		// 
+		
 		component(utils.components.genericComponent(id:"addPointsWhenEnemyKilled", messageId:"enemyKilled"){ message ->
 			def enemy = message.enemy
 			def sourceEnemy = message.sourceEnemy
@@ -38,6 +41,22 @@ builder.entity("playing") {
 			def enemy = message.enemy
 			def points = (int) enemy.points * 0.25 
 			entity.player.points = (int) entity.player.points + points
+		})
+		
+		component(utils.components.genericComponent(id:"detectEnemiesOverCity", messageId:"update"){ message ->
+		
+			def enemiesOverCity = entity.root.getEntities(Predicates.and(EntityPredicates.withAllTags("enemy"),//  
+					{enemy-> enemy.position.y > 460 } as Predicate))
+		
+			if (enemiesOverCity.isEmpty()) {
+				return
+			}
+			
+			// game is over!
+			messageQueue.enqueue(utils.genericMessage("gameover"){
+				
+			})
+			
 		})
 		
 	})

@@ -73,7 +73,7 @@ public class EnemyFactory {
 				return;
 
 			final Entity enemy = (Entity) collidingEnemies.toArray()[0];
-			
+
 			final Entity sourceEnemy = Properties.getValue(entity, "enemy");
 
 			messageQueue.enqueue(new Message("enemyKilled", new PropertiesMapBuilder() {
@@ -158,7 +158,7 @@ public class EnemyFactory {
 				property("image", builderUtils.getResources().image("enemy01"));
 
 				property("force", new Vector2f());
-				
+
 				property("targeted", false);
 
 				component(new UpdateCollisionsComponent("updateCollisions")).withProperties(new ComponentProperties() {
@@ -192,6 +192,28 @@ public class EnemyFactory {
 						property("color", Color.white);
 					}
 				});
+
+//				component(new FieldsReflectionComponent("messageWhenOutsideScreen") {
+//
+//					@EntityProperty
+//					Vector2f position;
+//					
+//					@Handles
+//					public void update(Message message) {
+//						
+//						if (position.y > 460) {
+//							
+//							
+//							
+//						}
+//						
+//					}
+//					
+//				}).withProperties(new ComponentProperties() {
+//					{
+//						propertyRef("position", "position");
+//					}
+//				});
 
 				component(new FieldsReflectionComponent("removeEnemyWhenKilled") {
 
@@ -293,31 +315,31 @@ public class EnemyFactory {
 						property("color", Color.white);
 					}
 				});
-				
-				component(new FieldsReflectionComponent("respawnEnemyWhenScreenLimitReached"){
-					
+
+				component(new FieldsReflectionComponent("respawnEnemyWhenScreenLimitReached") {
+
 					@Inject
 					MessageQueue messageQueue;
-					
+
 					@EntityProperty
 					Vector2f position;
-					
+
 					@Handles
 					public void update(Message message) {
-						
-						if (position.y < 10 ||  position.x < 20 ||  position.x > 620f) {
-							
+
+						if (position.y < 10 || position.x < 20 || position.x > 620f) {
+
 							Entity enemy = Properties.getValue(entity, "enemy");
 							Properties.setValue(enemy, "position", position.copy());
 							Properties.setValue(enemy, "targeted", false);
-							
+
 							messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(enemy, entity.getParent()));
 							messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity));
-							
+
 						}
-						
+
 					}
-					
+
 				}).withProperties(new ComponentProperties() {
 					{
 						propertyRef("position", "position");

@@ -12,7 +12,7 @@ builder.entity("helpscreen") {
 	property("screen", utils.rectangle(0,0, 640, 480))
 	property("center", utils.vector(320, 240))
 	
-	def textColor = utils.color(0,0,0,1)
+	def textColor = utils.color(1,1,1,1)
 	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
 		messageQueue.enqueue(utils.genericMessage("resume"){})	
@@ -21,7 +21,7 @@ builder.entity("helpscreen") {
 	component(new RectangleRendererComponent("backback")) {
 		property("position", utils.vector(0,0))
 		property("rectangle", utils.rectangle(0,0, 640, 480))
-		property("fillColor", utils.color(1,1,1,1))
+		property("fillColor", utils.color(0,0,0,0))
 		property("layer", -1)
 	}
 	
@@ -42,8 +42,9 @@ builder.entity("helpscreen") {
 			"Shoot: LEFT MOUSE BUTTON", 
 			"",
 			"",
-			"",
-			"",
+			"Your mission:",
+			"Kill all aliens to win!!",
+			"Avoid them to reach the city!!",
 			"",
 			"",
 			"Press any key to continue"]

@@ -16,17 +16,19 @@ builder.entity("game") {
 			paused:"paused",
 			resume:"playing",
 			helpscreen:"helpscreen",
+			gameover:"gameover",
 			])
 	
 	property("stateEntities",[
 			entity("playing"){ parent("grapplinghookus.scenes.playing") },
 			entity("paused"){ parent("grapplinghookus.scenes.paused") }, 
-			entity("helpscreen"){ parent("grapplinghookus.scenes.helpscreen") }
+			entity("helpscreen"){ parent("grapplinghookus.scenes.helpscreen") },
+			entity("gameover"){ parent("grapplinghookus.scenes.gameover") },
 			])
 	
 	property("currentNodeState", null)
 	
-	component(utils.components.genericComponent(id:"transitionHandler", messageId:["paused","resume", "helpscreen"]){ message ->
+	component(utils.components.genericComponent(id:"transitionHandler", messageId:["paused","resume", "helpscreen", "gameover"]){ message ->
 		
 		String messageId = message.getId();
 		String transition = entity.transitions.get(messageId);
