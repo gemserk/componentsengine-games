@@ -54,7 +54,7 @@ builder.entity {
 		if (entity.win){
 			entity.labelText = "You rock!!!!"
 		}else{
-			entity.labelText = "You suck!!!!"
+			entity.labelText = "You lose!!!!"
 		}	
 		
 	})
