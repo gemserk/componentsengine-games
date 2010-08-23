@@ -10,6 +10,30 @@ builder.entity {
 	property("minTime", parameters.minTime)
 	property("maxTime", parameters.maxTime)
 	
+	// timers are decreased 10% while they are > 100ms, each 5secs
+	property("accelerateTimersTime", 10000)
+	property("accelerateCurrentTime", 0)
+	
+	component(utils.components.genericComponent(id:"accelerateTimers", messageId:"update"){ message ->
+		
+		entity.accelerateCurrentTime = (int) entity.accelerateCurrentTime + message.delta
+		
+		if (entity.accelerateCurrentTime > entity.accelerateTimersTime) {
+			
+			entity.minTime = (int) (entity.minTime - entity.minTime * 0.1)
+			entity.maxTime = (int) (entity.maxTime - entity.maxTime * 0.1)
+			
+			if (entity.minTime < 100)
+				entity.minTime = 100
+			
+			if (entity.maxTime < 100)
+				entity.maxTime = 100
+			
+			entity.accelerateCurrentTime = 0
+		}
+		
+	})
+	
 	component(utils.components.genericComponent(id:"updateTimer", messageId:"update"){ message ->
 		def timer = entity.timer
 		
