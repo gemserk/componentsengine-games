@@ -1,5 +1,6 @@
 
 
+
 package dudethatsmybullet.entities
 
 
@@ -15,7 +16,6 @@ import com.gemserk.componentsengine.commons.components.SuperMovementComponent
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent 
 import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.utils.AngleUtils;
 import com.gemserk.games.dudethatsmybullet.GamePredicates 
 
 
@@ -23,7 +23,7 @@ builder.entity("ship") {
 	
 	tags("ship","nofriction","hittable")
 	
-	property("hitpoints",utils.container(400,400))
+	property("hitpoints",utils.container(parameters.hitpoints,parameters.hitpoints))
 	
 	
 	
@@ -59,13 +59,11 @@ builder.entity("ship") {
 		}else {
 			entity."movement.velocity" = utils.vector(0,0)
 		}
-		
 	})
 	
 	component(new SuperMovementComponent("movement")){
 		property("maxVelocity", (float)(500/1000))
 		propertyRef("position", "position")
-		
 	}
 	
 	
@@ -113,7 +111,8 @@ builder.entity("ship") {
 	
 	
 	component(utils.components.genericComponent(id:"raiseShieldHandler", messageId:"raiseShield"){ message ->
-		entity.shieldEnabled = true
+		if(entity.shieldCapacity.getPercentage() > 0.05f)
+			entity.shieldEnabled = true
 	})
 	
 	component(utils.components.genericComponent(id:"lowerShieldHandler", messageId:"lowerShield"){ message ->
@@ -126,6 +125,16 @@ builder.entity("ship") {
 		property("width", 300f)
 		property("height", 15f)
 		property("fullColor", utils.color(0.3f, 0.6f, 0.9f,1))
+		property("emptyColor", utils.color(0.9f, 0.1f, 0.1f, 1))
+		property("layer", 20)
+	}
+	
+	component(new BarRendererComponent("shieldCapacityRenderer") ){
+		property("position", utils.vector(250,30))
+		propertyRef("container", "shieldCapacity")
+		property("width", 300f)
+		property("height", 15f)
+		property("fullColor", utils.color(1f, 1f, 0f,1))
 		property("emptyColor", utils.color(0.9f, 0.1f, 0.1f, 1))
 		property("layer", 20)
 	}
@@ -150,10 +159,23 @@ builder.entity("ship") {
 				def newAngle = distanceVector.getTheta()
 				def newVelocity = utils.vector(currentVelocity.length(),0).add(newAngle)
 				bullet."movement.velocity" = newVelocity
-				
 			}
 		})
 		propertyRef("enabled","shieldEnabled")
 	}
 	
+	
+	property("shieldCapacity", utils.container(parameters.maxShield, parameters.maxShield) )
+	property("shieldDischargeRate",parameters.shieldDischargeRate)
+	property("shieldRechargeRate",parameters.shieldRechargeRate)
+	component(utils.components.genericComponent(id:"shieldDrainer", messageId:"update"){ message ->
+		def shieldCapacity = entity.shieldCapacity
+		if(entity.shieldEnabled){
+			shieldCapacity.remove((float)message.delta * entity.shieldDischargeRate)
+			if(shieldCapacity.isEmpty())
+				entity.shieldEnabled = false
+		} else {
+			shieldCapacity.add((float)message.delta * entity.shieldRechargeRate)
+		}
+	})
 }

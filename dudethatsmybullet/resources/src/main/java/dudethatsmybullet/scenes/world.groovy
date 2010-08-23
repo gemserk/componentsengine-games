@@ -40,27 +40,49 @@ builder.entity("world") {
 	
 	def hero = entity("hero"){ parent("dudethatsmybullet.entities.ship",[
 		position:utils.vector(400,300),
-		bounds:utils.rectangle(0,0,800,600)
+		bounds:utils.rectangle(0,0,800,600),
+		hitpoints: 250f,
+		maxShield: 1000f,
+		shieldDischargeRate: (float)200f/1000f,
+		shieldRechargeRate: (float)1000f/(40f*1000f),
 		])
 	}
 	
 	child(hero)
 	
-	child(entity("turret1"){ parent("dudethatsmybullet.entities.turret",[
-		position:utils.vector(200,300),
-		bulletTemplate: bulletTemplate,
-		target: hero,
-		damage: 25f,
-		])
-	})
+	def turretPositions = [
+			utils.vector(200,300),
+			utils.vector(600,300),		
+			utils.vector(400,150),
+			utils.vector(400,450),
+		]
 	
-	child(entity("turret2"){ parent("dudethatsmybullet.entities.turret",[
-		position:utils.vector(600,300),
-		bulletTemplate: bulletTemplate,
-		target: hero,
-		damage: 25f,
-		])
-	})
+	turretPositions.eachWithIndex { position, index ->
+		child(entity("turret$index"){ parent("dudethatsmybullet.entities.turret",[
+			position:position,
+			bulletTemplate: bulletTemplate,
+			target: hero,
+			damage: 25f,
+			])
+		})
+	}
+	
+	
+//	child(entity("turret1"){ parent("dudethatsmybullet.entities.turret",[
+//		position:utils.vector(200,300),
+//		bulletTemplate: bulletTemplate,
+//		target: hero,
+//		damage: 25f,
+//		])
+//	})
+//	
+//	child(entity("turret2"){ parent("dudethatsmybullet.entities.turret",[
+//		position:utils.vector(600,300),
+//		bulletTemplate: bulletTemplate,
+//		target: hero,
+//		damage: 25f,
+//		])
+//	})
 	
 	
 	property("win",null)
