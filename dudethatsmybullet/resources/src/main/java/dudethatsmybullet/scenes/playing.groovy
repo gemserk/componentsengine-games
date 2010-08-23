@@ -14,14 +14,8 @@ builder.entity("playing") {
 	
 	input("inputmapping"){
 		keyboard {
-			hold(button:"left",eventId:"move.left")
-			hold(button:"right",eventId:"move.right")
-			hold(button:"up",eventId:"move.up")
-			hold(button:"down",eventId:"move.down")
-			hold(button:"a",eventId:"move.left")
-			hold(button:"d",eventId:"move.right")
-			hold(button:"w",eventId:"move.up")
-			hold(button:"s",eventId:"move.down")
+			press(button:"escape",eventId:"pauseGame")
+			press(button:"p",eventId:"pauseGame")
 		}
 		mouse {
 			press(button:"left",eventId:"raiseShield")
@@ -33,4 +27,18 @@ builder.entity("playing") {
 			}
 		}
 	}
+	
+	component(utils.components.genericComponent(id:"grabscreenshot-leavenodestate", messageId:"leaveNodeState"){ message ->
+		def graphics = utils.custom.gameContainer.graphics
+		graphics.copyArea(utils.custom.gameStateManager.gameProperties.screenshot, 0, 0);
+	})
+	
+	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
+		if(!utils.custom.gameStateManager.gameProperties.runningInDebug && !utils.custom.gameContainer.hasFocus())
+			messageQueue.enqueue(utils.genericMessage("paused"){})
+	})
+	
+	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
+		messageQueue.enqueue(utils.genericMessage("paused"){})
+	})
 }

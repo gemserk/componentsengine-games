@@ -122,10 +122,10 @@ builder.entity("ship") {
 	})
 	
 	component(new BarRendererComponent("hitpointsRenderer") ){
-		property("position", utils.vector(30,10))
+		property("position", utils.vector(250,10))
 		propertyRef("container", "hitpoints")
-		property("width", 44f)
-		property("height", 5f)
+		property("width", 300f)
+		property("height", 15f)
 		property("fullColor", utils.color(0.3f, 0.6f, 0.9f,1))
 		property("emptyColor", utils.color(0.9f, 0.1f, 0.1f, 1))
 		property("layer", 20)

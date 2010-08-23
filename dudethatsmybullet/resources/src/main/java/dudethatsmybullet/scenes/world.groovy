@@ -61,7 +61,6 @@ builder.entity("world") {
 		])
 	})
 	
-	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
 	component(utils.components.genericComponent(id:"endConditionChecker", messageId:["update",]){ message ->
 		if(entity.gameOver)
 			return
@@ -69,40 +68,17 @@ builder.entity("world") {
 		def resultMessage = ""			
 		def heroEntity = entity.getEntityById("hero")
 		if(!heroEntity || heroEntity.isDead){
-			resultMessage = "You suck!!!"
-			entity.gameOver = true
+			messageQueue.enqueueDelay(utils.genericMessage("gameover"){ newMessage -> newMessage.win = false})
+			return
 		}
 		
 		
 		def turrets = entity.root.getEntities(EntityPredicates.withAllTags("turret"))
 		if(!entity.gameOver && turrets.size == 1){
-			resultMessage = "You rock!!!"
-			entity.gameOver = true
-		}
-		
-		if(!entity.gameOver)
+			messageQueue.enqueueDelay(utils.genericMessage("gameover"){ newMessage -> newMessage.win = true})
 			return
-		
-		log.info("Llego a gameover")
-		
-		def label = entity("gameover"){
-			
-			parent("gemserk.gui.label", [
-			position:utils.vector(400f, 300),
-			fontColor:utils.color(1f,1f,1f,1f),
-			bounds:utils.rectangle(-220,-50,440,100),
-			font: font,
-			align:"center",
-			valign:"center",
-			layer:100
-			])
-			
-			property("message", resultMessage)
 		}
 		
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(label,entity))
-		
-		messageQueue.enqueue(utils.genericMessage("gameOver") {})
 	})
 		
 	
