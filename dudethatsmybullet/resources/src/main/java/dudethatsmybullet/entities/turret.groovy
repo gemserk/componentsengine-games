@@ -73,7 +73,7 @@ builder.entity("turret-${Math.random()}") {
 			}
 		}
 	})
-	component(utils.components.genericComponent(id:"gameOverHandler", messageId:"gameOver"){ message ->
+	component(utils.components.genericComponent(id:"gameOverHandler", messageId:"playStopped"){ message ->
 		entity.target = null
 	})
 	component(new BarRendererComponent("hitpointsRenderer") ){

@@ -2,9 +2,10 @@ package dudethatsmybullet.scenes;
 
 import com.gemserk.componentsengine.commons.components.ExplosionComponent 
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover 
+import com.gemserk.componentsengine.commons.components.TimerComponent 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.componentsengine.timers.CountDownTimer 
 
 
 builder.entity("world") {
@@ -61,6 +62,8 @@ builder.entity("world") {
 		])
 	})
 	
+	
+	property("win",null)
 	component(utils.components.genericComponent(id:"endConditionChecker", messageId:["update",]){ message ->
 		if(entity.gameOver)
 			return
@@ -68,18 +71,29 @@ builder.entity("world") {
 		def resultMessage = ""			
 		def heroEntity = entity.getEntityById("hero")
 		if(!heroEntity || heroEntity.isDead){
-			messageQueue.enqueueDelay(utils.genericMessage("gameover"){ newMessage -> newMessage.win = false})
-			return
+			entity.gameOver = true
+			entity.win = false
 		}
 		
 		
 		def turrets = entity.root.getEntities(EntityPredicates.withAllTags("turret"))
 		if(!entity.gameOver && turrets.size == 1){
-			messageQueue.enqueueDelay(utils.genericMessage("gameover"){ newMessage -> newMessage.win = true})
-			return
+			entity.gameOver = true
+			entity.win = true
 		}
 		
+		if(entity.gameOver){
+			entity.gameOverTimer.reset()
+			messageQueue.enqueue(utils.genericMessage("playStopped"){})
+		}
 	})
+	
+	
+	property("gameOverTimer",new CountDownTimer(1000))
+	component(new TimerComponent("gameOverTimerComponent")){
+		property("trigger",utils.custom.triggers.genericMessage("gameover") { message.win = entity.win	})
+		propertyRef("timer","gameOverTimer")
+	}
 		
 	
 	

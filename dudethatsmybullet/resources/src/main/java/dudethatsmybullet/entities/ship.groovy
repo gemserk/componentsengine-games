@@ -3,6 +3,8 @@
 package dudethatsmybullet.entities
 
 
+import org.newdawn.slick.Input;
+
 import com.gemserk.componentsengine.commons.components.BarRendererComponent 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.DisablerComponent 
@@ -32,7 +34,6 @@ builder.entity("ship") {
 	property("radius",16f)
 	
 	
-	property("target",utils.vector(1,0))
 	property("bounds",parameters.bounds)
 	
 	property("isDead",{entity.hitpoints.isEmpty()})
@@ -47,7 +48,10 @@ builder.entity("ship") {
 	
 	
 	component(utils.components.genericComponent(id:"directionToForceComponent", messageId:["update"]){ message ->
-		def distanceVector = entity.target.copy().sub(entity.position)
+		Input input = utils.custom.gameContainer.input
+		def target = utils.vector(input.getMouseX(),input.getMouseY())
+		
+		def distanceVector = target.sub(entity.position)
 		
 		
 		if(distanceVector.lengthSquared() > 10f){
@@ -72,11 +76,6 @@ builder.entity("ship") {
 		property("direction", {utils.vector(1,0).add(entity.rotationValue)})
 	}
 	
-	
-	component(utils.components.genericComponent(id:"lookAtHandler", messageId:["lookAt"]){ message ->
-		def target = utils.vector(message.x,message.y)
-		entity.target = target
-	})
 	
 	
 	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->

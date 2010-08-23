@@ -60,11 +60,11 @@ builder.entity {
 	})
 	
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
-		if (entity.win) {
-			messageQueue.enqueue(utils.genericMessage("nextLevel"){ })
-		} else {
+//		if (entity.win) {
+//			messageQueue.enqueue(utils.genericMessage("nextLevel"){ })
+//		} else {
 			messageQueue.enqueue(utils.genericMessage("restartLevel"){})
-		}
+//		}
 	})
 	
 	input("inputmapping"){
