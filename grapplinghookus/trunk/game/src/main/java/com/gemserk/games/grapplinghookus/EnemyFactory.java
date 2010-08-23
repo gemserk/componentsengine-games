@@ -187,7 +187,92 @@ public class EnemyFactory {
 						property("color", Color.white);
 					}
 				});
+
+			}
+		});
+	}
+
+	public Entity enemybullet(String id, final Map<String, Object> parameters) {
+		return new EntityBuilderFactory().entity(id).with(new EntityBuilder(injector) {
+
+			@Override
+			public void build() {
+
+				tags("enemybullet");
+
+				property("position", parameters.get("position"));
+				property("moveDirection", parameters.get("moveDirection"));
+				property("speed", parameters.get("speed"));
 				
+				property("enemy", parameters.get("enemy"));
+
+				property("bounds", new Rectangle(-10, -5, 20, 10));
+
+				property("image", builderUtils.getResources().image("enemy01"));
+
+				property("force", new Vector2f());
+
+				component(new UpdateCollisionsComponent("updateCollisions")).withProperties(new ComponentProperties() {
+					{
+						propertyRef("bounds", "bounds");
+						propertyRef("position", "position");
+					}
+				});
+
+				component(new SuperMovementComponent("movementComponent")).withProperties(new ComponentProperties() {
+					{
+						propertyRef("position", "position");
+						propertyRef("maxVelocity", "speed");
+						propertyRef("force", "force");
+					}
+				});
+
+				component(new UpdateMoveDirection("updateMoveDirection")).withProperties(new ComponentProperties() {
+					{
+						propertyRef("direction", "moveDirection");
+						propertyRef("force", "force");
+					}
+				});
+
+				property("renderDirection", new Vector2f(1f, 0f));
+				property("rotationSpeed", 0.12f);
+
+				component(new FieldsReflectionComponent("rotateWhileFlying") {
+
+					@EntityProperty
+					Vector2f direction;
+
+					@EntityProperty
+					Float speed;
+					
+					@Handles
+					public void update(Message message) {
+
+						Integer delta = Properties.getValue(message, "delta");
+
+						float angle = speed * delta;
+
+						direction.add(angle);
+
+					}
+
+				}).withProperties(new ComponentProperties() {
+					{
+						propertyRef("direction", "renderDirection");
+						propertyRef("speed", "rotationSpeed");
+					}
+				});
+
+				component(new ImageRenderableComponent("imageRenderer")).withProperties(new ComponentProperties() {
+					{
+						propertyRef("position", "position");
+						propertyRef("image", "image");
+						propertyRef("direction", "renderDirection");
+						property("layer", 5);
+						property("color", Color.white);
+					}
+				});
+
 			}
 		});
 	}

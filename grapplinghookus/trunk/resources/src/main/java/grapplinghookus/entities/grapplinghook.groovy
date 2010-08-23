@@ -111,18 +111,20 @@ builder.entity {
 		entity.endPosition = interpolator.interpolatedValue
 		
 		if (interpolator.finished) {
-			entity.state = "idle"
+			entity.state = "waitingToShoot"
 			entity.endPositionInterpolator = null
-			
-			utils.custom.messageQueue.enqueue(utils.genericMessage("trappedEnemyBaseReached") { newMessage ->
-				newMessage.trappedEnemyId = entity.trappedEnemy.id
-				newMessage.baseId = entity.base.id
-			}) 
-			
-			//			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.trappedEnemy))
-			entity.trappedEnemy = null
 		}
 		
+	})
+	
+	component(utils.components.genericComponent(id:"enemyWasShootedHandler", messageId:"enemyWasShooted"){ message ->
+		if (message.grapplinghook != entity)
+			return
+		
+		log.debug("grappling hook is now free: grapplinghook.id - $entity.id")
+			
+		entity.state = "idle"
+		entity.trappedEnemy = null
 	})
 	
 	input("inputmapping"){
@@ -131,10 +133,12 @@ builder.entity {
 		}
 	}
 	
-	
 	component(utils.components.genericComponent(id:"droidRenderer", messageId:"render"){ message ->
 		
 		if (entity.state == "idle")
+			return
+		
+		if (entity.state == "waitingToShoot")
 			return
 		
 		def renderer = message.renderer

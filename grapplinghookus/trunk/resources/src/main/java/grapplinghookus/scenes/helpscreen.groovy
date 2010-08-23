@@ -38,7 +38,7 @@ builder.entity("helpscreen") {
 			"Instructions", 
 			"",
 			"Aim: MOUSE", 
-			"Absorb enemy: RIGHT MOUSE BUTTON", 
+			"Absorb: RIGHT MOUSE BUTTON", 
 			"Shoot: LEFT MOUSE BUTTON", 
 			"",
 			"",
