@@ -1,7 +1,6 @@
 package com.gemserk.games.grapplinghookus;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.newdawn.slick.Color;
@@ -9,8 +8,6 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.commons.collisions.Collidable;
-import com.gemserk.commons.collisions.EntityCollidableImpl;
 import com.gemserk.commons.slick.geom.ShapeUtils;
 import com.gemserk.componentsengine.annotations.EntityProperty;
 import com.gemserk.componentsengine.builders.BuilderUtils;
@@ -45,7 +42,7 @@ public class EnemyFactory {
 		this.builderUtils = builderUtils;
 	}
 
-	private final class DetectCollisionsWithEnemiesComponent extends FieldsReflectionComponent {
+	public class DetectCollisionsWithEnemiesComponent extends FieldsReflectionComponent {
 
 		@EntityProperty
 		Shape bounds;
@@ -140,86 +137,6 @@ public class EnemyFactory {
 		}
 	}
 
-	public class BulletDeadHandler extends FieldsReflectionComponent {
-
-		@Inject
-		MessageQueue messageQueue;
-
-		@EntityProperty(readOnly = true)
-		Collidable collidable;
-
-		@EntityProperty(readOnly = true)
-		Entity player;
-
-		public BulletDeadHandler(String id) {
-			super(id);
-		}
-
-		@Handles
-		public void bulletDead(Message message) {
-			if (entity != Properties.getValue(message, "bullet"))
-				return;
-
-			collidable.remove();
-
-			Color playerColor = Properties.getValue(player, "color");
-
-			final Color startColor = new Color(playerColor);
-			startColor.a = 1f;
-
-			final Color endColor = new Color(playerColor);
-			endColor.a = 0.2f;
-
-			final Vector2f position = Properties.getValue(entity, "position");
-
-			messageQueue.enqueue(new Message("explosion", new PropertiesMapBuilder() {
-				{
-					property("explosion", EffectFactory.explosionEffect(30, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 20f, 60f, 1f, startColor, endColor));
-				}
-			}.build()));
-
-			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity));
-		}
-	}
-
-	public class HitWhenCollisionDetected extends FieldsReflectionComponent {
-
-		@Inject
-		MessageQueue messageQueue;
-
-		@EntityProperty(readOnly = true)
-		List<EntityCollidableImpl> collisions;
-
-		@EntityProperty(readOnly = true)
-		Float damage;
-
-		public HitWhenCollisionDetected(String id) {
-			super(id);
-		}
-
-		@Handles
-		public void update(Message message) {
-			if (collisions.isEmpty())
-				return;
-
-			final Entity target = collisions.get(0).getEntity();
-
-			messageQueue.enqueue(new Message("collisionDetected", new PropertiesMapBuilder() {
-				{
-					property("source", entity);
-					property("target", target);
-					property("damage", damage);
-				}
-			}.build()));
-
-			messageQueue.enqueue(new Message("bulletDead", new PropertiesMapBuilder() {
-				{
-					property("bullet", entity);
-				}
-			}.build()));
-		}
-	}
-
 	public Entity enemy(String id, final Map<String, Object> parameters) {
 		return new EntityBuilderFactory().entity(id).with(new EntityBuilder(injector) {
 
@@ -292,6 +209,7 @@ public class EnemyFactory {
 						messageQueue.enqueue(new Message("explosion", new PropertiesMapBuilder() {
 							{
 								property("explosion", EffectFactory.explosionEffect(50, (int) position.x, (int) position.y, 0f, 360f, 400, 5.0f, 20f, 100f, 1.5f, startColor, endColor));
+								property("layer", 5);
 							}
 						}.build()));
 					}
@@ -367,6 +285,35 @@ public class EnemyFactory {
 						propertyRef("direction", "renderDirection");
 						property("layer", 5);
 						property("color", Color.white);
+					}
+				});
+				
+				component(new FieldsReflectionComponent("respawnEnemyWhenScreenLimitReached"){
+					
+					@Inject
+					MessageQueue messageQueue;
+					
+					@EntityProperty
+					Vector2f position;
+					
+					@Handles
+					public void update(Message message) {
+						
+						if (position.y < 10 ||  position.x < 20 ||  position.x > 620f) {
+							
+							Entity enemy = Properties.getValue(entity, "enemy");
+							Properties.setValue(enemy, "position", position.copy());
+							
+							messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(enemy, entity.getParent()));
+							messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity));
+							
+						}
+						
+					}
+					
+				}).withProperties(new ComponentProperties() {
+					{
+						propertyRef("position", "position");
 					}
 				});
 
