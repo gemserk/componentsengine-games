@@ -46,6 +46,21 @@ builder.entity {
 		property("message", {entity.parent.labelText })
 	})
 	
+	child(entity("restartLabel"){
+		
+		parent("gemserk.gui.label", [
+		font:font,
+		position:utils.vector(400f, 320f),
+		fontColor:utils.color(0f,0f,0f,1f),
+		bounds:labelRectangle,
+		align:"center",
+		valign:"center",
+		layer:1010
+		])
+		
+		property("message", "Click to continue")
+	})
+	
 	component(utils.components.genericComponent(id:"enterNodeStateHandler", messageId:"enterNodeState"){ message ->
 		
 		def sourceMessage = message.message
