@@ -73,11 +73,14 @@ public class EnemyFactory {
 				return;
 
 			final Entity enemy = (Entity) collidingEnemies.toArray()[0];
+			
+			final Entity sourceEnemy = Properties.getValue(entity, "enemy");
 
 			messageQueue.enqueue(new Message("enemyKilled", new PropertiesMapBuilder() {
 				{
 					property("bullet", entity);
 					property("enemy", enemy);
+					property("sourceEnemy", sourceEnemy);
 				}
 			}.build()));
 
@@ -148,6 +151,7 @@ public class EnemyFactory {
 				property("position", parameters.get("position"));
 				property("moveDirection", parameters.get("moveDirection"));
 				property("speed", parameters.get("speed"));
+				property("points", parameters.get("points"));
 
 				property("bounds", new Rectangle(-20, -20, 40, 40));
 

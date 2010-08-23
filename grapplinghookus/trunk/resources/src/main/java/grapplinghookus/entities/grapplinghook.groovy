@@ -37,7 +37,7 @@ builder.entity {
 		
 		entity.timeToReach = entity.time
 	})
-		
+	
 	// time is float between 0 and 1
 	def interpolate = { Vector2f a, Vector2f b, float time -> 
 		def x = (float) (a.x * time + b.x * (1-time))
@@ -51,11 +51,11 @@ builder.entity {
 		
 		if (entity.state != "reachingEnemy")
 			return
-
+		
 		float w = (float)( entity.timeToReach / entity.time)
 		entity.endPosition = interpolate(entity.position, entity.target.position, w)
 		entity.timeToReach = entity.timeToReach - message.delta
-			
+		
 		if (entity.timeToReach <= 0) {
 			entity.state = "reachingBase"
 			entity.endPositionInterpolator = new Vector2fInterpolator(entity.time, entity.endPosition, entity.position)
@@ -71,6 +71,11 @@ builder.entity {
 				base:base])
 			}
 			
+			utils.custom.messageQueue.enqueue(utils.genericMessage("grapplingHookEnemyReached") { newMessage ->
+				newMessage.grapplinghook = entity
+				newMessage.enemy = targetedEnemy
+			}) 
+			
 			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(targetedEnemy))
 			utils.custom.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(entity.trappedEnemy, entity))
 			
@@ -78,7 +83,7 @@ builder.entity {
 		}
 		
 	})
-
+	
 	component(utils.components.genericComponent(id:"updateUntilItReachesTheBase", messageId:"update"){ message ->
 		
 		// updates the grappling hook until it reaches the base with the enemy with it

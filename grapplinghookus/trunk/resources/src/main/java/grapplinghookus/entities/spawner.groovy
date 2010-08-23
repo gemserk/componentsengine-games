@@ -6,7 +6,7 @@ builder.entity {
 	
 	tags("spawner")
 	
-	property("timer", parameters.maxTime)
+	property("timer", 100)
 	property("minTime", parameters.minTime)
 	property("maxTime", parameters.maxTime)
 	
@@ -58,14 +58,17 @@ builder.entity {
 		
 		def position = utils.vector((float) (20f + utils.random.nextFloat() * 600f), -20f)
 		def moveDirection = utils.vector(0,1)
-		def speed = (float) (0.01f + utils.random.nextFloat() * 0.05f)
+		def speed = (float) (0.01f + utils.random.nextFloat() * 0.07f)
+		def points = (int) (10000 * speed)
 		
 		def enemyFactory = utils.custom.enemyFactory
 		
 		def enemy = enemyFactory.enemy("enemy-${Math.random()}".toString(), [
 				position:position,
 				moveDirection:moveDirection, 
-				speed:speed])
+				speed:speed, 
+				points:points,
+				])
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(enemy,entity.parent))
 	})

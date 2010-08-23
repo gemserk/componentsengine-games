@@ -12,21 +12,35 @@ builder.entity("playing") {
 	
 	new GroovyBootstrapper();
 	
+	def textFont = utils.resources.fonts.font([italic:false, bold:false, size:18])
+	def textColor = utils.color(1,1,1,1)
+	
 	def enemyFactory = utils.custom.enemyFactory
+	
+	def player = entity("player") { property("points", 0) }
+	
+	child(player)
 	
 	child(entity("gameLogic") {
 		
+		property("player", player)
+		// 
+		component(utils.components.genericComponent(id:"addPointsWhenEnemyKilled", messageId:"enemyKilled"){ message ->
+			def enemy = message.enemy
+			def sourceEnemy = message.sourceEnemy
+			
+			def points = (int) (enemy.points + sourceEnemy.points * 0.10) 
+			
+			entity.player.points = (int) entity.player.points + points
+		})
+		
+		component(utils.components.genericComponent(id:"grapplingHookShootedHandler", messageId:"grapplingHookEnemyReached"){ message ->
+			def enemy = message.enemy
+			def points = (int) enemy.points * 0.25 
+			entity.player.points = (int) entity.player.points + points
+		})
+		
 	})
-	
-	child(enemyFactory.enemy("enemy1", [
-			position:utils.vector(100, 100),
-			moveDirection:utils.vector(0,1), 
-			speed:0.03f]))
-	
-	child(enemyFactory.enemy("enemy2", [
-			position:utils.vector(400, 50),
-			moveDirection:utils.vector(0,1), 
-			speed:0.02f]))		
 	
 	child(entity("spawner") {
 		parent("grapplinghookus.entities.spawner", [
@@ -92,6 +106,20 @@ builder.entity("playing") {
 	
 	component(new ExplosionComponent("explosions")) { }
 	
+	child(entity("pointsLabel"){
+		
+		parent("gemserk.gui.label", [
+		font:textFont,
+		position:utils.vector(500, 30),
+		fontColor:textColor,
+		bounds:utils.rectangle(0,-15,100,30),
+		align:"left",
+		valign:"center",
+		layer:1010,
+		])
+		
+		property("message", {"Points: " +  player.points})
+	})
 	
 	input("inputmapping"){
 		keyboard {
