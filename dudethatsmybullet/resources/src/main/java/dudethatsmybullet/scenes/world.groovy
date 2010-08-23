@@ -30,9 +30,9 @@ builder.entity("world") {
 				position:data.position.copy(),
 				direction:data.direction.copy(),
 				image:utils.resources.image("bullet"),
-				radius:10.0f,
+				radius:16.0f,
 				maxVelocity:0.2f,
-				color:utils.color(1.0f, 0.2f, 0.2f, 1.0f),
+				color:utils.color(1.0f, 0f, 0f, 1.0f),
 				damage: data.damage
 				]
 			})
@@ -40,13 +40,9 @@ builder.entity("world") {
 	
 	
 	
-	def hero = entity("hero"){ parent("dudethatsmybullet.entities.ship",[
+	def hero = entity("hero"){ parent("dudethatsmybullet.entities.ship",parameters.level.hero + [
 		position:utils.vector(400,300),
 		bounds:utils.rectangle(0,0,800,600),
-		hitpoints: 250f,
-		maxShield: 150f,
-		shieldDischargeRate: (float)200f/1000f,
-		shieldRechargeRate: (float)1000f/(80f*1000f),
 		])
 	}
 	
@@ -60,11 +56,9 @@ builder.entity("world") {
 		]
 	
 	parameters.level.turrets.eachWithIndex { turretDefinition, index ->
-		child(entity("turret$index"){ parent("dudethatsmybullet.entities.turret",[
-			position:turretDefinition.position,
+		child(entity("turret$index"){ parent("dudethatsmybullet.entities.turret",turretDefinition + [
 			bulletTemplate: bulletTemplate,
 			target: hero,
-			damage: 25f,
 			])
 		})
 	}

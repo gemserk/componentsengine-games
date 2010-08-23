@@ -12,6 +12,7 @@ builder.entity("scene") {
 	
 	
 	
+	
 	property("gameState", "playing");
 	property("currentLevelIndex", parameters.levelIndex ?: 0)
 	
@@ -81,5 +82,18 @@ builder.entity("scene") {
 		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
 		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
 		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
+	})
+	
+	
+	input("inputmapping"){
+		keyboard {
+			press(button:"k",eventId:"makeScreenshot")
+		}
+	}
+	component(utils.components.genericComponent(id:"makeScreenshotHandler", messageId:"makeScreenshot"){ message ->
+		
+		def screenshotGrabber = utils.custom.screenshotGrabber
+		screenshotGrabber.saveScreenshot("dudethatsmybullet-", "png")
+		
 	})
 }

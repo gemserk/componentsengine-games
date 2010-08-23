@@ -30,6 +30,7 @@ builder.entity("bullet-${Math.random()}") {
 		propertyRef("color", "color")
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
+		property("size",utils.vector(0.7f,0.7f))
 	}
 //	
 //	component(utils.components.genericComponent(id:"collisionLineGenerator", messageId:["update"]){ message ->

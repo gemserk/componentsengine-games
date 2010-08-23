@@ -19,9 +19,9 @@ builder.entity("turret-${Math.random()}") {
 	
 	property("bulletTemplate",parameters.bulletTemplate)
 	property("target",parameters.target)
-	property("fireRadius",150f)
+	property("fireRadius",parameters.fireRadius)
 	
-	property("hitpoints", utils.container(100,100))
+	property("hitpoints", utils.container(parameters.hitpoints,parameters.hitpoints))
 	
 	property("damage", parameters.damage)
 	
@@ -33,10 +33,8 @@ builder.entity("turret-${Math.random()}") {
 	}
 	
 	
-	
-	
 	component(new WeaponComponent("shooter")) {
-		property("reloadTime", 300)
+		property("reloadTime", parameters.reloadTime)
 		propertyRef("position", "position")
 		property("shouldFire", {entity.target != null && !entity.target.isDead && entity.target.position.distance(entity.position) < entity.fireRadius})
 		
