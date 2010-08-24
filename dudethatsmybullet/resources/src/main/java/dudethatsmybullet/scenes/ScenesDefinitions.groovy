@@ -83,7 +83,7 @@ class ScenesDefinitions {
 		
 		
 		//def levels = [levelLine, levelTriangle,levelSquare,levelCross,levelDinamic,]
-		return (2..10).collect { quantity ->
+		return (2..20).collect { quantity ->
 			def generatedLevel = [
 				hero: basicHero ,
 				turrets: geometricPositions(utils.vector(400,330),quantity).collect { basicTurret + [position: it ] }
