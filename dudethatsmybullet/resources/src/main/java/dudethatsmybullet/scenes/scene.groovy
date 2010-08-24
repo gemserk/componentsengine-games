@@ -24,7 +24,8 @@ builder.entity("scene") {
 			gameover:"gameover",
 			paused:"paused",
 			resume:"playing",
-			helpscreen:"helpscreen"
+			helpscreen:"helpscreen",
+			title:"title"
 			])
 	
 	property("stateEntities",[
@@ -33,12 +34,13 @@ builder.entity("scene") {
 			},
 			entity("paused"){ parent("dudethatsmybullet.scenes.paused") },
 			entity("gameover"){  parent("dudethatsmybullet.scenes.gameover") },
-			entity("helpscreen"){parent("dudethatsmybullet.scenes.helpscreen") }
+			entity("helpscreen"){parent("dudethatsmybullet.scenes.helpscreen") },
+			entity("title"){parent("dudethatsmybullet.scenes.title") },
 			])
 	
 	property("currentNodeState", null)
 	
-	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume","helpscreen"]){ message ->
+	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume","helpscreen","title"]){ message ->
 		
 		String messageId = message.getId();
 		String transition = entity.transitions.get(messageId);
@@ -64,7 +66,7 @@ builder.entity("scene") {
 	})
 	
 	component(utils.components.genericComponent(id:"enterStateHandler", messageId:"enterState"){ message ->
-		messageQueue.enqueueDelay(utils.genericMessage("helpscreen"){})
+		messageQueue.enqueueDelay(utils.genericMessage("title"){})
 	})
 	
 	property("sceneTemplate",new InstantiationTemplateImpl(
