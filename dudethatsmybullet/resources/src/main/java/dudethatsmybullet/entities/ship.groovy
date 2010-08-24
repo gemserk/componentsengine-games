@@ -25,6 +25,7 @@ builder.entity("ship") {
 	
 	property("hitpoints",utils.container(parameters.hitpoints,parameters.hitpoints))
 	
+	property("invulnerable",false)
 	
 	
 	property("position", parameters.position)
@@ -80,6 +81,9 @@ builder.entity("ship") {
 		if (message.targets.contains(entity)){
 			def bullet = message.source
 			
+			if(entity.invulnerable)
+				return
+			
 			entity.hitpoints.remove(bullet.damage)
 			
 			if(entity.hitpoints.isEmpty()){
@@ -93,7 +97,9 @@ builder.entity("ship") {
 	})
 	
 	
-	
+	component(utils.components.genericComponent(id:"playStoppedHandler", messageId:"playStopped"){ message ->
+		entity.invulnerable = true
+	})
 	
 	property("shieldEnabled",false)
 	property("shieldRadius",32f)
@@ -118,6 +124,8 @@ builder.entity("ship") {
 	component(utils.components.genericComponent(id:"lowerShieldHandler", messageId:"lowerShield"){ message ->
 		entity.shieldEnabled = false
 	})
+	
+	
 	
 	component(new BarRendererComponent("hitpointsRenderer") ){
 		property("position", utils.vector(250,10))

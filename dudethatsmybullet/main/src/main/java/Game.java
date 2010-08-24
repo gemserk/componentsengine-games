@@ -69,7 +69,7 @@ public class Game extends StateBasedGame {
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		container.setVSync(false);
-		container.setShowFPS(true);
+		container.setShowFPS(false);
 		GemserkGameState menuState = new GameGameState(0,"dudethatsmybullet.scenes.scene");
 		addState(menuState);
 		gameProperties.put("screenshot", new Image(800,600));

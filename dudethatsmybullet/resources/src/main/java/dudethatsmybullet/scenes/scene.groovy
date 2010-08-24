@@ -24,7 +24,7 @@ builder.entity("scene") {
 			gameover:"gameover",
 			paused:"paused",
 			resume:"playing",
-			editor:"editor"
+			helpscreen:"helpscreen"
 			])
 	
 	property("stateEntities",[
@@ -33,11 +33,12 @@ builder.entity("scene") {
 			},
 			entity("paused"){ parent("dudethatsmybullet.scenes.paused") },
 			entity("gameover"){  parent("dudethatsmybullet.scenes.gameover") },
+			entity("helpscreen"){parent("dudethatsmybullet.scenes.helpscreen") }
 			])
 	
 	property("currentNodeState", null)
 	
-	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume"]){ message ->
+	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume","helpscreen"]){ message ->
 		
 		String messageId = message.getId();
 		String transition = entity.transitions.get(messageId);
@@ -63,7 +64,7 @@ builder.entity("scene") {
 	})
 	
 	component(utils.components.genericComponent(id:"enterStateHandler", messageId:"enterState"){ message ->
-		messageQueue.enqueueDelay(utils.genericMessage("resume"){})
+		messageQueue.enqueueDelay(utils.genericMessage("helpscreen"){})
 	})
 	
 	property("sceneTemplate",new InstantiationTemplateImpl(
@@ -88,12 +89,22 @@ builder.entity("scene") {
 	input("inputmapping"){
 		keyboard {
 			press(button:"k",eventId:"makeScreenshot")
+			press(button:"h",eventId:"helpscreen")
+			press(button:"f",eventId:"toggleShowFps")
 		}
 	}
 	component(utils.components.genericComponent(id:"makeScreenshotHandler", messageId:"makeScreenshot"){ message ->
 		
 		def screenshotGrabber = utils.custom.screenshotGrabber
 		screenshotGrabber.saveScreenshot("dudethatsmybullet-", "png")
+	})
+	
+	component(utils.components.genericComponent(id:"toggleShowFps", messageId:"toggleShowFps"){ message ->
+		
+		def gameContainer = utils.custom.gameContainer
+		boolean isShowingFps = gameContainer.isShowingFPS()
+		gameContainer.setShowFPS(!isShowingFps)
 		
 	})
+
 }

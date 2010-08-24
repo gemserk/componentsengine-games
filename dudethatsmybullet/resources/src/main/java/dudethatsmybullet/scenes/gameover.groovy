@@ -27,7 +27,7 @@ builder.entity {
 		property("position",utils.vector(0,0))
 		property("rectangle", utils.rectangle(0,0, 800, 600))
 		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
-		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
+		property("fillColor", utils.color(0.0f,0.0f,0.0f,0.5f))
 		property("layer",1000)
 	}
 	
@@ -36,7 +36,7 @@ builder.entity {
 		parent("gemserk.gui.label", [
 		font:font,
 		position:utils.vector(400f, 280),
-		fontColor:utils.color(0f,0f,0f,1f),
+		fontColor:utils.color(1f,1f,1f,1f),
 		bounds:labelRectangle,
 		align:"center",
 		valign:"center",
@@ -51,7 +51,7 @@ builder.entity {
 		parent("gemserk.gui.label", [
 		font:font,
 		position:utils.vector(400f, 320f),
-		fontColor:utils.color(0f,0f,0f,1f),
+		fontColor:utils.color(1f,1f,1f,1f),
 		bounds:labelRectangle,
 		align:"center",
 		valign:"center",

@@ -63,15 +63,24 @@ builder.entity("turret-${Math.random()}") {
 			entity.hitpoints.remove(bullet.damage)
 			
 			if(entity.hitpoints.isEmpty()){
-				messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
-					newMessage.explosion =EffectFactory.explosionEffect(100, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, utils.color(0,0,1,1), utils.color(0,0,1,1))
-					newMessage.layer = 1
-				})
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+				messageQueue.enqueue(utils.genericMessage("dead") { newMessage  -> newMessage.target = entity})
 			}
 		}
 	})
-	component(utils.components.genericComponent(id:"gameOverHandler", messageId:"playStopped"){ message ->
+	
+	component(utils.components.genericComponent(id:"deadHandler", messageId:"dead"){ message ->
+		if(message.target != entity)
+			return
+			
+			messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+				newMessage.explosion =EffectFactory.explosionEffect(100, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, utils.color(0,0,1,1), utils.color(0,0,1,1))
+				newMessage.layer = 1
+			})
+			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity))
+	})
+	
+	
+	component(utils.components.genericComponent(id:"playStoppedHandler", messageId:"playStopped"){ message ->
 		entity.target = null
 	})
 	component(new BarRendererComponent("hitpointsRenderer") ){
