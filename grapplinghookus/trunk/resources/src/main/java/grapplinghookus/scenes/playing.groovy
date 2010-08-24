@@ -102,7 +102,7 @@ builder.entity("playing") {
 	
 	child(entity("grappplingHook1") {
 		parent("grapplinghookus.entities.grapplinghook", [
-		position:utils.vector(340f, 470f),
+		position:utils.vector(140f, 468f),
 		cursor:cursor,
 		base: base,
 		])
@@ -110,7 +110,7 @@ builder.entity("playing") {
 	
 	child(entity("grappplingHook2") {
 		parent("grapplinghookus.entities.grapplinghook", [
-		position:utils.vector(300f, 470f),
+		position:utils.vector(500f, 468f),
 		cursor:cursor,
 		base: base,
 		])

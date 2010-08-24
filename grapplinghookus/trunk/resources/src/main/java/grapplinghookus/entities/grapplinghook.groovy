@@ -2,9 +2,11 @@ package grapplinghookus.entities
 
 import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.commons.animation.interpolators.Vector2fInterpolator;
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.render.ClosureRenderObject;
 import com.gemserk.componentsengine.utils.OpenGlUtils;
+import org.newdawn.slick.Color 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.opengl.SlickCallable;
 
@@ -159,5 +161,15 @@ builder.entity {
 		}));
 		
 	})
+	
+	component(new ImageRenderableComponent("imageRenderer")) {
+		propertyRef("position", "position");
+		property("direction", utils.vector(1,0));
+		property("image", utils.resources.image("grapplinghook"));
+		property("layer", 7);
+		property("color", Color.white);
+		property("size", utils.vector(0.5f,0.5f));
+	}
+	
 	
 }

@@ -45,12 +45,12 @@ builder.entity {
 		def enemyFactory = utils.custom.enemyFactory
 		
 		def cursor = entity.cursor
-		def base = entity.base
+		def position = message.grapplinghook.position
 		
-		def direction = cursor.position.copy().sub(base.position).normalise()
+		def direction = cursor.position.copy().sub(position).normalise()
 		
 		def bullet = enemyFactory.enemybullet("bullet-${Math.random()}", [
-				position:entity.base.position,
+				position:position,
 				moveDirection:direction,
 				speed:0.12f,
 				enemy:trappedenemy.enemy,
