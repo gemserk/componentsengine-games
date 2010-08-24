@@ -24,6 +24,11 @@ builder.entity {
 			return
 		}
 		
+		def position = entity.cursor.position
+		
+		// shoot nearest grabbed enemy
+		grapplingHooks.sort { it.position.distance(position) }
+		
 		def grapplinghook = grapplingHooks[0]
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("enemyWasShooted") { newMessage ->

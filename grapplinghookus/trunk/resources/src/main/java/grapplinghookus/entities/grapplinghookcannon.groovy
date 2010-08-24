@@ -56,6 +56,11 @@ builder.entity {
 			return
 		}
 		
+		def position = entity.targetEnemy.position
+		
+		grapplingHooks.sort { it.position.distance(position) }
+		
+		// select nearest to target
 		def grapplinghook = grapplingHooks[0]
 		
 		utils.custom.messageQueue.enqueue(utils.genericMessage("grapplingHookShooted") { newMessage ->
@@ -64,7 +69,6 @@ builder.entity {
 			newMessage.targetEnemy = entity.targetEnemy
 		}) 
 		
-//		entity.targetEnemy = null
 	})
 	
 	component(utils.components.genericComponent(id:"grapplingHookShootedHandler", messageId:"grapplingHookShooted"){ message ->
