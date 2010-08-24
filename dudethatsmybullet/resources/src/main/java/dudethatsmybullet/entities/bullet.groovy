@@ -59,7 +59,6 @@ builder.entity("bullet-${Math.random()}") {
 	
 	component(utils.components.genericComponent(id:"hithandler", messageId:"hit"){ message ->
 		if (message.source == entity){
-			log.info("Bullet hitted target $entity.id - ${message.targets[0]}")
 			messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
 				newMessage.explosion =EffectFactory.explosionEffect(100, (int) entity.position.x, (int) entity.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, entity.color, entity.color)
 				newMessage.layer = 1
