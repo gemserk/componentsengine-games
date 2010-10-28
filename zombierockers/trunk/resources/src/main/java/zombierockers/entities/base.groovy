@@ -49,11 +49,11 @@ builder.entity("base") {
 		
 		if(entity.baseReached==false){
 			log.info("Base reached - base.id: $entity.id")
-			utils.custom.messageQueue.enqueue(utils.genericMessage("baseReached"){})
+			utils.custom.messageQueue.enqueue(utils.messages.genericMessage("baseReached"){})
 			entity.baseReached = true
 		}
 		def segment = message.targets[0]
-		utils.custom.messageQueue.enqueue(utils.genericMessage("segmentRemoveHead"){newMessage ->
+		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("segmentRemoveHead"){newMessage ->
 			newMessage.segment = segment
 		})
 	})

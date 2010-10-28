@@ -63,7 +63,7 @@ builder.entity("segment-${Math.random()}") {
 				log.info("Removed last ball - segment.id: $entity.id - ball.id: $ball.id")
 				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 			}
-			messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
+			messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
 				newMessage.segment = entity 					
 			})
 			log.info("Removed segment - segment.id: $entity.id")
@@ -128,7 +128,7 @@ builder.entity("segment-${Math.random()}") {
 		}
 		
 		delayedCheckBallSeries.each { ball -> 
-			utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
+			utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage -> 
 				newMessage.ball = ball
 			})
 		}
@@ -204,7 +204,7 @@ builder.entity("segment-${Math.random()}") {
 			ballIndex++
 		
 		
-		messageQueue.enqueue(utils.genericMessage("addNewBall"){newMessage -> 
+		messageQueue.enqueue(utils.messages.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity
 			newMessage.ball = ball
 			newMessage.index = ballIndex
@@ -254,7 +254,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		
 		if(ballsToRemove.size() < 3) {
-			utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){
+			utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkSameColorSegments"){
 			})
 			log.info("When ball added to segment less than 3 balls  in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")			
 			return
@@ -269,7 +269,7 @@ builder.entity("segment-${Math.random()}") {
 		}
 		
 		log.info("When ball added to segment 3 or more in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")	
-		utils.custom.messageQueue.enqueue(utils.genericMessage("seriesDetected"){newMessage ->
+		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("seriesDetected"){newMessage ->
 			newMessage.segment = entity
 			newMessage.ballsToRemove = ballsToRemove
 		})
@@ -299,7 +299,7 @@ builder.entity("segment-${Math.random()}") {
 			
 			log.info("Splitting segment when removeBalls cancelled because ballsToRemove not in segment - segment.id: $entity.id - ballsToRemove: ${ballsToRemove.size()} - ballsOutside.ids: ${ballsToRemove.findAll({ !balls.contains(it)})*.id }")
 
-			messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage -> 
+			messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage -> 
 				newMessage.ball = ballsInside[0]
 			})
 			
@@ -329,7 +329,7 @@ builder.entity("segment-${Math.random()}") {
 		if(firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()){
 			log.info("Both subsegments are empty, removing balls - segment.id: $entity.id")
 			entity.balls.clear()
-			messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
+			messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
 				newMessage.segment = entity 					
 			})
 			
@@ -353,11 +353,11 @@ builder.entity("segment-${Math.random()}") {
 			}
 		}
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("explodeBall"){newMessage -> 
+		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("explodeBall"){newMessage -> 
 			newMessage.balls=ballsToRemove
 		})
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("checkSameColorSegments"){
+		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkSameColorSegments"){
 		})
 	})
 	
@@ -376,11 +376,11 @@ builder.entity("segment-${Math.random()}") {
 		entity.balls.addAll(slaveSegment.balls)
 		slaveSegment.balls.each { ball -> ball.segment = entity}
 		slaveSegment.balls.clear()
-		messageQueue.enqueue(utils.genericMessage("destroySegment"){ newMessage ->
+		messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
 			newMessage.segment = slaveSegment 					
 		})
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("checkBallSeries"){newMessage ->
+		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage ->
 			newMessage.ball = ballToCheck
 			newMessage.mustContainBall = mustContainBall
 		})

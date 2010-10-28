@@ -60,11 +60,11 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
 		if(!utils.custom.gameContainer.hasFocus())
-			messageQueue.enqueue(utils.genericMessage("paused"){})
+			messageQueue.enqueue(utils.messages.genericMessage("paused"){})
 	})
 	
 	component(utils.components.genericComponent(id:"pauseGameHandler", messageId:"pauseGame"){ message ->
-		messageQueue.enqueue(utils.genericMessage("paused"){})
+		messageQueue.enqueue(utils.messages.genericMessage("paused"){})
 	})
 	
 	child(entity("fpsLabel"){

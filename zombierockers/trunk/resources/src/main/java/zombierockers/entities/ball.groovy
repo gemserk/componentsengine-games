@@ -85,7 +85,7 @@ builder.entity("ball-${Math.random()}") {
 		
 		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 		
-		messageQueue.enqueue(utils.genericMessage("explosion") { newMessage  ->
+		messageQueue.enqueue(utils.messages.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(100, (int) ball.position.x, (int) ball.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, ball.color, ball.color) 
 			newMessage.layer = entity.layer+1
 		})

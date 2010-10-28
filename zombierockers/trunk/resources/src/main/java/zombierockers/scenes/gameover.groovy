@@ -59,9 +59,9 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
 		if (entity.win) {
-			messageQueue.enqueue(utils.genericMessage("nextLevel"){ })
+			messageQueue.enqueue(utils.messages.genericMessage("nextLevel"){ })
 		} else {
-			messageQueue.enqueue(utils.genericMessage("restartLevel"){})
+			messageQueue.enqueue(utils.messages.genericMessage("restartLevel"){})
 		}
 	})
 	

@@ -14,6 +14,10 @@ sed "s/utils\.\(vector\|rectangle\|color\)(/utils.slick.\1(/g" * -i
 
 ==============================
 utils.genericMessage
+.............................
+utils.genericMessage => utils.messages.genericMessage
+sed  's/utils\.genericMessage/utils.messages.genericMessage/' * -i
+
 ==============================
 utils.resources.animation
 utils.resources.fonts.font
@@ -45,9 +49,10 @@ utils.custom.messageQueue.enqueue
 utils.custom.screenshotGrabber
 utils.custom.svg.loadPoints
 utils.custom.templateProvider.getTemplate
+
+SACAR CUSTOM NOMAS
 utils.custom.triggers.closureTrigger 
 utils.custom.triggers.genericMessage
-
 
 -------------------------------
 ESTAS SON CLASES SALEN DE LOS IMPORTS

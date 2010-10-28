@@ -130,7 +130,7 @@ builder.entity {
 				def nextSegmentColor = nextSegment.firstBall.color
 				if (lastBallColor == nextSegmentColor) {
 					log.info("SegmentManager detected color coincidence between segments ends segment1.id: $segment.id - segment2.id - $nextSegment.id - colorCoincidence: $lastBallColor")
-					utils.custom.messageQueue.enqueue(utils.genericMessage("segmentChangeSpeed"){newMessage ->
+					utils.custom.messageQueue.enqueue(utils.messages.genericMessage("segmentChangeSpeed"){newMessage ->
 						newMessage.segment = nextSegment
 						newMessage.speed = reverseSpeed
 					})
@@ -154,7 +154,7 @@ builder.entity {
 			def firstSegment = sortedSegments[0]
 			
 			if (firstSegment.speed <= 0) {
-				utils.custom.messageQueue.enqueue(utils.genericMessage("segmentChangeSpeed"){newMessage ->
+				utils.custom.messageQueue.enqueue(utils.messages.genericMessage("segmentChangeSpeed"){newMessage ->
 					newMessage.segment = firstSegment
 					newMessage.speed = 0.04f
 				})
@@ -165,7 +165,7 @@ builder.entity {
 		component(utils.components.genericComponent(id:"destroySegmentHandler", messageId:["destroySegment"]){ message ->
 			def segment = message.segment 
 			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(segment))
-			messageQueue.enqueue(utils.genericMessage("checkFirstSegmentSholdAdvance"){
+			messageQueue.enqueue(utils.messages.genericMessage("checkFirstSegmentSholdAdvance"){
 			})
 		})
 		
@@ -187,7 +187,7 @@ builder.entity {
 				if(segmentLastBall.position.distance(nextSegmentFirstBall.position) < (float)segmentLastBall.radius * 2){
 					log.info("Collision detected with other segment - masterSegment.id: $segment.id - slaveSegment.id: $nextSegment.id")
 					
-					utils.custom.messageQueue.enqueue(utils.genericMessage("mergeSegments"){newMessage ->
+					utils.custom.messageQueue.enqueue(utils.messages.genericMessage("mergeSegments"){newMessage ->
 						newMessage.masterSegment = segment
 						newMessage.slaveSegment = nextSegment
 					})
@@ -257,7 +257,7 @@ builder.entity {
 		def win = allLimbosDone && !baseReached
 		log.info("Game over - winResult: $win")
 		
-		utils.custom.messageQueue.enqueue(utils.genericMessage("gameover"){newMessage ->
+		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("gameover"){newMessage ->
 			newMessage.win = win
 		})
 	})

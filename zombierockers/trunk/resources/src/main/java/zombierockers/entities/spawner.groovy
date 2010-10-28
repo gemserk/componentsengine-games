@@ -79,7 +79,7 @@ builder.entity("spawner-${Math.random()}") {
 		properties.putAll(entity.pathProperties)
 		def segment = entity.segmentTemplate.get(properties)
 		
-		messageQueue.enqueue(utils.genericMessage("spawnedSegment"){ newMessage ->
+		messageQueue.enqueue(utils.messages.genericMessage("spawnedSegment"){ newMessage ->
 			newMessage.balls = balls
 			newMessage.segment = segment
 		})

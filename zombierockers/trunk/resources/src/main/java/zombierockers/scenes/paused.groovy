@@ -63,11 +63,11 @@ builder.entity {
 	
 	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
-		messageQueue.enqueue(utils.genericMessage("resume"){})	
+		messageQueue.enqueue(utils.messages.genericMessage("resume"){})	
 	})
 	
 	component(utils.components.genericComponent(id:"reloadSceneHandler", messageId:"restart"){ message ->
-		messageQueue.enqueue(utils.genericMessage("restartLevel"){})
+		messageQueue.enqueue(utils.messages.genericMessage("restartLevel"){})
 	})
 	
 	input("inputmapping"){
