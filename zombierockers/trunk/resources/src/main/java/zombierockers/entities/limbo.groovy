@@ -27,7 +27,7 @@ builder.entity("limbo-${Math.random()}") {
 		
 		log.info("Ball released from limbo - ballId:$ball.id - color:$ball.color")
 		// ball.position = entity.spawnPoint.copy()
-		messageQueue.enqueue(utils.messages.genericMessage("addNewBall"){newMessage -> 
+		utils.messageQueue.enqueue(utils.messages.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity.segment
 			newMessage.ball = ball
 		})
@@ -61,7 +61,7 @@ builder.entity("limbo-${Math.random()}") {
 		entity.segment = segment
 		
 		log.info("New segment and balls added to limbo - segment.id:$segment.id - deque.size:$deque.size - deque.balls.collors:${deque.collect{it.color}}")
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment, entity.parent))
+		utils.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment, entity.parent))
 		utils.messageQueue.enqueue(utils.messages.genericMessage("releaseBalls"){
 		})
 	})

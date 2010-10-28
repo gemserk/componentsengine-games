@@ -61,9 +61,9 @@ builder.entity("segment-${Math.random()}") {
 		if (entity.balls.size() < 2) {
 			entity.balls.each { ball ->
 				log.info("Removed last ball - segment.id: $entity.id - ball.id: $ball.id")
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
+				utils.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 			}
-			messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
+			utils.messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
 				newMessage.segment = entity 					
 			})
 			log.info("Removed segment - segment.id: $entity.id")
@@ -74,7 +74,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.pathTraversal = getPathTraversal(entity,entity.balls.size()-2)
 		log.info("Removed last ball - segment.id: $entity.id - ball.id: $lastBall.id")
 		entity.balls.remove(lastBall)
-		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBall))
+		utils.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBall))
 	})
 	
 	component(utils.components.genericComponent(id:"addNewBallHandler", messageId:["addNewBall"]){ message ->
@@ -99,7 +99,7 @@ builder.entity("segment-${Math.random()}") {
 		
 			
 		ball.segment = entity
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
+		utils.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ball, entity.parent))
 		
 		log.info("Added ball to segment - segment.id: $message.segment.id -  ball: $ball.id - $ball.color - index: $insertionPoint")
 	})
@@ -204,7 +204,7 @@ builder.entity("segment-${Math.random()}") {
 			ballIndex++
 		
 		
-		messageQueue.enqueue(utils.messages.genericMessage("addNewBall"){newMessage -> 
+		utils.messageQueue.enqueue(utils.messages.genericMessage("addNewBall"){newMessage -> 
 			newMessage.segment = entity
 			newMessage.ball = ball
 			newMessage.index = ballIndex
@@ -299,7 +299,7 @@ builder.entity("segment-${Math.random()}") {
 			
 			log.info("Splitting segment when removeBalls cancelled because ballsToRemove not in segment - segment.id: $entity.id - ballsToRemove: ${ballsToRemove.size()} - ballsOutside.ids: ${ballsToRemove.findAll({ !balls.contains(it)})*.id }")
 
-			messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage -> 
+			utils.messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage -> 
 				newMessage.ball = ballsInside[0]
 			})
 			
@@ -329,7 +329,7 @@ builder.entity("segment-${Math.random()}") {
 		if(firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()){
 			log.info("Both subsegments are empty, removing balls - segment.id: $entity.id")
 			entity.balls.clear()
-			messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
+			utils.messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
 				newMessage.segment = entity 					
 			})
 			
@@ -345,7 +345,7 @@ builder.entity("segment-${Math.random()}") {
 				                     minSpeedFactor:entity.minSpeedFactor, maxSpeed:entity.maxSpeed, speedWhenReachBase:entity.speedWhenReachBase]
 				                     
 				def segment = entity.segmentTemplate.get(newParameters)
-				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
+				utils.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment,entity.parent))
 				secondSegmentBalls.each { ball -> ball.segment = segment}
 				log.info("Splitted in two segments - segment.id: $entity.id - newSegment.id: $segment.id")
 			} else {
@@ -376,7 +376,7 @@ builder.entity("segment-${Math.random()}") {
 		entity.balls.addAll(slaveSegment.balls)
 		slaveSegment.balls.each { ball -> ball.segment = entity}
 		slaveSegment.balls.clear()
-		messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
+		utils.messageQueue.enqueue(utils.messages.genericMessage("destroySegment"){ newMessage ->
 			newMessage.segment = slaveSegment 					
 		})
 		

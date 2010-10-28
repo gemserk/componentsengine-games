@@ -144,6 +144,6 @@ builder.entity {
 	component(utils.components.genericComponent(id:"returnToGameHandler", messageId:"returnToGame"){ message ->
 		def levelIndex = entity.currentLevelIndex
 		def scene = entity.sceneTemplate.instantiate(entity.id,[levelIndex:levelIndex])
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+		utils.messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
 	})
 }

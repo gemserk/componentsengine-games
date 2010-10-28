@@ -83,9 +83,9 @@ builder.entity("ball-${Math.random()}") {
 		entity.alive = false
 		log.info("Exploding ball - ball.id: $ball.id - ball.color: $ball.color")
 		
-		messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
+		utils.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball))
 		
-		messageQueue.enqueue(utils.messages.genericMessage("explosion") { newMessage  ->
+		utils.messageQueue.enqueue(utils.messages.genericMessage("explosion") { newMessage  ->
 			newMessage.explosion =EffectFactory.explosionEffect(100, (int) ball.position.x, (int) ball.position.y, 0f, 360f, 800, 10.0f, 50f, 320f, 3f, ball.color, ball.color) 
 			newMessage.layer = entity.layer+1
 		})

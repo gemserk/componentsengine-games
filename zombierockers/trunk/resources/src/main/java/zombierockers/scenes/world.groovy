@@ -164,8 +164,8 @@ builder.entity {
 		
 		component(utils.components.genericComponent(id:"destroySegmentHandler", messageId:["destroySegment"]){ message ->
 			def segment = message.segment 
-			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(segment))
-			messageQueue.enqueue(utils.messages.genericMessage("checkFirstSegmentSholdAdvance"){
+			utils.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(segment))
+			utils.messageQueue.enqueue(utils.messages.genericMessage("checkFirstSegmentSholdAdvance"){
 			})
 		})
 		

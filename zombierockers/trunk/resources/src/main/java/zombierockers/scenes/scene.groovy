@@ -47,9 +47,9 @@ builder.entity("game") {
 		
 		def newEntity = entity.stateEntities.find{it.id == transition}
 		
-		messageQueue.enqueueDelay(new Message("leaveNodeState", new PropertiesMapBuilder().property("message", message).build()));
-		messageQueue.enqueueDelay(utils.messages.genericMessage("changeNodeState"){ newMessage -> newMessage.state = newEntity})
-		messageQueue.enqueueDelay(new Message("enterNodeState", new PropertiesMapBuilder().property("message", message).build()));
+		utils.messageQueue.enqueueDelay(new Message("leaveNodeState", new PropertiesMapBuilder().property("message", message).build()));
+		utils.messageQueue.enqueueDelay(utils.messages.genericMessage("changeNodeState"){ newMessage -> newMessage.state = newEntity})
+		utils.messageQueue.enqueueDelay(new Message("enterNodeState", new PropertiesMapBuilder().property("message", message).build()));
 	})
 	
 	component(utils.components.genericComponent(id:"changeNodeStateHandler", messageId:"changeNodeState"){ message ->
@@ -59,14 +59,14 @@ builder.entity("game") {
 			return
 		
 		if (entity.currentNodeState != null)
-			messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.currentNodeState));
+			utils.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.currentNodeState));
 		
-		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newEntity,entity));
+		utils.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newEntity,entity));
 		entity.currentNodeState = newEntity
 	})
 	
 	component(utils.components.genericComponent(id:"enterStateHandler", messageId:"enterState"){ message ->
-		messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})
+		utils.messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})
 	})
 	
 	component(utils.components.genericComponent(id:"makeScreenshotHandler", messageId:"makeScreenshot"){ message ->
@@ -95,15 +95,15 @@ builder.entity("game") {
 	component(utils.components.genericComponent(id:"nextLevelHandler", messageId:"nextLevel"){ message ->
 		def	levelIndex = (entity.currentLevelIndex + 1) % levels.size
 		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
-		messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})
+		utils.messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+		utils.messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})
 	})
 	
 	component(utils.components.genericComponent(id:"restartLevelHandler", messageId:"restartLevel"){ message ->
 		def levelIndex = entity.currentLevelIndex
 		def scene = entity.sceneTemplate.get([levelIndex:levelIndex])
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
-		messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})
+		utils.messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+		utils.messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})
 	})
 	
 	property("sceneEditorTemplate",utils.templateProvider.getTemplate("zombierockers.scenes.sceneEditor"))
@@ -111,6 +111,6 @@ builder.entity("game") {
 	component(utils.components.genericComponent(id:"goToEditorHandler", messageId:"goToEditor"){ message ->
 		def levelIndex = entity.currentLevelIndex
 		def scene = entity.sceneEditorTemplate.instantiate(entity.id,[levelIndex:levelIndex, level:levels[(levelIndex)]])
-		messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
+		utils.messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
 	})
 }
