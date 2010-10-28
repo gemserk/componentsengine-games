@@ -73,6 +73,15 @@ utils.custom.svg.loadPoints
 sacar el custom nomás
 ========================
 
+messageQueue no es más un field del genericComponent
+.............................
+agregar el utils
+sed 's/        messageQueue\./ utils.messageQueue./' * -i
+================================
+entitypredicates no contiene más predicados de slick, convertir esos casos a slickentitypredicates o custom del juego
+
+
+==============
 -------------------------------
 ESTAS SON CLASES SALEN DE LOS IMPORTS
 utils.EntityDumper 

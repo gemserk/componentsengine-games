@@ -6,6 +6,7 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent
 import com.gemserk.componentsengine.commons.components.SuperMovementComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.predicates.EntityPredicates 
+import com.gemserk.componentsengine.slick.predicates.SlickEntityPredicates;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -47,7 +48,7 @@ builder.entity("bullet-${Math.random()}") {
 	
 	component(new DisablerComponent(new GenericHitComponent("bullethitComponent"))){
 		property("targetTag", "ball")
-		property("predicate",{Predicates.and({ball -> ball.collisionMask == entity.collisionMask} as Predicate, EntityPredicates.isNear(entity.position, (float)entity.radius * 2-3),{ball -> ball.alive} as Predicate)})
+		property("predicate",{Predicates.and({ball -> ball.collisionMask == entity.collisionMask} as Predicate, SlickEntityPredicates.isNear(entity.position, (float)entity.radius * 2-3),{ball -> ball.alive} as Predicate)})
 		property("trigger", utils.triggers.genericMessage("bulletHit") { 
 			def source = message.source
 			def target = message.targets[0]
