@@ -22,7 +22,7 @@ builder.entity("game") {
 	
 	def currentLevel = levels[entity.currentLevelIndex]
 	
-	//	def backgroundMusic = utils.resources.sounds.sound("backgroundmusic")
+	//	def backgroundMusic = utils.slick.resources.sounds.sound("backgroundmusic")
 	//	backgroundMusic.play();
 	
 	property("transitions",[

@@ -84,7 +84,7 @@ builder.entity("cannon") {
 	}
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image("ship"))
+		property("image", utils.slick.resources.image("ship"))
 		property("color", utils.color(1,1,1,1))
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
@@ -211,7 +211,7 @@ builder.entity("cannon") {
 		})
 		
 		component(new ImageRenderableComponent("imagerenderer")) {
-			property("image", utils.resources.image("cursor"))
+			property("image", utils.slick.resources.image("cursor"))
 			propertyRef("color", "color")
 			property("position", {entity.position})
 			property("direction", utils.vector(0,1))

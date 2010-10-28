@@ -4,8 +4,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CopyOnWriteArrayTest {
 	static final int INITIAL_QUANTITY = 5000;
-	private static final int ADDTESTQUANTITY = 1;
-	static int ITERATIONS = 100;
+	private static final int ADDTESTQUANTITY = 1000;
+	static int ITERATIONS = 10;
 	public static void main(String[] args) {
 		
 		for (int i = 0; i < ITERATIONS; i++) {

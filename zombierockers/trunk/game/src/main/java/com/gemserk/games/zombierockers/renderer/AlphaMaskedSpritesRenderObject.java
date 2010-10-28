@@ -14,7 +14,7 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.opengl.SlickCallable;
 import org.newdawn.slick.opengl.Texture;
 
-import com.gemserk.componentsengine.render.SlickCallableRenderObject;
+import com.gemserk.componentsengine.slick.render.SlickCallableRenderObject;
 
 public class AlphaMaskedSpritesRenderObject extends SlickCallableRenderObject {
 	final Image alphaMask;

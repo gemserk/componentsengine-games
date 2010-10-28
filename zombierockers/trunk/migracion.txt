@@ -1,0 +1,51 @@
+Comando para obtener las invocaciones a utils
+
+grep -R "utils\.[^({]*" * -o  -h | sort -u
+
+
+==============================
+utils.color
+utils.rectangle
+utils.vector
+
+..............................
+utils.(color|rectangle|vector)\( => utils.slick.$1
+
+
+==============================
+utils.genericMessage
+==============================
+utils.resources.animation
+utils.resources.fonts.font
+utils.resources.image
+utils.resources.sounds.sound
+..............................
+
+utils.resources => utils.slick.resources
+sed -i.old 's/utils\.resources\./utils.slick.resources\./' *
+=============================
+
+
+
+
+
+utils.components.genericComponent
+utils.custom.gameContainer.getFPS
+utils.custom.gameContainer.graphics
+utils.custom.gameContainer.hasFocus
+utils.custom.gameContainer.input
+utils.custom.gameContainer.setMouseGrabbed
+utils.custom.gameStateManager.gameProperties
+utils.custom.gameStateManager.gameProperties.runningInDebug)
+utils.custom.gameStateManager.gameProperties.screenshot})
+utils.custom.gameStateManager.gameProperties.screenshot, 0, 0); 
+utils.custom.genericprovider.provide
+utils.custom.messageQueue
+utils.custom.messageQueue.enqueue
+utils.custom.screenshotGrabber
+utils.custom.svg.loadPoints
+utils.custom.templateProvider.getTemplate
+utils.custom.triggers.closureTrigger 
+utils.custom.triggers.genericMessage
+utils.EntityDumper 
+utils.GroovyBootstrapper 

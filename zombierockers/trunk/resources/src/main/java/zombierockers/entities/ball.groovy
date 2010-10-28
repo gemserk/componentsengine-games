@@ -3,9 +3,8 @@ package zombierockers.entities
 
 
 
-import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
-import com.gemserk.componentsengine.effects.EffectFactory 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
+import com.gemserk.componentsengine.slick.effects.EffectFactory 
 import com.gemserk.games.zombierockers.AnimationHelper;
 
 
@@ -15,7 +14,7 @@ builder.entity("ball-${Math.random()}") {
 	
 	property("type", parameters.definition.type)
 	property("color", parameters.definition.color)
-	property("animation", utils.resources.animation(parameters.definition.animation))
+	property("animation", utils.slick.resources.animation(parameters.definition.animation))
 	
 //	property("direction", utils.vector(1,0))
 	property("radius", parameters.radius)
@@ -30,7 +29,7 @@ builder.entity("ball-${Math.random()}") {
 	
 	property("position", {entity.pathTraversal.position})
 	
-	// property("animation", utils.resources.animation("ballanimation"))
+	// property("animation", utils.slick.resources.animation("ballanimation"))
 	
 	property("animationHelper", new AnimationHelper(entity.animation, (float) 2 * Math.PI * entity.finalRadius / entity.animation.frameCount))
 	

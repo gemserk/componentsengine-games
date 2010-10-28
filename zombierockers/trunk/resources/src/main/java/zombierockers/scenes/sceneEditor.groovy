@@ -1,11 +1,11 @@
 package zombierockers.scenes
 
 import org.newdawn.slick.Graphics;
-import com.gemserk.componentsengine.render.ClosureRenderObject;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.Path;
+import com.gemserk.componentsengine.groovy.render.ClosureRenderObject 
 import com.gemserk.games.zombierockers.PathTraversal;
 
 
@@ -21,7 +21,7 @@ builder.entity {
 	property("path",new Path(utils.custom.svg.loadPoints(entity.level.path, "path")))	
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.resources.image(entity.level.background))
+		property("image", utils.slick.resources.image(entity.level.background))
 		property("color", utils.color(1,1,1,1))
 		property("position", utils.vector(400,300))
 		property("direction", utils.vector(1,0))
@@ -36,7 +36,7 @@ builder.entity {
 		placeables.each { placeable ->
 			def position = placeable.position
 			def layer = placeable.layer
-			def image = utils.resources.image(placeable.image)
+			def image = utils.slick.resources.image(placeable.image)
 			def input = utils.custom.gameContainer.input
 			//position = utils.vector(input.mouseX, input.mouseY)
 			//println position
@@ -90,7 +90,7 @@ builder.entity {
 		child(entity("velocityLabel"){
 			
 			parent("gemserk.gui.label", [
-			//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+			//font:utils.slick.resources.fonts.font([italic:false, bold:false, size:16]),
 			position:utils.vector(60f, 20f),
 			fontColor:utils.color(0f,0f,0f,1f),
 			bounds:utils.rectangle(-50f, -20f, 100f, 40f),
@@ -104,7 +104,7 @@ builder.entity {
 		child(entity("positionLabel"){
 			
 			parent("gemserk.gui.label", [
-			//font:utils.resources.fonts.font([italic:false, bold:false, size:16]),
+			//font:utils.slick.resources.fonts.font([italic:false, bold:false, size:16]),
 			position:utils.vector(60f, 40f),
 			fontColor:utils.color(0f,0f,0f,1f),
 			bounds:utils.rectangle(-50f, -20f, 100f, 40f),

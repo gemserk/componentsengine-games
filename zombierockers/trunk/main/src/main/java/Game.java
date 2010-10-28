@@ -1,5 +1,3 @@
-import groovy.lang.Closure;
-
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.net.URI;
@@ -25,16 +23,29 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
-import com.gemserk.componentsengine.builders.BuilderUtils;
-import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures;
-import com.gemserk.componentsengine.components.Component;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
-import com.gemserk.componentsengine.gamestates.GemserkGameState;
+import com.gemserk.componentsengine.groovy.modules.GroovyModule;
+import com.gemserk.componentsengine.groovy.modules.InitBuilderUtilsGroovy;
+import com.gemserk.componentsengine.groovy.modules.InitGroovyTemplateProvider;
+import com.gemserk.componentsengine.modules.BasicModule;
+import com.gemserk.componentsengine.modules.InitBuilderUtilsBasic;
+import com.gemserk.componentsengine.modules.InitDefaultTemplateProvider;
+import com.gemserk.componentsengine.modules.InitEntityManager;
+import com.gemserk.componentsengine.slick.gamestates.GemserkGameState;
+import com.gemserk.componentsengine.slick.modules.InitBuilderUtilsSlick;
+import com.gemserk.componentsengine.slick.modules.InitSlickRenderer;
+import com.gemserk.componentsengine.slick.modules.SlickModule;
+import com.gemserk.componentsengine.slick.modules.SlickSoundSystemModule;
+import com.gemserk.componentsengine.slick.utils.SlickToSlf4j;
 import com.gemserk.componentsengine.utils.EntityDumper;
-import com.gemserk.componentsengine.utils.SlickToSlf4j;
-import com.google.common.collect.Lists;
+import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Singleton;
 import com.kitfox.svg.SVGCache;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGElement;
@@ -85,8 +96,33 @@ public class Game extends StateBasedGame {
 		//container.setVSync(true);
 		container.setShowFPS(false);
 
-		GemserkGameState menuState = new GameGameState(0, "zombierockers.scenes.scene");
-		addState(menuState);
+		
+		Injector injector = Guice.createInjector(new SlickModule(container, this), // 
+				new SlickSoundSystemModule(), // 
+				new BasicModule(), //
+				new GroovyModule(), new AbstractModule() {
+					
+					@Override
+					protected void configure() {
+						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
+					}
+				});
+
+		injector.getInstance(InitEntityManager.class).config();
+		injector.getInstance(InitBuilderUtilsBasic.class).config();
+		injector.getInstance(InitDefaultTemplateProvider.class).config();
+		
+		
+		injector.getInstance(InitBuilderUtilsGroovy.class).config();
+		injector.getInstance(InitGroovyTemplateProvider.class).config();
+
+		injector.getInstance(InitBuilderUtilsSlick.class).config();
+
+		injector.getInstance(InitSlickRenderer.class).config();
+
+		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
+		injector.injectMembers(gameState);
+		addState(gameState);
 		gameProperties.put("screenshot", new Image(800,600));
 		
 		
@@ -94,6 +130,9 @@ public class Game extends StateBasedGame {
 
 	class GameGameState extends GemserkGameState {
 
+		@Inject @BuilderUtils Map<String,Object> builderUtils;
+		
+		
 		@Override
 		public void onInit() {
 			super.onInit();
@@ -101,14 +140,14 @@ public class Game extends StateBasedGame {
 			images("assets/images.properties");
 			animations("assets/animations.properties");
 
-			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
-			builderUtils.addCustomUtil("components", new Object() {
-				public Component closureComponent(String id, Closure closure) {
-					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
-				}
-			});
-
-			builderUtils.addCustomUtil("svg", new Object() {
+//			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
+//			builderUtils.addCustomUtil("components", new Object() {
+//				public Component closureComponent(String id, Closure closure) {
+//					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
+//				}
+//			});
+//
+			builderUtils.put("svg", new Object() {
 
 				public List<Vector2f> loadPoints(String file, String pathName) throws URISyntaxException {
 					ArrayList<Vector2f> points = new ArrayList<Vector2f>();
@@ -130,10 +169,10 @@ public class Game extends StateBasedGame {
 					return points;
 				}
 			});
-			
-			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
-			injector.injectMembers(screenshotGrabber);
-			builderUtils.addCustomUtil("screenshotGrabber", screenshotGrabber);
+//			
+//			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
+//			injector.injectMembers(screenshotGrabber);
+//			builderUtils.addCustomUtil("screenshotGrabber", screenshotGrabber);
 
 		}
 

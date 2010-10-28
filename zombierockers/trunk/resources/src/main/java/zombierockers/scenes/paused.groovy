@@ -7,7 +7,7 @@ import com.gemserk.componentsengine.commons.components.RectangleRendererComponen
 
 builder.entity {
 	
-	def font = utils.resources.fonts.font([italic:false, bold:false, size:28])
+	def font = utils.slick.resources.fonts.font([italic:false, bold:false, size:28])
 	
 	def labelRectangle = utils.rectangle(-220,-50,440,100)
 	
