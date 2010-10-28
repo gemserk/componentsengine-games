@@ -31,7 +31,7 @@ builder.entity {
 	
 	def gameProperties = utils.custom.gameStateManager.gameProperties
 	
-	property("bounds",utils.rectangle(0,0,800,600))
+	property("bounds",utils.slick.rectangle(0,0,800,600))
 	property("ballsQuantity",0)
 	property("baseReached",false)
 	
@@ -48,9 +48,9 @@ builder.entity {
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.slick.resources.image(entity.level.background))
-		property("color", utils.color(1,1,1,1))
-		property("position", utils.vector(400,300))
-		property("direction", utils.vector(1,0))
+		property("color", utils.slick.color(1,1,1,1))
+		property("position", utils.slick.vector(400,300))
+		property("direction", utils.slick.vector(1,0))
 		property("layer", -1000)
 	}
 	
@@ -66,7 +66,7 @@ builder.entity {
 			def layer = placeable.layer
 			def image = utils.slick.resources.image(placeable.image)
 			def input = utils.custom.gameContainer.input
-			//position = utils.vector(input.mouseX, input.mouseY)
+			//position = utils.slick.vector(input.mouseX, input.mouseY)
 			//println position
 			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
 				g.pushTransform()
@@ -99,7 +99,7 @@ builder.entity {
 	child(id:"limbo", template:"zombierockers.entities.limbo") { path = entity.path }
 	
 	child(id:"cannon", template:"zombierockers.entities.cannon") {
-		bounds=utils.rectangle((float)20+offset,20,(float)760-offset,560)
+		bounds=utils.slick.rectangle((float)20+offset,20,(float)760-offset,560)
 		ballDefinitions = entity.level.ballDefinitions
 		collisionMap = entity.level.collisionMap
 		subPathDefinitions = entity.level.subPathDefinitions
@@ -229,9 +229,9 @@ builder.entity {
 		
 		parent("gemserk.gui.label", [
 		//font:utils.slick.resources.fonts.font([italic:false, bold:false, size:16]),
-		position:utils.vector(740f, 30f),
-		fontColor:utils.color(0f,0f,0f,1f),
-		bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+		position:utils.slick.vector(740f, 30f),
+		fontColor:utils.slick.color(0f,0f,0f,1f),
+		bounds:utils.slick.rectangle(-50f, -20f, 100f, 40f),
 		align:"left",
 		valign:"top"
 		])
@@ -287,9 +287,9 @@ builder.entity {
 			
 			def ballsSprites = ballsRenderer.sprites
 			def shadowSprites = shadowRenderer.sprites
-			def shadowColor = utils.color(1,1,1,1)
+			def shadowColor = utils.slick.color(1,1,1,1)
 			
-			def shadowDisplacement = utils.vector(3,3)
+			def shadowDisplacement = utils.slick.vector(3,3)
 			
 			balls.each { ball ->
 				

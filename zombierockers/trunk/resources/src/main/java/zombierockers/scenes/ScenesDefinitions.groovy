@@ -28,12 +28,12 @@ class ScenesDefinitions {
 		}
 		
 		def allBallDefinitions = [
-				[type:"red", animation:"ballanimation", color:utils.color(1,0,0)],
-				[type:"blue", animation:"ballanimation", color:utils.color(0,0,1)],
-				[type:"green", animation:"ballanimation", color:utils.color(0,1,0)],
-				[type:"yellow", animation:"ballanimation", color:utils.color(1,1,0)],
-				[type:"violet", animation:"ballanimation", color:utils.color(1,0,1)],
-				[type:"white", animation:"ballanimation", color:utils.color(1,1,1)],
+				[type:"red", animation:"ballanimation", color:utils.slick.color(1,0,0)],
+				[type:"blue", animation:"ballanimation", color:utils.slick.color(0,0,1)],
+				[type:"green", animation:"ballanimation", color:utils.slick.color(0,1,0)],
+				[type:"yellow", animation:"ballanimation", color:utils.slick.color(1,1,0)],
+				[type:"violet", animation:"ballanimation", color:utils.slick.color(1,0,1)],
+				[type:"white", animation:"ballanimation", color:utils.slick.color(1,1,1)],
 				]
 		
 		def ballDefinition = { type ->
@@ -100,7 +100,7 @@ class ScenesDefinitions {
 				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
 				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
 				placeables:[],
-				//placeables:[[image:"level06-tunnel",position:utils.vector(448,439),layer:10]],
+				//placeables:[[image:"level06-tunnel",position:utils.slick.vector(448,439),layer:10]],
 				//collisionMap:collisionMap("levels/level06/collisionMap.png"),
 				subPathDefinitions:segmentsMetadataConvertor([], defaultElement)
 				]	
@@ -108,7 +108,7 @@ class ScenesDefinitions {
 		def level07 = [background:"level07", path:"levels/level07/path.svg",ballsQuantity:100, 
 				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
 				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
-				placeables:[[image:"level07-tunnel",position:utils.vector(305f,206f),layer:-2000]],
+				placeables:[[image:"level07-tunnel",position:utils.slick.vector(305f,206f),layer:-2000]],
 				//collisionMap:collisionMap("levels/level07/collisionMap.png"),
 				subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(1374.4f,1639.9f, [layer:-1500, collisionMask:7]) ], defaultElement),
 				//alphaMasks:[(-1500):new Image("levels/level07/alphaMask1.png")]

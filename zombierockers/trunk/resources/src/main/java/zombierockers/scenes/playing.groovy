@@ -71,9 +71,9 @@ builder.entity {
 		
 		parent("gemserk.gui.label", [
 		//font:utils.slick.resources.fonts.font([italic:false, bold:false, size:16]),
-		position:utils.vector(60f, 30f),
-		fontColor:utils.color(0f,0f,0f,1f),
-		bounds:utils.rectangle(-50f, -20f, 100f, 40f),
+		position:utils.slick.vector(60f, 30f),
+		fontColor:utils.slick.color(0f,0f,0f,1f),
+		bounds:utils.slick.rectangle(-50f, -20f, 100f, 40f),
 		align:"left",
 		valign:"top",
 		layer: 100000

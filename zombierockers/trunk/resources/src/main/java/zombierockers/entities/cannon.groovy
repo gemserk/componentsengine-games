@@ -22,10 +22,10 @@ builder.entity("cannon") {
 	tags("cannon","nofriction")
 	
 	property("yaxisConstraint", 570f)
-	property("position", utils.vector(400f,570f))
-	property("bulletPosition",{entity.position.copy().add(utils.vector(0f,-10f))})
-	property("nextBulletPosition",{entity.position.copy().add(utils.vector(0f,30f))})
-	property("direction",utils.vector(0,-1))
+	property("position", utils.slick.vector(400f,570f))
+	property("bulletPosition",{entity.position.copy().add(utils.slick.vector(0f,-10f))})
+	property("nextBulletPosition",{entity.position.copy().add(utils.slick.vector(0f,30f))})
+	property("direction",utils.slick.vector(0,-1))
 	
 	property("fireTriggered",false)
 	property("canFire",true)
@@ -73,26 +73,26 @@ builder.entity("cannon") {
 		property("image", {entity.currentBall.animation.currentFrame})
 		property("color",{entity.currentBall.color})
 		propertyRef("position", "bulletPosition")
-		property("direction", utils.vector(0,-1))
+		property("direction", utils.slick.vector(0,-1))
 	}
 	
 	component(new ImageRenderableComponent("nextBallRenderer")) {
 		property("image", {entity.nextBall.animation.currentFrame})
 		property("color",{entity.nextBall.color})
 		propertyRef("position", "nextBulletPosition")
-		property("direction", utils.vector(0,-1))
+		property("direction", utils.slick.vector(0,-1))
 	}
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.slick.resources.image("ship"))
-		property("color", utils.color(1,1,1,1))
+		property("color", utils.slick.color(1,1,1,1))
 		propertyRef("position", "position")
 		propertyRef("direction", "direction")
 	}
 	
 	
 	component(utils.components.genericComponent(id:"mousemovehandler", messageId:["movemouse"]){ message ->
-		entity.position =  utils.vector(message.x,entity.yaxisConstraint)
+		entity.position =  utils.slick.vector(message.x,entity.yaxisConstraint)
 	})
 	
 	component(utils.components.genericComponent(id:"leftmousehandler", messageId:["leftmouse"]){ message ->
@@ -198,8 +198,8 @@ builder.entity("cannon") {
 		
 		property("color", {entity.parent.currentBall.color})
 		
-		property("position",utils.vector(400,300))
-		property("bounds",utils.rectangle(20,20,760,520))
+		property("position",utils.slick.vector(400,300))
+		property("bounds",utils.slick.rectangle(20,20,760,520))
 		
 		component(new WorldBoundsComponent("bounds")){
 			propertyRef("bounds","bounds")
@@ -207,14 +207,14 @@ builder.entity("cannon") {
 		}
 		
 		component(utils.components.genericComponent(id:"mousemovehandler", messageId:["movemouse"]){ message ->
-			entity.position =  utils.vector(message.x,message.y)
+			entity.position =  utils.slick.vector(message.x,message.y)
 		})
 		
 		component(new ImageRenderableComponent("imagerenderer")) {
 			property("image", utils.slick.resources.image("cursor"))
 			propertyRef("color", "color")
 			property("position", {entity.position})
-			property("direction", utils.vector(0,1))
+			property("direction", utils.slick.vector(0,1))
 			property("layer", 10)
 		}
 	})

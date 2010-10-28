@@ -26,7 +26,7 @@ builder.entity("spawner-${Math.random()}") {
 			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
 			utils.custom.genericprovider.provide{ data ->
 				[
-				direction:utils.vector(0,1),
+				direction:utils.slick.vector(0,1),
 				radius:16.0f,
 				definition:data.ballDefinition,
 				collisionMap:data.collisionMap,

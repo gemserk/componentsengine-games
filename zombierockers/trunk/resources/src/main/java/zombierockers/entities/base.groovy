@@ -25,8 +25,8 @@ builder.entity("base") {
 	component(new CircleRenderableComponent("circlerenderer")) {
 		propertyRef("position", "position")
 		propertyRef("radius", "radius")
-		property("lineColor", utils.color(0,0,0,1))
-		property("fillColor", utils.color(0,0,0,1))
+		property("lineColor", utils.slick.color(0,0,0,1))
+		property("fillColor", utils.slick.color(0,0,0,1))
 		property("layer",1)
 	}
 	

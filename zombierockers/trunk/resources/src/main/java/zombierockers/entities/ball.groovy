@@ -16,7 +16,7 @@ builder.entity("ball-${Math.random()}") {
 	property("color", parameters.definition.color)
 	property("animation", utils.slick.resources.animation(parameters.definition.animation))
 	
-//	property("direction", utils.vector(1,0))
+//	property("direction", utils.slick.vector(1,0))
 	property("radius", parameters.radius)
 	property("finalRadius", parameters.finalRadius ?: parameters.radius)
 	property("state",parameters.state)
@@ -39,7 +39,7 @@ builder.entity("ball-${Math.random()}") {
 	
 	property("size", {
 		def size = (float)entity.radius/entity.finalRadius
-		return utils.vector(size, size)
+		return utils.slick.vector(size, size)
 	})
 	
 	property("subPathDefinitions", parameters.subPathDefinitions)

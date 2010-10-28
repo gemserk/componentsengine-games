@@ -10,7 +10,7 @@ utils.vector
 
 ..............................
 utils.(color|rectangle|vector)\( => utils.slick.$1
-
+sed "s/utils\.\(vector\|rectangle\|color\)(/utils.slick.\1(/g" * -i
 
 ==============================
 utils.genericMessage
@@ -47,5 +47,9 @@ utils.custom.svg.loadPoints
 utils.custom.templateProvider.getTemplate
 utils.custom.triggers.closureTrigger 
 utils.custom.triggers.genericMessage
+
+
+-------------------------------
+ESTAS SON CLASES SALEN DE LOS IMPORTS
 utils.EntityDumper 
 utils.GroovyBootstrapper 

@@ -32,7 +32,7 @@ builder.entity("bullet-${Math.random()}") {
 		property("image", {entity.ball.animation.currentFrame})
 		property("color",{entity.ball.color})
 		propertyRef("position", "position")
-		property("direction", utils.vector(0,-1))
+		property("direction", utils.slick.vector(0,-1))
 		property("layer",20)
 	}
 	

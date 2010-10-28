@@ -11,21 +11,21 @@ builder.entity {
 	property("labelText","")
 	property("win", false)
 	
-	def labelRectangle = utils.rectangle(-220,-50,440,100)
+	def labelRectangle = utils.slick.rectangle(-220,-50,440,100)
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", {utils.custom.gameStateManager.gameProperties.screenshot})
-		property("color", utils.color(1,1,1,1))
-		property("position", utils.vector(400,300))
-		property("direction", utils.vector(1,0))
+		property("color", utils.slick.color(1,1,1,1))
+		property("position", utils.slick.vector(400,300))
+		property("direction", utils.slick.vector(1,0))
 		property("layer", 900)
 	}
 	
 	component(new RectangleRendererComponent("background")) {
-		property("position",utils.vector(0,0))
-		property("rectangle", utils.rectangle(0,0, 800, 600))
-		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
-		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
+		property("position",utils.slick.vector(0,0))
+		property("rectangle", utils.slick.rectangle(0,0, 800, 600))
+		property("lineColor", utils.slick.color(0.2f,0.2f,0.2f,0.0f))
+		property("fillColor", utils.slick.color(0.5f,0.5f,0.5f,0.5f))
 		property("layer",1000)
 	}
 	
@@ -33,8 +33,8 @@ builder.entity {
 		
 		parent("gemserk.gui.label", [
 		font:font,
-		position:utils.vector(400f, 280),
-		fontColor:utils.color(0f,0f,0f,1f),
+		position:utils.slick.vector(400f, 280),
+		fontColor:utils.slick.color(0f,0f,0f,1f),
 		bounds:labelRectangle,
 		align:"center",
 		valign:"center",
