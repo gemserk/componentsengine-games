@@ -14,7 +14,7 @@ builder.entity {
 	def labelRectangle = utils.slick.rectangle(-220,-50,440,100)
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", {utils.stateBasedGame.gameProperties.screenshot})
+		property("image", {utils.slick.stateBasedGame.gameProperties.screenshot})
 		property("color", utils.slick.color(1,1,1,1))
 		property("position", utils.slick.vector(400,300))
 		property("direction", utils.slick.vector(1,0))

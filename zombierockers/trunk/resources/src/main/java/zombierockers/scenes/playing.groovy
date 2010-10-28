@@ -37,8 +37,8 @@ builder.entity {
 	property("shouldGrabMouse",true)
 	
 	component(utils.components.genericComponent(id:"grabMouse", messageId:"update"){ message ->
-		if(entity.shouldGrabMouse && !utils.stateBasedGame.gameProperties.runningInDebug)
-			utils.gameContainer.setMouseGrabbed(true)
+		if(entity.shouldGrabMouse && !utils.slick.stateBasedGame.gameProperties.runningInDebug)
+			utils.slick.gameContainer.setMouseGrabbed(true)
 	})
 	
 	component(utils.components.genericComponent(id:"grabMouse-enternodestate", messageId:"enterNodeState"){ message ->
@@ -47,19 +47,19 @@ builder.entity {
 	})
 	
 	component(utils.components.genericComponent(id:"grabMouse-leavenodestate", messageId:"leaveNodeState"){ message ->
-		utils.gameContainer.setMouseGrabbed(false)
+		utils.slick.gameContainer.setMouseGrabbed(false)
 		entity.shouldGrabMouse = false
 		log.info("Leaving playing state")
 	})
 	
 	
 	component(utils.components.genericComponent(id:"grabscreenshot-leavenodestate", messageId:"leaveNodeState"){ message ->
-		def graphics = utils.gameContainer.graphics
-        graphics.copyArea(utils.stateBasedGame.gameProperties.screenshot, 0, 0); 
+		def graphics = utils.slick.gameContainer.graphics
+        graphics.copyArea(utils.slick.stateBasedGame.gameProperties.screenshot, 0, 0); 
 	})
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
-		if(!utils.gameContainer.hasFocus())
+		if(!utils.slick.gameContainer.hasFocus())
 			utils.messageQueue.enqueue(utils.messages.genericMessage("paused"){})
 	})
 	
@@ -79,7 +79,7 @@ builder.entity {
 		layer: 100000
 		])
 		
-		property("message", {"FPS: ${utils.gameContainer.getFPS()}".toString() })
+		property("message", {"FPS: ${utils.slick.gameContainer.getFPS()}".toString() })
 	})
 }
 

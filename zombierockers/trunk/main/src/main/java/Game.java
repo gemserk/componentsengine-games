@@ -120,7 +120,6 @@ public class Game extends StateBasedGame {
 
 		injector.getInstance(InitSlickRenderer.class).config();
 
-		injector.getInstance(InitBuilderUtilsThingsSlick.class).config();
 		
 		injector.getInstance(InitSlickGroovyClosureRenderer.class).config();
 		

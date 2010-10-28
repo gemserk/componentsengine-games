@@ -29,7 +29,7 @@ import com.google.common.base.Predicates
 
 builder.entity {
 	
-	def gameProperties = utils.stateBasedGame.gameProperties
+	def gameProperties = utils.slick.stateBasedGame.gameProperties
 	
 	property("bounds",utils.slick.rectangle(0,0,800,600))
 	property("ballsQuantity",0)
@@ -65,7 +65,7 @@ builder.entity {
 			def position = placeable.position
 			def layer = placeable.layer
 			def image = utils.slick.resources.image(placeable.image)
-			def input = utils.gameContainer.input
+			def input = utils.slick.gameContainer.input
 			//position = utils.slick.vector(input.mouseX, input.mouseY)
 			//println position
 			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->

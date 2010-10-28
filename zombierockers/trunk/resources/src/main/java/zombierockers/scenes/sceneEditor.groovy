@@ -37,7 +37,7 @@ builder.entity {
 			def position = placeable.position
 			def layer = placeable.layer
 			def image = utils.slick.resources.image(placeable.image)
-			def input = utils.gameContainer.input
+			def input = utils.slick.gameContainer.input
 			//position = utils.slick.vector(input.mouseX, input.mouseY)
 			//println position
 			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->

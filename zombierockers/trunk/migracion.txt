@@ -41,8 +41,17 @@ utils.custom.gameStateManager.gameProperties.screenshot, 0, 0);
 .....................
 sacar custom y renombrar gameStateManager a stateBasedGame
 
-sed 's/utils\.custom\.gameStateManager\./utils.stateBasedGame./' * -i
+sed 's/utils\.custom\.gameStateManager\./utils.slick.stateBasedGame./' * -i
 ==========================
+utils.custom.gameContainer.getFPS
+utils.custom.gameContainer.graphics
+utils.custom.gameContainer.hasFocus
+utils.custom.gameContainer.input
+utils.custom.gameContainer.setMouseGrabbed
+...........................
+
+sed 's/utils\.custom\.gameContainer/utils.slick.gameContainer/g' * -i
+==============================
 
 utils.custom.screenshotGrabber
 utils.custom.genericprovider.provide
@@ -51,11 +60,7 @@ utils.custom.triggers.genericMessage
 utils.custom.messageQueue
 utils.custom.messageQueue.enqueue
 utils.custom.templateProvider.getTemplate
-utils.custom.gameContainer.getFPS
-utils.custom.gameContainer.graphics
-utils.custom.gameContainer.hasFocus
-utils.custom.gameContainer.input
-utils.custom.gameContainer.setMouseGrabbed
+
 ........................
 SACAR CUSTOM NOMAS
 sed 's/utils\.custom\./utils./' * -i
