@@ -32,27 +32,46 @@ sed -i.old 's/utils\.resources\./utils.slick.resources\./' *
 
 
 
+=========================
 
-utils.components.genericComponent
+utils.custom.gameStateManager.gameProperties
+utils.custom.gameStateManager.gameProperties.runningInDebug)
+utils.custom.gameStateManager.gameProperties.screenshot})
+utils.custom.gameStateManager.gameProperties.screenshot, 0, 0); 
+.....................
+sacar custom y renombrar gameStateManager a stateBasedGame
+
+sed 's/utils\.custom\.gameStateManager\./utils.stateBasedGame./' * -i
+==========================
+
+utils.custom.screenshotGrabber
+utils.custom.genericprovider.provide
+utils.custom.triggers.closureTrigger 
+utils.custom.triggers.genericMessage
+utils.custom.messageQueue
+utils.custom.messageQueue.enqueue
+utils.custom.templateProvider.getTemplate
 utils.custom.gameContainer.getFPS
 utils.custom.gameContainer.graphics
 utils.custom.gameContainer.hasFocus
 utils.custom.gameContainer.input
 utils.custom.gameContainer.setMouseGrabbed
-utils.custom.gameStateManager.gameProperties
-utils.custom.gameStateManager.gameProperties.runningInDebug)
-utils.custom.gameStateManager.gameProperties.screenshot})
-utils.custom.gameStateManager.gameProperties.screenshot, 0, 0); 
-utils.custom.genericprovider.provide
-utils.custom.messageQueue
-utils.custom.messageQueue.enqueue
-utils.custom.screenshotGrabber
-utils.custom.svg.loadPoints
-utils.custom.templateProvider.getTemplate
-
+........................
 SACAR CUSTOM NOMAS
-utils.custom.triggers.closureTrigger 
-utils.custom.triggers.genericMessage
+
+
+===============================
+utils.components.genericComponent
+.........................
+anda de primera
+================================
+============================
+custom del zombierockers
+
+utils.custom.svg.loadPoints
+..........................
+sacar el custom nomás
+========================
 
 -------------------------------
 ESTAS SON CLASES SALEN DE LOS IMPORTS

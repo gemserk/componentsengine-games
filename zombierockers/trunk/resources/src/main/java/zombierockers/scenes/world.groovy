@@ -29,7 +29,7 @@ import com.google.common.base.Predicates
 
 builder.entity {
 	
-	def gameProperties = utils.custom.gameStateManager.gameProperties
+	def gameProperties = utils.stateBasedGame.gameProperties
 	
 	property("bounds",utils.slick.rectangle(0,0,800,600))
 	property("ballsQuantity",0)

@@ -15,7 +15,7 @@ builder.entity {
 	//
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", {utils.custom.gameStateManager.gameProperties.screenshot})
+		property("image", {utils.stateBasedGame.gameProperties.screenshot})
 		property("color", utils.slick.color(1,1,1,1))
 		property("position", utils.slick.vector(400,300))
 		property("direction", utils.slick.vector(1,0))

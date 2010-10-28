@@ -37,7 +37,7 @@ builder.entity {
 	property("shouldGrabMouse",true)
 	
 	component(utils.components.genericComponent(id:"grabMouse", messageId:"update"){ message ->
-		if(entity.shouldGrabMouse && !utils.custom.gameStateManager.gameProperties.runningInDebug)
+		if(entity.shouldGrabMouse && !utils.stateBasedGame.gameProperties.runningInDebug)
 			utils.custom.gameContainer.setMouseGrabbed(true)
 	})
 	
@@ -55,7 +55,7 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"grabscreenshot-leavenodestate", messageId:"leaveNodeState"){ message ->
 		def graphics = utils.custom.gameContainer.graphics
-        graphics.copyArea(utils.custom.gameStateManager.gameProperties.screenshot, 0, 0); 
+        graphics.copyArea(utils.stateBasedGame.gameProperties.screenshot, 0, 0); 
 	})
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->

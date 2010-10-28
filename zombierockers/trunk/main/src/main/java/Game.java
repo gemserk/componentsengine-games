@@ -120,6 +120,15 @@ public class Game extends StateBasedGame {
 
 		injector.getInstance(InitSlickRenderer.class).config();
 
+		injector.getInstance(InitBuilderUtilsThingsSlick.class).config();
+		
+		
+		
+		
+		
+		
+		
+		
 		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
 		injector.injectMembers(gameState);
 		addState(gameState);
@@ -169,6 +178,8 @@ public class Game extends StateBasedGame {
 					return points;
 				}
 			});
+			
+			
 //			
 //			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
 //			injector.injectMembers(screenshotGrabber);
