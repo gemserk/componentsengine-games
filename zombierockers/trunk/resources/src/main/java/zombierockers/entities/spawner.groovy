@@ -23,8 +23,8 @@ builder.entity("spawner-${Math.random()}") {
 	
 	
 	property("ballTemplate",new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
-			utils.custom.genericprovider.provide{ data ->
+			utils.templateProvider.getTemplate("zombierockers.entities.ball"), 
+			utils.genericprovider.provide{ data ->
 				[
 				direction:utils.slick.vector(0,1),
 				radius:16.0f,
@@ -35,8 +35,8 @@ builder.entity("spawner-${Math.random()}") {
 			}))
 	
 	property("segmentTemplate",new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
-			utils.custom.genericprovider.provide{ data ->
+			utils.templateProvider.getTemplate("zombierockers.entities.segment"), 
+			utils.genericprovider.provide{ data ->
 				[
 				pathTraversal:data.pathTraversal,
 				acceleratedSpeed:data.acceleratedSpeed,

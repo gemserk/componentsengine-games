@@ -71,7 +71,7 @@ builder.entity("game") {
 	
 	component(utils.components.genericComponent(id:"makeScreenshotHandler", messageId:"makeScreenshot"){ message ->
 		
-		def screenshotGrabber = utils.custom.screenshotGrabber
+		def screenshotGrabber = utils.screenshotGrabber
 		screenshotGrabber.saveScreenshot("zombierockers-", "png")
 		
 	})
@@ -88,8 +88,8 @@ builder.entity("game") {
 	} )
 	
 	property("sceneTemplate",new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("zombierockers.scenes.scene"), 
-			utils.custom.genericprovider.provide{ data ->[levelIndex:data.levelIndex]}))
+			utils.templateProvider.getTemplate("zombierockers.scenes.scene"), 
+			utils.genericprovider.provide{ data ->[levelIndex:data.levelIndex]}))
 	
 	
 	component(utils.components.genericComponent(id:"nextLevelHandler", messageId:"nextLevel"){ message ->
@@ -106,7 +106,7 @@ builder.entity("game") {
 		messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})
 	})
 	
-	property("sceneEditorTemplate",utils.custom.templateProvider.getTemplate("zombierockers.scenes.sceneEditor"))
+	property("sceneEditorTemplate",utils.templateProvider.getTemplate("zombierockers.scenes.sceneEditor"))
 	
 	component(utils.components.genericComponent(id:"goToEditorHandler", messageId:"goToEditor"){ message ->
 		def levelIndex = entity.currentLevelIndex

@@ -58,7 +58,7 @@ utils.custom.gameContainer.input
 utils.custom.gameContainer.setMouseGrabbed
 ........................
 SACAR CUSTOM NOMAS
-
+sed 's/utils\.custom\./utils./' * -i
 
 ===============================
 utils.components.genericComponent

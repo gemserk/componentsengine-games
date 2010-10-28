@@ -26,8 +26,8 @@ builder.entity("segment-${Math.random()}") {
 	property("pathLength",parameters.pathLength)
 	
 	property("segmentTemplate",new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("zombierockers.entities.segment"), 
-			utils.custom.genericprovider.provide{ data ->
+			utils.templateProvider.getTemplate("zombierockers.entities.segment"), 
+			utils.genericprovider.provide{ data ->
 				[
 				pathTraversal:data.pathTraversal,
 				balls:data.balls,
@@ -128,7 +128,7 @@ builder.entity("segment-${Math.random()}") {
 		}
 		
 		delayedCheckBallSeries.each { ball -> 
-			utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage -> 
+			utils.messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage -> 
 				newMessage.ball = ball
 			})
 		}
@@ -156,7 +156,7 @@ builder.entity("segment-${Math.random()}") {
 		def pathTraversal = entity.pathTraversal.add(distance)
 		entity.pathTraversal = pathTraversal
 		
-		def messageQueue = utils.custom.messageQueue
+		def messageQueue = utils.messageQueue
 		entity.balls.reverseEach { ball ->
 			ball.newPathTraversal = pathTraversal
 			pathTraversal = pathTraversal.add((float)-ball.radius * 2f)
@@ -254,7 +254,7 @@ builder.entity("segment-${Math.random()}") {
 		
 		
 		if(ballsToRemove.size() < 3) {
-			utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkSameColorSegments"){
+			utils.messageQueue.enqueue(utils.messages.genericMessage("checkSameColorSegments"){
 			})
 			log.info("When ball added to segment less than 3 balls  in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")			
 			return
@@ -269,7 +269,7 @@ builder.entity("segment-${Math.random()}") {
 		}
 		
 		log.info("When ball added to segment 3 or more in series- segment.id: $entity.id - balls.id: ${ballsToRemove*.id} - balls.color: ${ballsToRemove[0].color}")	
-		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("seriesDetected"){newMessage ->
+		utils.messageQueue.enqueue(utils.messages.genericMessage("seriesDetected"){newMessage ->
 			newMessage.segment = entity
 			newMessage.ballsToRemove = ballsToRemove
 		})
@@ -353,11 +353,11 @@ builder.entity("segment-${Math.random()}") {
 			}
 		}
 		
-		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("explodeBall"){newMessage -> 
+		utils.messageQueue.enqueue(utils.messages.genericMessage("explodeBall"){newMessage -> 
 			newMessage.balls=ballsToRemove
 		})
 		
-		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkSameColorSegments"){
+		utils.messageQueue.enqueue(utils.messages.genericMessage("checkSameColorSegments"){
 		})
 	})
 	
@@ -380,7 +380,7 @@ builder.entity("segment-${Math.random()}") {
 			newMessage.segment = slaveSegment 					
 		})
 		
-		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage ->
+		utils.messageQueue.enqueue(utils.messages.genericMessage("checkBallSeries"){newMessage ->
 			newMessage.ball = ballToCheck
 			newMessage.mustContainBall = mustContainBall
 		})

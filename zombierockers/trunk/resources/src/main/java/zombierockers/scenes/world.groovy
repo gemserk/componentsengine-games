@@ -44,7 +44,7 @@ builder.entity {
 	
 	def offset = 0f
 	
-	property("path",new Path(utils.custom.svg.loadPoints(entity.level.path, "path")))	
+	property("path",new Path(utils.svg.loadPoints(entity.level.path, "path")))	
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.slick.resources.image(entity.level.background))
@@ -65,7 +65,7 @@ builder.entity {
 			def position = placeable.position
 			def layer = placeable.layer
 			def image = utils.slick.resources.image(placeable.image)
-			def input = utils.custom.gameContainer.input
+			def input = utils.gameContainer.input
 			//position = utils.slick.vector(input.mouseX, input.mouseY)
 			//println position
 			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
@@ -130,7 +130,7 @@ builder.entity {
 				def nextSegmentColor = nextSegment.firstBall.color
 				if (lastBallColor == nextSegmentColor) {
 					log.info("SegmentManager detected color coincidence between segments ends segment1.id: $segment.id - segment2.id - $nextSegment.id - colorCoincidence: $lastBallColor")
-					utils.custom.messageQueue.enqueue(utils.messages.genericMessage("segmentChangeSpeed"){newMessage ->
+					utils.messageQueue.enqueue(utils.messages.genericMessage("segmentChangeSpeed"){newMessage ->
 						newMessage.segment = nextSegment
 						newMessage.speed = reverseSpeed
 					})
@@ -154,7 +154,7 @@ builder.entity {
 			def firstSegment = sortedSegments[0]
 			
 			if (firstSegment.speed <= 0) {
-				utils.custom.messageQueue.enqueue(utils.messages.genericMessage("segmentChangeSpeed"){newMessage ->
+				utils.messageQueue.enqueue(utils.messages.genericMessage("segmentChangeSpeed"){newMessage ->
 					newMessage.segment = firstSegment
 					newMessage.speed = 0.04f
 				})
@@ -187,7 +187,7 @@ builder.entity {
 				if(segmentLastBall.position.distance(nextSegmentFirstBall.position) < (float)segmentLastBall.radius * 2){
 					log.info("Collision detected with other segment - masterSegment.id: $segment.id - slaveSegment.id: $nextSegment.id")
 					
-					utils.custom.messageQueue.enqueue(utils.messages.genericMessage("mergeSegments"){newMessage ->
+					utils.messageQueue.enqueue(utils.messages.genericMessage("mergeSegments"){newMessage ->
 						newMessage.masterSegment = segment
 						newMessage.slaveSegment = nextSegment
 					})
@@ -219,7 +219,7 @@ builder.entity {
 	property("startTimer",new CountDownTimer(2000))
 	entity.startTimer.reset()
 	component(new TimerComponent("startTimer")){
-		property("trigger",utils.custom.triggers.genericMessage("spawn") {
+		property("trigger",utils.triggers.genericMessage("spawn") {
 		})
 		propertyRef("timer","startTimer")
 	}
@@ -257,7 +257,7 @@ builder.entity {
 		def win = allLimbosDone && !baseReached
 		log.info("Game over - winResult: $win")
 		
-		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("gameover"){newMessage ->
+		utils.messageQueue.enqueue(utils.messages.genericMessage("gameover"){newMessage ->
 			newMessage.win = win
 		})
 	})

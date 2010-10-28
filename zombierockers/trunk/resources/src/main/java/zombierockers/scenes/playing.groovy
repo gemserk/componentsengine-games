@@ -38,7 +38,7 @@ builder.entity {
 	
 	component(utils.components.genericComponent(id:"grabMouse", messageId:"update"){ message ->
 		if(entity.shouldGrabMouse && !utils.stateBasedGame.gameProperties.runningInDebug)
-			utils.custom.gameContainer.setMouseGrabbed(true)
+			utils.gameContainer.setMouseGrabbed(true)
 	})
 	
 	component(utils.components.genericComponent(id:"grabMouse-enternodestate", messageId:"enterNodeState"){ message ->
@@ -47,19 +47,19 @@ builder.entity {
 	})
 	
 	component(utils.components.genericComponent(id:"grabMouse-leavenodestate", messageId:"leaveNodeState"){ message ->
-		utils.custom.gameContainer.setMouseGrabbed(false)
+		utils.gameContainer.setMouseGrabbed(false)
 		entity.shouldGrabMouse = false
 		log.info("Leaving playing state")
 	})
 	
 	
 	component(utils.components.genericComponent(id:"grabscreenshot-leavenodestate", messageId:"leaveNodeState"){ message ->
-		def graphics = utils.custom.gameContainer.graphics
+		def graphics = utils.gameContainer.graphics
         graphics.copyArea(utils.stateBasedGame.gameProperties.screenshot, 0, 0); 
 	})
 	
 	component(utils.components.genericComponent(id:"enterPauseWhenLostFocus", messageId:"update"){ message ->
-		if(!utils.custom.gameContainer.hasFocus())
+		if(!utils.gameContainer.hasFocus())
 			messageQueue.enqueue(utils.messages.genericMessage("paused"){})
 	})
 	
@@ -79,7 +79,7 @@ builder.entity {
 		layer: 100000
 		])
 		
-		property("message", {"FPS: ${utils.custom.gameContainer.getFPS()}".toString() })
+		property("message", {"FPS: ${utils.gameContainer.getFPS()}".toString() })
 	})
 }
 

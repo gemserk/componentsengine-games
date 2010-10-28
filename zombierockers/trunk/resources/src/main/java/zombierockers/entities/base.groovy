@@ -37,7 +37,7 @@ builder.entity("base") {
 		property("predicate",{segment ->
 			segment.pathTraversal.position.distance(entity.position) < entity.radius
 		} as Predicate)
-		property("trigger", utils.custom.triggers.genericMessage("segmentReachedBase") { 
+		property("trigger", utils.triggers.genericMessage("segmentReachedBase") { 
 			def source = message.source
 			def targets = message.targets
 		})
@@ -49,11 +49,11 @@ builder.entity("base") {
 		
 		if(entity.baseReached==false){
 			log.info("Base reached - base.id: $entity.id")
-			utils.custom.messageQueue.enqueue(utils.messages.genericMessage("baseReached"){})
+			utils.messageQueue.enqueue(utils.messages.genericMessage("baseReached"){})
 			entity.baseReached = true
 		}
 		def segment = message.targets[0]
-		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("segmentRemoveHead"){newMessage ->
+		utils.messageQueue.enqueue(utils.messages.genericMessage("segmentRemoveHead"){newMessage ->
 			newMessage.segment = segment
 		})
 	})

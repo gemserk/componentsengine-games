@@ -48,7 +48,7 @@ builder.entity("limbo-${Math.random()}") {
 	    
 	    def ball = balls[0]
 	    ball.state = "inWorld"
-	    utils.custom.messageQueue.enqueue(utils.messages.genericMessage("releaseBalls"){})
+	    utils.messageQueue.enqueue(utils.messages.genericMessage("releaseBalls"){})
 	})
 		
 		
@@ -62,7 +62,7 @@ builder.entity("limbo-${Math.random()}") {
 		
 		log.info("New segment and balls added to limbo - segment.id:$segment.id - deque.size:$deque.size - deque.balls.collors:${deque.collect{it.color}}")
 		messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment, entity.parent))
-		utils.custom.messageQueue.enqueue(utils.messages.genericMessage("releaseBalls"){
+		utils.messageQueue.enqueue(utils.messages.genericMessage("releaseBalls"){
 		})
 	})
 	

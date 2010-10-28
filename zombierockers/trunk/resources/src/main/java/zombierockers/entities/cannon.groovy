@@ -45,8 +45,8 @@ builder.entity("cannon") {
 	property("fireRate", 300)
 	
 	property("ballTemplate",new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("zombierockers.entities.ball"), 
-			utils.custom.genericprovider.provide{ data ->
+			utils.templateProvider.getTemplate("zombierockers.entities.ball"), 
+			utils.genericprovider.provide{ data ->
 				[
 				radius:0.1f,
 				finalRadius:16.0f,
@@ -58,8 +58,8 @@ builder.entity("cannon") {
 			}))
 	
 	property("bulletTemplate",new InstantiationTemplateImpl(
-			utils.custom.templateProvider.getTemplate("zombierockers.entities.bullet"), 
-			utils.custom.genericprovider.provide{ cannon ->
+			utils.templateProvider.getTemplate("zombierockers.entities.bullet"), 
+			utils.genericprovider.provide{ cannon ->
 				[
 				ball:cannon.ball,
 				position:cannon.position.copy(),
@@ -114,7 +114,7 @@ builder.entity("cannon") {
 		propertyRef("position", "position")
 		propertyRef("shouldFire", "fireTriggered")
 		
-		property("trigger", utils.custom.triggers.closureTrigger { cannon -> 
+		property("trigger", utils.triggers.closureTrigger { cannon -> 
 			entity.fireTriggered = false
 			
 			def bulletTemplate = entity.bulletTemplate

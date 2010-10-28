@@ -18,7 +18,7 @@ builder.entity {
 	
 	
 	
-	property("path",new Path(utils.custom.svg.loadPoints(entity.level.path, "path")))	
+	property("path",new Path(utils.svg.loadPoints(entity.level.path, "path")))	
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", utils.slick.resources.image(entity.level.background))
@@ -37,7 +37,7 @@ builder.entity {
 			def position = placeable.position
 			def layer = placeable.layer
 			def image = utils.slick.resources.image(placeable.image)
-			def input = utils.custom.gameContainer.input
+			def input = utils.gameContainer.input
 			//position = utils.slick.vector(input.mouseX, input.mouseY)
 			//println position
 			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
@@ -139,7 +139,7 @@ builder.entity {
 		})
 	})
 	
-	property("sceneTemplate",utils.custom.templateProvider.getTemplate("zombierockers.scenes.scene"))
+	property("sceneTemplate",utils.templateProvider.getTemplate("zombierockers.scenes.scene"))
 	
 	component(utils.components.genericComponent(id:"returnToGameHandler", messageId:"returnToGame"){ message ->
 		def levelIndex = entity.currentLevelIndex
