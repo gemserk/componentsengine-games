@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
+import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.groovy.modules.GroovyModule;
@@ -44,7 +45,6 @@ import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.templates.RegistrableTemplateProvider;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
-import com.gemserk.games.zombierockers.entities.GameStateManagerEntityBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
