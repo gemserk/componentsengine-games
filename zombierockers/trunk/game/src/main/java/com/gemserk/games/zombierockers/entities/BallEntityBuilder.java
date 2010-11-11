@@ -61,8 +61,8 @@ public class BallEntityBuilder extends EntityBuilder {
 		property("isGrownUp", new FixedProperty(entity) {
 			@Override
 			public Object get() {
-				float radius = Properties.getValue(getHolder(), "radius");
-				float finalRadius = Properties.getValue(getHolder(), "finalRadius");
+				Float radius = Properties.getValue(getHolder(), "radius");
+				Float finalRadius = Properties.getValue(getHolder(), "finalRadius");
 				return radius == finalRadius;
 			}
 		});
@@ -104,8 +104,8 @@ public class BallEntityBuilder extends EntityBuilder {
 
 			@Override
 			public Object get() {
-				float radius = Properties.getValue(getHolder(), "radius");
-				float finalRadius = Properties.getValue(getHolder(), "finalRadius");
+				Float radius = Properties.getValue(getHolder(), "radius");
+				Float finalRadius = Properties.getValue(getHolder(), "finalRadius");
 				Float s = radius / finalRadius;
 				size.set(s, s);
 				return size;
