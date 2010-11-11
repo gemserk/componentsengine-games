@@ -45,6 +45,7 @@ import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.templates.RegistrableTemplateProvider;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
+import com.gemserk.games.zombierockers.entities.BallEntityBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -126,6 +127,7 @@ public class Game extends StateBasedGame {
 			RegistrableTemplateProvider registrableTemplateProvider = injector.getInstance(RegistrableTemplateProvider.class);
 			registrableTemplateProvider.add("GameStateManager", javaEntityTemplateProvider.get().with(new GameStateManagerEntityBuilder()));
 			
+			registrableTemplateProvider.add("zombierockers.entities.ball", javaEntityTemplateProvider.get().with(new BallEntityBuilder()));
 		}
 		
 		injector.getInstance(InitBuilderUtilsGroovy.class).config();

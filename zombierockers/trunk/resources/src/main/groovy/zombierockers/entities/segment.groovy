@@ -112,7 +112,7 @@ builder.entity("segment-${Math.random()}") {
 				def ballGrowSpeed = 0.016f * 6f
 				def grow = ballGrowSpeed * message.delta
 				
-				ball.radius = (float) ball.radius + grow
+				ball.radius = (float) (ball.radius + grow)
 				def diff = ball.radius - ball.finalRadius
 				if (diff > 0) {
 					grow -= diff
