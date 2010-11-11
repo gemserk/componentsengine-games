@@ -3,8 +3,6 @@ package zombierockers.scenes;
 
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
-import com.gemserk.componentsengine.messages.Message;
-import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.utils.EntityDumper 
 import gemserk.utils.GroovyBootstrapper 
 import net.sf.json.JSONArray 
@@ -24,46 +22,21 @@ builder.entity("game") {
 	
 	//	def backgroundMusic = utils.slick.resources.sounds.sound("backgroundmusic")
 	//	backgroundMusic.play();
-	
-	property("transitions",[
-			gameover:"gameover",
-			paused:"paused",
-			resume:"playing",
-			])
-	
-	property("stateEntities",[
-			entity("playing"){
-				parent("zombierockers.scenes.playing", [level:currentLevel])
-			},
-			entity("paused"){ parent("zombierockers.scenes.paused") },entity("gameover"){  parent("zombierockers.scenes.gameover") }
-			])
-	
-	property("currentNodeState", null)
-	
-	component(utils.components.genericComponent(id:"transitionHandler", messageId:["gameover","paused","resume"]){ message ->
-		
-		String messageId = message.getId();
-		String transition = entity.transitions.get(messageId);
-		
-		def newEntity = entity.stateEntities.find{it.id == transition}
-		
-		utils.messageQueue.enqueueDelay(new Message("leaveNodeState", new PropertiesMapBuilder().property("message", message).build()));
-		utils.messageQueue.enqueueDelay(utils.messages.genericMessage("changeNodeState"){ newMessage -> newMessage.state = newEntity})
-		utils.messageQueue.enqueueDelay(new Message("enterNodeState", new PropertiesMapBuilder().property("message", message).build()));
-	})
-	
-	component(utils.components.genericComponent(id:"changeNodeStateHandler", messageId:"changeNodeState"){ message ->
-		def newEntity = message.state
-		
-		if (entity.currentNodeState == newEntity)
-			return
-		
-		if (entity.currentNodeState != null)
-			utils.messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity.currentNodeState));
-		
-		utils.messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newEntity,entity));
-		entity.currentNodeState = newEntity
-	})
+	                          
+	parent("GameStateManager", [
+	            transitions:[
+	             			gameover:"gameover",
+	            			paused:"paused",
+	            			resume:"playing",
+//	            			editor:"editor",
+	            			],
+	            stateEntities:[
+	               			playing:entity("playing"){ parent("zombierockers.scenes.playing", [level:currentLevel]) },
+	            			paused:entity("paused"){ parent("zombierockers.scenes.paused") },
+	            			gameover:entity("gameover"){  parent("zombierockers.scenes.gameover") },
+//	            			editor:entity("editor"){  parent("zombierockers.scenes.sceneEditor") },
+	            			],
+	            ])                          
 	
 	component(utils.components.genericComponent(id:"enterStateHandler", messageId:"enterState"){ message ->
 		utils.messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})

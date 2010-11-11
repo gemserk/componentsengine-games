@@ -11,12 +11,9 @@ import com.gemserk.games.zombierockers.PathTraversal;
 
 builder.entity {
 	
-	
 	property("bounds",utils.slick.rectangle(0,0,800,600))
 	property("level", parameters.level)
 	property("currentLevelIndex",parameters.levelIndex)
-	
-	
 	
 	property("path",new Path(utils.svg.loadPoints(entity.level.path, "path")))	
 	
@@ -48,9 +45,6 @@ builder.entity {
 			}))
 		}
 	})
-	
-	
-	
 	
 	input("inputmapping"){
 		keyboard {

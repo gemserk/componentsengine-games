@@ -1,3 +1,4 @@
+package com.gemserk.games.zombierockers;
 import org.newdawn.slick.Graphics;
 
 import com.gemserk.componentsengine.groovy.render.ClosureRenderObject;

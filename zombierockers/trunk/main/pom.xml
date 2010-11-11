@@ -21,9 +21,9 @@
 		<!--  finalName>${project.artifactId}-${project.version}</finalName -->
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
-		<webstartMain>Game</webstartMain>
+		<webstartMain>com.gemserk.games.zombierockers.Game</webstartMain>
 
-		<appletGameParameter>Game</appletGameParameter>
+		<appletGameParameter>com.gemserk.games.zombierockers.Game</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
 		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
 

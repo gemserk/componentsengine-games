@@ -1,8 +1,5 @@
 package zombierockers.scenes
 
-
-
-
 builder.entity {
 	
 	component(utils.components.genericComponent(id:"acceleratorSystem2000", messageId:["update"]){ message ->

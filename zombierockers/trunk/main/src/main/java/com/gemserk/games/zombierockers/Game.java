@@ -1,3 +1,5 @@
+package com.gemserk.games.zombierockers;
+
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.net.URI;
@@ -38,13 +40,17 @@ import com.gemserk.componentsengine.slick.modules.InitSlickRenderer;
 import com.gemserk.componentsengine.slick.modules.SlickModule;
 import com.gemserk.componentsengine.slick.modules.SlickSoundSystemModule;
 import com.gemserk.componentsengine.slick.utils.SlickToSlf4j;
+import com.gemserk.componentsengine.templates.JavaEntityTemplate;
+import com.gemserk.componentsengine.templates.RegistrableTemplateProvider;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
+import com.gemserk.games.zombierockers.entities.GameStateManagerEntityBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.kitfox.svg.SVGCache;
 import com.kitfox.svg.SVGDiagram;
@@ -90,6 +96,9 @@ public class Game extends StateBasedGame {
 		logger.info("OS-VERSION: " + System.getProperty("os.version"));
 		logger.info("OS-ARCH: " + System.getProperty("os.arch"));
 	}
+	
+	@Inject
+	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
@@ -112,6 +121,12 @@ public class Game extends StateBasedGame {
 		injector.getInstance(InitBuilderUtilsBasic.class).config();
 		injector.getInstance(InitDefaultTemplateProvider.class).config();
 		
+		{
+			// register each java template provdier to the template provider manager...
+			RegistrableTemplateProvider registrableTemplateProvider = injector.getInstance(RegistrableTemplateProvider.class);
+			registrableTemplateProvider.add("GameStateManager", javaEntityTemplateProvider.get().with(new GameStateManagerEntityBuilder()));
+			
+		}
 		
 		injector.getInstance(InitBuilderUtilsGroovy.class).config();
 		injector.getInstance(InitGroovyTemplateProvider.class).config();
@@ -119,21 +134,13 @@ public class Game extends StateBasedGame {
 		injector.getInstance(InitBuilderUtilsSlick.class).config();
 
 		injector.getInstance(InitSlickRenderer.class).config();
-
 		
 		injector.getInstance(InitSlickGroovyClosureRenderer.class).config();
-		
-		
-		
-		
-		
 		
 		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
 		injector.injectMembers(gameState);
 		addState(gameState);
 		gameProperties.put("screenshot", new Image(800,600));
-		
-		
 	}
 
 	class GameGameState extends GemserkGameState {
@@ -148,13 +155,6 @@ public class Game extends StateBasedGame {
 			images("assets/images.properties");
 			animations("assets/animations.properties");
 
-//			BuilderUtils builderUtils = injector.getInstance(BuilderUtils.class);
-//			builderUtils.addCustomUtil("components", new Object() {
-//				public Component closureComponent(String id, Closure closure) {
-//					return new ComponentFromListOfClosures(id, Lists.newArrayList(closure));
-//				}
-//			});
-//
 			builderUtils.put("svg", new Object() {
 
 				public List<Vector2f> loadPoints(String file, String pathName) throws URISyntaxException {
@@ -177,12 +177,6 @@ public class Game extends StateBasedGame {
 					return points;
 				}
 			});
-			
-			
-//			
-//			ScreenshotGrabber screenshotGrabber = new SlickScreenshotGrabber();
-//			injector.injectMembers(screenshotGrabber);
-//			builderUtils.addCustomUtil("screenshotGrabber", screenshotGrabber);
 
 		}
 
