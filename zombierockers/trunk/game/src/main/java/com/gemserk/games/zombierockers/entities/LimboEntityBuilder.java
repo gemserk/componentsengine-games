@@ -23,7 +23,6 @@ import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.PropertiesWrapper;
 import com.gemserk.componentsengine.properties.Property;
-import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.google.common.base.Predicate;
@@ -34,14 +33,11 @@ public class LimboEntityBuilder extends EntityBuilder {
 
 	protected static final Logger logger = LoggerFactory.getLogger(LimboEntityBuilder.class);
 
-	@Inject
-	SlickUtils slickUtils;
-
 	private static int limboNumber = 1;
 
 	@Override
 	public String getId() {
-		return MessageFormat.format("bullet-{0}", LimboEntityBuilder.limboNumber);
+		return MessageFormat.format("limbo-{0}", LimboEntityBuilder.limboNumber);
 	}
 
 	class LimboEntity extends PropertiesWrapper {
