@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import org.newdawn.slick.Image 
 
+import com.gemserk.games.zombierockers.ImageCollisionMap;
 import com.gemserk.games.zombierockers.SubPathDefinition;
 
 class ScenesDefinitions {
@@ -14,17 +15,7 @@ class ScenesDefinitions {
 		
 		def collisionMap = { path ->
 			BufferedImage image = ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream(path));
-			def height = image.getHeight()
-			def width = image.getWidth()
-			return [collides:{x, y ->
-				int xint = (int)x
-				int yint = (int)y
-				if(xint < 0 || xint > width || yint < 0 || yint > height)
-					return false
-				
-				int value = image.getRGB(xint,yint)
-				return value == -1 ? 1 : 0
-			}]
+			return new ImageCollisionMap(image);
 		}
 		
 		def allBallDefinitions = [
@@ -95,7 +86,7 @@ class ScenesDefinitions {
 				placeables:[],
 				subPathDefinitions:segmentsMetadataConvertor([], defaultElement)
 				]	
-	
+		
 		def level06 = [background:"level06", path:"levels/level06/path.svg",ballsQuantity:100, 
 				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
 				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
@@ -115,13 +106,13 @@ class ScenesDefinitions {
 				]	
 		
 		def level08 = [background:"level08", path:"levels/level08/path.svg",ballsQuantity:100,
-			pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
-			ballDefinitions:ballDefinitions(["red","blue","green","white"]),
-			placeables:[],
-			//collisionMap:collisionMap("levels/level07/collisionMap.png"),
-			subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(412.8999f,706.1004f, [layer:15, collisionMask:7]) ], defaultElement),
-			alphaMasks:[(15):new Image("levels/level08/alphaMask1.png")]
-			]
+				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
+				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
+				placeables:[],
+				//collisionMap:collisionMap("levels/level07/collisionMap.png"),
+				subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(412.8999f,706.1004f, [layer:15, collisionMask:7]) ], defaultElement),
+				alphaMasks:[(15):new Image("levels/level08/alphaMask1.png")]
+				]
 		def levels = [level01, level02, level03, level04, level05,level07,level06,level08]
 		return levels
 	}

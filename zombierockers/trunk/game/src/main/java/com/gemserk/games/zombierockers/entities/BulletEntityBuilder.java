@@ -1,11 +1,8 @@
 package com.gemserk.games.zombierockers.entities;
 
-import groovy.lang.Closure;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.geom.Vector2f;
@@ -26,6 +23,7 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.slick.predicates.SlickEntityPredicates;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
+import com.gemserk.games.zombierockers.ImageCollisionMap;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
@@ -103,7 +101,7 @@ public class BulletEntityBuilder extends EntityBuilder {
 		component(new FieldsReflectionComponent("updateCollisionMaskHandler") {
 
 			@EntityProperty(readOnly = true)
-			Map collisionMap;
+			ImageCollisionMap collisionMap;
 
 			@EntityProperty(readOnly = true)
 			Vector2f position;
@@ -117,8 +115,7 @@ public class BulletEntityBuilder extends EntityBuilder {
 				if (collisionMap == null)
 					return;
 
-				Closure collides = (Closure) collisionMap.get("collides");
-				collisionMask = (Integer) collides.call(new Object[] { position.x, position.y });
+				collisionMask = collisionMap.collides(position.x, position.y);
 			}
 
 		});
