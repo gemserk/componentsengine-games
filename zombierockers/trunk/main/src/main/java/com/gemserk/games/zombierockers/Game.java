@@ -47,6 +47,7 @@ import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
 import com.gemserk.games.zombierockers.entities.BallEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BulletEntityBuilder;
+import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -130,6 +131,7 @@ public class Game extends StateBasedGame {
 			
 			registrableTemplateProvider.add("zombierockers.entities.ball", javaEntityTemplateProvider.get().with(new BallEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.bullet", javaEntityTemplateProvider.get().with(new BulletEntityBuilder()));
+			registrableTemplateProvider.add("zombierockers.entities.limbo", javaEntityTemplateProvider.get().with(new LimboEntityBuilder()));
 		}
 		
 		injector.getInstance(InitBuilderUtilsGroovy.class).config();

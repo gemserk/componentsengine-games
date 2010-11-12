@@ -60,8 +60,6 @@ builder.entity {
 		property("message", "Press \"r\" to restart")
 	})
 	
-	
-	
 	component(utils.components.genericComponent(id:"resumeGameHandler", messageId:"resumeGame"){ message ->
 		utils.messageQueue.enqueue(utils.messages.genericMessage("resume"){})	
 	})
