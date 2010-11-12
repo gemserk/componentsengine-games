@@ -45,7 +45,7 @@ public class BallEntityBuilder extends EntityBuilder {
 		
 		BallEntityBuilder.ballNumber++;
 		
-		tags("ball", "nofriction");
+		tags("ball");
 
 		Map definition = (Map) parameters.get("definition");
 
