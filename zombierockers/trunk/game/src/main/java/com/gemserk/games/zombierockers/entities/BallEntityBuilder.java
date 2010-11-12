@@ -63,7 +63,7 @@ public class BallEntityBuilder extends EntityBuilder {
 			public Object get() {
 				Float radius = Properties.getValue(getHolder(), "radius");
 				Float finalRadius = Properties.getValue(getHolder(), "finalRadius");
-				return radius == finalRadius;
+				return radius.equals(finalRadius);
 			}
 		});
 
