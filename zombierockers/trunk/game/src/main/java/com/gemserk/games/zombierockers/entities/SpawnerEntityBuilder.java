@@ -53,6 +53,8 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 
 		property("spawnQuantity", parameters.get("ballsQuantity"));
 		property("fired", false);
+		
+		property("path", parameters.get("path"));
 
 		property("pathProperties", parameters.get("pathProperties"));
 
@@ -126,6 +128,9 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 			@EntityProperty
 			Property<Map<String, Object>> pathProperties;
 
+			@EntityProperty
+			Property<Path> path;
+
 			@Handles
 			public void spawn(Message message) {
 
@@ -151,12 +156,12 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 
 				}
 
-				Path path = Properties.getValue(entity.getParent(), "path");
-				final PathTraversal pathTraversal = new PathTraversal(path, 0, 0);
+				Path pathValue = path.get();
+				final PathTraversal pathTraversal = new PathTraversal(pathValue, 0, 0);
 
 				pathTraversal.getDistanceFromOrigin(); // so that it is calculated, and propagated when segment split
 
-				final float pathLength = new PathTraversal(path, path.getPoints().size() - 1).getDistanceFromOrigin();
+				final float pathLength = new PathTraversal(pathValue, pathValue.getPoints().size() - 1).getDistanceFromOrigin();
 
 				if (logger.isDebugEnabled())
 					logger.debug("pathLength: " + pathLength);
@@ -186,6 +191,7 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 				propertyRef("ballDefinitions", "ballDefinitions");
 				propertyRef("spawnQuantity", "spawnQuantity");
 				propertyRef("pathProperties", "pathProperties");
+				propertyRef("path", "path");
 			}
 		});
 
