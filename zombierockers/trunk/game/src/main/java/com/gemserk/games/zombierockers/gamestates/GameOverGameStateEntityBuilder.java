@@ -1,4 +1,4 @@
-package com.gemserk.games.zombierockers.entities;
+package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
 
@@ -7,7 +7,8 @@ import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
-import com.gemserk.componentsengine.components.ReflectionComponent;
+import com.gemserk.componentsengine.components.ReferencePropertyComponent;
+import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
@@ -16,13 +17,16 @@ import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.properties.Properties;
+import com.gemserk.componentsengine.properties.Property;
+import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class PausedGameStateEntityBuilder extends EntityBuilder {
+public class GameOverGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	Provider<InputMappingBuilderConfigurator> inputMappingConfiguratorProvider;
@@ -32,7 +36,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	GlobalProperties globalProperties;
-	
+
 	@Inject
 	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
 
@@ -43,6 +47,9 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 		final Rectangle labelRectangle = slick.rectangle(-220, -50, 440, 100);
 		final Rectangle screenBounds = slick.rectangle(0, 0, 800, 600);
+
+		property("labelText", "");
+		property("win", false);
 
 		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
@@ -67,7 +74,8 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 		child(javaEntityTemplateProvider.get().with(new EntityBuilder() {
 			@Override
 			public void build() {
-				parent("gemserk.gui.label", new HashMap<String, Object>() {
+				
+				parameters.putAll( new HashMap<String, Object>() {
 					{
 						put("font", font);
 						put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
@@ -78,42 +86,69 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 						put("layer", 1010);
 					}
 				});
-				property("message", "Paused, press click to continue...");
+				
+				parent("gemserk.gui.label", parameters);
 			}
-		}).instantiate("pausedLabel"));
-
-		child(javaEntityTemplateProvider.get().with(new EntityBuilder() {
-			@Override
-			public void build() {
-				parent("gemserk.gui.label", new HashMap<String, Object>() {
-					{
-						put("font", font);
-						put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 40f));
-						put("fontColor", slick.color(0f, 0f, 0f, 1f));
-						put("bounds", labelRectangle);
-						put("align", "center");
-						put("valign", "center");
-						put("layer", 1010);
-					}
-				});
-				property("message", "Press \"r\" to restart");
+		}).instantiate("deadLabel", new HashMap<String, Object>() {
+			{
+				put("message", new ReferenceProperty<Object>("labelText", entity));
+				// put("message", new FixedProperty(entity){
+				// @Override
+				// public Object get() {
+				// return Properties.getValue(getHolder(), "labelText");
+				// }
+				// });
 			}
-		}).instantiate("restartLabel"));
+		}));
 
-		component(new ReflectionComponent("inputMessagesHandler") {
+		component(new ReferencePropertyComponent("enterNodeStateHandler") {
+
+			@EntityProperty
+			Property<Boolean> win;
+
+			@EntityProperty
+			Property<String> labelText;
+
+			@Handles
+			public void enterNodeState(Message message) {
+				Message sourceMessage = Properties.getValue(message, "message");
+				Boolean winValue = Properties.getValue(sourceMessage, "win");
+
+				win.set(winValue);
+
+				if (win.get())
+					labelText.set("You win");
+				else
+					labelText.set("You lose");
+
+			}
+
+		}).withProperties(new ComponentProperties() {
+			{
+				propertyRef("win", "win");
+				propertyRef("labelText", "labelText");
+			}
+		});
+
+		component(new ReferencePropertyComponent("inputMessagesHandler") {
 			@Inject
 			MessageQueue messageQueue;
 
-			@Handles
-			public void resumeGame(Message message) {
-				messageQueue.enqueue(new Message("resume"));
-			}
+			@EntityProperty
+			Property<Boolean> win;
 
 			@Handles
 			public void restart(Message message) {
-				messageQueue.enqueue(new Message("restartLevel"));
+				if (win.get())
+					messageQueue.enqueue(new Message("nextLevel"));
+				else
+					messageQueue.enqueue(new Message("restartLevel"));
 			}
 
+		}).withProperties(new ComponentProperties() {
+			{
+				propertyRef("win", "win");
+			}
 		});
 
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
@@ -124,20 +159,17 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				keyboard(new KeyboardMappingBuilder() {
 					@Override
 					public void build() {
-						press("return", "resumeGame");
-						press("r", "restart");
-						press("space", "resumeGame");
-						press("p", "resumeGame");
-						press("escape", "resumeGame");
-						press("e", "goToEditor");
+						press("return", "restart");
+						press("space", "restart");
+						press("escape", "restart");
 					}
 				});
 
 				mouse(new MouseMappingBuilder() {
 					@Override
 					public void build() {
-						press("left", "resumeGame");
-						press("right", "resumeGame");
+						press("left", "restart");
+						press("right", "restart");
 					}
 				});
 			}
