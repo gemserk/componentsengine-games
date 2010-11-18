@@ -35,7 +35,7 @@ import com.google.inject.Inject;
 
 public class SegmentEntityBuilder extends EntityBuilder {
 
-	protected static final Logger logger = LoggerFactory.getLogger("zombierockers.entities.segment");
+	protected static final Logger logger = LoggerFactory.getLogger(SegmentEntityBuilder.class);
 
 	class SegmentWrapper extends PropertiesWrapper {
 
