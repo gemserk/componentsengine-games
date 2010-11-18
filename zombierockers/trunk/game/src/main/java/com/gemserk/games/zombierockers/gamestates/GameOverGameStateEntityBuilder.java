@@ -22,7 +22,6 @@ import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -36,9 +35,6 @@ public class GameOverGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	GlobalProperties globalProperties;
-
-	@Inject
-	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
 
 	@Override
 	public void build() {
@@ -71,33 +67,16 @@ public class GameOverGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(javaEntityTemplateProvider.get().with(new EntityBuilder() {
-			@Override
-			public void build() {
-				
-				parameters.putAll( new HashMap<String, Object>() {
-					{
-						put("font", font);
-						put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
-						put("fontColor", slick.color(0f, 0f, 0f, 1f));
-						put("bounds", labelRectangle);
-						put("align", "center");
-						put("valign", "center");
-						put("layer", 1010);
-					}
-				});
-				
-				parent("gemserk.gui.label", parameters);
-			}
-		}).instantiate("deadLabel", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("deadLabel", new HashMap<String, Object>() {
 			{
+				put("font", font);
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
+				put("fontColor", slick.color(0f, 0f, 0f, 1f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1010);
 				put("message", new ReferenceProperty<Object>("labelText", entity));
-				// put("message", new FixedProperty(entity){
-				// @Override
-				// public Object get() {
-				// return Properties.getValue(getHolder(), "labelText");
-				// }
-				// });
 			}
 		}));
 

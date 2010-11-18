@@ -18,7 +18,6 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -33,9 +32,6 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 	@Inject
 	GlobalProperties globalProperties;
 	
-	@Inject
-	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
-
 	@Override
 	public void build() {
 
@@ -63,42 +59,32 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				property("layer", 1000);
 			}
 		});
-
-		child(javaEntityTemplateProvider.get().with(new EntityBuilder() {
-			@Override
-			public void build() {
-				parent("gemserk.gui.label", new HashMap<String, Object>() {
-					{
-						put("font", font);
-						put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
-						put("fontColor", slick.color(0f, 0f, 0f, 1f));
-						put("bounds", labelRectangle);
-						put("align", "center");
-						put("valign", "center");
-						put("layer", 1010);
-					}
-				});
-				property("message", "Paused, press click to continue...");
+		
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("pausedLabel", new HashMap<String, Object>() {
+			{
+				put("font", font);
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
+				put("fontColor", slick.color(0f, 0f, 0f, 1f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1010);
+				put("message", "Paused, press click to continue...");
 			}
-		}).instantiate("pausedLabel"));
+		}));
 
-		child(javaEntityTemplateProvider.get().with(new EntityBuilder() {
-			@Override
-			public void build() {
-				parent("gemserk.gui.label", new HashMap<String, Object>() {
-					{
-						put("font", font);
-						put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 40f));
-						put("fontColor", slick.color(0f, 0f, 0f, 1f));
-						put("bounds", labelRectangle);
-						put("align", "center");
-						put("valign", "center");
-						put("layer", 1010);
-					}
-				});
-				property("message", "Press \"r\" to restart");
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("restartLabel", new HashMap<String, Object>() {
+			{
+				put("font", font);
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 40f));
+				put("fontColor", slick.color(0f, 0f, 0f, 1f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1010);
+				put("message", "Press \"r\" to restart");
 			}
-		}).instantiate("restartLabel"));
+		}));
 
 		component(new ReflectionComponent("inputMessagesHandler") {
 			@Inject
