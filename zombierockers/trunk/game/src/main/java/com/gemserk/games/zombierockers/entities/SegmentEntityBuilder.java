@@ -269,11 +269,12 @@ public class SegmentEntityBuilder extends EntityBuilder {
 					return;
 				}
 
+				Entity lastBallEntity = segment.lastBall.get();
 				segment.pathTraversal.set(getPathTraversal(entity, segment.balls.get().size() - 2));
 				if (logger.isInfoEnabled())
 					logger.info("Removed last ball - segment.id: " + entity.getId() + " - ball.id: " + segment.lastBall.get().getId());
-				segment.balls.get().remove(segment.lastBall.get());
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(segment.lastBall.get()));
+				segment.balls.get().remove(lastBallEntity);
+				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBallEntity));
 			}
 
 		});
