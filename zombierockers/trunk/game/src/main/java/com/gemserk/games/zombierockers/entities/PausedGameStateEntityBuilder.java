@@ -5,11 +5,11 @@ import java.util.HashMap;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.geom.Rectangle;
 
-import com.gemserk.componentsengine.ApplicationProperties;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.Handles;
+import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
@@ -31,7 +31,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 	SlickUtils slick;
 
 	@Inject
-	ApplicationProperties applicationProperties;
+	GlobalProperties globalProperties;
 	
 	@Inject
 	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
@@ -46,7 +46,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
-				property("image", applicationProperties.getProperties().get("screenshot"));
+				property("image", globalProperties.getProperties().get("screenshot"));
 				property("color", slick.color(1, 1, 1, 1));
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));

@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
-import com.gemserk.componentsengine.ApplicationProperties;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
+import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.groovy.modules.GroovyModule;
 import com.gemserk.componentsengine.groovy.modules.InitBuilderUtilsGroovy;
 import com.gemserk.componentsengine.groovy.modules.InitGroovyTemplateProvider;
@@ -73,10 +73,10 @@ public class Game extends StateBasedGame {
 	 * to be used in groovy templates for now...
 	 */
 	public Map<String, Object> getGameProperties() {
-		return applicationProperties.getProperties();
+		return globalProperties.getProperties();
 	}
 	
-	ApplicationProperties applicationProperties = new ApplicationProperties();
+	GlobalProperties globalProperties = new GlobalProperties();
 
 	public static void main(String[] arguments) {
 
@@ -129,7 +129,7 @@ public class Game extends StateBasedGame {
 					@Override
 					protected void configure() {
 						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
-						bind(ApplicationProperties.class).toInstance(applicationProperties);
+						bind(GlobalProperties.class).toInstance(globalProperties);
 					}
 				});
 
