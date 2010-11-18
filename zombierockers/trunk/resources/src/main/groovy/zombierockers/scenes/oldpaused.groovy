@@ -1,18 +1,13 @@
 package zombierockers.scenes
-;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
-
 
 builder.entity {
 	
 	def font = utils.slick.resources.fonts.font([italic:false, bold:false, size:28])
 	
 	def labelRectangle = utils.slick.rectangle(-220,-50,440,100)
-	
-	
-	//
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
 		property("image", {utils.slick.stateBasedGame.gameProperties.screenshot})
@@ -82,4 +77,5 @@ builder.entity {
 			press(button:"right", eventId:"resumeGame")
 		}
 	}
+	
 }

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
+import com.gemserk.componentsengine.annotations.GameProperties;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -51,6 +52,7 @@ import com.gemserk.games.zombierockers.entities.BulletEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CannonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CursorEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
+import com.gemserk.games.zombierockers.entities.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
 import com.google.inject.AbstractModule;
@@ -60,6 +62,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.kitfox.svg.SVGCache;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGElement;
@@ -96,7 +99,7 @@ public class Game extends StateBasedGame {
 
 	public Game() {
 		super("Zombie Rockers");
-		gameProperties.put("runningInDebug", System.getProperty("runningInDebug")!=null);
+		gameProperties.put("runningInDebug", System.getProperty("runningInDebug") != null);
 		System.out.println(gameProperties);
 		Log.setLogSystem(new SlickToSlf4j());
 
@@ -104,36 +107,36 @@ public class Game extends StateBasedGame {
 		logger.info("OS-VERSION: " + System.getProperty("os.version"));
 		logger.info("OS-ARCH: " + System.getProperty("os.arch"));
 	}
-	
+
 	@Inject
 	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		//container.setVSync(true);
+		// container.setVSync(true);
 		container.setShowFPS(false);
 
-		
 		Injector injector = Guice.createInjector(new SlickModule(container, this), // 
 				new SlickSoundSystemModule(), // 
 				new BasicModule(), //
 				new GroovyModule(), new AbstractModule() {
-					
 					@Override
 					protected void configure() {
 						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
+						bind(new TypeLiteral<Map<String, Object>>() {
+						}).annotatedWith(GameProperties.class).toInstance(gameProperties);
 					}
 				});
 
 		injector.getInstance(InitEntityManager.class).config();
 		injector.getInstance(InitBuilderUtilsBasic.class).config();
 		injector.getInstance(InitDefaultTemplateProvider.class).config();
-		
+
 		{
 			// register each java template provdier to the template provider manager...
 			RegistrableTemplateProvider registrableTemplateProvider = injector.getInstance(RegistrableTemplateProvider.class);
 			registrableTemplateProvider.add("GameStateManager", javaEntityTemplateProvider.get().with(new GameStateManagerEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.entities.ball", javaEntityTemplateProvider.get().with(new BallEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.bullet", javaEntityTemplateProvider.get().with(new BulletEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.limbo", javaEntityTemplateProvider.get().with(new LimboEntityBuilder()));
@@ -141,30 +144,32 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.entities.cannon", javaEntityTemplateProvider.get().with(new CannonEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.cursor", javaEntityTemplateProvider.get().with(new CursorEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.spawner", javaEntityTemplateProvider.get().with(new SpawnerEntityBuilder()));
-			
 			registrableTemplateProvider.add("zombierockers.entities.segment", javaEntityTemplateProvider.get().with(new SegmentEntityBuilder()));
+
+			registrableTemplateProvider.add("zombierockers.scenes.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
 		}
-		
+
 		injector.getInstance(InitBuilderUtilsGroovy.class).config();
 		injector.getInstance(InitGroovyTemplateProvider.class).config();
 
 		injector.getInstance(InitBuilderUtilsSlick.class).config();
 
 		injector.getInstance(InitSlickRenderer.class).config();
-		
+
 		injector.getInstance(InitSlickGroovyClosureRenderer.class).config();
-		
+
 		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
 		injector.injectMembers(gameState);
 		addState(gameState);
-		gameProperties.put("screenshot", new Image(800,600));
+		gameProperties.put("screenshot", new Image(800, 600));
 	}
 
 	class GameGameState extends GemserkGameState {
 
-		@Inject @BuilderUtils Map<String,Object> builderUtils;
-		
-		
+		@Inject
+		@BuilderUtils
+		Map<String, Object> builderUtils;
+
 		@Override
 		public void onInit() {
 			super.onInit();
@@ -221,9 +226,9 @@ public class Game extends StateBasedGame {
 		@Override
 		public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 			try {
-				if(container.getInput().isKeyPressed(Input.KEY_BACK))
+				if (container.getInput().isKeyPressed(Input.KEY_BACK))
 					container.exit();
-				
+
 				int minimumTargetFPS = 30;
 				int maximumDelta = (int) (1000f / minimumTargetFPS);
 				if (delta > maximumDelta)
