@@ -5,7 +5,6 @@ import java.awt.geom.PathIterator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
-import com.gemserk.componentsengine.annotations.GameProperties;
+import com.gemserk.componentsengine.ApplicationProperties;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -62,22 +61,28 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import com.kitfox.svg.SVGCache;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGElement;
 
 public class Game extends StateBasedGame {
 
-	Map<String, Object> gameProperties = new HashMap<String, Object>();
-
 	protected static final Logger logger = LoggerFactory.getLogger(Game.class);
+	
+	/**
+	 * to be used in groovy templates for now...
+	 */
+	public Map<String, Object> getGameProperties() {
+		return applicationProperties.getProperties();
+	}
+	
+	ApplicationProperties applicationProperties = new ApplicationProperties();
 
 	public static void main(String[] arguments) {
 
 		try {
 			Game game = new Game();
-			game.gameProperties.put("runningFromMain", true);
+			game.getGameProperties().put("runningFromMain", true);
 
 			AppGameContainer app = new AppGameContainer(game);
 
@@ -99,6 +104,7 @@ public class Game extends StateBasedGame {
 
 	public Game() {
 		super("Zombie Rockers");
+		Map<String, Object> gameProperties = getGameProperties();
 		gameProperties.put("runningInDebug", System.getProperty("runningInDebug") != null);
 		System.out.println(gameProperties);
 		Log.setLogSystem(new SlickToSlf4j());
@@ -123,8 +129,7 @@ public class Game extends StateBasedGame {
 					@Override
 					protected void configure() {
 						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
-						bind(new TypeLiteral<Map<String, Object>>() {
-						}).annotatedWith(GameProperties.class).toInstance(gameProperties);
+						bind(ApplicationProperties.class).toInstance(applicationProperties);
 					}
 				});
 
@@ -161,7 +166,7 @@ public class Game extends StateBasedGame {
 		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
 		injector.injectMembers(gameState);
 		addState(gameState);
-		gameProperties.put("screenshot", new Image(800, 600));
+		getGameProperties().put("screenshot", new Image(800, 600));
 	}
 
 	class GameGameState extends GemserkGameState {

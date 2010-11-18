@@ -1,12 +1,11 @@
 package com.gemserk.games.zombierockers.entities;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.newdawn.slick.Font;
 import org.newdawn.slick.geom.Rectangle;
 
-import com.gemserk.componentsengine.annotations.GameProperties;
+import com.gemserk.componentsengine.ApplicationProperties;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
@@ -32,9 +31,8 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 	SlickUtils slick;
 
 	@Inject
-	@GameProperties
-	Map<String, Object> gameProperties;
-
+	ApplicationProperties applicationProperties;
+	
 	@Inject
 	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
 
@@ -48,7 +46,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
-				property("image", gameProperties.get("screenshot"));
+				property("image", applicationProperties.getProperties().get("screenshot"));
 				property("color", slick.color(1, 1, 1, 1));
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
