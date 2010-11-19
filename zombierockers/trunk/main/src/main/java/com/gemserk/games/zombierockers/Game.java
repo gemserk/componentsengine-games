@@ -1,11 +1,5 @@
 package com.gemserk.games.zombierockers;
 
-import java.awt.Shape;
-import java.awt.geom.PathIterator;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONArray;
@@ -16,7 +10,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
@@ -40,6 +33,7 @@ import com.gemserk.componentsengine.slick.modules.InitBuilderUtilsSlick;
 import com.gemserk.componentsengine.slick.modules.InitSlickRenderer;
 import com.gemserk.componentsengine.slick.modules.SlickModule;
 import com.gemserk.componentsengine.slick.modules.SlickSoundSystemModule;
+import com.gemserk.componentsengine.slick.utils.SlickSvgUtils;
 import com.gemserk.componentsengine.slick.utils.SlickToSlf4j;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.templates.RegistrableTemplateProvider;
@@ -52,6 +46,7 @@ import com.gemserk.games.zombierockers.entities.CannonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CursorEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
+import com.gemserk.games.zombierockers.entities.SegmentsManagerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.GameOverGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
@@ -64,9 +59,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.kitfox.svg.SVGCache;
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGElement;
 
 public class Game extends StateBasedGame {
 
@@ -133,6 +125,7 @@ public class Game extends StateBasedGame {
 					protected void configure() {
 						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
 						bind(GlobalProperties.class).toInstance(globalProperties);
+						bind(SlickSvgUtils.class).in(Singleton.class);
 					}
 				});
 
@@ -159,6 +152,8 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.scenes.gameover", javaEntityTemplateProvider.get().with(new GameOverGameStateEntityBuilder()));
 			
 			registrableTemplateProvider.add("zombierockers.scenes.sceneimpl", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
+			
+			registrableTemplateProvider.add("zombierockers.scenes.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
 		}
 
 		injector.getInstance(InitBuilderUtilsGroovy.class).config();
@@ -178,6 +173,8 @@ public class Game extends StateBasedGame {
 
 	class GameGameState extends GemserkGameState {
 
+
+
 		@Inject
 		@BuilderUtils
 		Map<String, Object> builderUtils;
@@ -189,28 +186,7 @@ public class Game extends StateBasedGame {
 			images("assets/images.properties");
 			animations("assets/animations.properties");
 
-			builderUtils.put("svg", new Object() {
-
-				public List<Vector2f> loadPoints(String file, String pathName) throws URISyntaxException {
-					ArrayList<Vector2f> points = new ArrayList<Vector2f>();
-					URI fileUri = Thread.currentThread().getContextClassLoader().getResource(file).toURI();
-					SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(fileUri);
-					SVGElement element = diagram.getElement(pathName);
-					List vector = element.getPath(null);
-					com.kitfox.svg.Path pathSVG = (com.kitfox.svg.Path) vector.get(1);
-					Shape shape = pathSVG.getShape();
-					PathIterator pathIterator = shape.getPathIterator(null, 0.001d);
-					float[] coords = new float[2];
-
-					while (!pathIterator.isDone()) {
-						pathIterator.currentSegment(coords);
-						points.add(new Vector2f(coords[0], coords[1]));
-						pathIterator.next();
-					}
-
-					return points;
-				}
-			});
+			builderUtils.put("svg", new SlickSvgUtils());
 
 		}
 
