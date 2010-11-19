@@ -48,6 +48,7 @@ import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentsManagerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
+import com.gemserk.games.zombierockers.entities.WorldEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.GameOverGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
@@ -147,13 +148,15 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.entities.spawner", javaEntityTemplateProvider.get().with(new SpawnerEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.segment", javaEntityTemplateProvider.get().with(new SegmentEntityBuilder()));
 
+			registrableTemplateProvider.add("zombierockers.entities.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
+			registrableTemplateProvider.add("zombierockers.entities.world", javaEntityTemplateProvider.get().with(new WorldEntityBuilder()));
+			
 			registrableTemplateProvider.add("zombierockers.scenes.playing", javaEntityTemplateProvider.get().with(new PlayingGameStateEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.scenes.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.scenes.gameover", javaEntityTemplateProvider.get().with(new GameOverGameStateEntityBuilder()));
 			
 			registrableTemplateProvider.add("zombierockers.scenes.sceneimpl", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
 			
-			registrableTemplateProvider.add("zombierockers.scenes.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
 		}
 
 		injector.getInstance(InitBuilderUtilsGroovy.class).config();

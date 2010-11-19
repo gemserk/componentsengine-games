@@ -73,7 +73,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 		});
 
-		child(templateProvider.getTemplate("zombierockers.scenes.world").instantiate("world", parameters));
+		child(templateProvider.getTemplate("zombierockers.entities.world").instantiate("world", parameters));
 
 		component(new ReferencePropertyComponent("mouseMoveConverter") {
 

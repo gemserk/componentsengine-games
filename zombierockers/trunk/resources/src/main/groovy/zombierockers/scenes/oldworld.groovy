@@ -281,7 +281,6 @@ builder.entity {
 		ballsByLayer.each { layer, balls ->
 			def alphaMask = level.alphaMasks?.get(layer)
 			
-			
 			AlphaMaskedSpritesRenderObject ballsRenderer = new AlphaMaskedSpritesRenderObject(layer, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
 			AlphaMaskedSpritesRenderObject shadowRenderer = new AlphaMaskedSpritesRenderObject(layer -1, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
 			

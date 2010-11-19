@@ -116,9 +116,6 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 		component(new ReferencePropertyComponent("checkSameColorSegmentsHandler") {
 
-			@Inject
-			MessageQueue messageQueue;
-
 			SegmentWrapper segment = new SegmentWrapper();
 			SegmentWrapper nextSegment = new SegmentWrapper();
 
@@ -163,9 +160,6 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 		component(new ReferencePropertyComponent("checkFirstSegmentShouldAdvanceHandler") {
 
-			@Inject
-			MessageQueue messageQueue;
-
 			SegmentsManagerWrapper segmentsManager = new SegmentsManagerWrapper();
 
 			SegmentWrapper firstSegment = new SegmentWrapper();
@@ -205,9 +199,6 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 		component(new ReferencePropertyComponent("destroySegmentHandler") {
 
-			@Inject
-			MessageQueue messageQueue;
-
 			@Handles
 			public void destroySegment(Message message) {
 				Entity segment = Properties.getValue(message, "segment");
@@ -219,9 +210,6 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 		
 		component(new ReferencePropertyComponent("collisionBetweenSegmentsDetector") {
 
-			@Inject
-			MessageQueue messageQueue;
-			
 			SegmentWrapper segment = new SegmentWrapper();
 			SegmentWrapper nextSegment = new SegmentWrapper();
 
