@@ -1,7 +1,6 @@
 package zombierockers.scenes
 
 import org.newdawn.slick.Graphics;
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.Path;
@@ -11,7 +10,7 @@ import com.gemserk.games.zombierockers.PathTraversal;
 
 builder.entity {
 	
-	property("bounds",utils.slick.rectangle(0,0,800,600))
+	property("bounds",parameters.screenBounds)
 	property("level", parameters.level)
 	property("currentLevelIndex",parameters.levelIndex)
 	
@@ -48,7 +47,7 @@ builder.entity {
 	
 	input("inputmapping"){
 		keyboard {
-			press(button:"escape",eventId:"returnToGame")
+			press(button:"escape",eventId:"restartLevel")
 			hold(button:"up",eventId:"advance")
 			hold(button:"down",eventId:"retreat")
 			press(button:"prior",eventId:"accelerate")
@@ -133,11 +132,4 @@ builder.entity {
 		})
 	})
 	
-	property("sceneTemplate",utils.templateProvider.getTemplate("zombierockers.scenes.scene"))
-	
-	component(utils.components.genericComponent(id:"returnToGameHandler", messageId:"returnToGame"){ message ->
-		def levelIndex = entity.currentLevelIndex
-		def scene = entity.sceneTemplate.instantiate(entity.id,[levelIndex:levelIndex])
-		utils.messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(scene,entity.root))
-	})
 }

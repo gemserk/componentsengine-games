@@ -7,15 +7,11 @@ import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
-import com.gemserk.componentsengine.components.ReflectionComponent;
-import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
-import com.gemserk.componentsengine.messages.Message;
-import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.google.inject.Inject;
@@ -86,22 +82,6 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		component(new ReflectionComponent("inputMessagesHandler") {
-			@Inject
-			MessageQueue messageQueue;
-
-			@Handles
-			public void resumeGame(Message message) {
-				messageQueue.enqueue(new Message("resume"));
-			}
-
-			@Handles
-			public void restart(Message message) {
-				messageQueue.enqueue(new Message("restartLevel"));
-			}
-
-		});
-
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
 			@Override
@@ -110,20 +90,20 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				keyboard(new KeyboardMappingBuilder() {
 					@Override
 					public void build() {
-						press("return", "resumeGame");
-						press("r", "restart");
-						press("space", "resumeGame");
-						press("p", "resumeGame");
-						press("escape", "resumeGame");
-						press("e", "goToEditor");
+						press("return", "resume");
+						press("r", "restartLevel");
+						press("space", "resume");
+						press("p", "resume");
+						press("escape", "resume");
+						press("e", "editor");
 					}
 				});
 
 				mouse(new MouseMappingBuilder() {
 					@Override
 					public void build() {
-						press("left", "resumeGame");
-						press("right", "resumeGame");
+						press("left", "resume");
+						press("right", "resume");
 					}
 				});
 			}
