@@ -20,23 +20,25 @@ builder.entity("game") {
 	
 	def currentLevel = levels[entity.currentLevelIndex]
 	
+	def screenBounds = utils.slick.rectangle(0, 0, 800, 600);
+	
 	//	def backgroundMusic = utils.slick.resources.sounds.sound("backgroundmusic")
 	//	backgroundMusic.play();
-	                          
+	
 	parent("GameStateManager", [
-	            transitions:[
-	             			gameover:"gameover",
-	            			paused:"paused",
-	            			resume:"playing",
-//	            			editor:"editor",
-	            			],
-	            stateEntities:[
-	               			playing:entity("playing"){ parent("zombierockers.scenes.playing", [level:currentLevel]) },
-	            			paused:entity("paused"){ parent("zombierockers.scenes.paused") },
-	            			gameover:entity("gameover"){  parent("zombierockers.scenes.gameover") },
-//	            			editor:entity("editor"){  parent("zombierockers.scenes.sceneEditor") },
-	            			],
-	            ])                          
+			transitions:[
+			gameover:"gameover",
+			paused:"paused",
+			resume:"playing",
+			//	            			editor:"editor",
+			],
+			stateEntities:[
+			playing:entity("playing"){ parent("zombierockers.scenes.playing", [level:currentLevel, screenBounds:screenBounds]) },
+			paused:entity("paused"){ parent("zombierockers.scenes.paused", [screenBounds:screenBounds]) },
+			gameover:entity("gameover"){  parent("zombierockers.scenes.gameover", [screenBounds:screenBounds]) },
+			//	            			editor:entity("editor"){  parent("zombierockers.scenes.sceneEditor") },
+			],
+			])                          
 	
 	component(utils.components.genericComponent(id:"enterStateHandler", messageId:"enterState"){ message ->
 		utils.messageQueue.enqueueDelay(utils.messages.genericMessage("resume"){})

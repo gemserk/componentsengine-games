@@ -49,7 +49,6 @@ builder.entity {
 		log.info("Leaving playing state")
 	})
 	
-	
 	component(utils.components.genericComponent(id:"grabscreenshot-leavenodestate", messageId:"leaveNodeState"){ message ->
 		def graphics = utils.slick.gameContainer.graphics
         graphics.copyArea(utils.slick.stateBasedGame.gameProperties.screenshot, 0, 0); 

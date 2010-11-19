@@ -42,7 +42,7 @@ public class GameOverGameStateEntityBuilder extends EntityBuilder {
 		final Font font = slick.getResources().getFonts().font(false, false, 28);
 
 		final Rectangle labelRectangle = slick.rectangle(-220, -50, 440, 100);
-		final Rectangle screenBounds = slick.rectangle(0, 0, 800, 600);
+		final Rectangle screenBounds = (Rectangle) parameters.get("screenBounds");
 
 		property("labelText", "");
 		property("win", false);
