@@ -31,7 +31,7 @@ builder.entity {
 	
 	def gameProperties = utils.slick.stateBasedGame.gameProperties
 	
-	property("bounds",utils.slick.rectangle(0,0,800,600))
+	property("bounds", parameters.screenBounds)
 	property("ballsQuantity",0)
 	property("baseReached",false)
 	
