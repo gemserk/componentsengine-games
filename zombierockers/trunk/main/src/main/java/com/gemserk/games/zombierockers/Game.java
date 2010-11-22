@@ -10,6 +10,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ import com.gemserk.games.zombierockers.gamestates.GameOverGameStateEntityBuilder
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SceneGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -78,7 +80,9 @@ public class Game extends StateBasedGame {
 
 		try {
 			Game game = new Game();
+			
 			game.getGameProperties().put("runningFromMain", true);
+			game.getGameProperties().put("screenResolution", new Rectangle(0, 0, 800, 600));
 
 			AppGameContainer app = new AppGameContainer(game);
 
@@ -156,7 +160,8 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.scenes.gameover", javaEntityTemplateProvider.get().with(new GameOverGameStateEntityBuilder()));
 			
 			registrableTemplateProvider.add("zombierockers.scenes.sceneimpl", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
-			
+
+			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
 		}
 
 		injector.getInstance(InitBuilderUtilsGroovy.class).config();
@@ -168,7 +173,7 @@ public class Game extends StateBasedGame {
 
 		injector.getInstance(InitSlickGroovyClosureRenderer.class).config();
 
-		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
+		GemserkGameState gameState = new GameGameState(0, "zombierockers.screens.splash");
 		injector.injectMembers(gameState);
 		addState(gameState);
 		getGameProperties().put("screenshot", new Image(800, 600));

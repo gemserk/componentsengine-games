@@ -1,6 +1,6 @@
 package zombierockers.scenes;
 
-builder.entity("game") { 
+builder.entity { 
 	
 	parameters.levels = ScenesDefinitions.scenes(utils)
 	

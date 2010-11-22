@@ -113,7 +113,16 @@ class ScenesDefinitions {
 				subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(412.8999f,706.1004f, [layer:15, collisionMask:7]) ], defaultElement),
 				alphaMasks:[(15):new Image("levels/level08/alphaMask1.png")]
 				]
-		def levels = [level01, level02, level03, level04, level05,level07,level06,level08]
+		
+		def level09 = [background:"level10", path:"levels/level10/path.svg",ballsQuantity:300,
+				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
+				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
+				placeables:[],
+				//collisionMap:collisionMap("levels/level07/collisionMap.png"),
+				subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(1685.6128f, 2114.009f, [layer:2, collisionMask:2]) ], defaultElement),
+				alphaMasks:[(2):new Image("levels/level10/mask.png")]
+				]
+		def levels = [level01, level02, level03, level04, level05,level07,level06,level08,level09]
 		return levels
 	}
 	
