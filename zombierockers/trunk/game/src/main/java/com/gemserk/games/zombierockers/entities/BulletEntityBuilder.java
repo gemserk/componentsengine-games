@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
@@ -79,8 +78,7 @@ public class BulletEntityBuilder extends EntityBuilder {
 					@Override
 					public Object get() {
 						Entity ball = Properties.getValue(getHolder(), "ball");
-						Animation animation = Properties.getValue(ball, "animation");
-						return animation.getCurrentFrame();
+						return Properties.getValue(ball, "currentFrame");
 					}
 				});
 

@@ -1,6 +1,8 @@
 package zombierockers.scenes
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+
 import com.gemserk.componentsengine.commons.components.CircleRenderableComponent 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.Path;
@@ -17,11 +19,15 @@ builder.entity {
 	property("path",new Path(utils.svg.loadPoints(entity.level.path, "path")))	
 	
 	component(new ImageRenderableComponent("imagerenderer")) {
-		property("image", utils.slick.resources.image(entity.level.background))
+		//		property("image", utils.slick.resources.image(entity.level.background))
 		property("color", utils.slick.color(1,1,1,1))
 		property("position", utils.slick.vector(400,300))
 		property("direction", utils.slick.vector(1,0))
 		property("layer", -1000)
+		
+		property("image", {
+			utils.resourceManager.get(entity.level.background, Image.class).get();
+		})
 	}
 	
 	component(utils.components.genericComponent(id:"placeablesRender", messageId:["render"]){ message ->
@@ -32,8 +38,8 @@ builder.entity {
 		placeables.each { placeable ->
 			def position = placeable.position
 			def layer = placeable.layer
-			def image = utils.slick.resources.image(placeable.image)
-			def input = utils.slick.gameContainer.input
+			def image = utils.resourceManager.get(placeable.image, Image.class).get();
+			//			def image = utils.slick.resources.image(placeable.image)
 			//position = utils.slick.vector(input.mouseX, input.mouseY)
 			//println position
 			renderer.enqueue( new ClosureRenderObject(layer, { Graphics g ->
@@ -127,9 +133,7 @@ builder.entity {
 				entity.velocity = (float)0.90f*entity.velocity
 		})
 		
-		component(utils.components.genericComponent(id:"printerDistancer", messageId:["printDistance"]){ message ->
-			println "${entity.pathTraversal.distanceFromOrigin}"
-		})
+		component(utils.components.genericComponent(id:"printerDistancer", messageId:["printDistance"]){ message -> println "${entity.pathTraversal.distanceFromOrigin}" })
 	})
 	
 }

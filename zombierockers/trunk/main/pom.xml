@@ -54,7 +54,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>game</artifactId>
 		</dependency>
-		
 
 	</dependencies>
 

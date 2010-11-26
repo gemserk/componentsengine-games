@@ -25,6 +25,7 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
+import com.gemserk.resources.Resource;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -172,8 +173,8 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void leaveNodeState(Message message) {
 				Graphics graphics = slick.getGameContainer().getGraphics();
-				Image screenshot = (Image) globalProperties.getProperties().get("screenshot");
-				graphics.copyArea(screenshot, 0, 0);
+				Resource<Image> screenshot = (Resource<Image>) globalProperties.getProperties().get("screenshot");
+				graphics.copyArea(screenshot.get(), 0, 0);
 			}
 		});
 

@@ -17,11 +17,13 @@ import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
+import com.gemserk.resources.Resource;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -49,11 +51,19 @@ public class GameOverGameStateEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
-				property("image", globalProperties.getProperties().get("screenshot"));
+				// property("image", globalProperties.getProperties().get("screenshot"));
 				property("color", slick.color(1, 1, 1, 1));
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", 900);
+
+				property("image", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						Resource resource = (Resource) globalProperties.getProperties().get("screenshot");
+						return resource.get();
+					}
+				});
 			}
 		});
 

@@ -12,8 +12,13 @@ import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
+import com.gemserk.componentsengine.properties.FixedProperty;
+import com.gemserk.componentsengine.properties.Properties;
+import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
+import com.gemserk.resources.Resource;
+import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -28,21 +33,39 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 	@Inject
 	GlobalProperties globalProperties;
 	
+	@Inject
+	ResourceManager resourceManager;
+
 	@Override
 	public void build() {
-
-		final Font font = slick.getResources().getFonts().font(false, false, 28);
 
 		final Rectangle labelRectangle = slick.rectangle(-220, -50, 440, 100);
 		final Rectangle screenBounds = (Rectangle) parameters.get("screenBounds");
 
+		property("fontResource", resourceManager.get("FontDialogMessage", Font.class));
+		property("font", new FixedProperty(entity) {
+			@Override
+			public Object get() {
+				Resource fontResource = Properties.getValue(getHolder(), "fontResource");
+				return fontResource.get();
+			}
+		});
+
 		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
-				property("image", globalProperties.getProperties().get("screenshot"));
+				// property("image", globalProperties.getProperties().get("screenshot"));
 				property("color", slick.color(1, 1, 1, 1));
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", 900);
+
+				property("image", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						Resource resource = (Resource) globalProperties.getProperties().get("screenshot");
+						return resource.get();
+					}
+				});
 			}
 		});
 
@@ -55,10 +78,9 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				property("layer", 1000);
 			}
 		});
-		
+
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("pausedLabel", new HashMap<String, Object>() {
 			{
-				put("font", font);
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				put("fontColor", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", labelRectangle);
@@ -66,12 +88,13 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1010);
 				put("message", "Paused, press click to continue...");
+//				put("font", font);
+				put("font", new ReferenceProperty("font", entity));
 			}
 		}));
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("restartLabel", new HashMap<String, Object>() {
 			{
-				put("font", font);
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 40f));
 				put("fontColor", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", labelRectangle);
@@ -79,6 +102,8 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1010);
 				put("message", "Press \"r\" to restart");
+//				put("font", font);
+				put("font", new ReferenceProperty("font", entity));
 			}
 		}));
 

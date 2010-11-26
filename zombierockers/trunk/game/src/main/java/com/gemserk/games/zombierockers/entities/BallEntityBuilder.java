@@ -26,6 +26,8 @@ import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.games.zombierockers.AnimationHelper;
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.gemserk.games.zombierockers.SubPathDefinition;
+import com.gemserk.resources.Resource;
+import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 
 public class BallEntityBuilder extends EntityBuilder {
@@ -34,6 +36,9 @@ public class BallEntityBuilder extends EntityBuilder {
 	SlickUtils slickUtils;
 	
 	private static int ballNumber = 1;
+	
+	@Inject
+	ResourceManager resourceManager;
 	
 	@Override
 	public String getId() {
@@ -48,10 +53,22 @@ public class BallEntityBuilder extends EntityBuilder {
 		tags("ball");
 
 		Map definition = (Map) parameters.get("definition");
+		
+		Resource<Animation> animationResource = resourceManager.get((String) definition.get("animation"), Animation.class);
+		
+//		property("ballImageResource", resourceManager.get("ball", Image.class));
 
 		property("type", definition.get("type"));
 		property("color", definition.get("color"));
-		property("animation", slickUtils.getResources().animation((String) definition.get("animation")));
+		
+		property("animationResource", animationResource);
+		property("animation", new FixedProperty(entity){
+			@Override
+			public Object get() {
+				Resource resource = Properties.getValue(getHolder(), "animationResource");
+				return resource.get();
+			}
+		});
 
 		property("radius", parameters.get("radius"));
 		property("finalRadius", parameters.get("finalRadius") != null ? parameters.get("finalRadius") : parameters.get("radius"));
@@ -80,10 +97,11 @@ public class BallEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		Animation animation = Properties.getValue(entity, "animation");
+//		Animation animation = Properties.getValue(entity, "animation");
+		Animation animation = animationResource.get();
 		Float finalRadius = Properties.getValue(entity, "finalRadius");
 		float frameSize = (float) (2 * Math.PI * finalRadius / animation.getFrameCount());
-		property("animationHelper", new AnimationHelper(animation, frameSize));
+		property("animationHelper", new AnimationHelper(animationResource, frameSize));
 
 		property("direction", new FixedProperty(entity) {
 			@Override
@@ -120,6 +138,10 @@ public class BallEntityBuilder extends EntityBuilder {
 		property("currentFrame", new FixedProperty(entity) {
 			@Override
 			public Object get() {
+				
+//				Resource<Image> imageResource = Properties.getValue(getHolder(), "ballImageResource");
+//				return imageResource.get();
+				
 				Animation animation = Properties.getValue(getHolder(), "animation");
 				return animation.getCurrentFrame();
 			}

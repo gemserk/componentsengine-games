@@ -5,6 +5,7 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -55,6 +56,12 @@ import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SceneGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
+import com.gemserk.resources.Resource;
+import com.gemserk.resources.ResourceManager;
+import com.gemserk.resources.slick.DefaultSlickFontLoaderProvider;
+import com.gemserk.resources.slick.PropertiesAnimationLoader;
+import com.gemserk.resources.slick.PropertiesImageLoader;
+import com.gemserk.resources.slick.resourceloaders.SlickTrueTypeFontLoader;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -66,21 +73,21 @@ import com.google.inject.Singleton;
 public class Game extends StateBasedGame {
 
 	protected static final Logger logger = LoggerFactory.getLogger(Game.class);
-	
+
 	/**
 	 * to be used in groovy templates for now...
 	 */
 	public Map<String, Object> getGameProperties() {
 		return globalProperties.getProperties();
 	}
-	
+
 	GlobalProperties globalProperties = new GlobalProperties();
 
 	public static void main(String[] arguments) {
 
 		try {
 			Game game = new Game();
-			
+
 			game.getGameProperties().put("runningFromMain", true);
 			game.getGameProperties().put("screenResolution", new Rectangle(0, 0, 800, 600));
 
@@ -90,6 +97,8 @@ public class Game extends StateBasedGame {
 
 			app.setDisplayMode(800, 600, false);
 			app.setAlwaysRender(true);
+			
+			app.setFullscreen(false);
 
 			app.setMinimumLogicUpdateInterval(1);
 			// app.setTargetFrameRate(60);
@@ -131,6 +140,8 @@ public class Game extends StateBasedGame {
 						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
 						bind(GlobalProperties.class).toInstance(globalProperties);
 						bind(SlickSvgUtils.class).in(Singleton.class);
+
+						bind(ResourceManager.class).in(Singleton.class);
 					}
 				});
 
@@ -154,11 +165,11 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("zombierockers.entities.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.world", javaEntityTemplateProvider.get().with(new WorldEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.scenes.playing", javaEntityTemplateProvider.get().with(new PlayingGameStateEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.scenes.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.scenes.gameover", javaEntityTemplateProvider.get().with(new GameOverGameStateEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.scenes.sceneimpl", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
@@ -176,25 +187,41 @@ public class Game extends StateBasedGame {
 		GemserkGameState gameState = new GameGameState(0, "zombierockers.screens.splash");
 		injector.injectMembers(gameState);
 		addState(gameState);
-		getGameProperties().put("screenshot", new Image(800, 600));
+		getGameProperties().put("screenshot", new Resource<Image>(new Image(800, 600)));
 	}
 
 	class GameGameState extends GemserkGameState {
-
-
 
 		@Inject
 		@BuilderUtils
 		Map<String, Object> builderUtils;
 
+		@Inject
+		PropertiesAnimationLoader propertiesAnimationLoader;
+
+		@Inject
+		PropertiesImageLoader propertiesImageLoader;
+
+		@Inject
+		ResourceManager resourceManager;
+
 		@Override
 		public void onInit() {
 			super.onInit();
 
-			images("assets/images.properties");
-			animations("assets/animations.properties");
+			// images("assets/images.properties");
+			// animations("assets/animations.properties");
+
+			propertiesImageLoader.load("assets/images.properties");
+			propertiesAnimationLoader.load("assets/animations.properties");
+
+			// resourceManager.registerResourceLoader("FontTitle", new slick)
+			resourceManager.registerLoaderProvider(Font.class, new DefaultSlickFontLoaderProvider());
+//			resourceManager.registerResourceLoader("FontTitle", new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36), true));
+			resourceManager.registerResourceLoader("FontDialogMessage", new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36));
 
 			builderUtils.put("svg", new SlickSvgUtils());
+			builderUtils.put("resourceManager", resourceManager);
 
 		}
 

@@ -15,7 +15,6 @@ import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
@@ -24,8 +23,6 @@ import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.PropertiesWrapper;
 import com.gemserk.componentsengine.properties.Property;
-import com.gemserk.componentsengine.slick.utils.SlickSvgUtils;
-import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.google.common.base.Predicate;
@@ -38,15 +35,6 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
-
-	@Inject
-	GlobalProperties globalProperties;
-
-	@Inject
-	SlickSvgUtils slickSvgUtils;
-
-	@Inject
-	SlickUtils slick;
 
 	List<Entity> getSortedSegments(Entity entity) {
 

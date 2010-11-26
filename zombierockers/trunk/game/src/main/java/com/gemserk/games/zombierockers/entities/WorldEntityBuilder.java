@@ -45,6 +45,8 @@ import com.gemserk.componentsengine.timers.CountDownTimer;
 import com.gemserk.componentsengine.triggers.Trigger;
 import com.gemserk.games.zombierockers.renderer.AlphaMaskedSprite;
 import com.gemserk.games.zombierockers.renderer.AlphaMaskedSpritesRenderObject;
+import com.gemserk.resources.Resource;
+import com.gemserk.resources.ResourceManager;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.HashMultimap;
@@ -70,12 +72,15 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 	@Inject
 	SlickUtils slick;
-	
+
+	@Inject
+	ResourceManager resourceManager;
+
 	class BallWrapper extends PropertiesWrapper {
 
 		@EntityProperty
 		Property<Image> currentFrame;
-		
+
 		@EntityProperty
 		Property<Vector2f> position;
 
@@ -84,13 +89,13 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 		@EntityProperty
 		Property<Color> color;
-		
+
 		@EntityProperty
 		Property<Vector2f> size;
-		
+
 		@EntityProperty
 		Property<Integer> layer;
-		
+
 	}
 
 	@Override
@@ -107,6 +112,14 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 		property("level", level);
 
+		// pre load needed images?
+		Map<Integer, String> alphaMasks = (Map<Integer, String>) level.get("alphaMasks");
+		if (alphaMasks != null) {
+			for (Integer key : alphaMasks.keySet()) {
+				resourceManager.get(alphaMasks.get(key), Image.class);
+			}
+		}
+
 		final Path levelPath = new Path(slickSvgUtils.loadPoints((String) level.get("path"), "path"));
 
 		property("path", levelPath);
@@ -118,13 +131,24 @@ public class WorldEntityBuilder extends EntityBuilder {
 			}
 		});
 
+		property("backgroundImageResource", resourceManager.get(level.get("background"), Image.class));
+
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
-				property("image", slick.getResources().image((String) level.get("background")));
+				// property("image", slick.getResources().image((String) level.get("background")));
+				// property("image", resourceManager.get(level.get("background"), Image.class));
 				property("color", slick.color(1, 1, 1, 1));
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", -1000);
+
+				property("image", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						Resource resource = Properties.getValue(getHolder(), "backgroundImageResource");
+						return resource.get();
+					}
+				});
 			}
 		});
 
@@ -146,7 +170,10 @@ public class WorldEntityBuilder extends EntityBuilder {
 				for (Map<String, Object> placeable : placeables) {
 					final Vector2f position = (Vector2f) placeable.get("position");
 					Integer layer = (Integer) placeable.get("layer");
-					final Image image = slick.getResources().image((String) placeable.get("image"));
+
+					// property("image", resourceManager.get(level.get("background"), Image.class));
+					// final Image image = slick.getResources().image((String) placeable.get("image"));
+					final Image image = resourceManager.get(placeable.get("image"), Image.class).get();
 
 					renderer.enqueue(new SlickCallableRenderObject(layer) {
 
@@ -307,10 +334,11 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 		});
 
-		property("ballShadowImage", slick.getResources().image("ballshadow"));
+		// property("ballShadowImage", slick.getResources().image("ballshadow"));
+		property("ballShadowImage", resourceManager.get("ballshadow", Image.class));
 
 		component(new ReferencePropertyComponent("ballRenderer") {
-			
+
 			BallWrapper ball = new BallWrapper();
 
 			@Handles
@@ -328,7 +356,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 					return;
 
 				RenderQueue renderer = Properties.getValue(message, "renderer");
-				Image ballShadowImage = Properties.getValue(entity, "ballShadowImage");
+				Resource<Image> ballShadowImage = Properties.getValue(entity, "ballShadowImage");
 
 				Map<String, Object> level = Properties.getValue(entity, "level");
 				Multimap<Integer, Entity> ballsByLayer = HashMultimap.create();
@@ -337,37 +365,41 @@ public class WorldEntityBuilder extends EntityBuilder {
 					ball.wrap(ballEntity);
 					ballsByLayer.put(ball.layer.get(), ballEntity);
 				}
-				
+
 				Color shadowColor = slick.color(1, 1, 1, 1);
-				Vector2f shadowDispacement = slick.vector(3,3);
+				Vector2f shadowDispacement = slick.vector(3, 3);
+
+				Map<Integer, String> alphaMasks = (Map<Integer, String>) level.get("alphaMasks");
 
 				for (Integer layer : ballsByLayer.keySet()) {
 					Collection<Entity> balls = ballsByLayer.get(layer);
 
-					Map<Integer, Image> alphaMasks = (Map<Integer, Image>) level.get("alphaMasks");
 					Image alphaMask = null;
-					if (alphaMasks != null)
-						alphaMask = alphaMasks.get(layer);
+					if (alphaMasks != null) {
+						String alphaMaskId = alphaMasks.get(layer);
+						if (alphaMaskId != null)
+							alphaMask = resourceManager.get(alphaMasks.get(layer), Image.class).get();
+					}
 
 					AlphaMaskedSpritesRenderObject ballsRenderer = new AlphaMaskedSpritesRenderObject(layer, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
 					AlphaMaskedSpritesRenderObject shadowRenderer = new AlphaMaskedSpritesRenderObject(layer - 1, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));
 
 					List<AlphaMaskedSprite> ballsSprites = ballsRenderer.getSprites();
 					List<AlphaMaskedSprite> shadowSprites = shadowRenderer.getSprites();
-					
+
 					for (Entity ballEntity : balls) {
 						ball.wrap(ballEntity);
-						
+
 						Image image = ball.currentFrame.get();
 						Vector2f position = ball.position.get();
 						Vector2f direction = ball.direction.get();
 						Vector2f size = ball.size.get();
 						Color color = ball.color.get();
-						
+
 						ballsSprites.add(new AlphaMaskedSprite(image, position, direction, size, color));
-						shadowSprites.add(new AlphaMaskedSprite(ballShadowImage, position.copy().add(shadowDispacement), direction, size, shadowColor));
+						shadowSprites.add(new AlphaMaskedSprite(ballShadowImage.get(), position.copy().add(shadowDispacement), direction, size, shadowColor));
 					}
-					
+
 					renderer.enqueue(ballsRenderer);
 					renderer.enqueue(shadowRenderer);
 				}

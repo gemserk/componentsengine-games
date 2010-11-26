@@ -45,6 +45,24 @@
 			<version>0.0.1.GEMSERK.a</version>
 			<classifier>tiny</classifier>
 		</dependency>
+
+		<dependency>
+			<groupId>com.gemserk.resources</groupId>
+			<artifactId>core</artifactId>
+			<version>0.0.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.gemserk.resources</groupId>
+			<artifactId>slickmodule</artifactId>
+			<version>0.0.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.gemserk.commons.animation</groupId>
+			<artifactId>animation</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 </project>

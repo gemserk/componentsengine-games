@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gemserk.games.zombierocker</groupId>
 	<artifactId>zombierockers</artifactId>
@@ -32,6 +33,7 @@
 	<properties>
 		<compiler.version>1.6</compiler.version>
 		<componentsengine.version>0.0.8-SNAPSHOT</componentsengine.version>
+		<resourcesmanager.version>0.0.4-SNAPSHOT</resourcesmanager.version>
 	</properties>
 
 	<build>
@@ -93,8 +95,8 @@
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock-legacy</artifactId>
 		</dependency>
-	</dependencies>
 
+	</dependencies>
 
 	<dependencyManagement>
 
@@ -154,11 +156,23 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>com.gemserk.resources</groupId>
+				<artifactId>core</artifactId>
+				<version>${resourcesmanager.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.gemserk.resources</groupId>
+				<artifactId>slickmodule</artifactId>
+				<version>${resourcesmanager.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
-  <modules>
-    <module>game</module>
-    <module>resources</module>
-    <module>main</module>
-  </modules>
+	<modules>
+		<module>game</module>
+		<module>resources</module>
+		<module>main</module>
+	</modules>
 </project>

@@ -10,6 +10,7 @@ import java.util.Random;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -31,11 +32,11 @@ import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.Property;
-import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.gemserk.componentsengine.triggers.Trigger;
+import com.gemserk.resources.ResourceManager;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
@@ -50,10 +51,10 @@ public class CannonEntityBuilder extends EntityBuilder {
 	MessageQueue messageQueue;
 
 	@Inject
-	SlickUtils slickUtils;
+	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
 
 	@Inject
-	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
+	ResourceManager resourceManager;
 
 	Random random = new Random();
 
@@ -242,8 +243,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 					@Override
 					public Object get() {
 						Entity ball = Properties.getValue(getHolder(), "currentBall");
-						Animation animation = Properties.getValue(ball, "animation");
-						return animation.getCurrentFrame();
+						return Properties.getValue(ball, "currentFrame");
 					}
 				});
 				property("color", new FixedProperty(entity) {
@@ -264,8 +264,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 					@Override
 					public Object get() {
 						Entity ball = Properties.getValue(getHolder(), "nextBall");
-						Animation animation = Properties.getValue(ball, "animation");
-						return animation.getCurrentFrame();
+						return Properties.getValue(ball, "currentFrame");
 					}
 				});
 				property("color", new FixedProperty(entity) {
@@ -282,10 +281,17 @@ public class CannonEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("imagerenderer")).withProperties(new ComponentProperties() {
 			{
-				property("image", slickUtils.getResources().image("ship"));
+				// property("image", slickUtils.getResources().image("ship"));
+				// property("image", resourceManager.get("ship", Image.class));
 				property("color", new Color(1f, 1f, 1f, 1f));
 				propertyRef("position", "position");
 				propertyRef("direction", "direction");
+				property("image", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						return resourceManager.get("ship", Image.class).get();
+					}
+				});
 			}
 		});
 
@@ -445,10 +451,18 @@ public class CannonEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.entities.cursor").instantiate("cursor", new HashMap<String, Object>() {
 			{
 				put("color", colorProperty);
-				put("image", slickUtils.getResources().image("cursor"));
+				// put("image", slickUtils.getResources().image("cursor"));
+				// put("image", resourceManager.get("cursor", Image.class));
 				put("position", new Vector2f(400, 300));
 				put("bounds", new Rectangle(20, 20, 760, 520));
 				put("layer", 10);
+
+				put("image", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						return resourceManager.get("cursor", Image.class).get();
+					}
+				});
 			}
 		}));
 

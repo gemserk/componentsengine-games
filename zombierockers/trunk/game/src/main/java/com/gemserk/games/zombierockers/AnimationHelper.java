@@ -2,19 +2,21 @@ package com.gemserk.games.zombierockers;
 
 import org.newdawn.slick.Animation;
 
+import com.gemserk.resources.Resource;
+
 public class AnimationHelper {
 
-	final Animation animation;
+	final Resource<Animation> animation;
 
 	final float frameSize;
 
 	float framePosition;
 
 	public Animation getAnimation() {
-		return animation;
+		return animation.get();
 	}
 
-	public AnimationHelper(Animation animation, float frameSize) {
+	public AnimationHelper(Resource<Animation> animation, float frameSize) {
 		this.animation = animation;
 		this.frameSize = frameSize;
 		this.framePosition = frameSize / 2f;
@@ -36,7 +38,7 @@ public class AnimationHelper {
 		framePosition -= distance;
 
 		while (framePosition < 0) {
-			animation.setCurrentFrame(getPreviousFrame(animation.getFrame(), animation.getFrameCount()));
+			getAnimation().setCurrentFrame(getPreviousFrame(getAnimation().getFrame(), getAnimation().getFrameCount()));
 			framePosition += frameSize;
 		}
 	}
@@ -51,7 +53,7 @@ public class AnimationHelper {
 		framePosition += distance;
 
 		while (framePosition > frameSize) {
-			animation.setCurrentFrame(getNextFrame(animation.getFrame(), animation.getFrameCount()));
+			getAnimation().setCurrentFrame(getNextFrame(getAnimation().getFrame(), getAnimation().getFrameCount()));
 			framePosition -= frameSize;
 		}
 	}

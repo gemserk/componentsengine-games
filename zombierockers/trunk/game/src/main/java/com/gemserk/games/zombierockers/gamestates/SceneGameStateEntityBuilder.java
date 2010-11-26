@@ -35,6 +35,7 @@ import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.EntityTemplate;
 import com.gemserk.componentsengine.utils.EntityDumper;
+import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -131,6 +132,18 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
+		
+		component(new ReflectionComponent("reloadResourcesHandler") {
+
+			@Inject
+			ResourceManager resourceManager;
+			
+			@Handles
+			public void reloadResources(Message message) {
+				resourceManager.reloadAll();
+			}
+
+		});
 
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
@@ -143,6 +156,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						press("x", "dumpEntities");
 						press("n", "nextLevel");
 						press("k", "makeScreenshot");
+						press("u", "reloadResources");
 					}
 				});
 			}
