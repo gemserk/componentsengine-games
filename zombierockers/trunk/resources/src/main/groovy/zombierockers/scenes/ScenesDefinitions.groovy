@@ -122,7 +122,7 @@ class ScenesDefinitions {
 				subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(1685.6128f, 2114.009f, [layer:2, collisionMask:2]) ], defaultElement),
 				alphaMasks:[(2):new Image("levels/level10/mask.png")]
 				]
-		def levels = [level01, level02, level03, level04, level05,level07,level06,level08,level09]
+		def levels = [level01, level02, level03, level04, level05,level07,level06,level08]
 		return levels
 	}
 	
