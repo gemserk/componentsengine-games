@@ -81,7 +81,7 @@ public class GameOverGameStateEntityBuilder extends EntityBuilder {
 			{
 				put("font", font);
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
-				put("fontColor", slick.color(0f, 0f, 0f, 1f));
+				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");

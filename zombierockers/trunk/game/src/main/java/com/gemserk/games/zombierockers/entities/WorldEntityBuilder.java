@@ -280,10 +280,10 @@ public class WorldEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("pausedLabel", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("ballsQuantityLabel", new HashMap<String, Object>() {
 			{
 				put("position", slick.vector(screenBounds.getMaxX() - 60f, screenBounds.getMinY() + 30f));
-				put("fontColor", slick.color(0f, 0f, 0f, 1f));
+				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
 				put("align", "left");
 				put("valign", "top");

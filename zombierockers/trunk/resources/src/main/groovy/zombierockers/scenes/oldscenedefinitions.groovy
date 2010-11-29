@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 import com.gemserk.games.zombierockers.ImageCollisionMap;
 import com.gemserk.games.zombierockers.SubPathDefinition;
 
-class ScenesDefinitions {
+class oldscenedefinitions {
 	
 	static def scenes(def utils){
 		// TODO: find better way to define balls, now it is not understandable

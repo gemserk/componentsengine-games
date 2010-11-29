@@ -16,7 +16,7 @@ builder.entity("game") {
 	
 	property("currentLevelIndex", parameters.levelIndex ?: 0)
 	
-	def levels = ScenesDefinitions.scenes(utils)
+	def levels = oldscenedefinitions.scenes(utils)
 	
 	def currentLevel = levels[entity.currentLevelIndex]
 	

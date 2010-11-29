@@ -1,7 +1,5 @@
 package com.gemserk.games.zombierockers.gamestates;
 
-import gemserk.utils.GroovyBootstrapper;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +54,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 	@SuppressWarnings( { "unchecked", "serial" })
 	@Override
 	public void build() {
-		
-		new GroovyBootstrapper();
 		
 		List<Map<String, Object>> levels = ScenesDefinitions.levels();
 

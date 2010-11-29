@@ -136,6 +136,12 @@
 				<groupId>com.gemserk.componentsengine</groupId>
 				<artifactId>commons</artifactId>
 				<version>${componentsengine.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.gemserk.componentsengine</groupId>
+						<artifactId>groovymodule</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
