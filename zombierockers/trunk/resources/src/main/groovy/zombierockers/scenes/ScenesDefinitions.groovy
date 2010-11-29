@@ -1,6 +1,7 @@
 package zombierockers.scenes
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -116,16 +117,16 @@ class ScenesDefinitions {
 		def level09 = [background:"level09", path:"levels/level09/path.svg",ballsQuantity:300,
 				pathProperties:[speed:0.04f, acceleratedSpeed:0.5f, accelerationStopPoint:1300f, minSpeedFactor:0.3f, maxSpeed:0.05f, speedWhenReachBase:0.4f],
 				ballDefinitions:ballDefinitions(["red","blue","green","white"]),
-//				placeables:[],
+				//				placeables:[],
 				placeables:[[image:"level09_path",position:utils.slick.vector(400f,300f),layer:0]],
 				//collisionMap:collisionMap("levels/level07/collisionMap.png"),
 				subPathDefinitions:segmentsMetadataConvertor([], defaultElement),
-//								subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(0f,70006.1004f, [layer:1, collisionMask:1]) ], defaultElement),
-//								alphaMasks:[(1):"level09_alphaMask"]
+				//								subPathDefinitions:segmentsMetadataConvertor([subPathDefinition(0f,70006.1004f, [layer:1, collisionMask:1]) ], defaultElement),
+				//								alphaMasks:[(1):"level09_alphaMask"]
 				]
 		
-		def levels = [level01, level02, level03, level04, level05,level07,level06,level08,level09]
-		return levels
+		
+		return Arrays.asList(level01, level02, level03, level04, level05,level07,level06,level08,level09);
 	}
 	
 	

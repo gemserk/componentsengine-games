@@ -171,7 +171,7 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.scenes.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.scenes.gameover", javaEntityTemplateProvider.get().with(new GameOverGameStateEntityBuilder()));
 
-			registrableTemplateProvider.add("zombierockers.scenes.sceneimpl", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
+			registrableTemplateProvider.add("zombierockers.scenes.scene", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
 			

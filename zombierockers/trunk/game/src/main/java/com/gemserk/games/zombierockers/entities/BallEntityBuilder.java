@@ -1,7 +1,5 @@
 package com.gemserk.games.zombierockers.entities;
 
-import groovy.lang.Closure;
-
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +24,7 @@ import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.games.zombierockers.AnimationHelper;
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.gemserk.games.zombierockers.SubPathDefinition;
+import com.gemserk.games.zombierockers.ScenesDefinitions.SubPathDefinitions;
 import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
@@ -173,9 +172,13 @@ public class BallEntityBuilder extends EntityBuilder {
 
 				pathTraversal = newPathTraversal;
 
-				Map subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
-				Closure method = (Closure) subPathDefinitions.get("getSubPathDefinition");
-				SubPathDefinition subPathDefinition = (SubPathDefinition) method.call(newPathTraversal);
+				SubPathDefinitions subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
+				
+//				Map subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
+//				Closure method = (Closure) subPathDefinitions.get("getSubPathDefinition");
+//				SubPathDefinition subPathDefinition = (SubPathDefinition) method.call(newPathTraversal);
+				
+				SubPathDefinition subPathDefinition = subPathDefinitions.getSubPathDefinition(newPathTraversal);
 
 				layer = (Integer) subPathDefinition.getMetadata().get("layer");
 				collisionMask = (Integer) subPathDefinition.getMetadata().get("collisionMask");

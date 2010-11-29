@@ -35,6 +35,7 @@ import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.EntityTemplate;
 import com.gemserk.componentsengine.utils.EntityDumper;
+import com.gemserk.games.zombierockers.ScenesDefinitions;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -55,11 +56,13 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 	@SuppressWarnings( { "unchecked", "serial" })
 	@Override
 	public void build() {
-
+		
 		new GroovyBootstrapper();
+		
+		List<Map<String, Object>> levels = ScenesDefinitions.levels();
 
 		final Integer levelIndex = (Integer) (parameters.get("levelIndex") != null ? parameters.get("levelIndex") : 0);
-		List<Map<String, Object>> levels = (List<Map<String, Object>>) parameters.get("levels");
+//		List<Map<String, Object>> levels = (List<Map<String, Object>>) parameters.get("levels");
 		final Map<String, Object> currentLevel = levels.get(levelIndex);
 		final Rectangle screenBounds = slick.rectangle(0, 0, 800, 600);
 
