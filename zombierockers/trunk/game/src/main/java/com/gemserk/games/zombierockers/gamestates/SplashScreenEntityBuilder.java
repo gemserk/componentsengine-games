@@ -19,13 +19,11 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
-import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.FixedProperty;
@@ -69,11 +67,26 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
 				property("color", slick.color(1, 1, 1, 1));
 				property("direction", slick.vector(1, 0));
-				property("layer", -1);
+				property("layer", 0);
 				property("image", new FixedProperty(entity) {
 					@Override
 					public Object get() {
 						return resourceManager.get("background", Image.class).get();
+					}
+				});
+			}
+		});
+
+		component(new ImageRenderableComponent("logo")).withProperties(new ComponentProperties() {
+			{
+				property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
+				property("color", slick.color(1, 1, 1, 1));
+				property("direction", slick.vector(1, 0));
+				property("layer", 1);
+				property("image", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						return resourceManager.get("gemserklogo", Image.class).get();
 					}
 				});
 			}
@@ -85,16 +98,16 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 
 				property("color", slick.color(1, 1, 1, 1));
 
-				component(new ImageRenderableComponent("logo")).withProperties(new ComponentProperties() {
+				component(new ImageRenderableComponent("fadeImage")).withProperties(new ComponentProperties() {
 					{
 						property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
 						propertyRef("color", "color");
 						property("direction", slick.vector(1, 0));
-						property("layer", 1);
+						property("layer", 10);
 						property("image", new FixedProperty(entity) {
 							@Override
 							public Object get() {
-								return resourceManager.get("gemserklogo", Image.class).get();
+								return resourceManager.get("background", Image.class).get();
 							}
 						});
 					}
@@ -110,10 +123,10 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 							{
 								interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
 
-								keyFrame(0, new Color(1f, 1f, 1f, 0f));
-								keyFrame(part, new Color(1f, 1f, 1f, 1f));
-								keyFrame(part * 3, new Color(1f, 1f, 1f, 1f));
-								keyFrame(part * 4, new Color(1f, 1f, 1f, 0f));
+								keyFrame(0, new Color(1f, 1f, 1f, 1f));
+								keyFrame(part, new Color(1f, 1f, 1f, 0f));
+								keyFrame(part * 3, new Color(1f, 1f, 1f, 0f));
+								keyFrame(part * 4, new Color(1f, 1f, 1f, 1f));
 							}
 						});
 
@@ -146,7 +159,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				});
 
 			}
-		}).instantiate("gemserkLogo", new HashMap<String, Object>() {
+		}).instantiate("fadeInImage", new HashMap<String, Object>() {
 			{
 				put("time", 3500);
 			}
@@ -171,18 +184,24 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				Integer delta = Properties.getValue(message, "delta");
 				timeToNextScreen -= delta;
 				if (timeToNextScreen <= 0) {
-					Entity newScene = templateProvider.getTemplate("zombierockers.scenes.scene").instantiate(entity.getId());
-					messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
-					messageQueue.enqueueDelay(new Message("resume"));
+//					Entity newScene = templateProvider.getTemplate("zombierockers.screens.menu").instantiate(entity.getId());
+//					messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
+//					messageQueue.enqueueDelay(new Message("resume"));
+					
+					messageQueue.enqueueDelay(new Message("menu"));
+					
 					nextScreenLoaded = true;
 				}
 			}
 
 			@Handles(ids = { "continue" })
 			public void continueHandler(Message message) {
-				Entity newScene = templateProvider.getTemplate("zombierockers.scenes.scene").instantiate(entity.getId());
-				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
-				messageQueue.enqueueDelay(new Message("resume"));
+//				Entity newScene = templateProvider.getTemplate("zombierockers.screens.menu").instantiate(entity.getId());
+//				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
+//				messageQueue.enqueueDelay(new Message("resume"));
+				
+				messageQueue.enqueueDelay(new Message("menu"));
+				
 				nextScreenLoaded = true;
 			}
 

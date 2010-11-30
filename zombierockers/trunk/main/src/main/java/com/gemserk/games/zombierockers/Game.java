@@ -42,8 +42,11 @@ import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
 import com.gemserk.games.zombierockers.entities.BallEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BaseEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BulletEntityBuilder;
+import com.gemserk.games.zombierockers.entities.ButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CannonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CursorEntityBuilder;
+import com.gemserk.games.zombierockers.entities.CustomButtonEntityBuilder;
+import com.gemserk.games.zombierockers.entities.LabelButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentsManagerEntityBuilder;
@@ -134,7 +137,6 @@ public class Game extends StateBasedGame {
 		Injector injector = Guice.createInjector(new SlickModule(container, this), // 
 				new SlickSoundSystemModule(), // 
 				new BasicModule(), //
-				// new GroovyModule(),
 				new AbstractModule() {
 					@Override
 					protected void configure() {
@@ -179,20 +181,17 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.scenes.sceneEditor", javaEntityTemplateProvider.get().with(new EditorGameStateEntityBuilder()));
 
 			registrableTemplateProvider.add("gemserk.gui.label", javaEntityTemplateProvider.get().with(new LabelEntityBuilder()));
-		}
+			registrableTemplateProvider.add("gemserk.gui.button", javaEntityTemplateProvider.get().with(new ButtonEntityBuilder()));
 
-		// injector.getInstance(InitBuilderUtilsGroovy.class).config();
-		// injector.getInstance(InitGroovyTemplateProvider.class).config();
+			registrableTemplateProvider.add("gemserk.gui.labelbutton", javaEntityTemplateProvider.get().with(new LabelButtonEntityBuilder()));
+
+			registrableTemplateProvider.add("zombierockers.gui.button", javaEntityTemplateProvider.get().with(new CustomButtonEntityBuilder()));
+		}
 
 		injector.getInstance(InitBuilderUtilsSlick.class).config();
 		injector.getInstance(InitSlickRenderer.class).config();
 
-		// injector.getInstance(InitSlickGroovyClosureRenderer.class).config();
-
-		// new GroovyBootstrapper();
-
-		// GemserkGameState gameState = new GameGameState(0, "zombierockers.screens.menu");
-		GemserkGameState gameState = new GameGameState(0, "zombierockers.screens.splash");
+		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
 		injector.injectMembers(gameState);
 		addState(gameState);
 		getGameProperties().put("screenshot", new Resource<Image>(new Image(800, 600)));
@@ -228,7 +227,9 @@ public class Game extends StateBasedGame {
 			resourceManager.registerLoaderProvider(Font.class, new DefaultSlickFontLoaderProvider());
 			resourceManager.registerResourceLoader("FontTitle", new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36), true));
 			resourceManager.registerResourceLoader("FontDialogMessage", new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36));
+
 			resourceManager.registerResourceLoader("FontDialogMessage2", new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36));
+			resourceManager.registerResourceLoader("FontTitle2", new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48));
 
 			builderUtils.put("svg", new SlickSvgUtils());
 			builderUtils.put("resourceManager", resourceManager);

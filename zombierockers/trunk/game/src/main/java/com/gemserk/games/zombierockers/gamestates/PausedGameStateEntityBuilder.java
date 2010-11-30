@@ -88,7 +88,6 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1010);
 				put("message", "Paused, press click to continue...");
-//				put("font", font);
 				put("font", new ReferenceProperty("font", entity));
 			}
 		}));
@@ -102,7 +101,19 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1010);
 				put("message", "Press \"r\" to restart");
-//				put("font", font);
+				put("font", new ReferenceProperty("font", entity));
+			}
+		}));
+		
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("quitLabel", new HashMap<String, Object>() {
+			{
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 80f));
+				put("color", slick.color(0f, 0f, 0f, 1f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1010);
+				put("message", "or press \"q\" to quit");
 				put("font", new ReferenceProperty("font", entity));
 			}
 		}));
@@ -120,6 +131,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 						press("space", "resume");
 						press("p", "resume");
 						press("escape", "resume");
+						press("q", "menu");
 						press("e", "editor");
 					}
 				});

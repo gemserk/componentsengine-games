@@ -7,9 +7,9 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
+import com.gemserk.commons.animation.properties.InterpolatedPropertyTimeProvider;
 import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
 import com.gemserk.commons.animation.timeline.Timeline;
 import com.gemserk.commons.animation.timeline.TimelineAnimation;
@@ -18,6 +18,7 @@ import com.gemserk.commons.animation.timeline.TimelineValue;
 import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
+import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
@@ -39,8 +40,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class MenuScreenEntityBuilder extends EntityBuilder {
-
-	private static final Logger logger = LoggerFactory.getLogger(MenuScreenEntityBuilder.class);
 
 	@Inject
 	Provider<InputMappingBuilderConfigurator> inputMappingConfiguratorProvider;
@@ -64,8 +63,8 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 	public void build() {
 
 		final Rectangle screenResolution = (Rectangle) globalProperties.getProperties().get("screenResolution");
-		final Rectangle labelRectangle = slick.rectangle(-220, -50, 440, 100);
-		
+		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
+
 		property("fontResource", resourceManager.get("FontDialogMessage2", Font.class));
 		property("font", new FixedProperty(entity) {
 			@Override
@@ -155,61 +154,100 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		}).instantiate("fadeInImage", new HashMap<String, Object>() {
 			{
-				put("time", 3000);
+				put("time", 2000);
 			}
 		}));
-		
+
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
 				put("position", slick.vector(screenResolution.getCenterX(), 40f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
+				put("color", slick.color(0.5f, 0.2f, 0.2f, 1f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Main Menu");
-				put("font", new ReferenceProperty("font", entity));
+				put("message", "¿Zombie Rockers?");
+				put("font", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						return resourceManager.get("FontTitle2", Font.class).get();
+					}
+				});
 			}
 		}));
-		
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("playLabel", new HashMap<String, Object>() {
+
+		final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
+
+		component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
 			{
+				property("timeProvider", timeProvider);
+			}
+		});
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("playButton", new HashMap<String, Object>() {
+			{
+				put("font", new ReferenceProperty<Object>("font", entity));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 50f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Play");
-				put("font", new ReferenceProperty("font", entity));
 			}
 		}));
-		
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("settingsLabel", new HashMap<String, Object>() {
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("settingsButton", new HashMap<String, Object>() {
 			{
+				put("font", new ReferenceProperty<Object>("font", entity));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY()));
-				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Settings");
-				put("font", new ReferenceProperty("font", entity));
 			}
 		}));
-		
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("exitLabel", new HashMap<String, Object>() {
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("exitButton", new HashMap<String, Object>() {
 			{
+				put("font", new ReferenceProperty<Object>("font", entity));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() + 50f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Exit");
-				put("font", new ReferenceProperty("font", entity));
 			}
 		}));
+
+		component(new ReferencePropertyComponent("guiHandler") {
+
+			@Handles
+			public void buttonReleased(Message message) {
+				String id = Properties.getValue(message, "buttonId");
+
+				if ("playButton".equals(id)) {
+					System.out.println("play button");
+
+					messageQueue.enqueueDelay(new Message("resume"));
+					messageQueue.enqueueDelay(new Message("restartLevel"));
+
+					return;
+				}
+
+				if ("settingsButton".equals(id)) {
+					System.out.println("settings button");
+					return;
+				}
+
+				if ("exitButton".equals(id)) {
+					System.out.println("exit button");
+					System.exit(0);
+					return;
+				}
+			}
+
+		});
 
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 

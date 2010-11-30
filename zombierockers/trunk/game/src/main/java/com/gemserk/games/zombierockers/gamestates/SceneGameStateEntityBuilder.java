@@ -72,6 +72,8 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			{
 				put("transitions", new HashMap<String, Object>() {
 					{
+						put("splash", "splash");
+						put("menu", "menu");
 						put("resume", "playing");
 						put("paused", "paused");
 						put("gameover", "gameover");
@@ -80,6 +82,16 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 				});
 				put("stateEntities", new HashMap<String, Object>() {
 					{
+						put("splash", templateProvider.getTemplate("zombierockers.screens.splash").instantiate("splash", new HashMap<String, Object>() {
+							{
+								
+							}
+						}));
+						put("menu", templateProvider.getTemplate("zombierockers.screens.menu").instantiate("menu", new HashMap<String, Object>() {
+							{
+								
+							}
+						}));
 						put("playing", templateProvider.getTemplate("zombierockers.scenes.playing").instantiate("playing", new HashMap<String, Object>() {
 							{
 								put("level", currentLevel);
@@ -115,7 +127,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void enterState(Message message) {
-				messageQueue.enqueueDelay(new Message("resume"));
+				messageQueue.enqueueDelay(new Message("splash"));
 			}
 
 		});
