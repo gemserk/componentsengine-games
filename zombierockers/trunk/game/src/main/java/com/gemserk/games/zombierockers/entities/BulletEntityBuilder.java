@@ -30,7 +30,7 @@ import com.google.inject.Inject;
 public class BulletEntityBuilder extends EntityBuilder {
 
 	@Inject
-	SlickUtils slickUtils;
+	SlickUtils slick;
 
 	private static int bulletNumber = 1;
 
@@ -81,15 +81,7 @@ public class BulletEntityBuilder extends EntityBuilder {
 						return Properties.getValue(ball, "currentFrame");
 					}
 				});
-
-				property("color", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						Entity ball = Properties.getValue(getHolder(), "ball");
-						return Properties.getValue(ball, "color");
-					}
-				});
-
+				property("color", slick.color(1f,1f,1f,1f));
 				propertyRef("position", "position");
 				property("direction", new Vector2f(0, -1));
 				property("layer", 20);

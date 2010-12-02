@@ -227,7 +227,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				if ("playButton".equals(id)) {
 					System.out.println("play button");
 
-					messageQueue.enqueueDelay(new Message("resume"));
+					messageQueue.enqueue(new Message("resume"));
 					messageQueue.enqueueDelay(new Message("restartLevel"));
 
 					return;

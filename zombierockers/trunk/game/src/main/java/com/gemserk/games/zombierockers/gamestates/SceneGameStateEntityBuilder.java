@@ -15,23 +15,20 @@ import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
-import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.game.GlobalProperties;
-import com.gemserk.componentsengine.genericproviders.GenericProvider;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplate;
-import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl;
-import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
+import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.componentsengine.templates.EntityTemplate;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.games.zombierockers.ScenesDefinitions;
 import com.google.inject.Inject;
@@ -61,11 +58,21 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 		final Map<String, Object> currentLevel = levels.get(levelIndex);
 		final Rectangle screenBounds = slick.rectangle(0, 0, 800, 600);
 
+		property("screenBounds", screenBounds);
+
 		property("gameState", "playing");
 		property("playtime", 0);
 
 		property("levelIndex", levelIndex);
 		property("levels", levels);
+		property("currentLevel", new FixedProperty(entity) {
+			@Override
+			public Object get() {
+				List levels = Properties.getValue(getHolder(), "levels");
+				Integer levelIndex = Properties.getValue(getHolder(), "levelIndex");
+				return levels.get(levelIndex);
+			}
+		});
 
 		parent("GameStateManager", new HashMap<String, Object>() {
 			{
@@ -93,7 +100,8 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						}));
 						put("playing", templateProvider.getTemplate("zombierockers.scenes.playing").instantiate("playing", new HashMap<String, Object>() {
 							{
-								put("level", currentLevel);
+								put("levels", new ReferenceProperty("levels", entity));
+								put("level", new ReferenceProperty("currentLevel", entity));
 								put("screenBounds", screenBounds);
 							}
 						}));
@@ -109,9 +117,8 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						}));
 						put("editor", templateProvider.getTemplate("zombierockers.scenes.sceneEditor").instantiate("editor", new HashMap<String, Object>() {
 							{
-								put("level", currentLevel);
+								put("level", new ReferenceProperty("currentLevel", entity));
 								put("screenBounds", screenBounds);
-								put("currentLevelIndex", levelIndex);
 							}
 						}));
 					}
@@ -143,6 +150,19 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 		});
 
+		component(new ReflectionComponent("toggleFpsHandler") {
+			
+			@Inject
+			GlobalProperties globalProperties;
+
+			@Handles
+			public void toggleFps(Message message) {
+				Boolean showFps = (Boolean) globalProperties.getProperties().get("showFps");
+				globalProperties.getProperties().put("showFps", !showFps);
+			}
+
+		});
+
 		// component(new ReflectionComponent("reloadResourcesHandler") {
 		//
 		// @Inject
@@ -166,6 +186,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						press("x", "dumpEntities");
 						press("n", "nextLevel");
 						press("k", "makeScreenshot");
+						press("f", "toggleFps");
 						// press("u", "reloadResources");
 					}
 				});
@@ -181,26 +202,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
-
-		property("sceneInstantiationTemplate", new InstantiationTemplateImpl(templateProvider.getTemplate("zombierockers.scenes.scene"), new GenericProvider() {
-
-			@Override
-			public <T> T get(Object... objects) {
-				final Map<String, Object> data = (Map<String, Object>) objects[0];
-				return (T) new HashMap<String, Object>() {
-					{
-						put("levels", data.get("levels"));
-						put("levelIndex", data.get("levelIndex"));
-					}
-				};
-			}
-
-			@Override
-			public <T> T get() {
-				throw new RuntimeException("must never be called");
-			}
-
-		}));
 
 		component(new ReflectionComponent("nextLevelHandler") {
 
@@ -251,14 +252,13 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void loadLevel(Message message) {
 				final Integer nextLevelIndex = Properties.getValue(message, "levelIndex");
-				Entity newScene = sceneInstantiationTemplate.get().get(new HashMap<String, Object>() {
+				Properties.setValue(entity, "levelIndex", nextLevelIndex);
+				messageQueue.enqueue(new Message("resume"));
+				messageQueue.enqueueDelay(new Message("changeLevel", new PropertiesMapBuilder() {
 					{
-						put("levelIndex", nextLevelIndex);
-						put("levels", levels.get());
+
 					}
-				});
-				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
-				messageQueue.enqueueDelay(new Message("resume"));
+				}.build()));
 			}
 
 		}).withProperties(new ComponentProperties() {
@@ -268,35 +268,24 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		component(new ReferencePropertyComponent("goToEditorHandler") {
-
-			@EntityProperty
-			Property<Integer> levelIndex;
-
-			@EntityProperty
-			Property<List> levels;
-
-			@Inject
-			MessageQueue messageQueue;
-
-			@Handles
-			public void goToEditor(Message message) {
-				EntityTemplate levelEditorTemplate = templateProvider.getTemplate("zombierockers.scenes.sceneEditor");
-				Entity newScene = levelEditorTemplate.instantiate(entity.getId(), new HashMap<String, Object>() {
-					{
-						put("levelIndex", levelIndex.get());
-						put("level", levels.get().get(levelIndex.get()));
-					}
-				});
-				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
-			}
-
-		}).withProperties(new ComponentProperties() {
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("fpsLabel", new HashMap<String, Object>() {
 			{
-				propertyRef("levelIndex");
-				propertyRef("levels");
+				put("position", slick.vector(screenBounds.getMinX() + 60f, screenBounds.getMinY() + 30f));
+				put("color", slick.color(0f, 0f, 0f, 1f));
+				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
+				put("align", "left");
+				put("valign", "top");
+				put("layer", 10000);
+				put("message", new FixedProperty(entity) {
+					public Object get() {
+						Boolean showFps = (Boolean) globalProperties.getProperties().get("showFps");
+						if (showFps)
+							return "FPS: " + slick.getGameContainer().getFPS();
+						return "";
+					};
+				});
 			}
-		});
+		}));
 
 	}
 }

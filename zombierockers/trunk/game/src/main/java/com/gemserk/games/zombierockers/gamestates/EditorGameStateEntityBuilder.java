@@ -61,16 +61,38 @@ public class EditorGameStateEntityBuilder extends EntityBuilder {
 
 		final Rectangle screenBounds = (Rectangle) parameters.get("screenBounds");
 
-		Map<String, Object> level = (Map<String, Object>) parameters.get("level");
-
 		property("bounds", parameters.get("screenBounds"));
 		property("level", parameters.get("level"));
-		property("currentLevelIndex", parameters.get("levelIndex"));
+		
+		Map<String, Object> level = Properties.getValue(entity, "level");
 
 		Path path = new Path(slickSvgUtils.loadPoints((String) level.get("path"), "path"));
 		property("path", path);
 
 		property("backgroundImageResource", resourceManager.get(level.get("background")));
+		
+		component(new FieldsReflectionComponent("reloadLevel-enternodestate") {
+			
+			@EntityProperty
+			Map<String, Object> level;
+
+			@EntityProperty
+			Path path;
+			
+			@EntityProperty
+			Resource backgroundImageResource;
+			
+			@EntityProperty
+			PathTraversal pathTraversal;
+			
+			@Handles
+			public void enterNodeState(Message message) {
+				path = new Path(slickSvgUtils.loadPoints((String) level.get("path"), "path"));
+				backgroundImageResource =  resourceManager.get(level.get("background"));
+				pathTraversal = new PathTraversal(path, 0);
+			}
+			
+		});
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
@@ -106,9 +128,6 @@ public class EditorGameStateEntityBuilder extends EntityBuilder {
 					final Vector2f position = (Vector2f) placeable.get("position");
 					Integer layer = (Integer) placeable.get("layer");
 
-					// property("image", resourceManager.get(level.get("background"), Image.class));
-					// final Image image = slick.getResources().image((String) placeable.get("image"));
-
 					Resource<Image> imageResource = resourceManager.get(placeable.get("image"));
 					final Image image = imageResource.get();
 
@@ -117,7 +136,7 @@ public class EditorGameStateEntityBuilder extends EntityBuilder {
 						@Override
 						public void execute(Graphics g) {
 							g.pushTransform();
-							g.translate(position.x + 5, position.y + 5);
+							g.translate(position.x, position.y);
 							g.drawImage(image, (float) -(image.getWidth() / 2), (float) -(image.getHeight() / 2));
 							g.popTransform();
 						}

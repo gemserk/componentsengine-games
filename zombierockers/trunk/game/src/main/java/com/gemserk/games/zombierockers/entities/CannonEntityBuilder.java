@@ -30,6 +30,7 @@ import com.gemserk.componentsengine.predicates.EntityPredicates;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.Property;
+import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.templates.TemplateProvider;
@@ -53,6 +54,9 @@ public class CannonEntityBuilder extends EntityBuilder {
 
 	@Inject
 	ResourceManager resourceManager;
+	
+	@Inject
+	SlickUtils slick;
 
 	Random random = new Random();
 
@@ -244,13 +248,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 						return Properties.getValue(ball, "currentFrame");
 					}
 				});
-				property("color", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						Entity ball = Properties.getValue(getHolder(), "currentBall");
-						return Properties.getValue(ball, "color");
-					}
-				});
+				property("color", slick.color(1f,1f,1f,1f));
 				propertyRef("position", "bulletPosition");
 				property("direction", new Vector2f(0, -1));
 			}
@@ -265,13 +263,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 						return Properties.getValue(ball, "currentFrame");
 					}
 				});
-				property("color", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						Entity ball = Properties.getValue(getHolder(), "nextBall");
-						return Properties.getValue(ball, "color");
-					}
-				});
+				property("color", slick.color(1f,1f,1f,1f));
 				propertyRef("position", "nextBulletPosition");
 				property("direction", new Vector2f(0, -1));
 			}

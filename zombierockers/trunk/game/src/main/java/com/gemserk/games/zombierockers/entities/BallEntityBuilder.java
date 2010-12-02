@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -21,24 +20,22 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.slick.effects.EffectFactory;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.games.zombierockers.AnimationHelper;
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.gemserk.games.zombierockers.SubPathDefinition;
 import com.gemserk.games.zombierockers.ScenesDefinitions.SubPathDefinitions;
-import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 
 public class BallEntityBuilder extends EntityBuilder {
 
 	@Inject
-	SlickUtils slickUtils;
-	
+	SlickUtils slick;
+
 	private static int ballNumber = 1;
-	
+
 	@Inject
 	ResourceManager resourceManager;
-	
+
 	@Override
 	public String getId() {
 		return MessageFormat.format("ball-{0}", BallEntityBuilder.ballNumber);
@@ -46,28 +43,27 @@ public class BallEntityBuilder extends EntityBuilder {
 
 	@Override
 	public void build() {
-		
+
 		BallEntityBuilder.ballNumber++;
-		
+
 		tags("ball");
 
 		Map definition = (Map) parameters.get("definition");
-		
-		Resource<Animation> animationResource = resourceManager.get((String) definition.get("animation"));
-		
-//		property("ballImageResource", resourceManager.get("ball", Image.class));
 
 		property("type", definition.get("type"));
 		property("color", definition.get("color"));
 		
-		property("animationResource", animationResource);
-		property("animation", new FixedProperty(entity){
-			@Override
-			public Object get() {
-				Resource resource = Properties.getValue(getHolder(), "animationResource");
-				return resource.get();
-			}
-		});
+		property("image", definition.get("image"));
+//		property("image", resourceManager.get((String) definition.get("image")));
+
+		// property("animationResource", animationResource);
+		// property("animation", new FixedProperty(entity){
+		// @Override
+		// public Object get() {
+		// Resource resource = Properties.getValue(getHolder(), "animationResource");
+		// return resource.get();
+		// }
+		// });
 
 		property("radius", parameters.get("radius"));
 		property("finalRadius", parameters.get("finalRadius") != null ? parameters.get("finalRadius") : parameters.get("radius"));
@@ -96,18 +92,19 @@ public class BallEntityBuilder extends EntityBuilder {
 			}
 		});
 
-//		Animation animation = Properties.getValue(entity, "animation");
-		Animation animation = animationResource.get();
-		Float finalRadius = Properties.getValue(entity, "finalRadius");
-		float frameSize = (float) (2 * Math.PI * finalRadius / animation.getFrameCount());
-		property("animationHelper", new AnimationHelper(animationResource, frameSize));
+		// Animation animation = animationResource.get();
+		// Float finalRadius = Properties.getValue(entity, "finalRadius");
+		// float frameSize = (float) (2 * Math.PI * finalRadius / animation.getFrameCount());
+		// property("animationHelper", new AnimationHelper(animationResource, frameSize));
 
+		property("angle", 0f);
 		property("direction", new FixedProperty(entity) {
 			@Override
 			public Object get() {
+				Float angle = Properties.getValue(getHolder(), "angle");
 				PathTraversal pathTraversal = Properties.getValue(getHolder(), "pathTraversal");
 				if (pathTraversal != null)
-					return pathTraversal.getTangent();
+					return pathTraversal.getTangent().add(angle);
 				return new Vector2f();
 			}
 		});
@@ -138,11 +135,13 @@ public class BallEntityBuilder extends EntityBuilder {
 			@Override
 			public Object get() {
 				
-//				Resource<Image> imageResource = Properties.getValue(getHolder(), "ballImageResource");
-//				return imageResource.get();
-				
-				Animation animation = Properties.getValue(getHolder(), "animation");
-				return animation.getCurrentFrame();
+				// Resource<Image> imageResource = Properties.getValue(getHolder(), "image");
+				String image = Properties.getValue(getHolder(), "image");
+				return resourceManager.get(image).get(); 
+				// return imageResource.get();
+
+				// Animation animation = Properties.getValue(getHolder(), "animation");
+				// return animation.getCurrentFrame();
 			}
 		});
 
@@ -151,11 +150,14 @@ public class BallEntityBuilder extends EntityBuilder {
 			@EntityProperty
 			PathTraversal pathTraversal;
 
-			@EntityProperty(readOnly=true)
+			@EntityProperty(readOnly = true)
 			PathTraversal newPathTraversal;
 
-			@EntityProperty(readOnly=true)
-			AnimationHelper animationHelper;
+			// @EntityProperty(readOnly = true)
+			// AnimationHelper animationHelper;
+			
+			@EntityProperty
+			Float angle;
 
 			@EntityProperty
 			Integer layer;
@@ -168,16 +170,17 @@ public class BallEntityBuilder extends EntityBuilder {
 
 				float distance = newPathTraversal.getDistanceFromOrigin() - pathTraversal.getDistanceFromOrigin();
 
-				animationHelper.add(distance);
+				// animationHelper.add(distance);
+				angle += (distance * 3);
 
 				pathTraversal = newPathTraversal;
 
 				SubPathDefinitions subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
-				
-//				Map subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
-//				Closure method = (Closure) subPathDefinitions.get("getSubPathDefinition");
-//				SubPathDefinition subPathDefinition = (SubPathDefinition) method.call(newPathTraversal);
-				
+
+				// Map subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
+				// Closure method = (Closure) subPathDefinitions.get("getSubPathDefinition");
+				// SubPathDefinition subPathDefinition = (SubPathDefinition) method.call(newPathTraversal);
+
 				SubPathDefinition subPathDefinition = subPathDefinitions.getSubPathDefinition(newPathTraversal);
 
 				layer = (Integer) subPathDefinition.getMetadata().get("layer");

@@ -173,7 +173,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 					// property("image", resourceManager.get(level.get("background"), Image.class));
 					// final Image image = slick.getResources().image((String) placeable.get("image"));
-					
+
 					Resource<Image> imageResource = resourceManager.get(placeable.get("image"));
 					final Image image = imageResource.get();
 
@@ -182,7 +182,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 						@Override
 						public void execute(Graphics g) {
 							g.pushTransform();
-							g.translate(position.x + 5, position.y + 5);
+							g.translate(position.x, position.y);
 							g.drawImage(image, (float) -(image.getWidth() / 2), (float) -(image.getHeight() / 2));
 							g.popTransform();
 						}
@@ -369,6 +369,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 				}
 
 				Color shadowColor = slick.color(1, 1, 1, 1);
+				Color ballColor = slick.color(1f, 1f, 1f, 1f);
 				Vector2f shadowDispacement = slick.vector(3, 3);
 
 				Map<Integer, String> alphaMasks = (Map<Integer, String>) level.get("alphaMasks");
@@ -398,9 +399,9 @@ public class WorldEntityBuilder extends EntityBuilder {
 						Vector2f position = ball.position.get();
 						Vector2f direction = ball.direction.get();
 						Vector2f size = ball.size.get();
-						Color color = ball.color.get();
+						// Color color = ball.color.get();
 
-						ballsSprites.add(new AlphaMaskedSprite(image, position, direction, size, color));
+						ballsSprites.add(new AlphaMaskedSprite(image, position, direction, size, ballColor));
 						shadowSprites.add(new AlphaMaskedSprite(ballShadowImage.get(), position.copy().add(shadowDispacement), direction, size, shadowColor));
 					}
 

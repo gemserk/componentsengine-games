@@ -1,6 +1,8 @@
 package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -9,17 +11,19 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
+import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
@@ -45,36 +49,11 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 	@Override
 	public void build() {
 
-		final Rectangle screenBounds = (Rectangle) parameters.get("screenBounds");
-		
-		property("accelerating", false);
+		property("screenBounds", parameters.get("screenBounds"));
+		property("levels", parameters.get("levels"));
+		property("level", parameters.get("level"));
 
-		component(new ReferencePropertyComponent("acceleratorSystem2000") {
-			@Handles
-			public void update(Message message) {
-				Boolean accelerating = Properties.getValue(entity, "accelerating");
-				if (!accelerating)
-					return;
-				Integer delta = Properties.getValue(message, "delta");
-				Properties.setValue(message, "delta", delta * 10);
-			}
-		});
-
-		component(new ReferencePropertyComponent("acceleratorSystem2000") {
-
-			@Handles(ids = { "accelerateSystem2000-press" })
-			public void enableAccelerateSystem(Message message) {
-				Properties.setValue(entity, "accelerating", true);
-			}
-
-			@Handles(ids = { "accelerateSystem2000-release" })
-			public void disableAccelerateSystem(Message message) {
-				Properties.setValue(entity, "accelerating", false);
-			}
-
-		});
-
-		child(templateProvider.getTemplate("zombierockers.entities.world").instantiate("world", parameters));
+		// child(templateProvider.getTemplate("zombierockers.entities.world").instantiate("world", parameters));
 
 		component(new ReferencePropertyComponent("mouseMoveConverter") {
 
@@ -88,10 +67,37 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			public void mouseMoved(Message message) {
 				messageQueue.enqueue(new Message("movemouse", new PropertiesMapBuilder() {
 					{
-						property("x", (float)input.getMouseX());
-						property("y", (float)input.getMouseY());
+						property("x", (float) input.getMouseX());
+						property("y", (float) input.getMouseY());
 					}
 				}.build()));
+			}
+
+		});
+
+		component(new FieldsReflectionComponent("restartLevel") {
+
+			@EntityProperty
+			List levels;
+
+			@EntityProperty
+			Map level;
+
+			@EntityProperty
+			Rectangle screenBounds;
+
+			@Inject
+			MessageQueue messageQueue;
+
+			@Handles
+			public void changeLevel(Message message) {
+				Entity world = templateProvider.getTemplate("zombierockers.entities.world").instantiate("world", new HashMap<String, Object>() {
+					{
+						put("screenBounds", screenBounds);
+						put("level", level);
+					}
+				});
+				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(world, entity));
 			}
 
 		});
@@ -189,7 +195,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					messageQueue.enqueue(new Message("paused"));
 			}
 		});
-		
+
 		component(new ReferencePropertyComponent("pauseGameHandler") {
 			@Inject
 			MessageQueue messageQueue;
@@ -200,20 +206,5 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("fpsLabel", new HashMap<String, Object>() {
-			{
-				put("position", slick.vector(screenBounds.getMinX() + 60f, screenBounds.getMinY() + 30f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
-				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
-				put("align", "left");
-				put("valign", "top");
-				put("layer", 100000);
-				put("message", new FixedProperty(entity){
-					public Object get() {
-						return "FPS: " + slick.getGameContainer().getFPS();
-					};
-				});
-			}
-		}));
 	}
 }

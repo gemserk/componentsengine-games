@@ -106,7 +106,12 @@ public class Game extends StateBasedGame {
 			app.setFullscreen(false);
 
 			app.setMinimumLogicUpdateInterval(1);
+
+			app.setShowFPS(false);
+			
+			game.getGameProperties().put("showFps", false);
 			// app.setTargetFrameRate(60);
+
 			app.setForceExit(true);
 			app.start();
 

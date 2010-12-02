@@ -12,7 +12,6 @@ import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Transform;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.opengl.SlickCallable;
-import org.newdawn.slick.opengl.Texture;
 
 import com.gemserk.componentsengine.slick.render.SlickCallableRenderObject;
 
@@ -33,24 +32,33 @@ public class AlphaMaskedSpritesRenderObject extends SlickCallableRenderObject {
 
 		SlickCallable.enterSafeBlock();
 
-		Image spriteImage = sprites.get(0).getImage();
-		Texture spriteTexture = spriteImage.getTexture();
+		// Image spriteImage = sprites.get(0).getImage();
+		// Texture spriteTexture = spriteImage.getTexture();
 
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, spriteTexture.getTextureID());
-		if (alphaMask != null) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE1);
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, alphaMask.getTexture().getTextureID());
-		}
+		// GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		// GL11.glEnable(GL11.GL_TEXTURE_2D);
+		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, spriteTexture.getTextureID());
+		// if (alphaMask != null) {
+		// GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		// GL11.glEnable(GL11.GL_TEXTURE_2D);
+		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, alphaMask.getTexture().getTextureID());
+		// }
 
 		for (AlphaMaskedSprite sprite : sprites) {
 			Image image = sprite.getImage();
 			Vector2f position = sprite.getPosition();
 			Vector2f direction = sprite.getDirection();
-			Vector2f scale = sprite.getScale() != null ? sprite.getScale() : new Vector2f(1,1);
+			Vector2f scale = sprite.getScale() != null ? sprite.getScale() : new Vector2f(1, 1);
 			Color color = sprite.getColor();
+
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, image.getTexture().getTextureID());
+			if (alphaMask != null) {
+				GL13.glActiveTexture(GL13.GL_TEXTURE1);
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, alphaMask.getTexture().getTextureID());
+			}
 
 			Shape pixels = new Rectangle(-image.getWidth() / 2f, -image.getHeight() / 2f, image.getWidth(), image.getHeight());
 			Transform translation = Transform.createTranslateTransform(position.x, position.y);
@@ -82,14 +90,21 @@ public class AlphaMaskedSpritesRenderObject extends SlickCallableRenderObject {
 				}
 			}
 			GL11.glEnd();
+
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			if (alphaMask != null) {
+				GL13.glActiveTexture(GL13.GL_TEXTURE1);
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+			}
 		}
 
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		if (alphaMask != null) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE1);
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
-		}
+		// GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		// GL11.glDisable(GL11.GL_TEXTURE_2D);
+		// if (alphaMask != null) {
+		// GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		// GL11.glDisable(GL11.GL_TEXTURE_2D);
+		// }
 		SlickCallable.leaveSafeBlock();
 
 	}
@@ -101,6 +116,5 @@ public class AlphaMaskedSpritesRenderObject extends SlickCallableRenderObject {
 	public List<AlphaMaskedSprite> getSprites() {
 		return sprites;
 	}
-	
-	
+
 }
