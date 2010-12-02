@@ -137,7 +137,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void update(Message message) {
-				if (!shouldGrabMouse.get())
+				if (!shouldGrabMouse.get().booleanValue())
 					return;
 				if ((Boolean) globalProperties.getProperties().get("runningInDebug"))
 					return;
@@ -162,6 +162,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void leaveNodeState(Message message) {
 				Properties.setValue(entity, "shouldGrabMouse", false);
+				slick.getGameContainer().setMouseGrabbed(false);
 				logger.info("Leaving playing state");
 			}
 		});
