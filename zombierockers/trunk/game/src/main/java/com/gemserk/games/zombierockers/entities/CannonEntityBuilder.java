@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -289,7 +287,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 				property("image", new FixedProperty(entity) {
 					@Override
 					public Object get() {
-						return resourceManager.get("ship", Image.class).get();
+						return resourceManager.get("ship").get();
 					}
 				});
 			}
@@ -460,7 +458,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 				put("image", new FixedProperty(entity) {
 					@Override
 					public Object get() {
-						return resourceManager.get("cursor", Image.class).get();
+						return resourceManager.get("cursor").get();
 					}
 				});
 			}

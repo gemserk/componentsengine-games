@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Font;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
@@ -65,7 +63,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 		final Rectangle screenResolution = (Rectangle) globalProperties.getProperties().get("screenResolution");
 		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
 
-		property("fontResource", resourceManager.get("FontDialogMessage2", Font.class));
+		property("fontResource", resourceManager.get("FontDialogMessage2"));
 		property("font", new FixedProperty(entity) {
 			@Override
 			public Object get() {
@@ -83,7 +81,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				property("image", new FixedProperty(entity) {
 					@Override
 					public Object get() {
-						return resourceManager.get("background", Image.class).get();
+						return resourceManager.get("background").get();
 					}
 				});
 			}
@@ -104,7 +102,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 						property("image", new FixedProperty(entity) {
 							@Override
 							public Object get() {
-								return resourceManager.get("background", Image.class).get();
+								return resourceManager.get("background").get();
 							}
 						});
 					}
@@ -170,7 +168,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("font", new FixedProperty(entity) {
 					@Override
 					public Object get() {
-						return resourceManager.get("FontTitle2", Font.class).get();
+						return resourceManager.get("FontTitle2").get();
 					}
 				});
 			}

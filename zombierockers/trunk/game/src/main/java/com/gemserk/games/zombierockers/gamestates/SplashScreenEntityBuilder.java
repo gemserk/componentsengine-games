@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				property("image", new FixedProperty(entity) {
 					@Override
 					public Object get() {
-						return resourceManager.get("background", Image.class).get();
+						return resourceManager.get("background").get();
 					}
 				});
 			}
@@ -86,7 +85,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				property("image", new FixedProperty(entity) {
 					@Override
 					public Object get() {
-						return resourceManager.get("gemserklogo", Image.class).get();
+						return resourceManager.get("gemserklogo").get();
 					}
 				});
 			}
@@ -107,7 +106,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 						property("image", new FixedProperty(entity) {
 							@Override
 							public Object get() {
-								return resourceManager.get("background", Image.class).get();
+								return resourceManager.get("background").get();
 							}
 						});
 					}

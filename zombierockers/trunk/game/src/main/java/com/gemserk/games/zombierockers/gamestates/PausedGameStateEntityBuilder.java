@@ -2,7 +2,6 @@ package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
 
-import org.newdawn.slick.Font;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
@@ -42,7 +41,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 		final Rectangle labelRectangle = slick.rectangle(-220, -50, 440, 100);
 		final Rectangle screenBounds = (Rectangle) parameters.get("screenBounds");
 
-		property("fontResource", resourceManager.get("FontDialogMessage", Font.class));
+		property("fontResource", resourceManager.get("FontDialogMessage"));
 		property("font", new FixedProperty(entity) {
 			@Override
 			public Object get() {

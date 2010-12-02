@@ -34,7 +34,6 @@ import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.EntityTemplate;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.games.zombierockers.ScenesDefinitions;
-import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -54,11 +53,11 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 	@SuppressWarnings( { "unchecked", "serial" })
 	@Override
 	public void build() {
-		
+
 		List<Map<String, Object>> levels = ScenesDefinitions.levels();
 
 		final Integer levelIndex = (Integer) (parameters.get("levelIndex") != null ? parameters.get("levelIndex") : 0);
-//		List<Map<String, Object>> levels = (List<Map<String, Object>>) parameters.get("levels");
+		// List<Map<String, Object>> levels = (List<Map<String, Object>>) parameters.get("levels");
 		final Map<String, Object> currentLevel = levels.get(levelIndex);
 		final Rectangle screenBounds = slick.rectangle(0, 0, 800, 600);
 
@@ -84,12 +83,12 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 					{
 						put("splash", templateProvider.getTemplate("zombierockers.screens.splash").instantiate("splash", new HashMap<String, Object>() {
 							{
-								
+
 							}
 						}));
 						put("menu", templateProvider.getTemplate("zombierockers.screens.menu").instantiate("menu", new HashMap<String, Object>() {
 							{
-								
+
 							}
 						}));
 						put("playing", templateProvider.getTemplate("zombierockers.scenes.playing").instantiate("playing", new HashMap<String, Object>() {
@@ -143,18 +142,18 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
-		
-		component(new ReflectionComponent("reloadResourcesHandler") {
 
-			@Inject
-			ResourceManager resourceManager;
-			
-			@Handles
-			public void reloadResources(Message message) {
-				resourceManager.reloadAll();
-			}
-
-		});
+		// component(new ReflectionComponent("reloadResourcesHandler") {
+		//
+		// @Inject
+		// ResourceManager resourceManager;
+		//			
+		// @Handles
+		// public void reloadResources(Message message) {
+		// resourceManager.reloadAll();
+		// }
+		//
+		// });
 
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
@@ -167,7 +166,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						press("x", "dumpEntities");
 						press("n", "nextLevel");
 						press("k", "makeScreenshot");
-						press("u", "reloadResources");
+						// press("u", "reloadResources");
 					}
 				});
 			}
@@ -182,7 +181,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
-		
+
 		property("sceneInstantiationTemplate", new InstantiationTemplateImpl(templateProvider.getTemplate("zombierockers.scenes.scene"), new GenericProvider() {
 
 			@Override
@@ -200,58 +199,64 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			public <T> T get() {
 				throw new RuntimeException("must never be called");
 			}
-			
+
 		}));
-		
+
 		component(new ReflectionComponent("nextLevelHandler") {
 
 			@Inject
 			MessageQueue messageQueue;
-			
+
 			@Handles
 			public void nextLevel(Message message) {
 				final List levels = Properties.getValue(entity, "levels");
 				final Integer levelIndex = Properties.getValue(entity, "levelIndex");
-				messageQueue.enqueueDelay(new Message("loadLevel", new PropertiesMapBuilder(){{
-					property("levelIndex", (levelIndex + 1) % levels.size());
-				}}.build()));
+				messageQueue.enqueueDelay(new Message("loadLevel", new PropertiesMapBuilder() {
+					{
+						property("levelIndex", (levelIndex + 1) % levels.size());
+					}
+				}.build()));
 			}
 
 		});
-		
+
 		component(new ReflectionComponent("restartLevelHandler") {
 
 			@Inject
 			MessageQueue messageQueue;
-			
+
 			@Handles
 			public void restartLevel(Message message) {
 				final Integer levelIndex = Properties.getValue(entity, "levelIndex");
-				messageQueue.enqueueDelay(new Message("loadLevel", new PropertiesMapBuilder(){{
-					property("levelIndex", levelIndex);
-				}}.build()));
+				messageQueue.enqueueDelay(new Message("loadLevel", new PropertiesMapBuilder() {
+					{
+						property("levelIndex", levelIndex);
+					}
+				}.build()));
 			}
 
 		});
-		
+
 		component(new ReferencePropertyComponent("changeLevelHandler") {
 
 			@EntityProperty
 			Property<List> levels;
-			
+
 			@EntityProperty
 			Property<InstantiationTemplate> sceneInstantiationTemplate;
-			
+
 			@Inject
 			MessageQueue messageQueue;
-			
+
 			@Handles
 			public void loadLevel(Message message) {
 				final Integer nextLevelIndex = Properties.getValue(message, "levelIndex");
-				Entity newScene = sceneInstantiationTemplate.get().get(new HashMap<String, Object>(){{
-					put("levelIndex", nextLevelIndex);
-					put("levels", levels.get());
-				}});
+				Entity newScene = sceneInstantiationTemplate.get().get(new HashMap<String, Object>() {
+					{
+						put("levelIndex", nextLevelIndex);
+						put("levels", levels.get());
+					}
+				});
 				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
 				messageQueue.enqueueDelay(new Message("resume"));
 			}
@@ -262,25 +267,27 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 				propertyRef("sceneInstantiationTemplate");
 			}
 		});
-		
+
 		component(new ReferencePropertyComponent("goToEditorHandler") {
 
 			@EntityProperty
 			Property<Integer> levelIndex;
-			
+
 			@EntityProperty
 			Property<List> levels;
-			
+
 			@Inject
 			MessageQueue messageQueue;
-			
+
 			@Handles
 			public void goToEditor(Message message) {
 				EntityTemplate levelEditorTemplate = templateProvider.getTemplate("zombierockers.scenes.sceneEditor");
-				Entity newScene = levelEditorTemplate.instantiate(entity.getId(), new HashMap<String, Object>(){{
-					put("levelIndex", levelIndex.get());
-					put("level", levels.get().get(levelIndex.get()));
-				}});
+				Entity newScene = levelEditorTemplate.instantiate(entity.getId(), new HashMap<String, Object>() {
+					{
+						put("levelIndex", levelIndex.get());
+						put("level", levels.get().get(levelIndex.get()));
+					}
+				});
 				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
 			}
 
@@ -290,6 +297,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 				propertyRef("levels");
 			}
 		});
-		
+
 	}
 }

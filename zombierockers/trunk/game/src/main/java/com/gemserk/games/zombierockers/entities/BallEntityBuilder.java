@@ -53,7 +53,7 @@ public class BallEntityBuilder extends EntityBuilder {
 
 		Map definition = (Map) parameters.get("definition");
 		
-		Resource<Animation> animationResource = resourceManager.get((String) definition.get("animation"), Animation.class);
+		Resource<Animation> animationResource = resourceManager.get((String) definition.get("animation"));
 		
 //		property("ballImageResource", resourceManager.get("ball", Image.class));
 

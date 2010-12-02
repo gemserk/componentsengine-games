@@ -116,7 +116,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 		Map<Integer, String> alphaMasks = (Map<Integer, String>) level.get("alphaMasks");
 		if (alphaMasks != null) {
 			for (Integer key : alphaMasks.keySet()) {
-				resourceManager.get(alphaMasks.get(key), Image.class);
+				resourceManager.get(alphaMasks.get(key));
 			}
 		}
 
@@ -131,7 +131,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		property("backgroundImageResource", resourceManager.get(level.get("background"), Image.class));
+		property("backgroundImageResource", resourceManager.get(level.get("background")));
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
@@ -173,7 +173,9 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 					// property("image", resourceManager.get(level.get("background"), Image.class));
 					// final Image image = slick.getResources().image((String) placeable.get("image"));
-					final Image image = resourceManager.get(placeable.get("image"), Image.class).get();
+					
+					Resource<Image> imageResource = resourceManager.get(placeable.get("image"));
+					final Image image = imageResource.get();
 
 					renderer.enqueue(new SlickCallableRenderObject(layer) {
 
@@ -335,7 +337,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		// property("ballShadowImage", slick.getResources().image("ballshadow"));
-		property("ballShadowImage", resourceManager.get("ballshadow", Image.class));
+		property("ballShadowImage", resourceManager.get("ballshadow"));
 
 		component(new ReferencePropertyComponent("ballRenderer") {
 
@@ -377,8 +379,10 @@ public class WorldEntityBuilder extends EntityBuilder {
 					Image alphaMask = null;
 					if (alphaMasks != null) {
 						String alphaMaskId = alphaMasks.get(layer);
-						if (alphaMaskId != null)
-							alphaMask = resourceManager.get(alphaMasks.get(layer), Image.class).get();
+						if (alphaMaskId != null) {
+							Resource<Image> imageResource = resourceManager.get(alphaMasks.get(layer));
+							alphaMask = imageResource.get();
+						}
 					}
 
 					AlphaMaskedSpritesRenderObject ballsRenderer = new AlphaMaskedSpritesRenderObject(layer, alphaMask, new ArrayList<AlphaMaskedSprite>(balls.size()));

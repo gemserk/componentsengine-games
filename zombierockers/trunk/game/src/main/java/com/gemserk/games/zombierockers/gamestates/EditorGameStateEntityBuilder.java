@@ -70,7 +70,7 @@ public class EditorGameStateEntityBuilder extends EntityBuilder {
 		Path path = new Path(slickSvgUtils.loadPoints((String) level.get("path"), "path"));
 		property("path", path);
 
-		property("backgroundImageResource", resourceManager.get(level.get("background"), Image.class));
+		property("backgroundImageResource", resourceManager.get(level.get("background")));
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
@@ -108,7 +108,9 @@ public class EditorGameStateEntityBuilder extends EntityBuilder {
 
 					// property("image", resourceManager.get(level.get("background"), Image.class));
 					// final Image image = slick.getResources().image((String) placeable.get("image"));
-					final Image image = resourceManager.get(placeable.get("image"), Image.class).get();
+
+					Resource<Image> imageResource = resourceManager.get(placeable.get("image"));
+					final Image image = imageResource.get();
 
 					renderer.enqueue(new SlickCallableRenderObject(layer) {
 

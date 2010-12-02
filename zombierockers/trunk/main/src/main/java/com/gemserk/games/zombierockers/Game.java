@@ -59,12 +59,14 @@ import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SceneGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
-import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
-import com.gemserk.resources.slick.DefaultSlickFontLoaderProvider;
+import com.gemserk.resources.ResourceManagerImpl;
+import com.gemserk.resources.dataloaders.StaticDataLoader;
+import com.gemserk.resources.resourceloaders.CachedResourceLoader;
+import com.gemserk.resources.resourceloaders.ResourceLoaderImpl;
 import com.gemserk.resources.slick.PropertiesAnimationLoader;
 import com.gemserk.resources.slick.PropertiesImageLoader;
-import com.gemserk.resources.slick.resourceloaders.SlickTrueTypeFontLoader;
+import com.gemserk.resources.slick.dataloaders.SlickTrueTypeFontLoader;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -144,7 +146,7 @@ public class Game extends StateBasedGame {
 						bind(GlobalProperties.class).toInstance(globalProperties);
 						bind(SlickSvgUtils.class).in(Singleton.class);
 
-						bind(ResourceManager.class).in(Singleton.class);
+						bind(ResourceManager.class).to(ResourceManagerImpl.class).in(Singleton.class);
 					}
 				});
 
@@ -194,7 +196,8 @@ public class Game extends StateBasedGame {
 		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
 		injector.injectMembers(gameState);
 		addState(gameState);
-		getGameProperties().put("screenshot", new Resource<Image>(new Image(800, 600)));
+
+		getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(new Image(800, 600))).load());
 	}
 
 	class GameGameState extends GemserkGameState {
@@ -224,12 +227,19 @@ public class Game extends StateBasedGame {
 
 			// resourceManager.registerResourceLoader("FontTitle", new slick)
 			// 
-			resourceManager.registerLoaderProvider(Font.class, new DefaultSlickFontLoaderProvider());
-			resourceManager.registerResourceLoader("FontTitle", new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36), true));
-			resourceManager.registerResourceLoader("FontDialogMessage", new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36));
 
-			resourceManager.registerResourceLoader("FontDialogMessage2", new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36));
-			resourceManager.registerResourceLoader("FontTitle2", new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48));
+			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36)))));
+			resourceManager.add("FontDialogMessage", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36))));
+
+			resourceManager.add("FontDialogMessage2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36))));
+			resourceManager.add("FontTitle2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48))));
+
+			// resourceManager.registerLoaderProvider(Font.class, new DefaultSlickFontLoaderProvider());
+			// resourceManager.registerResourceLoader("FontTitle", new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36), true));
+			// resourceManager.registerResourceLoader("FontDialogMessage", new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36));
+
+			// resourceManager.registerResourceLoader("FontDialogMessage2", new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36));
+			// resourceManager.registerResourceLoader("FontTitle2", new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48));
 
 			builderUtils.put("svg", new SlickSvgUtils());
 			builderUtils.put("resourceManager", resourceManager);
