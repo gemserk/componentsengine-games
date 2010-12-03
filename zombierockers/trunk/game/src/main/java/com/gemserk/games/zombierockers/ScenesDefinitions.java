@@ -112,21 +112,27 @@ public class ScenesDefinitions {
 
 		Map<String, Object> level02 = new LevelBuilder() {
 			{
-				background("level02");
+				background("background");
 				path("levels/level02/path.svg");
 				level.put("ballsQuantity", 60);
 				level.put("pathProperties", new HashMap<String, Object>() {
 					{
 						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 800f);
+						put("acceleratedSpeed", 0.3f);
+						put("accelerationStopPoint", 600f);
 						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.05f);
+						put("maxSpeed", 0.04f);
 						put("speedWhenReachBase", 0.4f);
 					}
 				});
 				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
-				level.put("placeables", new ArrayList());
+				level.put("placeables", new ArrayList(){{
+					add(new HashMap<String, Object>(){{
+						put("image", "level02_path");
+						put("position", new Vector2f(400f, 300f));
+						put("layer", 0);
+					}});
+				}});
 				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
@@ -270,7 +276,7 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level09 = new LevelBuilder() {
 			{
-				background("level09");
+				background("background");
 				path("levels/level09/path.svg");
 				level.put("ballsQuantity", 100);
 				level.put("pathProperties", new HashMap<String, Object>() {
@@ -297,7 +303,7 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level10 = new LevelBuilder() {
 			{
-				background("level09");
+				background("background");
 				path("levels/level10/path.svg");
 				level.put("ballsQuantity", 40);
 				level.put("pathProperties", new HashMap<String, Object>() {
@@ -322,7 +328,7 @@ public class ScenesDefinitions {
 			}
 		}.build();
 
-		return Arrays.asList(level01, level09, level03, level04, level05, level06, level07, level08, level10);
+		return Arrays.asList(level01, level02);
 	}
 
 	@SuppressWarnings("serial")
