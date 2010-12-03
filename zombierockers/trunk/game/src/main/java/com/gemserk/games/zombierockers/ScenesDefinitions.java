@@ -139,7 +139,7 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level03 = new LevelBuilder() {
 			{
-				background("level03");
+				background("background");
 				path("levels/level03/path.svg");
 				level.put("ballsQuantity", 80);
 				level.put("pathProperties", new HashMap<String, Object>() {
@@ -153,8 +153,14 @@ public class ScenesDefinitions {
 					}
 				});
 				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
-				level.put("placeables", new ArrayList());
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
+				level.put("placeables", new ArrayList(){{
+					add(new HashMap<String, Object>(){{
+						put("image", "level03_path");
+						put("position", new Vector2f(400f, 300f));
+						put("layer", 0);
+					}});
+				}});
+				level.put("subPathDefinitions", new SubPathDefinitions(Arrays.asList(subPathDefinition(1081f, 1300f, 9, 1)), defaultSubPathDefinition));
 			}
 		}.build();
 		
@@ -328,7 +334,7 @@ public class ScenesDefinitions {
 			}
 		}.build();
 
-		return Arrays.asList(level01, level02);
+		return Arrays.asList(level01, level02, level03);
 	}
 
 	@SuppressWarnings("serial")

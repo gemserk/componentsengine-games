@@ -164,7 +164,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "¿Zombie Rockers?");
+				put("message", "GAME_NAME");
 				put("font", new FixedProperty(entity) {
 					@Override
 					public Object get() {
