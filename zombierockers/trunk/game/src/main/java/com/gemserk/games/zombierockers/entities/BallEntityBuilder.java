@@ -205,6 +205,8 @@ public class BallEntityBuilder extends EntityBuilder {
 
 			@EntityProperty(readOnly = true)
 			Integer layer;
+			
+			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void explodeBall(Message message) {
@@ -215,7 +217,7 @@ public class BallEntityBuilder extends EntityBuilder {
 
 				alive = false;
 
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity));
+				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity));
 
 				messageQueue.enqueue(new Message("explosion", new PropertiesMapBuilder() {
 					{

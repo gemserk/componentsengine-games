@@ -161,13 +161,15 @@ public class BulletEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
-
+			
+			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
+			
 			@Handles
 			public void bulletHit(Message message) {
 				Entity source = Properties.getValue(message, "source");
 				if (source != entity)
 					return;
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(entity));
+				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity));
 			}
 
 		});

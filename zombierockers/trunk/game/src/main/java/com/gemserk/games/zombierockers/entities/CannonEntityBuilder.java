@@ -55,6 +55,8 @@ public class CannonEntityBuilder extends EntityBuilder {
 	@Inject
 	ResourceManager resourceManager;
 	
+	@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
+	
 	@Inject
 	SlickUtils slick;
 
@@ -363,7 +365,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 								Entity bullet = bulletInstantiationTemplate.get(values);
 								// log
 
-								messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(bullet, entity.getParent()));
+								messageQueue.enqueue(childrenManagementMessageFactory.addEntity(bullet, entity.getParent()));
 								messageQueue.enqueue(new Message("generateBall"));
 							}
 

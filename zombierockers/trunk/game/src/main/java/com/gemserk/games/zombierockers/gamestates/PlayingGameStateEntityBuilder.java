@@ -88,6 +88,8 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
+			
+			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void changeLevel(Message message) {
@@ -97,7 +99,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 						put("level", level);
 					}
 				});
-				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(world, entity));
+				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(world, entity));
 			}
 
 		});

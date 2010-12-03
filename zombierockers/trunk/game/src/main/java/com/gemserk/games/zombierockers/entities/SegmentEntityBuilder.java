@@ -243,6 +243,8 @@ public class SegmentEntityBuilder extends EntityBuilder {
 			@Inject
 			MessageQueue messageQueue;
 
+			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
+			
 			@Handles
 			public void segmentRemoveHead(Message message) {
 
@@ -257,7 +259,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 					for (Entity ball : segment.balls.get()) {
 						if (logger.isInfoEnabled())
 							logger.info("Removed last ball - segment.id: " + entity.getId() + " - ball.id: " + ball.getId());
-						messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(ball));
+						messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(ball));
 					}
 
 					messageQueue.enqueue(new Message("destroySegment", new PropertiesMapBuilder() {
@@ -274,7 +276,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 				if (logger.isInfoEnabled())
 					logger.info("Removed last ball - segment.id: " + entity.getId() + " - ball.id: " + segment.lastBall.get().getId());
 				segment.balls.get().remove(lastBallEntity);
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(lastBallEntity));
+				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(lastBallEntity));
 			}
 
 		});
@@ -287,6 +289,8 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
+			
+			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void addNewBall(Message message) {
@@ -316,7 +320,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 				ball.segment.set(entity);
 
-				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(ballEntity, entity.getParent()));
+				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(ballEntity, entity.getParent()));
 
 				if (logger.isInfoEnabled())
 					logger.info("Added ball to segment - segment.id: " + entity.getId() + " -  ball: " + ballEntity.getId() + " - index: " + insertionPoint);
@@ -641,6 +645,8 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
+			
+			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void seriesDetected(Message message) {
@@ -724,7 +730,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 							put("speedWhenReachBase", segment.speedWhenReachBase.get());
 						}});
 						
-						messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(newSegmentEntity, entity.getParent()));
+						messageQueue.enqueue(childrenManagementMessageFactory.addEntity(newSegmentEntity, entity.getParent()));
 						for (Entity ballEntity : secondSegmentBalls) 
 							Properties.setValue(ballEntity, "segment", newSegmentEntity);
 						

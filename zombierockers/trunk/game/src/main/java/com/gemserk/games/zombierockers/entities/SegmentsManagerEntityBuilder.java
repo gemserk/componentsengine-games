@@ -35,6 +35,8 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
+	
+	@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 	List<Entity> getSortedSegments(Entity entity) {
 
@@ -190,7 +192,7 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 			@Handles
 			public void destroySegment(Message message) {
 				Entity segment = Properties.getValue(message, "segment");
-				messageQueue.enqueue(ChildrenManagementMessageFactory.removeEntity(segment));
+				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(segment));
 				messageQueue.enqueue(new Message("checkFirstSegmentSholdAdvance"));
 			}
 

@@ -186,6 +186,8 @@ public class LimboEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
+			
+			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void spawnedSegment(Message message) {
@@ -203,7 +205,7 @@ public class LimboEntityBuilder extends EntityBuilder {
 				if (logger.isInfoEnabled())
 					logger.info("New segment and balls added to limbo - segment.id:" + segment.getId());
 
-				messageQueue.enqueue(ChildrenManagementMessageFactory.addEntity(segment, entity.getParent()));
+				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(segment, entity.getParent()));
 				messageQueue.enqueue(new Message("releaseBalls"));
 			}
 
