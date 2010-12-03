@@ -85,21 +85,27 @@ public class ScenesDefinitions {
 
 		Map<String, Object> level01 = new LevelBuilder() {
 			{
-				background("level01");
+				background("background");
 				path("levels/level01/path.svg");
 				level.put("ballsQuantity", 40);
 				level.put("pathProperties", new HashMap<String, Object>() {
 					{
 						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 700f);
+						put("acceleratedSpeed", 0.3f);
+						put("accelerationStopPoint", 500f);
 						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.04f);
+						put("maxSpeed", 0.035f);
 						put("speedWhenReachBase", 0.4f);
 					}
 				});
 				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
-				level.put("placeables", new ArrayList());
+				level.put("placeables", new ArrayList(){{
+					add(new HashMap<String, Object>(){{
+						put("image", "level01_path");
+						put("position", new Vector2f(400f, 300f));
+						put("layer", 0);
+					}});
+				}});
 				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
@@ -316,7 +322,7 @@ public class ScenesDefinitions {
 			}
 		}.build();
 
-		return Arrays.asList(level10, level09, level03, level04, level05, level06, level07, level08);
+		return Arrays.asList(level01, level09, level03, level04, level05, level06, level07, level08, level10);
 	}
 
 	@SuppressWarnings("serial")

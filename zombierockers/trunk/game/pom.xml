@@ -48,12 +48,12 @@
 
 		<dependency>
 			<groupId>com.gemserk.resources</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>resourcesmanager-core</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.gemserk.resources</groupId>
-			<artifactId>slickmodule</artifactId>
+			<artifactId>resourcesmanager-slickmodule</artifactId>
 		</dependency>
 
 		<dependency>

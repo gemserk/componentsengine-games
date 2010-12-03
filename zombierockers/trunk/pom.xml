@@ -164,13 +164,13 @@
 
 			<dependency>
 				<groupId>com.gemserk.resources</groupId>
-				<artifactId>core</artifactId>
+				<artifactId>resourcesmanager-core</artifactId>
 				<version>${resourcesmanager.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>com.gemserk.resources</groupId>
-				<artifactId>slickmodule</artifactId>
+				<artifactId>resourcesmanager-slickmodule</artifactId>
 				<version>${resourcesmanager.version}</version>
 			</dependency>
 
