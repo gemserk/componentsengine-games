@@ -95,6 +95,9 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 		@EntityProperty
 		Property<Float> radius;
+		
+		@EntityProperty
+		Property<PathTraversal> pathTraversal;
 	}
 
 	@Override
@@ -226,7 +229,9 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 					lastBall.wrap(segment.lastBall.get());
 					firstBall.wrap(nextSegment.firstBall.get());
 					
-					if (lastBall.position.get().distance(firstBall.position.get()) < lastBall.radius.get() * 2) {
+					float distance = Math.abs(lastBall.pathTraversal.get().getDistanceFromOrigin() - firstBall.pathTraversal.get().getDistanceFromOrigin());
+					
+					if (distance < lastBall.radius.get() * 2) {
 						
 						if (logger.isInfoEnabled())
 							logger.info("Collision detected with other segment - masterSegment.id: " + segmentEntity.getId() + " - slaveSegment.id: " + nextSegmentEntity.getId());
