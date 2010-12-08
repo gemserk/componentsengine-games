@@ -7,7 +7,9 @@ import org.newdawn.slick.geom.Rectangle;
 import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
 import com.gemserk.commons.animation.properties.InterpolatedPropertyTimeProvider;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
+import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
+import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
@@ -18,6 +20,7 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
+import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
@@ -79,6 +82,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
 			{
+				put("started", false);
 				put("time", 1000);
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
@@ -86,7 +90,29 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("effect", "fadeIn");
 			}
 		}));
+
+		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+			{
+				put("started", false);
+				put("time", 1000);
+				put("layer", 10);
+				put("image", resourceManager.get("background"));
+				put("screenResolution", screenResolution);
+				put("effect", "fadeOut");
+			}
+		}));
 		
+		component(new ReferencePropertyComponent("fadeInWhenEnterState") {
+			@Handles
+			public void enterNodeState(Message message) {
+				messageQueue.enqueue(new Message("startAnimation", new PropertiesMapBuilder() {
+					{
+						property("animationId", "fadeInEffect");
+					}
+				}.build()));
+			}
+		});
+
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
 				put("position", slick.vector(screenResolution.getCenterX(), 40f));
@@ -149,7 +175,12 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		component(new ReferencePropertyComponent("guiHandler") {
+		property("exit", false);
+
+		component(new FieldsReflectionComponent("guiHandler") {
+
+			@EntityProperty
+			Boolean exit;
 
 			@Handles
 			public void buttonReleased(Message message) {
@@ -158,8 +189,11 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				if ("playButton".equals(id)) {
 					System.out.println("play button");
 
-					messageQueue.enqueue(new Message("resume"));
-					messageQueue.enqueueDelay(new Message("restartLevel"));
+					messageQueue.enqueue(new Message("startAnimation", new PropertiesMapBuilder() {
+						{
+							property("animationId", "fadeOutEffect");
+						}
+					}.build()));
 
 					return;
 				}
@@ -171,8 +205,38 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 				if ("exitButton".equals(id)) {
 					System.out.println("exit button");
-					System.exit(0);
+					// System.exit(0);
+					exit = true;
+
+					messageQueue.enqueue(new Message("startAnimation", new PropertiesMapBuilder() {
+						{
+							property("animationId", "fadeOutEffect");
+						}
+					}.build()));
+
 					return;
+				}
+			}
+
+		});
+
+		component(new FieldsReflectionComponent("animationComponentHandler") {
+
+			@EntityProperty
+			Boolean exit;
+
+			@Handles
+			public void animationEnded(Message message) {
+				String animationId = Properties.getValue(message, "entityId");
+				if ("fadeOutEffect".equalsIgnoreCase(animationId)) {
+
+					if (exit) {
+						System.exit(0);
+					} else {
+						messageQueue.enqueue(new Message("resume"));
+						messageQueue.enqueueDelay(new Message("restartLevel"));
+					}
+
 				}
 			}
 

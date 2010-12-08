@@ -95,7 +95,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
 			{
-				put("offset", 2000);
+				put("delay", 2000);
 				put("time", 1000);
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
@@ -103,35 +103,30 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				put("effect", "fadeOut");
 			}
 		}));
-
-		property("timeToNextScreen", 3500);
+		
 		property("nextScreenLoaded", false);
-
 		component(new FieldsReflectionComponent("nextScreenComponent") {
-
-			@EntityProperty
-			Integer timeToNextScreen;
 
 			@EntityProperty
 			Boolean nextScreenLoaded;
 
-			@Handles
-			public void update(Message message) {
+			@Handles(ids = { "continue" })
+			public void continueHandler(Message message) {
 				if (nextScreenLoaded)
 					return;
-
-				Integer delta = Properties.getValue(message, "delta");
-				timeToNextScreen -= delta;
-				if (timeToNextScreen <= 0) {
+				messageQueue.enqueueDelay(new Message("menu"));
+				nextScreenLoaded = true;
+			}
+			
+			@Handles
+			public void animationEnded(Message message) {
+				if (nextScreenLoaded)
+					return;
+				String animationId = Properties.getValue(message, "entityId");
+				if ("fadeOutEffect".equalsIgnoreCase(animationId)) {
 					messageQueue.enqueueDelay(new Message("menu"));
 					nextScreenLoaded = true;
 				}
-			}
-
-			@Handles(ids = { "continue" })
-			public void continueHandler(Message message) {
-				messageQueue.enqueueDelay(new Message("menu"));
-				nextScreenLoaded = true;
 			}
 
 		});
