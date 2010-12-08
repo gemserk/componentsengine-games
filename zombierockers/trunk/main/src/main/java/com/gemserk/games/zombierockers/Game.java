@@ -46,6 +46,7 @@ import com.gemserk.games.zombierockers.entities.ButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CannonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CursorEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CustomButtonEntityBuilder;
+import com.gemserk.games.zombierockers.entities.FadeEffectEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LabelButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
@@ -193,6 +194,8 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("gemserk.gui.labelbutton", javaEntityTemplateProvider.get().with(new LabelButtonEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.gui.button", javaEntityTemplateProvider.get().with(new CustomButtonEntityBuilder()));
+			
+			registrableTemplateProvider.add("zombierockers.effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
 		}
 
 		injector.getInstance(InitBuilderUtilsSlick.class).config();

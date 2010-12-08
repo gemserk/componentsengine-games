@@ -1,19 +1,11 @@
 package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
-import java.util.Map;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
-import com.gemserk.commons.animation.timeline.Timeline;
-import com.gemserk.commons.animation.timeline.TimelineAnimation;
-import com.gemserk.commons.animation.timeline.TimelineBuilder;
-import com.gemserk.commons.animation.timeline.TimelineValue;
-import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -91,76 +83,24 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(javaEntityTemplateProvider.get().with(new EntityBuilder() {
-			@Override
-			public void build() {
-
-				property("color", slick.color(1, 1, 1, 1));
-
-				component(new ImageRenderableComponent("fadeImage")).withProperties(new ComponentProperties() {
-					{
-						property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
-						propertyRef("color", "color");
-						property("direction", slick.vector(1, 0));
-						property("layer", 10);
-						property("image", new FixedProperty(entity) {
-							@Override
-							public Object get() {
-								return resourceManager.get("background").get();
-							}
-						});
-					}
-				});
-
-				final Integer time = (Integer) parameters.get("time");
-
-				final int part = time / 4;
-
-				final Timeline animationTimeline = new TimelineBuilder() {
-					{
-						value("color", new TimelineValueBuilder<Color>() {
-							{
-								interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
-
-								keyFrame(0, new Color(1f, 1f, 1f, 1f));
-								keyFrame(part, new Color(1f, 1f, 1f, 0f));
-								keyFrame(part * 3, new Color(1f, 1f, 1f, 0f));
-								keyFrame(part * 4, new Color(1f, 1f, 1f, 1f));
-							}
-						});
-
-					}
-				}.build();
-
-				component(new FieldsReflectionComponent("animationComponent") {
-
-					@EntityProperty(readOnly = true)
-					TimelineAnimation timelineAnimation;
-
-					@Handles
-					public void update(Message message) {
-						Integer delta = Properties.getValue(message, "delta");
-						timelineAnimation.update(delta);
-
-						// synchronize values...
-						Timeline timeline = timelineAnimation.getTimeline();
-						Map<String, TimelineValue> timelineValues = timeline.getTimelineValues();
-						for (String propertyName : timelineValues.keySet()) {
-							entity.getProperty(propertyName).set(timelineAnimation.getValue(propertyName));
-						}
-
-					}
-
-				}).withProperties(new ComponentProperties() {
-					{
-						property("timelineAnimation", new TimelineAnimation(animationTimeline, true));
-					}
-				});
-
-			}
-		}).instantiate("fadeInImage", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
 			{
-				put("time", 3500);
+				put("time", 1000);
+				put("layer", 10);
+				put("image", resourceManager.get("background"));
+				put("screenResolution", screenResolution);
+				put("effect", "fadeIn");
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+			{
+				put("offset", 2000);
+				put("time", 1000);
+				put("layer", 10);
+				put("image", resourceManager.get("background"));
+				put("screenResolution", screenResolution);
+				put("effect", "fadeOut");
 			}
 		}));
 
@@ -183,24 +123,14 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				Integer delta = Properties.getValue(message, "delta");
 				timeToNextScreen -= delta;
 				if (timeToNextScreen <= 0) {
-//					Entity newScene = templateProvider.getTemplate("zombierockers.screens.menu").instantiate(entity.getId());
-//					messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
-//					messageQueue.enqueueDelay(new Message("resume"));
-					
 					messageQueue.enqueueDelay(new Message("menu"));
-					
 					nextScreenLoaded = true;
 				}
 			}
 
 			@Handles(ids = { "continue" })
 			public void continueHandler(Message message) {
-//				Entity newScene = templateProvider.getTemplate("zombierockers.screens.menu").instantiate(entity.getId());
-//				messageQueue.enqueueDelay(ChildrenManagementMessageFactory.addEntity(newScene, entity.getRoot()));
-//				messageQueue.enqueueDelay(new Message("resume"));
-				
 				messageQueue.enqueueDelay(new Message("menu"));
-				
 				nextScreenLoaded = true;
 			}
 
