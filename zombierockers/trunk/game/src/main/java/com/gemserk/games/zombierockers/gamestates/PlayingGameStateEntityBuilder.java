@@ -211,7 +211,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 		});
 		child(messageLabel);
 
-		property("fontResource", resourceManager.get("FontDialogMessage2"));
+		property("fontResource", resourceManager.get("FontDialogMessage"));
 		property("font", new FixedProperty(entity) {
 			@Override
 			public Object get() {

@@ -144,7 +144,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 		});
 
 		component(new ReflectionComponent("toggleFpsHandler") {
-			
+
 			@Inject
 			GlobalProperties globalProperties;
 
@@ -205,11 +205,19 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			public void nextLevel(Message message) {
 				final List levels = Properties.getValue(entity, "levels");
 				final Integer levelIndex = Properties.getValue(entity, "levelIndex");
-				messageQueue.enqueueDelay(new Message("loadLevel", new PropertiesMapBuilder() {
-					{
-						property("levelIndex", (levelIndex + 1) % levels.size());
-					}
-				}.build()));
+
+				final Integer nextLevel = levelIndex + 1;
+				if (nextLevel < levels.size()) {
+					messageQueue.enqueueDelay(new Message("loadLevel", new PropertiesMapBuilder() {
+						{
+							property("levelIndex", nextLevel);
+						}
+					}.build()));
+				} else {
+					Properties.setValue(entity, "levelIndex", 0);
+					messageQueue.enqueueDelay(new Message("menu"));
+				}
+
 			}
 
 		});
