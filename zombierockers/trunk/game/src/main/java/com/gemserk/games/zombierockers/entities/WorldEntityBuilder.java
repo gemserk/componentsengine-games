@@ -305,9 +305,14 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		component(new ReferencePropertyComponent("gameOverChecker") {
+			
+			boolean gameOver = false;
 
 			@Handles
 			public void update(Message message) {
+				if (gameOver)
+					return;
+				
 				Collection<Entity> limbosNotDone = entity.getRoot().getEntities(Predicates.and(EntityPredicates.withAllTags("limbo"), new Predicate<Entity>() {
 					@Override
 					public boolean apply(Entity limbo) {
@@ -327,11 +332,13 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 				final boolean win = allLimbosDone && !baseReached;
 
-				messageQueue.enqueue(new Message("gameover", new PropertiesMapBuilder() {
+				messageQueue.enqueue(new Message("levelFinished", new PropertiesMapBuilder() {
 					{
 						property("win", win);
 					}
 				}.build()));
+				
+				gameOver = true;
 			}
 
 		});

@@ -54,7 +54,6 @@ import com.gemserk.games.zombierockers.entities.SegmentsManagerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.WorldEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorGameStateEntityBuilder;
-import com.gemserk.games.zombierockers.gamestates.GameOverGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
@@ -109,7 +108,7 @@ public class Game extends StateBasedGame {
 			app.setMinimumLogicUpdateInterval(1);
 
 			app.setShowFPS(false);
-			
+
 			game.getGameProperties().put("showFps", false);
 			// app.setTargetFrameRate(60);
 
@@ -179,7 +178,6 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("zombierockers.scenes.playing", javaEntityTemplateProvider.get().with(new PlayingGameStateEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.scenes.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.scenes.gameover", javaEntityTemplateProvider.get().with(new GameOverGameStateEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.scene", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
 
@@ -194,7 +192,7 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("gemserk.gui.labelbutton", javaEntityTemplateProvider.get().with(new LabelButtonEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.gui.button", javaEntityTemplateProvider.get().with(new CustomButtonEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
 		}
 

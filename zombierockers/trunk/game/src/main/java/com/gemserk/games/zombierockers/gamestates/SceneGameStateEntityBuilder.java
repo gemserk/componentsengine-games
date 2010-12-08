@@ -54,7 +54,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 		List<Map<String, Object>> levels = ScenesDefinitions.levels();
 
 		final Integer levelIndex = (Integer) (parameters.get("levelIndex") != null ? parameters.get("levelIndex") : 0);
-		// List<Map<String, Object>> levels = (List<Map<String, Object>>) parameters.get("levels");
 		final Map<String, Object> currentLevel = levels.get(levelIndex);
 		final Rectangle screenBounds = slick.rectangle(0, 0, 800, 600);
 
@@ -82,7 +81,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						put("menu", "menu");
 						put("resume", "playing");
 						put("paused", "paused");
-						put("gameover", "gameover");
 						put("editor", "editor");
 					}
 				});
@@ -106,11 +104,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 							}
 						}));
 						put("paused", templateProvider.getTemplate("zombierockers.scenes.paused").instantiate("paused", new HashMap<String, Object>() {
-							{
-								put("screenBounds", screenBounds);
-							}
-						}));
-						put("gameover", templateProvider.getTemplate("zombierockers.scenes.gameover").instantiate("gameover", new HashMap<String, Object>() {
 							{
 								put("screenBounds", screenBounds);
 							}
