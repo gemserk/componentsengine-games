@@ -105,7 +105,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 		component(new ReferencePropertyComponent("fadeInWhenEnterState") {
 			@Handles
 			public void enterNodeState(Message message) {
-				messageQueue.enqueue(new Message("startAnimation", new PropertiesMapBuilder() {
+				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 					{
 						property("animationId", "fadeInEffect");
 					}
@@ -189,7 +189,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				if ("playButton".equals(id)) {
 					System.out.println("play button");
 
-					messageQueue.enqueue(new Message("startAnimation", new PropertiesMapBuilder() {
+					messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 						{
 							property("animationId", "fadeOutEffect");
 						}
@@ -208,7 +208,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 					// System.exit(0);
 					exit = true;
 
-					messageQueue.enqueue(new Message("startAnimation", new PropertiesMapBuilder() {
+					messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 						{
 							property("animationId", "fadeOutEffect");
 						}

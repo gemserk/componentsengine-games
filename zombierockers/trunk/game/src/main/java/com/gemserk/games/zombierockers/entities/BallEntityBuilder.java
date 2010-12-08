@@ -48,7 +48,7 @@ public class BallEntityBuilder extends EntityBuilder {
 
 		tags("ball");
 
-		Map definition = (Map) parameters.get("definition");
+		Map definition = parameters.get("definition");
 
 		property("type", definition.get("type"));
 		property("color", definition.get("color"));

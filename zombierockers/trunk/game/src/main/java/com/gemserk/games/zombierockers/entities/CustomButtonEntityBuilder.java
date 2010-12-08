@@ -81,7 +81,7 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 			}
 		};
 		
-		newParameters.putAll(parameters);
+		newParameters.putAll(parameters.getWrappedParameters());
 		
 		parent("gemserk.gui.labelbutton", newParameters);
 	}

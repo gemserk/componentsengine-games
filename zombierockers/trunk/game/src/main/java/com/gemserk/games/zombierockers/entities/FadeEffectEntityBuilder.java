@@ -96,9 +96,12 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 	@Override
 	public void build() {
 
-		final Rectangle screenResolution = (Rectangle) parameters.get("screenResolution");
-		final Integer delay = (Integer) (parameters.get("delay") != null ? parameters.get("delay") : 0);
-		final Boolean started = (Boolean) (parameters.get("started") != null ? parameters.get("started") : true);
+		property("screenResolution", parameters.get("screenResolution"));
+
+		final Rectangle screenResolution = Properties.getValue(entity, "screenResolution");
+
+		final Integer delay = parameters.get("delay", 0);
+		final Boolean started = parameters.get("started", true);
 
 		property("color", slick.color(1, 1, 1, 1));
 		property("layer", parameters.get("layer"));
@@ -146,9 +149,8 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 
 		});
 
-		String effect = (String) parameters.get("effect");
-
-		final Integer time = (Integer) parameters.get("time");
+		String effect = parameters.get("effect");
+		final Integer time = parameters.get("time");
 
 		boolean fadeInEffect = "fadeIn".equals(effect);
 
@@ -195,7 +197,7 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 			}
 
 			@Handles
-			public void startAnimation(Message message) {
+			public void restartAnimation(Message message) {
 				String animationId = Properties.getValue(message, "animationId");
 				Animation animation = animationHandlerManager.getAnimation(animationId);
 				if (animation == null)

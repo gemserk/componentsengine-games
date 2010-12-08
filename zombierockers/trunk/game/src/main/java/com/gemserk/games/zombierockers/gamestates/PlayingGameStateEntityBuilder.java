@@ -27,9 +27,11 @@ import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
+import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.resources.Resource;
+import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -45,6 +47,12 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	GlobalProperties globalProperties;
+	
+	@Inject
+	ResourceManager resourceManager;
+	
+	@Inject
+	MessageQueue messageQueue;
 
 	@Override
 	public void build() {
@@ -155,6 +163,28 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 		}).withProperties(new ComponentProperties() {
 			{
 				propertyRef("shouldGrabMouse");
+			}
+		});
+		
+		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+			{
+				put("started", false);
+				put("time", 1000);
+				put("layer", 10);
+				put("image", resourceManager.get("background"));
+				put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
+				put("effect", "fadeIn");
+			}
+		}));
+
+		component(new ReferencePropertyComponent("fadeInWhenEnterState") {
+			@Handles
+			public void enterNodeState(Message message) {
+				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
+					{
+						property("animationId", "fadeInEffect");
+					}
+				}.build()));
 			}
 		});
 
