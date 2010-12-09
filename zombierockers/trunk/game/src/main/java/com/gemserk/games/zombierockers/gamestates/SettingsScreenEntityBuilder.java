@@ -2,7 +2,8 @@ package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
 
-import org.newdawn.slick.Music;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -30,7 +31,7 @@ import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class MenuScreenEntityBuilder extends EntityBuilder {
+public class SettingsScreenEntityBuilder extends EntityBuilder {
 
 	@Inject
 	Provider<InputMappingBuilderConfigurator> inputMappingConfiguratorProvider;
@@ -49,6 +50,9 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 	@Inject
 	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
+
+	@Inject
+	GameContainer gameContainer;
 
 	@Override
 	public void build() {
@@ -113,32 +117,6 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		component(new FieldsReflectionComponent("restarMusicComponent") {
-
-			@EntityProperty(readOnly=true)
-			Integer time;
-
-			Integer currentTime = 0;
-
-			@Handles
-			public void update(Message message) {
-				if (currentTime <= 0) {
-					Resource<Music> backgroundMusic = resourceManager.get("BackgroundMusic");
-					Music music = backgroundMusic.get();
-					if (!music.playing())
-						music.play();
-					currentTime += time;
-				}
-				Integer delta = Properties.getValue(message, "delta");
-				currentTime -= delta;
-			}
-
-		}).withProperties(new ComponentProperties() {
-			{
-				property("time", 1000);
-			}
-		});
-
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
 				put("position", slick.vector(screenResolution.getCenterX(), 40f));
@@ -147,7 +125,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Main Menu");
+				put("message", "Settings");
 				put("font", new FixedProperty(entity) {
 					@Override
 					public Object get() {
@@ -157,51 +135,57 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		// final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
-		//
-		// component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
-		// {
-		// property("timeProvider", timeProvider);
-		// }
-		// });
-
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("playButton", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("backButton", new HashMap<String, Object>() {
 			{
 				put("font", new ReferenceProperty<Object>("font", entity));
-				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 50f));
+				put("position", slick.vector(screenResolution.getMaxX() - 100, screenResolution.getMaxY() - 40f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Play");
+				put("message", "Back");
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("settingsButton", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("fullScreenLabel", new HashMap<String, Object>() {
 			{
 				put("font", new ReferenceProperty<Object>("font", entity));
-				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY()));
-				put("bounds", labelRectangle);
-				put("align", "center");
+				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 80f));
+				put("bounds", slick.rectangle(-200, -25, 400, 50));
+				put("align", "left");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Settings");
+				put("message", "Fullscreen");
+				put("color", slick.color(0f, 0f, 0f, 1f));
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("exitButton", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.gui.checkbox").instantiate("fullScreenCheckbox", new HashMap<String, Object>() {
 			{
-				put("font", new ReferenceProperty<Object>("font", entity));
-				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() + 50f));
-				put("bounds", labelRectangle);
-				put("align", "center");
-				put("valign", "center");
+				put("position", slick.vector(screenResolution.getCenterX() + 140, screenResolution.getCenterY() - 80f));
+				put("value", new FixedProperty(entity) {
+					@Override
+					public void set(Object value) {
+						Boolean fullscreen = (Boolean) value;
+						try {
+							gameContainer.setFullscreen(fullscreen);
+						} catch (SlickException e) {
+							e.printStackTrace();
+						}
+					}
+					@Override
+					public Object get() {
+						return gameContainer.isFullscreen();
+					}
+				});
 				put("layer", 1);
-				put("message", "Exit");
+				put("imageFalse", resourceManager.get("false"));
+				put("imageTrue", resourceManager.get("true"));
+				put("bounds", slick.rectangle(-30, -30, 60, 60));
 			}
 		}));
 
-		property("buttonPressed", "play");
+		property("buttonPressed", "back");
 
 		component(new FieldsReflectionComponent("guiHandler") {
 
@@ -217,24 +201,18 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 				Sound sound = buttonPressedSound.get();
 
-				if ("playButton".equals(id)) {
-					buttonPressed = "play";
+				if ("backButton".equals(id)) {
+					buttonPressed = "back";
+					sound.play();
+					messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
+						{
+							property("animationId", "fadeOutEffect");
+						}
+					}.build()));
+				} else if ("fullScreenCheckbox".equals(id)) {
+					sound.play();
 				}
 
-				if ("settingsButton".equals(id)) {
-					buttonPressed = "settings";
-				}
-
-				if ("exitButton".equals(id)) {
-					buttonPressed = "exit";
-				}
-
-				sound.play();
-				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-					{
-						property("animationId", "fadeOutEffect");
-					}
-				}.build()));
 			}
 
 		}).withProperties(new ComponentProperties() {
@@ -252,16 +230,9 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			public void animationEnded(Message message) {
 				String animationId = Properties.getValue(message, "entityId");
 				if ("fadeOutEffect".equalsIgnoreCase(animationId)) {
-
-					if ("exit".equals(buttonPressed)) {
-						System.exit(0);
-					} else if ("settings".equals(buttonPressed)) {
-						messageQueue.enqueue(new Message("settings"));
-					} else if ("play".equals(buttonPressed)) {
-						messageQueue.enqueue(new Message("resume"));
-						messageQueue.enqueueDelay(new Message("restartLevel"));
+					if ("back".equals(buttonPressed)) {
+						messageQueue.enqueue(new Message("menu"));
 					}
-
 				}
 			}
 

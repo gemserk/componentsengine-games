@@ -82,6 +82,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						put("resume", "playing");
 						put("paused", "paused");
 						put("editor", "editor");
+						put("settings", "settings");
 					}
 				});
 				put("stateEntities", new HashMap<String, Object>() {
@@ -112,6 +113,11 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 							{
 								put("level", new ReferenceProperty("currentLevel", entity));
 								put("screenBounds", screenBounds);
+							}
+						}));
+						put("settings", templateProvider.getTemplate("zombierockers.screens.settings").instantiate("settings", new HashMap<String, Object>() {
+							{
+
 							}
 						}));
 					}

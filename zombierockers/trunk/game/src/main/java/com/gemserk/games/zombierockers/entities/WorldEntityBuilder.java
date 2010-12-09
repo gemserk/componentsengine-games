@@ -9,6 +9,7 @@ import java.util.Map;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover;
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.commons.components.TimerComponent;
+import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -199,6 +201,23 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		component(new ExplosionComponent("explosionsComponent"));
+		
+		
+		component(new FieldsReflectionComponent("explosionSound") {
+			
+			@EntityProperty
+			Resource<Sound> explosionSound;
+
+			@Handles
+			public void explosion(Message message) {
+				explosionSound.get().play();
+			}
+
+		}).withProperties(new ComponentProperties() {
+			{
+				property("explosionSound", resourceManager.get("Explosion"));
+			}
+		});
 
 		child(templateProvider.getTemplate("zombierockers.entities.base").instantiate("base", new HashMap<String, Object>() {
 			{

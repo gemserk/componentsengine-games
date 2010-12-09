@@ -8,6 +8,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,6 +227,12 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Boolean win;
+			
+			@EntityProperty
+			Resource<Sound> winSoundResource;
+
+			@EntityProperty
+			Resource<Sound> loseSoundResource;
 
 			@Handles
 			public void levelStarted(Message message) {
@@ -241,15 +248,24 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			public void levelFinished(Message message) {
 				Properties.setValue(messageLabel, "color", slick.color(0f, 0f, 0f, 1f));
 				win = Properties.getValue(message, "win");
-				if (win)
+				if (win) {
+					winSoundResource.get().play();
 					Properties.setValue(messageLabel, "message", "You win!");
-				else
+				}
+				else {
+					loseSoundResource.get().play();
 					Properties.setValue(messageLabel, "message", "You lose, try again!");
+				}
 				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 					{
 						property("animationId", "fadeOutEffect");
 					}
 				}.build()));
+			}
+		}).withProperties(new ComponentProperties() {
+			{
+				property("winSoundResource", resourceManager.get("WinSound"));
+				property("loseSoundResource", resourceManager.get("LoseSound"));
 			}
 		});
 

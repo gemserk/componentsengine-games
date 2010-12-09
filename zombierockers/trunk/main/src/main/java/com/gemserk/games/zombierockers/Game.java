@@ -44,6 +44,7 @@ import com.gemserk.games.zombierockers.entities.BaseEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BulletEntityBuilder;
 import com.gemserk.games.zombierockers.entities.ButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CannonEntityBuilder;
+import com.gemserk.games.zombierockers.entities.CheckboxEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CursorEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CustomButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.FadeEffectEntityBuilder;
@@ -58,6 +59,7 @@ import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SceneGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.SettingsScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.resources.ResourceManagerImpl;
@@ -66,6 +68,8 @@ import com.gemserk.resources.resourceloaders.CachedResourceLoader;
 import com.gemserk.resources.resourceloaders.ResourceLoaderImpl;
 import com.gemserk.resources.slick.PropertiesAnimationLoader;
 import com.gemserk.resources.slick.PropertiesImageLoader;
+import com.gemserk.resources.slick.PropertiesSoundLoader;
+import com.gemserk.resources.slick.dataloaders.SlickMusicLoader;
 import com.gemserk.resources.slick.dataloaders.SlickTrueTypeFontLoader;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -183,6 +187,7 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
+			registrableTemplateProvider.add("zombierockers.screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.sceneEditor", javaEntityTemplateProvider.get().with(new EditorGameStateEntityBuilder()));
 
@@ -192,7 +197,8 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("gemserk.gui.labelbutton", javaEntityTemplateProvider.get().with(new LabelButtonEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.gui.button", javaEntityTemplateProvider.get().with(new CustomButtonEntityBuilder()));
-
+			registrableTemplateProvider.add("zombierockers.gui.checkbox", javaEntityTemplateProvider.get().with(new CheckboxEntityBuilder()));
+			
 			registrableTemplateProvider.add("zombierockers.effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
 		}
 
@@ -217,6 +223,9 @@ public class Game extends StateBasedGame {
 
 		@Inject
 		PropertiesImageLoader propertiesImageLoader;
+		
+		@Inject
+		PropertiesSoundLoader propertiesSoundLoader;
 
 		@Inject
 		ResourceManager resourceManager;
@@ -230,13 +239,17 @@ public class Game extends StateBasedGame {
 
 			propertiesImageLoader.load("assets/images.properties");
 			propertiesAnimationLoader.load("assets/animations.properties");
+			propertiesSoundLoader.load("assets/sounds.properties");
 
-			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36)))));
+//			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36)))));
+			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 48))));
 			resourceManager.add("FontDialogMessage", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36))));
 
 			resourceManager.add("FontDialogMessage2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36))));
 			resourceManager.add("FontTitle2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48))));
-
+			
+			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
+			
 			builderUtils.put("svg", new SlickSvgUtils());
 			builderUtils.put("resourceManager", resourceManager);
 

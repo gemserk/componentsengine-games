@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.Random;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.WeaponComponent;
 import com.gemserk.componentsengine.commons.components.WorldBoundsComponent;
+import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -35,6 +37,7 @@ import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.templates.TemplateProvider;
 import com.gemserk.componentsengine.triggers.Trigger;
+import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -367,6 +370,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 
 								messageQueue.enqueue(childrenManagementMessageFactory.addEntity(bullet, entity.getParent()));
 								messageQueue.enqueue(new Message("generateBall"));
+								messageQueue.enqueue(new Message("bulletFired"));
 							}
 
 							@Override
@@ -377,6 +381,22 @@ public class CannonEntityBuilder extends EntityBuilder {
 
 					};
 				});
+			}
+		});
+		
+		component(new FieldsReflectionComponent("bulletFiredSound") {
+			
+			@EntityProperty
+			Resource<Sound> bulletFiredSound;
+
+			@Handles
+			public void bulletFired(Message message) {
+				bulletFiredSound.get().play();
+			}
+
+		}).withProperties(new ComponentProperties() {
+			{
+				property("bulletFiredSound", resourceManager.get("BulletFired"));
 			}
 		});
 
