@@ -31,6 +31,7 @@ import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.games.zombierockers.ScenesDefinitions;
+import com.gemserk.resources.monitor.ResourcesMonitor;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -162,17 +163,17 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 		});
 
-		// component(new ReflectionComponent("reloadResourcesHandler") {
-		//
-		// @Inject
-		// ResourceManager resourceManager;
-		//			
-		// @Handles
-		// public void reloadResources(Message message) {
-		// resourceManager.reloadAll();
-		// }
-		//
-		// });
+		component(new ReflectionComponent("reloadResourcesHandler") {
+
+			@Inject
+			ResourcesMonitor resourcesMonitor;
+
+			@Handles
+			public void reloadResources(Message message) {
+				resourcesMonitor.reloadModifiedResources();
+			}
+
+		});
 
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
@@ -186,7 +187,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						press("n", "nextLevel");
 						press("k", "makeScreenshot");
 						press("f", "toggleFps");
-						// press("u", "reloadResources");
+						press("u", "reloadResources");
 					}
 				});
 			}
