@@ -64,8 +64,8 @@ import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.resources.ResourceManagerImpl;
 import com.gemserk.resources.dataloaders.StaticDataLoader;
-import com.gemserk.resources.monitor.ResourcesMonitor;
-import com.gemserk.resources.monitor.ResourcesMonitorImpl;
+import com.gemserk.resources.monitor.FilesMonitor;
+import com.gemserk.resources.monitor.FilesMonitorImpl;
 import com.gemserk.resources.resourceloaders.CachedResourceLoader;
 import com.gemserk.resources.resourceloaders.ResourceLoaderImpl;
 import com.gemserk.resources.slick.PropertiesAnimationLoader;
@@ -158,7 +158,7 @@ public class Game extends StateBasedGame {
 						bind(SlickSvgUtils.class).in(Singleton.class);
 
 						bind(ResourceManager.class).to(ResourceManagerImpl.class).in(Singleton.class);
-						bind(ResourcesMonitor.class).to(ResourcesMonitorImpl.class).in(Singleton.class);
+						bind(FilesMonitor.class).to(FilesMonitorImpl.class).in(Singleton.class);
 					}
 				});
 

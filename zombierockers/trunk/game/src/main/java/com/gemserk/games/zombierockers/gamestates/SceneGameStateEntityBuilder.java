@@ -31,7 +31,7 @@ import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.games.zombierockers.ScenesDefinitions;
-import com.gemserk.resources.monitor.ResourcesMonitor;
+import com.gemserk.resources.monitor.FilesMonitor;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -166,11 +166,11 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 		component(new ReflectionComponent("reloadResourcesHandler") {
 
 			@Inject
-			ResourcesMonitor resourcesMonitor;
+			FilesMonitor filesMonitor;
 
 			@Handles
 			public void reloadResources(Message message) {
-				resourcesMonitor.reloadModifiedResources();
+				filesMonitor.checkModifiedFiles();
 			}
 
 		});
