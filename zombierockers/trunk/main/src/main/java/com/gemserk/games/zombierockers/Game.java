@@ -64,6 +64,7 @@ import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.resources.ResourceManagerImpl;
 import com.gemserk.resources.dataloaders.StaticDataLoader;
+import com.gemserk.resources.monitor.FileMonitorResourceHelper;
 import com.gemserk.resources.monitor.FilesMonitor;
 import com.gemserk.resources.monitor.FilesMonitorImpl;
 import com.gemserk.resources.resourceloaders.CachedResourceLoader;
@@ -146,6 +147,9 @@ public class Game extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		// container.setVSync(true);
 		container.setShowFPS(false);
+		
+		final FileMonitorResourceHelper fileMonitorResourceHelper = new FileMonitorResourceHelper();
+		fileMonitorResourceHelper.setEnabled(false);
 
 		Injector injector = Guice.createInjector(new SlickModule(container, this), // 
 				new SlickSoundSystemModule(), // 
@@ -159,6 +163,7 @@ public class Game extends StateBasedGame {
 
 						bind(ResourceManager.class).to(ResourceManagerImpl.class).in(Singleton.class);
 						bind(FilesMonitor.class).to(FilesMonitorImpl.class).in(Singleton.class);
+						bind(FileMonitorResourceHelper.class).toInstance(fileMonitorResourceHelper);
 					}
 				});
 
