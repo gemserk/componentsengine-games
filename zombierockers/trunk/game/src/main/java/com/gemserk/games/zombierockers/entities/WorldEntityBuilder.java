@@ -125,7 +125,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 		final Path levelPath = new Path(slickSvgUtils.loadPoints((String) level.get("path"), "path"));
 
 		property("path", levelPath);
-
+		
 		component(new OutOfBoundsRemover("outofboundsremover")).withProperties(new ComponentProperties() {
 			{
 				property("tags", new String[] { "bullet" });
@@ -134,7 +134,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		property("backgroundImageResource", resourceManager.get(level.get("background")));
-
+		
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
 				// property("image", slick.getResources().image((String) level.get("background")));
@@ -300,14 +300,23 @@ public class WorldEntityBuilder extends EntityBuilder {
 				propertyRef("timer", "startTimer");
 			}
 		});
-
+		
+		property("font", new FixedProperty(entity) {
+			@Override
+			public Object get() {
+				return resourceManager.get("FontPlayingLabel").get();
+			}
+		});
+		
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("ballsQuantityLabel", new HashMap<String, Object>() {
 			{
+				put("font", new ReferenceProperty<Object>("font", entity));
 				put("position", slick.vector(screenBounds.getMaxX() - 60f, screenBounds.getMinY() + 30f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
+				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("align", "left");
-				put("valign", "top");
+				put("valign", "center");
+				put("layer", 50);
 				put("message", new FixedProperty(entity) {
 					public Object get() {
 						return "Balls: " + Properties.getValue(getHolder(), "ballsQuantity").toString();

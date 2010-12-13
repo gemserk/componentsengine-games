@@ -134,6 +134,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void enterState(Message message) {
 				messageQueue.enqueueDelay(new Message("splash"));
+//				messageQueue.enqueueDelay(new Message("resume"));
 			}
 
 		});

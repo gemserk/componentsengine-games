@@ -8,7 +8,6 @@ import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
-import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
@@ -102,7 +101,11 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		component(new ReferencePropertyComponent("fadeInWhenEnterState") {
+		component(new FieldsReflectionComponent("fadeInWhenEnterState") {
+			
+			@EntityProperty
+			Resource<Music> backgroundMusic;
+			
 			@Handles
 			public void enterNodeState(Message message) {
 				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
@@ -110,20 +113,28 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 						property("animationId", "fadeInEffect");
 					}
 				}.build()));
+
+				if (!backgroundMusic.get().playing()) {
+					backgroundMusic.get().fade(1000, 1.0f, false);
+				}
 			}
 		});
+		
+		property("backgroundMusic", resourceManager.get("BackgroundMusic"));
 
-		component(new FieldsReflectionComponent("restarMusicComponent") {
+		component(new FieldsReflectionComponent("restartMusicComponent") {
 
 			@EntityProperty(readOnly=true)
 			Integer time;
 
 			Integer currentTime = 0;
+			
+			@EntityProperty
+			Resource<Music> backgroundMusic;
 
 			@Handles
 			public void update(Message message) {
 				if (currentTime <= 0) {
-					Resource<Music> backgroundMusic = resourceManager.get("BackgroundMusic");
 					Music music = backgroundMusic.get();
 					if (!music.playing())
 						music.play();
@@ -210,6 +221,9 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Resource<Sound> buttonPressedSound;
+			
+			@EntityProperty
+			Resource<Music> backgroundMusic;
 
 			@Handles
 			public void buttonReleased(Message message) {
@@ -219,6 +233,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 				if ("playButton".equals(id)) {
 					buttonPressed = "play";
+					backgroundMusic.get().fade(1000, 0.0f, true);
 				}
 
 				if ("settingsButton".equals(id)) {
@@ -247,7 +262,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			String buttonPressed;
-
+			
 			@Handles
 			public void animationEnded(Message message) {
 				String animationId = Properties.getValue(message, "entityId");

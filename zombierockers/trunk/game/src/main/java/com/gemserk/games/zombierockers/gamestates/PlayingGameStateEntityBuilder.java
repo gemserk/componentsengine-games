@@ -198,7 +198,33 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		final Entity messageLabel = templateProvider.getTemplate("gemserk.gui.label").instantiate("playButton", new HashMap<String, Object>() {
+		property("points", 0);
+
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("pointsLabel", new HashMap<String, Object>() {
+			{
+				put("font", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						return resourceManager.get("FontPlayingLabel").get();
+					}
+				});
+				put("position", slick.vector(screenResolution.getMinX() + 140f, screenResolution.getMinY() + 30f));
+				put("bounds", slick.rectangle(-100, -20, 200, 40));
+				put("align", "left");
+				put("valign", "center");
+				put("layer", 50);
+				put("message", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						Integer points = Properties.getValue(getHolder(), "points");
+						return "Points: " + points;
+					}
+				});
+				put("color", slick.color(0f, 0f, 0f, 1f));
+			}
+		}));
+
+		final Entity messageLabel = templateProvider.getTemplate("gemserk.gui.label").instantiate("winMessageLabel", new HashMap<String, Object>() {
 			{
 				put("font", new ReferenceProperty<Object>("font", entity));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 50f));
@@ -227,7 +253,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Boolean win;
-			
+
 			@EntityProperty
 			Resource<Sound> winSoundResource;
 
@@ -251,8 +277,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				if (win) {
 					winSoundResource.get().play();
 					Properties.setValue(messageLabel, "message", "You win!");
-				}
-				else {
+				} else {
 					loseSoundResource.get().play();
 					Properties.setValue(messageLabel, "message", "You lose, try again!");
 				}
