@@ -104,16 +104,21 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
+			
+			@EntityProperty
+			Integer points;
 
 			@Inject
 			ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void changeLevel(Message message) {
+				points = 0;
 				Entity world = templateProvider.getTemplate("zombierockers.entities.world").instantiate("world", new HashMap<String, Object>() {
 					{
 						put("screenBounds", screenBounds);
 						put("level", level);
+						put("points", new ReferenceProperty<Object>("points", entity));
 					}
 				});
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(world, entity));
@@ -180,7 +185,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			{
 				put("started", false);
 				put("time", 1000);
-				put("layer", 10);
+				put("layer", 50);
 				put("image", resourceManager.get("background"));
 				put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
 				put("effect", "fadeIn");
@@ -192,7 +197,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				put("started", false);
 				put("delay", 2000);
 				put("time", 1000);
-				put("layer", 10);
+				put("layer", 50);
 				put("image", resourceManager.get("background"));
 				put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
 				put("effect", "fadeOut");
@@ -243,7 +248,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				put("bounds", slick.rectangle(-100, -20, 200, 40));
 				put("align", "left");
 				put("valign", "center");
-				put("layer", 50);
+				put("layer", 40);
 				put("message", new FixedProperty(entity) {
 					@Override
 					public Object get() {
@@ -262,7 +267,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				put("bounds", slick.rectangle(screenResolution.getCenterX() - 160, screenResolution.getCenterY() - 25, 320, 50));
 				put("align", "center");
 				put("valign", "center");
-				put("layer", 1);
+				put("layer", 40);
 				put("message", "");
 				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(slick.color(0f, 0f, 0f, 0f)), 0.004f));
 			}

@@ -111,6 +111,8 @@ public class WorldEntityBuilder extends EntityBuilder {
 		property("bounds", screenBounds);
 		property("ballsQuantity", 0);
 		property("baseReached", false);
+		
+		property("points", parameters.get("points"));
 
 		property("level", level);
 
@@ -316,7 +318,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("align", "left");
 				put("valign", "center");
-				put("layer", 50);
+				put("layer", 40);
 				put("message", new FixedProperty(entity) {
 					public Object get() {
 						return "Balls: " + Properties.getValue(getHolder(), "ballsQuantity").toString();
@@ -367,6 +369,27 @@ public class WorldEntityBuilder extends EntityBuilder {
 				}.build()));
 				
 				gameOver = true;
+			}
+
+		});
+		
+		
+		component(new FieldsReflectionComponent("pointsHandler") {
+			
+			@EntityProperty
+			Integer points;
+
+			@Handles
+			public void explodeBall(Message message) {
+				List<Entity> balls = Properties.getValue(message, "balls");
+				
+				int basePoints = 50;
+				for (int i = 0; i < balls.size(); i++) {
+					points += basePoints;
+					basePoints *= 2;
+				}
+				
+				System.out.println("points !! " + points);
 			}
 
 		});
