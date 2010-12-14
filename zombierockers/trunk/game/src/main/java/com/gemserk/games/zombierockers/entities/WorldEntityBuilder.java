@@ -29,6 +29,7 @@ import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
+import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.predicates.EntityPredicates;
@@ -387,7 +388,19 @@ public class WorldEntityBuilder extends EntityBuilder {
 			Integer comboCount;
 
 			@EntityProperty
+			Integer maxChainCount;
+
+			@EntityProperty
+			Integer maxComboCount;
+
+			@EntityProperty
 			Entity chainDetectionBall;
+
+			@Inject
+			ChildrenManagementMessageFactory childrenManagementMessageFactory;
+
+			@Inject
+			MessageQueue messageQueue;
 
 			@Handles
 			public void explodeBall(Message message) {
@@ -397,11 +410,25 @@ public class WorldEntityBuilder extends EntityBuilder {
 					chainCount++;
 					if (logger.isDebugEnabled())
 						logger.debug("chain incremented to " + chainCount);
+
+					if (chainCount >= maxChainCount) {
+						if (logger.isDebugEnabled())
+							logger.debug("max chain count reached, reseting to 0 ");
+						// show a message "max chain reached!! excelent, blah blah"
+						chainCount = 0;
+					}
 				}
-				
+
 				comboCount++;
 				if (logger.isDebugEnabled())
 					logger.debug("combo count incremented to " + comboCount);
+
+				if (comboCount >= maxComboCount) {
+					if (logger.isDebugEnabled())
+						logger.debug("max combo count reached, reseting to 1");
+					// show a message "max combo reached!! excelent, blah blah"
+					chainCount = 1;
+				}
 
 				int ballPoints = 30;
 				int chainPoints = 100;
@@ -410,11 +437,41 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 				if (chainCount >= minChainCount)
 					newPoints += chainCount * chainPoints;
-				
+
 				newPoints *= comboCount;
 
-				System.out.println("currentPoints = " + points + ", newPoints = " + newPoints);
 				points += newPoints;
+
+				final int messagePoints = newPoints;
+
+				final Vector2f position = new Vector2f();
+				final Color ballColor = Properties.getValue(balls.get(0), "color");
+
+				for (int i = 0; i < balls.size(); i++) {
+					Entity ball = balls.get(i);
+					Vector2f ballPosition = Properties.getValue(ball, "position");
+					position.x += ballPosition.x;
+					position.y += ballPosition.y;
+				}
+
+				position.scale(1f / (float) balls.size()).add(slick.vector(0, -40));
+
+				Entity pointsMessageEntity = templateProvider.getTemplate("zombierockers.gui.bonusmessage").instantiate("pointsMessage", new HashMap<String, Object>() {
+					{
+						put("position", position);
+						put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
+						put("startColor", slick.color(ballColor.r, ballColor.g, ballColor.b, 0f));
+						put("endColor", slick.color(ballColor.r, ballColor.g, ballColor.b, 1f));
+						put("startSize", slick.vector(0.6f, 0.6f));
+						put("endSize", slick.vector(1.0f, 1.0f));
+						put("align", "center");
+						put("valign", "center");
+						put("layer", 40);
+						put("message", "" + messagePoints + " points");
+					}
+				});
+
+				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(pointsMessageEntity, entity));
 			}
 
 			@Handles
@@ -442,7 +499,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 				if (logger.isDebugEnabled())
 					logger.debug("chain started with ball.id: " + chainDetectionBall.getId());
-				
+
 				comboCount = 0;
 				if (logger.isDebugEnabled())
 					logger.debug("combo count reseted because bullet hit!");
@@ -451,7 +508,9 @@ public class WorldEntityBuilder extends EntityBuilder {
 		}).withProperties(new ComponentProperties() {
 			{
 				property("chainCount", 0);
-				property("minChainCount", 2);
+				property("minChainCount", 0);
+				property("maxChainCount", 10);
+				property("maxComboCount", 10);
 				property("chainDetectionBall", null);
 				property("comboCount", 0);
 			}
