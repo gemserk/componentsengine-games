@@ -3,7 +3,6 @@ package com.gemserk.games.zombierockers.gamestates;
 import java.util.HashMap;
 
 import org.newdawn.slick.Music;
-import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
@@ -190,6 +189,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Play");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
 
@@ -202,6 +202,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Settings");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
 
@@ -214,6 +215,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Exit");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
 
@@ -224,28 +226,19 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			@EntityProperty
 			String buttonPressed;
 
-			@EntityProperty
-			Resource<Sound> buttonPressedSound;
-
 			@Handles
 			public void buttonReleased(Message message) {
 				String id = Properties.getValue(message, "buttonId");
 
-				Sound sound = buttonPressedSound.get();
-
-				if ("playButton".equals(id)) {
+				if ("playButton".equals(id))
 					buttonPressed = "play";
-				}
 
-				if ("settingsButton".equals(id)) {
+				if ("settingsButton".equals(id))
 					buttonPressed = "settings";
-				}
 
-				if ("exitButton".equals(id)) {
+				if ("exitButton".equals(id))
 					buttonPressed = "exit";
-				}
 
-				sound.play();
 				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 					{
 						property("animationId", "fadeOutEffect");
@@ -253,10 +246,6 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				}.build()));
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				property("buttonPressedSound", resourceManager.get("ButtonSound"));
-			}
 		});
 
 		component(new FieldsReflectionComponent("animationComponentHandler") {

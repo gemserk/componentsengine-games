@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
@@ -144,6 +143,7 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Back");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
 
@@ -182,6 +182,7 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 				put("imageFalse", resourceManager.get("false"));
 				put("imageTrue", resourceManager.get("true"));
 				put("bounds", slick.rectangle(-30, -30, 60, 60));
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
 
@@ -192,33 +193,23 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 			@EntityProperty
 			String buttonPressed;
 
-			@EntityProperty
-			Resource<Sound> buttonPressedSound;
-
 			@Handles
 			public void buttonReleased(Message message) {
 				String id = Properties.getValue(message, "buttonId");
 
-				Sound sound = buttonPressedSound.get();
-
 				if ("backButton".equals(id)) {
 					buttonPressed = "back";
-					sound.play();
 					messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 						{
 							property("animationId", "fadeOutEffect");
 						}
 					}.build()));
 				} else if ("fullScreenCheckbox".equals(id)) {
-					sound.play();
+					
 				}
 
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				property("buttonPressedSound", resourceManager.get("ButtonSound"));
-			}
 		});
 
 		component(new FieldsReflectionComponent("animationComponentHandler") {

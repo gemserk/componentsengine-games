@@ -3,6 +3,7 @@ package com.gemserk.games.zombierockers.entities;
 import java.util.HashMap;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
@@ -16,6 +17,7 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.triggers.NullTrigger;
+import com.gemserk.resources.Resource;
 import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
 import com.gemserk.slick.animation.timeline.Vector2fInterpolatedValue;
 import com.google.inject.Inject;
@@ -24,7 +26,7 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 
 	@Inject
 	SlickUtils slick;
-	
+
 	@Inject
 	MessageQueue messageQueue;
 
@@ -33,6 +35,8 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 	public void build() {
 
 		final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
+
+		property("buttonReleasedSound", parameters.get("buttonReleasedSound"), null);
 
 		component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
 			{
@@ -72,17 +76,24 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 					public void trigger(Object... parameters) {
 						final Entity labelEntity = (Entity) parameters[0];
 						Properties.setValue(labelEntity, "size", slick.vector(1.1f, 1.1f));
-						messageQueue.enqueue(new Message("buttonReleased", new PropertiesMapBuilder(){{
-							property("source", labelEntity);
-							property("buttonId", labelEntity.getId());
-						}}.build()));
+
+						Resource<Sound> sound = Properties.getValue(labelEntity, "buttonReleasedSound");
+						if (sound != null)
+							sound.get().play();
+
+						messageQueue.enqueue(new Message("buttonReleased", new PropertiesMapBuilder() {
+							{
+								property("source", labelEntity);
+								property("buttonId", labelEntity.getId());
+							}
+						}.build()));
 					}
 				});
 			}
 		};
-		
+
 		newParameters.putAll(parameters.getWrappedParameters());
-		
+
 		parent("gemserk.gui.labelbutton", newParameters);
 	}
 }
