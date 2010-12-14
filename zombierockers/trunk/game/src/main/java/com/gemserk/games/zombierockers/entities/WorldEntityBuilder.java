@@ -438,11 +438,12 @@ public class WorldEntityBuilder extends EntityBuilder {
 				if (chainCount >= minChainCount)
 					newPoints += chainCount * chainPoints;
 
-				newPoints *= comboCount;
-
-				points += newPoints;
 
 				final int messagePoints = newPoints;
+
+				newPoints *= comboCount;
+				
+				points += newPoints;
 
 				final Vector2f position = new Vector2f();
 				final Color ballColor = Properties.getValue(balls.get(0), "color");
@@ -456,6 +457,16 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 				position.scale(1f / (float) balls.size()).add(slick.vector(0, -40));
 
+				final StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append(messagePoints);
+				stringBuilder.append(" points");
+				
+				if (comboCount > 1) {
+					stringBuilder.append(" ");
+					stringBuilder.append("x");
+					stringBuilder.append(comboCount);
+				}
+
 				Entity pointsMessageEntity = templateProvider.getTemplate("zombierockers.gui.bonusmessage").instantiate("pointsMessage", new HashMap<String, Object>() {
 					{
 						put("position", position);
@@ -467,7 +478,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 						put("align", "center");
 						put("valign", "center");
 						put("layer", 40);
-						put("message", "" + messagePoints + " points");
+						put("message", stringBuilder.toString());
 					}
 				});
 
