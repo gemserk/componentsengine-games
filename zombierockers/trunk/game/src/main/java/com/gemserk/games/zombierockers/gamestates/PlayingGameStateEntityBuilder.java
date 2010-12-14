@@ -8,6 +8,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.Music;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
@@ -198,6 +199,36 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			}
 		}));
 
+		property("backgroundMusic", resourceManager.get("PlayMusic"));
+
+		component(new FieldsReflectionComponent("restartMusicComponent") {
+
+			@EntityProperty(readOnly = true)
+			Integer time;
+
+			Integer currentTime = 0;
+
+			@EntityProperty
+			Resource<Music> backgroundMusic;
+
+			@Handles
+			public void update(Message message) {
+				if (currentTime <= 0) {
+					Music music = backgroundMusic.get();
+					if (!music.playing())
+						music.play();
+					currentTime += time;
+				}
+				Integer delta = Properties.getValue(message, "delta");
+				currentTime -= delta;
+			}
+
+		}).withProperties(new ComponentProperties() {
+			{
+				property("time", 1000);
+			}
+		});
+
 		property("points", 0);
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("pointsLabel", new HashMap<String, Object>() {
@@ -292,6 +323,35 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				property("winSoundResource", resourceManager.get("WinSound"));
 				property("loseSoundResource", resourceManager.get("LoseSound"));
 			}
+		});
+
+		component(new FieldsReflectionComponent("backgroundMusicComponent") {
+
+			@EntityProperty
+			Resource<Music> backgroundMusic;
+
+			@Handles
+			public void levelStarted(Message message) {
+				if (backgroundMusic.get().getVolume() <= 0.05f)
+					backgroundMusic.get().fade(1000, 1.0f, false);
+			}
+
+			@Handles
+			public void levelFinished(Message message) {
+				backgroundMusic.get().fade(1000, 0.0f, true);
+			}
+
+			@Handles
+			public void enterNodeState(Message message) {
+				if (!backgroundMusic.get().playing())
+					backgroundMusic.get().fade(1000, 1.0f, false);
+			}
+
+			@Handles
+			public void leaveNodeState(Message message) {
+				backgroundMusic.get().fade(1000, 0.0f, true);
+			}
+
 		});
 
 		component(new FieldsReflectionComponent("nextScreenComponent") {

@@ -116,6 +116,7 @@ public class Game extends StateBasedGame {
 			app.setMinimumLogicUpdateInterval(1);
 
 			app.setShowFPS(false);
+			app.setVSync(true);
 
 			game.getGameProperties().put("showFps", false);
 			// app.setTargetFrameRate(60);
@@ -257,6 +258,7 @@ public class Game extends StateBasedGame {
 			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 24))));
 			
 			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
+			resourceManager.add("PlayMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/game.ogg"))));
 			
 			builderUtils.put("svg", new SlickSvgUtils());
 			builderUtils.put("resourceManager", resourceManager);

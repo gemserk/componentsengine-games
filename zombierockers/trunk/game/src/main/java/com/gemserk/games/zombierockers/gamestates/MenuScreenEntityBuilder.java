@@ -102,10 +102,6 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 		}));
 
 		component(new FieldsReflectionComponent("fadeInWhenEnterState") {
-			
-			@EntityProperty
-			Resource<Music> backgroundMusic;
-			
 			@Handles
 			public void enterNodeState(Message message) {
 				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
@@ -113,22 +109,18 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 						property("animationId", "fadeInEffect");
 					}
 				}.build()));
-
-				if (!backgroundMusic.get().playing()) {
-					backgroundMusic.get().fade(1000, 1.0f, false);
-				}
 			}
 		});
-		
+
 		property("backgroundMusic", resourceManager.get("BackgroundMusic"));
 
 		component(new FieldsReflectionComponent("restartMusicComponent") {
 
-			@EntityProperty(readOnly=true)
+			@EntityProperty(readOnly = true)
 			Integer time;
 
 			Integer currentTime = 0;
-			
+
 			@EntityProperty
 			Resource<Music> backgroundMusic;
 
@@ -150,6 +142,27 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		});
 
+		component(new FieldsReflectionComponent("backgroundMusicComponent") {
+
+			@EntityProperty
+			Resource<Music> backgroundMusic;
+
+			@Handles
+			public void enterNodeState(Message message) {
+				if (!backgroundMusic.get().playing())
+					backgroundMusic.get().fade(1000, 1.0f, false);
+			}
+
+			@Handles
+			public void buttonReleased(Message message) {
+				String id = Properties.getValue(message, "buttonId");
+
+				if ("playButton".equals(id))
+					backgroundMusic.get().fade(1000, 0.0f, true);
+			}
+
+		});
+
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
 				put("position", slick.vector(screenResolution.getCenterX(), 40f));
@@ -167,14 +180,6 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				});
 			}
 		}));
-
-		// final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
-		//
-		// component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
-		// {
-		// property("timeProvider", timeProvider);
-		// }
-		// });
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("playButton", new HashMap<String, Object>() {
 			{
@@ -221,9 +226,6 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Resource<Sound> buttonPressedSound;
-			
-			@EntityProperty
-			Resource<Music> backgroundMusic;
 
 			@Handles
 			public void buttonReleased(Message message) {
@@ -233,7 +235,6 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 				if ("playButton".equals(id)) {
 					buttonPressed = "play";
-					backgroundMusic.get().fade(1000, 0.0f, true);
 				}
 
 				if ("settingsButton".equals(id)) {
@@ -262,7 +263,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			String buttonPressed;
-			
+
 			@Handles
 			public void animationEnded(Message message) {
 				String animationId = Properties.getValue(message, "entityId");
