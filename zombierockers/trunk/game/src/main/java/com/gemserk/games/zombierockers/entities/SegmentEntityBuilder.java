@@ -77,7 +77,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 		@EntityProperty
 		Property<Float> accelerationStopPoint;
-		
+
 		@EntityProperty
 		Property<InstantiationTemplate> segmentTemplate;
 
@@ -160,15 +160,15 @@ public class SegmentEntityBuilder extends EntityBuilder {
 	}
 
 	private static int segmentNumber = 1;
-	
+
 	@Override
 	public String getId() {
 		return MessageFormat.format("segment-{0}", SegmentEntityBuilder.segmentNumber);
 	}
-	
+
 	@Override
 	public void build() {
-		
+
 		SegmentEntityBuilder.segmentNumber++;
 
 		tags("segment");
@@ -176,7 +176,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 		property("pathTraversal", parameters.get("pathTraversal"));
 		property("speed", parameters.get("speed"));
 		property("balls", parameters.get("balls") != null ? parameters.get("balls") : new LinkedList());
-		
+
 		property("baseReached", false);
 
 		property("firstBall", new FixedProperty(entity) {
@@ -243,8 +243,9 @@ public class SegmentEntityBuilder extends EntityBuilder {
 			@Inject
 			MessageQueue messageQueue;
 
-			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
-			
+			@Inject
+			ChildrenManagementMessageFactory childrenManagementMessageFactory;
+
 			@Handles
 			public void segmentRemoveHead(Message message) {
 
@@ -289,8 +290,9 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
-			
-			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
+
+			@Inject
+			ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void addNewBall(Message message) {
@@ -541,10 +543,12 @@ public class SegmentEntityBuilder extends EntityBuilder {
 			public void checkBallSeries(Message message) {
 
 				final Entity ballFromMessage = Properties.getValue(message, "ball");
-				
+
 				boolean seriesDetected = internalCheckBallSeries(message);
-				
+
 				if (!seriesDetected) {
+					if (logger.isDebugEnabled())
+						logger.debug("series not detected segment.id: " + entity.getId());
 					messageQueue.enqueue(new Message("seriesNotDetected", new PropertiesMapBuilder() {
 						{
 							property("ball", ballFromMessage);
@@ -631,7 +635,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 						property("ballsToRemove", ballsToRemove);
 					}
 				}.build()));
-				
+
 				return true;
 			}
 
@@ -661,23 +665,13 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
-			
-			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
+
+			@Inject
+			ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void seriesDetected(Message message) {
 
-				final boolean performed = internalSeriesDetected(message);
-				
-				messageQueue.enqueue(new Message("seriesDetectedPerformed", new PropertiesMapBuilder() {
-					{
-						property("performed", performed);
-					}
-				}.build()));
-				
-			}
-
-			private boolean internalSeriesDetected(Message message) {
 				segment.wrap(entity);
 
 				final List<Entity> balls = segment.getBalls();
@@ -691,7 +685,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 				}));
 
 				if (ballsInside.isEmpty())
-					return false;
+					return;
 
 				if (ballsInside.size() != ballsToRemove.size()) {
 
@@ -703,9 +697,9 @@ public class SegmentEntityBuilder extends EntityBuilder {
 						}
 					}.build()));
 
-					return false;
+					return;
 				}
-				
+
 				int firstIndex = balls.indexOf(ballsToRemove.get(0));
 				int lastIndex = balls.indexOf(ballsToRemove.get(ballsToRemove.size() - 1));
 
@@ -713,23 +707,23 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 				LinkedList<Entity> firstSegmentBalls = new LinkedList<Entity>(balls.subList(0, firstIndex));
 				final LinkedList<Entity> secondSegmentBalls = new LinkedList<Entity>(balls.subList(lastIndex + 1, balls.size()));
-				
+
 				if (logger.isInfoEnabled()) {
 					logger.info("Splitting segment when removeBalls - segment.id: " + entity.getId());
 					logger.info("First subsegment balls - " + firstSegmentBalls.size());
 					logger.info("Second subsegment balls - " + secondSegmentBalls.size());
 				}
-				
-				LinkedList<Entity> betweenSegment = new LinkedList<Entity>(balls.subList(firstIndex, lastIndex+1));
-				
+
+				LinkedList<Entity> betweenSegment = new LinkedList<Entity>(balls.subList(firstIndex, lastIndex + 1));
+
 				if (betweenSegment.size() != ballsToRemove.size()) {
 					if (logger.isInfoEnabled())
 						logger.info("Splitting canceled because concurrent merge and ball insertion - " + entity.getId());
-					return false;
+					return;
 				}
-				
+
 				// chain detected correctly
-				
+
 				if (firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()) {
 					if (logger.isInfoEnabled())
 						logger.info("Both subsegments are empty, removing balls - segment.id: " + entity.getId());
@@ -744,52 +738,53 @@ public class SegmentEntityBuilder extends EntityBuilder {
 						logger.info("First segment is empty - segment.id: " + entity.getId());
 					segment.balls.set(secondSegmentBalls);
 				} else {
-					segment.pathTraversal.set(getPathTraversal(entity, firstIndex-1));
+					segment.pathTraversal.set(getPathTraversal(entity, firstIndex - 1));
 					segment.balls.set(firstSegmentBalls);
-					
+
 					if (!secondSegmentBalls.isEmpty()) {
-						
-						Entity newSegmentEntity = segment.segmentTemplate.get().get(new HashMap<String, Object>() {{
-							put("pathTraversal", originalPathTraversal);
-							put("balls", secondSegmentBalls);
-							put("speed", 0.0f);
-							put("pathLength", segment.pathLength.get());
-							put("minSpeedFactor", segment.minSpeedFactor.get());
-							put("maxSpeed", segment.maxSpeed.get());
-							put("speedWhenReachBase", segment.speedWhenReachBase.get());
-						}});
-						
+
+						Entity newSegmentEntity = segment.segmentTemplate.get().get(new HashMap<String, Object>() {
+							{
+								put("pathTraversal", originalPathTraversal);
+								put("balls", secondSegmentBalls);
+								put("speed", 0.0f);
+								put("pathLength", segment.pathLength.get());
+								put("minSpeedFactor", segment.minSpeedFactor.get());
+								put("maxSpeed", segment.maxSpeed.get());
+								put("speedWhenReachBase", segment.speedWhenReachBase.get());
+							}
+						});
+
 						messageQueue.enqueue(childrenManagementMessageFactory.addEntity(newSegmentEntity, entity.getParent()));
-						for (Entity ballEntity : secondSegmentBalls) 
+						for (Entity ballEntity : secondSegmentBalls)
 							Properties.setValue(ballEntity, "segment", newSegmentEntity);
-						
+
 						// logger....
-						
+
 					} else {
 						if (logger.isInfoEnabled())
 							logger.info("Second subsegment is empty - segment.id: " + entity.getId());
 					}
 				}
-			
+
 				messageQueue.enqueue(new Message("explodeBall", new PropertiesMapBuilder() {
 					{
 						property("balls", ballsToRemove);
 					}
 				}.build()));
-				
+
 				messageQueue.enqueue(new Message("checkSameColorSegments"));
-				
-				return true;
+
 			}
 
 		});
-		
+
 		component(new ReferencePropertyComponent("mergeSegmentsHandler") {
 
 			final SegmentWrapper masterSegment = new SegmentWrapper();
 
 			final SegmentWrapper slaveSegment = new SegmentWrapper();
-			
+
 			final BallWrapper ball = new BallWrapper();
 
 			@Inject
@@ -800,50 +795,50 @@ public class SegmentEntityBuilder extends EntityBuilder {
 				Entity masterSegmentEntity = Properties.getValue(message, "masterSegment");
 				if (masterSegmentEntity != entity)
 					return;
-				
-				//// logger....
+
+				// // logger....
 				masterSegment.wrap(entity);
-				
+
 				final Entity slaveSegmentEntity = Properties.getValue(message, "slaveSegment");
 				slaveSegment.wrap(slaveSegmentEntity);
-				
+
 				masterSegment.pathTraversal.set(slaveSegment.pathTraversal.get());
-				
+
 				final Entity ballToCheck = slaveSegment.firstBall.get();
 				final Entity mustContainBall = masterSegment.lastBall.get();
-				
+
 				masterSegment.getBalls().addAll(slaveSegment.getBalls());
-				
+
 				for (Entity slaveSegmentBall : slaveSegment.getBalls()) {
 					ball.wrap(slaveSegmentBall);
 					ball.segment.set(masterSegmentEntity);
 				}
 				slaveSegment.getBalls().clear();
-				
+
 				messageQueue.enqueue(new Message("destroySegment", new PropertiesMapBuilder() {
 					{
 						property("segment", slaveSegmentEntity);
 					}
 				}.build()));
-				
+
 				messageQueue.enqueue(new Message("checkBallSeries", new PropertiesMapBuilder() {
 					{
 						property("ball", ballToCheck);
 						property("mustContainBall", mustContainBall);
 					}
 				}.build()));
-				
+
 			}
 
 		});
-		
+
 		component(new ReferencePropertyComponent("baseReachedHandler") {
-			
+
 			SegmentWrapper segment = new SegmentWrapper();
 
 			@Handles
 			public void baseReached(Message message) {
-				if (logger.isInfoEnabled()) 
+				if (logger.isInfoEnabled())
 					logger.info("Base reached - Accelerating - segment.id: " + entity.getId());
 				segment.wrap(entity);
 				segment.baseReached.set(true);

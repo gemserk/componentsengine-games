@@ -384,6 +384,9 @@ public class WorldEntityBuilder extends EntityBuilder {
 			Integer minChainCount;
 
 			@EntityProperty
+			Integer comboCount;
+
+			@EntityProperty
 			Entity chainDetectionBall;
 
 			@Handles
@@ -395,6 +398,10 @@ public class WorldEntityBuilder extends EntityBuilder {
 					if (logger.isDebugEnabled())
 						logger.debug("chain incremented to " + chainCount);
 				}
+				
+				comboCount++;
+				if (logger.isDebugEnabled())
+					logger.debug("combo count incremented to " + comboCount);
 
 				int ballPoints = 30;
 				int chainPoints = 100;
@@ -403,42 +410,28 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 				if (chainCount >= minChainCount)
 					newPoints += chainCount * chainPoints;
+				
+				newPoints *= comboCount;
 
 				System.out.println("currentPoints = " + points + ", newPoints = " + newPoints);
 				points += newPoints;
 			}
 
-			// @Handles
-			// public void seriesDetectedPerformed(Message message) {
-			// Boolean performed = Properties.getValue(message, "performed");
-			//
-			// if (!performed) {
-			// chainCount = 0;
-			// if (logger.isDebugEnabled())
-			// logger.debug("chain lost!");
-			// } else {
-			// chainCount++;
-			// if (logger.isDebugEnabled() && chainCount == 1)
-			// logger.debug("chain started!");
-			// if (logger.isDebugEnabled())
-			// logger.debug("chain length = " + chainCount);
-			// }
-			//
-			// }
-			
 			@Handles
 			public void seriesNotDetected(Message message) {
-				
 				Entity ball = Properties.getValue(message, "ball");
-				if (ball == chainDetectionBall) { 
+				if (ball == chainDetectionBall) {
 					chainCount = 0;
 					chainDetectionBall = null;
 					// cancel chain count because bullet didn't make a series
-					
+
 					if (logger.isDebugEnabled())
 						logger.debug("chain reseted because bullet didn't make a ball group");
 				}
-				
+
+				comboCount = 0;
+				if (logger.isDebugEnabled())
+					logger.debug("combo count reseted!");
 			}
 
 			@Handles
@@ -449,6 +442,10 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 				if (logger.isDebugEnabled())
 					logger.debug("chain started with ball.id: " + chainDetectionBall.getId());
+				
+				comboCount = 0;
+				if (logger.isDebugEnabled())
+					logger.debug("combo count reseted because bullet hit!");
 			}
 
 		}).withProperties(new ComponentProperties() {
@@ -456,6 +453,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 				property("chainCount", 0);
 				property("minChainCount", 2);
 				property("chainDetectionBall", null);
+				property("comboCount", 0);
 			}
 		});
 
