@@ -111,7 +111,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 		property("bounds", screenBounds);
 		property("ballsQuantity", 0);
 		property("baseReached", false);
-		
+
 		property("points", parameters.get("points"));
 
 		property("level", level);
@@ -127,7 +127,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 		final Path levelPath = new Path(slickSvgUtils.loadPoints((String) level.get("path"), "path"));
 
 		property("path", levelPath);
-		
+
 		component(new OutOfBoundsRemover("outofboundsremover")).withProperties(new ComponentProperties() {
 			{
 				property("tags", new String[] { "bullet" });
@@ -136,7 +136,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		property("backgroundImageResource", resourceManager.get(level.get("background")));
-		
+
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
 				// property("image", slick.getResources().image((String) level.get("background")));
@@ -203,10 +203,9 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		component(new ExplosionComponent("explosionsComponent"));
-		
-		
+
 		component(new FieldsReflectionComponent("explosionSound") {
-			
+
 			@EntityProperty
 			Resource<Sound> explosionSound;
 
@@ -302,14 +301,14 @@ public class WorldEntityBuilder extends EntityBuilder {
 				propertyRef("timer", "startTimer");
 			}
 		});
-		
+
 		property("font", new FixedProperty(entity) {
 			@Override
 			public Object get() {
 				return resourceManager.get("FontPlayingLabel").get();
 			}
 		});
-		
+
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("ballsQuantityLabel", new HashMap<String, Object>() {
 			{
 				put("font", new ReferenceProperty<Object>("font", entity));
@@ -335,14 +334,14 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		component(new ReferencePropertyComponent("gameOverChecker") {
-			
+
 			boolean gameOver = false;
 
 			@Handles
 			public void update(Message message) {
 				if (gameOver)
 					return;
-				
+
 				Collection<Entity> limbosNotDone = entity.getRoot().getEntities(Predicates.and(EntityPredicates.withAllTags("limbo"), new Predicate<Entity>() {
 					@Override
 					public boolean apply(Entity limbo) {
@@ -367,31 +366,97 @@ public class WorldEntityBuilder extends EntityBuilder {
 						property("win", win);
 					}
 				}.build()));
-				
+
 				gameOver = true;
 			}
 
 		});
-		
-		
+
 		component(new FieldsReflectionComponent("pointsHandler") {
-			
+
 			@EntityProperty
 			Integer points;
+
+			@EntityProperty
+			Integer chainCount;
+
+			@EntityProperty
+			Integer minChainCount;
+
+			@EntityProperty
+			Entity chainDetectionBall;
 
 			@Handles
 			public void explodeBall(Message message) {
 				List<Entity> balls = Properties.getValue(message, "balls");
-				
-				int basePoints = 50;
-				for (int i = 0; i < balls.size(); i++) {
-					points += basePoints;
-					basePoints *= 2;
+
+				if (balls.contains(chainDetectionBall)) {
+					chainCount++;
+					if (logger.isDebugEnabled())
+						logger.debug("chain incremented to " + chainCount);
 				}
-				
-				System.out.println("points !! " + points);
+
+				int ballPoints = 30;
+				int chainPoints = 100;
+
+				int newPoints = ballPoints * balls.size();
+
+				if (chainCount >= minChainCount)
+					newPoints += chainCount * chainPoints;
+
+				System.out.println("currentPoints = " + points + ", newPoints = " + newPoints);
+				points += newPoints;
 			}
 
+			// @Handles
+			// public void seriesDetectedPerformed(Message message) {
+			// Boolean performed = Properties.getValue(message, "performed");
+			//
+			// if (!performed) {
+			// chainCount = 0;
+			// if (logger.isDebugEnabled())
+			// logger.debug("chain lost!");
+			// } else {
+			// chainCount++;
+			// if (logger.isDebugEnabled() && chainCount == 1)
+			// logger.debug("chain started!");
+			// if (logger.isDebugEnabled())
+			// logger.debug("chain length = " + chainCount);
+			// }
+			//
+			// }
+			
+			@Handles
+			public void seriesNotDetected(Message message) {
+				
+				Entity ball = Properties.getValue(message, "ball");
+				if (ball == chainDetectionBall) { 
+					chainCount = 0;
+					chainDetectionBall = null;
+					// cancel chain count because bullet didn't make a series
+					
+					if (logger.isDebugEnabled())
+						logger.debug("chain reseted because bullet didn't make a ball group");
+				}
+				
+			}
+
+			@Handles
+			public void bulletHit(Message message) {
+				// ball added to a segment from a bullet hit, start a new chain detection with that ball
+				Entity bullet = Properties.getValue(message, "source");
+				chainDetectionBall = Properties.getValue(bullet, "ball");
+
+				if (logger.isDebugEnabled())
+					logger.debug("chain started with ball.id: " + chainDetectionBall.getId());
+			}
+
+		}).withProperties(new ComponentProperties() {
+			{
+				property("chainCount", 0);
+				property("minChainCount", 2);
+				property("chainDetectionBall", null);
+			}
 		});
 
 		// property("ballShadowImage", slick.getResources().image("ballshadow"));

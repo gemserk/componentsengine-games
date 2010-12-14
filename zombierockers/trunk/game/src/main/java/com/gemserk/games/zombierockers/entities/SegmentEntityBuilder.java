@@ -540,14 +540,29 @@ public class SegmentEntityBuilder extends EntityBuilder {
 			@Handles
 			public void checkBallSeries(Message message) {
 
+				final Entity ballFromMessage = Properties.getValue(message, "ball");
+				
+				boolean seriesDetected = internalCheckBallSeries(message);
+				
+				if (!seriesDetected) {
+					messageQueue.enqueue(new Message("seriesNotDetected", new PropertiesMapBuilder() {
+						{
+							property("ball", ballFromMessage);
+						}
+					}.build()));
+				}
+
+			}
+
+			private boolean internalCheckBallSeries(Message message) {
 				Entity ballFromMessage = Properties.getValue(message, "ball");
 				ball.wrap(ballFromMessage);
 
 				if (!ball.alive.get())
-					return;
+					return false;
 
 				if (ball.segment.get() != entity)
-					return;
+					return false;
 
 				segment.wrap(entity);
 
@@ -595,7 +610,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 					messageQueue.enqueue(new Message("checkSameColorSegments"));
 					if (logger.isInfoEnabled())
 						logger.info("When ball added to segment less than 3 balls  in series- segment.id: " + entity.getId());
-					return;
+					return false;
 				}
 
 				Entity mustContainBallEntity = Properties.getValue(message, "mustContainBall");
@@ -603,7 +618,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 					if (!ballsToRemove.contains(mustContainBallEntity)) {
 						if (logger.isInfoEnabled())
 							logger.info("When ball added to segment more than 3 balls but does not contains - segment.id: " + entity.getId());
-						return;
+						return false;
 					}
 				}
 
@@ -616,7 +631,8 @@ public class SegmentEntityBuilder extends EntityBuilder {
 						property("ballsToRemove", ballsToRemove);
 					}
 				}.build()));
-
+				
+				return true;
 			}
 
 		});
@@ -651,6 +667,17 @@ public class SegmentEntityBuilder extends EntityBuilder {
 			@Handles
 			public void seriesDetected(Message message) {
 
+				final boolean performed = internalSeriesDetected(message);
+				
+				messageQueue.enqueue(new Message("seriesDetectedPerformed", new PropertiesMapBuilder() {
+					{
+						property("performed", performed);
+					}
+				}.build()));
+				
+			}
+
+			private boolean internalSeriesDetected(Message message) {
 				segment.wrap(entity);
 
 				final List<Entity> balls = segment.getBalls();
@@ -664,7 +691,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 				}));
 
 				if (ballsInside.isEmpty())
-					return;
+					return false;
 
 				if (ballsInside.size() != ballsToRemove.size()) {
 
@@ -676,9 +703,9 @@ public class SegmentEntityBuilder extends EntityBuilder {
 						}
 					}.build()));
 
-					return;
+					return false;
 				}
-
+				
 				int firstIndex = balls.indexOf(ballsToRemove.get(0));
 				int lastIndex = balls.indexOf(ballsToRemove.get(ballsToRemove.size() - 1));
 
@@ -698,8 +725,10 @@ public class SegmentEntityBuilder extends EntityBuilder {
 				if (betweenSegment.size() != ballsToRemove.size()) {
 					if (logger.isInfoEnabled())
 						logger.info("Splitting canceled because concurrent merge and ball insertion - " + entity.getId());
-					return;
+					return false;
 				}
+				
+				// chain detected correctly
 				
 				if (firstSegmentBalls.isEmpty() && secondSegmentBalls.isEmpty()) {
 					if (logger.isInfoEnabled())
@@ -750,6 +779,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 				
 				messageQueue.enqueue(new Message("checkSameColorSegments"));
 				
+				return true;
 			}
 
 		});
