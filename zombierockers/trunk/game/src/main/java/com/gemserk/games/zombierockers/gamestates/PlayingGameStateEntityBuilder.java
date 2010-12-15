@@ -241,7 +241,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				put("font", new FixedProperty(entity) {
 					@Override
 					public Object get() {
-						return resourceManager.get("FontPlayingLabel").get();
+						return resourceManager.get("FontPointsLabel").get();
 					}
 				});
 				put("position", slick.vector(screenResolution.getMinX() + 140f, screenResolution.getMinY() + 30f));
@@ -256,7 +256,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 						return "Points: " + points;
 					}
 				});
-				put("color", slick.color(0f, 0f, 0f, 1f));
+				put("color", slick.color(0.3f, 0.3f, 1.0f, 1f));
 			}
 		}));
 

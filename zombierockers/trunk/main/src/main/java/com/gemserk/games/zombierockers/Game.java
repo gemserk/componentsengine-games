@@ -260,8 +260,8 @@ public class Game extends StateBasedGame {
 			resourceManager.add("FontTitle2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48))));
 			
 			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 24))));
+			resourceManager.add("FontPointsLabel", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));
 			
-//			resourceManager.add("FontBonusMessage", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36))));
 			resourceManager.add("FontBonusMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));
 			
 			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
