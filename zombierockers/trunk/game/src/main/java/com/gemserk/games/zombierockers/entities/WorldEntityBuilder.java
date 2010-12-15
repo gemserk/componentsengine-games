@@ -310,22 +310,22 @@ public class WorldEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("ballsQuantityLabel", new HashMap<String, Object>() {
-			{
-				put("font", new ReferenceProperty<Object>("font", entity));
-				put("position", slick.vector(screenBounds.getMaxX() - 60f, screenBounds.getMinY() + 30f));
-				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
-				put("align", "left");
-				put("valign", "center");
-				put("layer", 40);
-				put("message", new FixedProperty(entity) {
-					public Object get() {
-						return "Balls: " + Properties.getValue(getHolder(), "ballsQuantity").toString();
-					};
-				});
-			}
-		}));
+		// child(templateProvider.getTemplate("gemserk.gui.label").instantiate("ballsQuantityLabel", new HashMap<String, Object>() {
+		// {
+		// put("font", new ReferenceProperty<Object>("font", entity));
+		// put("position", slick.vector(screenBounds.getMaxX() - 60f, screenBounds.getMinY() + 30f));
+		// put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
+		// put("color", slick.color(0f, 0f, 0f, 1f));
+		// put("align", "left");
+		// put("valign", "center");
+		// put("layer", 40);
+		// put("message", new FixedProperty(entity) {
+		// public Object get() {
+		// return "Balls: " + Properties.getValue(getHolder(), "ballsQuantity").toString();
+		// };
+		// });
+		// }
+		// }));
 
 		component(new ReferencePropertyComponent("baseReachedHandler") {
 			@Handles

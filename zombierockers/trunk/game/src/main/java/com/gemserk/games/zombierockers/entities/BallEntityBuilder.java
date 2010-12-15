@@ -52,9 +52,9 @@ public class BallEntityBuilder extends EntityBuilder {
 
 		property("type", definition.get("type"));
 		property("color", definition.get("color"));
-		
+
 		property("image", definition.get("image"));
-//		property("image", resourceManager.get((String) definition.get("image")));
+		// property("image", resourceManager.get((String) definition.get("image")));
 
 		// property("animationResource", animationResource);
 		// property("animation", new FixedProperty(entity){
@@ -103,8 +103,9 @@ public class BallEntityBuilder extends EntityBuilder {
 			public Object get() {
 				Float angle = Properties.getValue(getHolder(), "angle");
 				PathTraversal pathTraversal = Properties.getValue(getHolder(), "pathTraversal");
-				if (pathTraversal != null)
-					return pathTraversal.getTangent().add(angle);
+				if (pathTraversal != null) {
+					return pathTraversal.getTangent().copy().add(angle);
+				}
 				return new Vector2f();
 			}
 		});
@@ -134,10 +135,10 @@ public class BallEntityBuilder extends EntityBuilder {
 		property("currentFrame", new FixedProperty(entity) {
 			@Override
 			public Object get() {
-				
+
 				// Resource<Image> imageResource = Properties.getValue(getHolder(), "image");
 				String image = Properties.getValue(getHolder(), "image");
-				return resourceManager.get(image).get(); 
+				return resourceManager.get(image).get();
 				// return imageResource.get();
 
 				// Animation animation = Properties.getValue(getHolder(), "animation");
@@ -155,7 +156,7 @@ public class BallEntityBuilder extends EntityBuilder {
 
 			// @EntityProperty(readOnly = true)
 			// AnimationHelper animationHelper;
-			
+
 			@EntityProperty
 			Float angle;
 
@@ -171,16 +172,16 @@ public class BallEntityBuilder extends EntityBuilder {
 				float distance = newPathTraversal.getDistanceFromOrigin() - pathTraversal.getDistanceFromOrigin();
 
 				// animationHelper.add(distance);
+				// Vector2f tangent = pathTraversal.getTangent();
+				// double theta = tangent.getTheta();
+				// if (theta >= 90f && theta < 270f)
+				// angle -= (distance * 3);
+				// else
 				angle += (distance * 3);
 
 				pathTraversal = newPathTraversal;
 
 				SubPathDefinitions subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
-
-				// Map subPathDefinitions = Properties.getValue(entity, "subPathDefinitions");
-				// Closure method = (Closure) subPathDefinitions.get("getSubPathDefinition");
-				// SubPathDefinition subPathDefinition = (SubPathDefinition) method.call(newPathTraversal);
-
 				SubPathDefinition subPathDefinition = subPathDefinitions.getSubPathDefinition(newPathTraversal);
 
 				layer = (Integer) subPathDefinition.getMetadata().get("layer");
@@ -205,8 +206,9 @@ public class BallEntityBuilder extends EntityBuilder {
 
 			@EntityProperty(readOnly = true)
 			Integer layer;
-			
-			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
+
+			@Inject
+			ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 			@Handles
 			public void explodeBall(Message message) {

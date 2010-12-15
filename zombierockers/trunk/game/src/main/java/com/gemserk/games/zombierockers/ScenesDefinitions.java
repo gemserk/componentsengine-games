@@ -166,42 +166,54 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level04 = new LevelBuilder() {
 			{
-				background("level04");
+				background("background");
 				path("levels/level04/path.svg");
 				level.put("ballsQuantity", 100);
 				level.put("pathProperties", new HashMap<String, Object>() {
 					{
 						put("speed", 0.04f);
 						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 1300f);
-						put("minSpeedFactor", 0.3f);
-						put("maxSpeed", 0.05f);
+						put("accelerationStopPoint", 800f);
+						put("minSpeedFactor", 0.2f);
+						put("maxSpeed", 0.04f);
 						put("speedWhenReachBase", 0.4f);
 					}
 				});
 				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList());
+				level.put("placeables", new ArrayList(){{
+					add(new HashMap<String, Object>(){{
+						put("image", "level04_path");
+						put("position", new Vector2f(400f, 300f));
+						put("layer", 0);
+					}});
+				}});
 				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 		
 		Map<String, Object> level05 = new LevelBuilder() {
 			{
-				background("level05");
+				background("background");
 				path("levels/level05/path.svg");
-				level.put("ballsQuantity", 100);
+				level.put("ballsQuantity", 120);
 				level.put("pathProperties", new HashMap<String, Object>() {
 					{
 						put("speed", 0.04f);
 						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 1300f);
-						put("minSpeedFactor", 0.3f);
-						put("maxSpeed", 0.05f);
+						put("accelerationStopPoint", 800f);
+						put("minSpeedFactor", 0.2f);
+						put("maxSpeed", 0.04f);
 						put("speedWhenReachBase", 0.4f);
 					}
 				});
 				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList());
+				level.put("placeables", new ArrayList(){{
+					add(new HashMap<String, Object>(){{
+						put("image", "level05_path");
+						put("position", new Vector2f(400f, 300f));
+						put("layer", 0);
+					}});
+				}});
 				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
@@ -334,7 +346,7 @@ public class ScenesDefinitions {
 			}
 		}.build();
 
-		return Arrays.asList(level01, level02, level03);
+		return Arrays.asList(level01, level02, level03, level04, level05);
 	}
 
 	@SuppressWarnings("serial")
