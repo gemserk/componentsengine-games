@@ -406,17 +406,14 @@ public class WorldEntityBuilder extends EntityBuilder {
 			public void explodeBall(Message message) {
 				List<Entity> balls = Properties.getValue(message, "balls");
 
+				final StringBuilder chainMessageStringBuilder = new StringBuilder();
+
 				if (balls.contains(chainDetectionBall)) {
 					chainCount++;
+					chainDetectionBall = null;
+					// reset chain ball to avoid cancelling chain when next series not detected and this ball on balls collection
 					if (logger.isDebugEnabled())
 						logger.debug("chain incremented to " + chainCount);
-
-					if (chainCount >= maxChainCount) {
-						if (logger.isDebugEnabled())
-							logger.debug("max chain count reached, reseting to 0 ");
-						// show a message "max chain reached!! excelent, blah blah"
-						chainCount = 0;
-					}
 				}
 
 				comboCount++;
@@ -427,7 +424,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 					if (logger.isDebugEnabled())
 						logger.debug("max combo count reached, reseting to 1");
 					// show a message "max combo reached!! excelent, blah blah"
-					chainCount = 1;
+					comboCount = 1;
 				}
 
 				int ballPoints = 30;
@@ -438,11 +435,10 @@ public class WorldEntityBuilder extends EntityBuilder {
 				if (chainCount >= minChainCount)
 					newPoints += chainCount * chainPoints;
 
-
 				final int messagePoints = newPoints;
 
 				newPoints *= comboCount;
-				
+
 				points += newPoints;
 
 				final Vector2f position = new Vector2f();
@@ -457,13 +453,22 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 				position.scale(1f / (float) balls.size()).add(slick.vector(0, -40));
 
+				if (chainCount >= maxChainCount) {
+					if (logger.isDebugEnabled())
+						logger.debug("max chain count reached, reseting to 0 ");
+					chainCount = 0;
+					chainMessageStringBuilder.append("MAX chain bonus!");
+				} else if (chainCount >= minChainCount) {
+					chainMessageStringBuilder.append(chainCount);
+					chainMessageStringBuilder.append("x chain bonus!");
+				}
+
 				final StringBuilder stringBuilder = new StringBuilder();
 				stringBuilder.append(messagePoints);
 				stringBuilder.append(" points");
-				
+
 				if (comboCount > 1) {
-					stringBuilder.append(" ");
-					stringBuilder.append("x");
+					stringBuilder.append(" x");
 					stringBuilder.append(comboCount);
 				}
 
@@ -478,7 +483,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 						put("align", "center");
 						put("valign", "center");
 						put("layer", 40);
-						put("message", stringBuilder.toString());
+						put("lines", new String[] { stringBuilder.toString(), chainMessageStringBuilder.toString() });
 					}
 				});
 
@@ -519,15 +524,14 @@ public class WorldEntityBuilder extends EntityBuilder {
 		}).withProperties(new ComponentProperties() {
 			{
 				property("chainCount", 0);
-				property("minChainCount", 0);
-				property("maxChainCount", 10);
-				property("maxComboCount", 10);
+				property("minChainCount", 2);
+				property("maxChainCount", 8);
+				property("maxComboCount", 8);
 				property("chainDetectionBall", null);
 				property("comboCount", 0);
 			}
 		});
 
-		// property("ballShadowImage", slick.getResources().image("ballshadow"));
 		property("ballShadowImage", resourceManager.get("ballshadow"));
 
 		component(new ReferencePropertyComponent("ballRenderer") {
