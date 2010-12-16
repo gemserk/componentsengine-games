@@ -56,6 +56,7 @@ import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentsManagerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.WorldEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.EditorEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
@@ -190,6 +191,8 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("zombierockers.entities.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.world", javaEntityTemplateProvider.get().with(new WorldEntityBuilder()));
+			
+			registrableTemplateProvider.add("zombierockers.entities.editor", javaEntityTemplateProvider.get().with(new EditorEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.playing", javaEntityTemplateProvider.get().with(new PlayingGameStateEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.scenes.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
