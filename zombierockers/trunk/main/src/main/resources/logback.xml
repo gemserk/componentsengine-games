@@ -17,13 +17,20 @@
 			</Pattern>
 		</layout>
 	</appender>
+	
+	
 
 	<root level="debug">
 		<appender-ref ref="FILE" />
+		<appender-ref ref="STDOUT" />
 	</root>
-
-	<logger name="com.gemserk.games" level="debug">
+	
+	<!--
+	<logger name="com.gemserk.games" level="error">
 		<appender-ref ref="STDOUT" />
 	</logger>
+	-->
+	
+	<logger name="com.gemserk.games.zombierockers.entities.WorldEntityBuilder" level="debug" />
 
 </configuration>

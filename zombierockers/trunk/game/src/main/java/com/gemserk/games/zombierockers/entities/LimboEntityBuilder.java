@@ -53,6 +53,10 @@ public class LimboEntityBuilder extends EntityBuilder {
 
 		@EntityProperty
 		Property<PathTraversal> nextBallPoint;
+
+		@EntityProperty
+		Property<Path> path;
+
 	}
 
 	class BallEntity extends PropertiesWrapper {
@@ -81,7 +85,7 @@ public class LimboEntityBuilder extends EntityBuilder {
 		property("path", path);
 		property("nextBallPoint", new PathTraversal(path, 0, 0).add(32f));
 		property("done", false);
-		
+
 		property("segment", null);
 
 		property("isEmpty", new FixedProperty(entity) {
@@ -162,6 +166,14 @@ public class LimboEntityBuilder extends EntityBuilder {
 							@Override
 							public boolean apply(Entity ballEntity) {
 								ball.wrap(ballEntity);
+								if (ball.pathTraversal.get() != null)
+									return limbo.path.get() == ball.pathTraversal.get().getPath();
+								return false;
+							}
+						}, new Predicate<Entity>() {
+							@Override
+							public boolean apply(Entity ballEntity) {
+								ball.wrap(ballEntity);
 								return ball.pathTraversal.get().compareTo(limbo.nextBallPoint.get()) > 0;
 							}
 						});
@@ -186,19 +198,43 @@ public class LimboEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
+
+			@Inject
+			ChildrenManagementMessageFactory childrenManagementMessageFactory;
 			
-			@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
+			class SpawnedSegmentMessage extends PropertiesWrapper {
+
+				@EntityProperty
+				Property<Collection<Entity>> balls;
+
+				@EntityProperty
+				Property<Path> path;
+				
+				@EntityProperty
+				Property<Entity> segment;
+
+			}
+			
+			SpawnedSegmentMessage spawnedSegmentMessage = new SpawnedSegmentMessage();
 
 			@Handles
 			public void spawnedSegment(Message message) {
 				limbo.wrap(entity);
+				spawnedSegmentMessage.wrap(message);
+				
+				if (limbo.path.get() != spawnedSegmentMessage.path.get()) {
+					if (logger.isDebugEnabled()) 
+						logger.debug("Spawned segment message for a different limbo");
+					return;
+				}
+				
 				Deque<Entity> deque = limbo.deque.get();
 
-				Collection<Entity> balls = Properties.getValue(message, "balls");
+				Collection<Entity> balls = spawnedSegmentMessage.balls.get();
 				for (Entity ballEntity : balls)
 					deque.addLast(ballEntity);
 
-				Entity segment = Properties.getValue(message, "segment");
+				Entity segment = spawnedSegmentMessage.segment.get();
 
 				limbo.segment.set(segment);
 

@@ -42,7 +42,7 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 		ArrayList<K> keyArray = new ArrayList<K>(keySet);
 		return items.get(keyArray.get(random.nextInt(keyArray.size())));
 	}
-
+	
 	@Override
 	public void build() {
 
@@ -156,7 +156,7 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 
 				}
 
-				Path pathValue = path.get();
+				final Path pathValue = path.get();
 				final PathTraversal pathTraversal = new PathTraversal(pathValue, 0, 0);
 
 				pathTraversal.getDistanceFromOrigin(); // so that it is calculated, and propagated when segment split
@@ -177,6 +177,7 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 
 				messageQueue.enqueue(new Message("spawnedSegment", new PropertiesMapBuilder() {
 					{
+						property("path", pathValue);
 						property("balls", balls);
 						property("segment", segment);
 					}

@@ -13,20 +13,49 @@ public class ScenesDefinitions {
 
 	static class LevelBuilder {
 
-		HashMap<String, Object> level = new HashMap<String, Object>();
-
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		
+		ArrayList<PathBuilder> pathBuilders = new ArrayList<PathBuilder>();
+		
 		void background(String bg) {
-			level.put("background", bg);
+			properties.put("background", bg);
 		}
 
-		void path(String path) {
-			level.put("path", path);
+//		void path(String path) {
+//			properties.put("path", path);
+//		}
+		
+		void path(PathBuilder pathBuilder){ 
+			pathBuilders.add(pathBuilder);
 		}
 
 		Map<String, Object> build() {
-			return level;
+			
+			ArrayList<Map<String, Object>> pathProperties = new ArrayList<Map<String,Object>>();
+			
+			for (PathBuilder path : pathBuilders) {
+				pathProperties.add(path.build());
+			}
+			
+			properties.put("paths", pathProperties);
+			
+			return properties;
 		}
 
+	}
+	
+	static class PathBuilder {
+		
+		Map<String, Object> properties = new HashMap<String, Object>();
+		
+		void path(String path) {
+			properties.put("path", path);
+		}
+		
+		Map<String, Object> build() {
+			return properties;
+		}
+		
 	}
 
 	final static Map<String, Object> redBallType = new HashMap<String, Object>() {
@@ -86,267 +115,207 @@ public class ScenesDefinitions {
 		Map<String, Object> level01 = new LevelBuilder() {
 			{
 				background("background");
-				path("levels/level01/path.svg");
-				level.put("ballsQuantity", 40);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.3f);
-						put("accelerationStopPoint", 500f);
-						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.035f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
-				level.put("placeables", new ArrayList(){{
+//				path("levels/level01/path.svg");
+				
+				path(new PathBuilder(){{
+					path("levels/level01/path.svg");
+					properties.put("ballsQuantity", 40);
+					properties.put("pathProperties", new HashMap<String, Object>() {
+						{
+							put("speed", 0.04f);
+							put("acceleratedSpeed", 0.3f);
+							put("accelerationStopPoint", 500f);
+							put("minSpeedFactor", 0.2f);
+							put("maxSpeed", 0.035f);
+							put("speedWhenReachBase", 0.4f);
+						}
+					});
+				}});
+				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
+				properties.put("placeables", new ArrayList(){{
 					add(new HashMap<String, Object>(){{
 						put("image", "level01_path");
 						put("position", new Vector2f(400f, 300f));
 						put("layer", 0);
 					}});
 				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
+				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 
 		Map<String, Object> level02 = new LevelBuilder() {
 			{
 				background("background");
-				path("levels/level02/path.svg");
-				level.put("ballsQuantity", 60);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.3f);
-						put("accelerationStopPoint", 600f);
-						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.04f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
-				level.put("placeables", new ArrayList(){{
+				
+				path(new PathBuilder(){{
+					path("levels/level02/path.svg");
+					properties.put("ballsQuantity", 60);
+					properties.put("pathProperties", new HashMap<String, Object>() {
+						{
+							put("speed", 0.04f);
+							put("acceleratedSpeed", 0.3f);
+							put("accelerationStopPoint", 600f);
+							put("minSpeedFactor", 0.2f);
+							put("maxSpeed", 0.04f);
+							put("speedWhenReachBase", 0.4f);
+						}
+					});
+				}});
+				
+				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
+				properties.put("placeables", new ArrayList(){{
 					add(new HashMap<String, Object>(){{
 						put("image", "level02_path");
 						put("position", new Vector2f(400f, 300f));
 						put("layer", 0);
 					}});
 				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
+				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 		
 		Map<String, Object> level03 = new LevelBuilder() {
 			{
 				background("background");
-				path("levels/level03/path.svg");
-				level.put("ballsQuantity", 80);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 800f);
-						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.04f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
-				level.put("placeables", new ArrayList(){{
+				
+				path(new PathBuilder(){{
+					path("levels/level03/path.svg");
+					properties.put("ballsQuantity", 80);
+					properties.put("pathProperties", new HashMap<String, Object>() {
+						{
+							put("speed", 0.04f);
+							put("acceleratedSpeed", 0.5f);
+							put("accelerationStopPoint", 800f);
+							put("minSpeedFactor", 0.2f);
+							put("maxSpeed", 0.04f);
+							put("speedWhenReachBase", 0.4f);
+						}
+					});
+				}});
+				
+				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
+				properties.put("placeables", new ArrayList(){{
 					add(new HashMap<String, Object>(){{
 						put("image", "level03_path");
 						put("position", new Vector2f(400f, 300f));
 						put("layer", 0);
 					}});
 				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(Arrays.asList(subPathDefinition(1081f, 1300f, 9, 1)), defaultSubPathDefinition));
+				properties.put("subPathDefinitions", new SubPathDefinitions(Arrays.asList(subPathDefinition(1081f, 1300f, 9, 1)), defaultSubPathDefinition));
 			}
 		}.build();
 		
 		Map<String, Object> level04 = new LevelBuilder() {
 			{
 				background("background");
-				path("levels/level04/path.svg");
-				level.put("ballsQuantity", 100);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 800f);
-						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.04f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList(){{
+				
+				path(new PathBuilder(){{
+					path("levels/level04/path.svg");
+					properties.put("ballsQuantity", 100);
+					properties.put("pathProperties", new HashMap<String, Object>() {
+						{
+							put("speed", 0.04f);
+							put("acceleratedSpeed", 0.5f);
+							put("accelerationStopPoint", 800f);
+							put("minSpeedFactor", 0.2f);
+							put("maxSpeed", 0.04f);
+							put("speedWhenReachBase", 0.4f);
+						}
+					});
+				}});
+
+				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
+				properties.put("placeables", new ArrayList(){{
 					add(new HashMap<String, Object>(){{
 						put("image", "level04_path");
 						put("position", new Vector2f(400f, 300f));
 						put("layer", 0);
 					}});
 				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
+				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 		
 		Map<String, Object> level05 = new LevelBuilder() {
 			{
 				background("background");
-				path("levels/level05/path.svg");
-				level.put("ballsQuantity", 120);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 800f);
-						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.04f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList(){{
+				
+				path(new PathBuilder(){{
+					path("levels/level05/path.svg");
+					properties.put("ballsQuantity", 120);
+					properties.put("pathProperties", new HashMap<String, Object>() {
+						{
+							put("speed", 0.04f);
+							put("acceleratedSpeed", 0.5f);
+							put("accelerationStopPoint", 800f);
+							put("minSpeedFactor", 0.2f);
+							put("maxSpeed", 0.04f);
+							put("speedWhenReachBase", 0.4f);
+						}
+					});
+				}});
+
+				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
+				properties.put("placeables", new ArrayList(){{
 					add(new HashMap<String, Object>(){{
 						put("image", "level05_path");
 						put("position", new Vector2f(400f, 300f));
 						put("layer", 0);
 					}});
 				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
+				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 		
 		Map<String, Object> level06 = new LevelBuilder() {
 			{
-				background("level06");
-				path("levels/level06/path.svg");
-				level.put("ballsQuantity", 100);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 1300f);
-						put("minSpeedFactor", 0.3f);
-						put("maxSpeed", 0.05f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList());
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
-			}
-		}.build();
-		
-		Map<String, Object> level07 = new LevelBuilder() {
-			{
-				background("level07");
-				path("levels/level07/path.svg");
-				level.put("ballsQuantity", 100);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 1300f);
-						put("minSpeedFactor", 0.3f);
-						put("maxSpeed", 0.05f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList(){{
-					add(new HashMap<String, Object>(){{
-						put("image", "level07-tunnel");
-						put("position", new Vector2f(305f, 206f));
-						put("layer", -2000);
-					}});
-				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(Arrays.asList(subPathDefinition(1374.4f, 1639.9f, -1500, 7)), defaultSubPathDefinition));
-			}
-		}.build();
-
-		Map<String, Object> level08 = new LevelBuilder() {
-			{
-				background("level08");
-				path("levels/level08/path.svg");
-				level.put("ballsQuantity", 100);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 1300f);
-						put("minSpeedFactor", 0.3f);
-						put("maxSpeed", 0.05f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList());
-				level.put("subPathDefinitions", new SubPathDefinitions(Arrays.asList(subPathDefinition(412.8999f, 706.1004f, 15, 7)), defaultSubPathDefinition));
-				level.put("alphaMasks", new HashMap() {
-					{
-						put(15, "level08_alphaMask");
-					}
-				});
-			}
-		}.build();
-		
-		Map<String, Object> level09 = new LevelBuilder() {
-			{
 				background("background");
-				path("levels/level09/path.svg");
-				level.put("ballsQuantity", 100);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.5f);
-						put("accelerationStopPoint", 1300f);
-						put("minSpeedFactor", 0.3f);
-						put("maxSpeed", 0.05f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
-				level.put("placeables", new ArrayList(){{
+				
+				path(new PathBuilder(){{
+					path("levels/level06/path01.svg");
+					properties.put("pathId", "path01");
+					properties.put("ballsQuantity", 60);
+					properties.put("pathProperties", new HashMap<String, Object>() {
+						{
+							put("speed", 0.03f);
+							put("acceleratedSpeed", 0.4f);
+							put("accelerationStopPoint", 400f);
+							put("minSpeedFactor", 0.2f);
+							put("maxSpeed", 0.03f);
+							put("speedWhenReachBase", 0.4f);
+						}
+					});
+				}});
+
+				path(new PathBuilder(){{
+					path("levels/level06/path02.svg");
+					properties.put("pathId", "path02");
+					properties.put("ballsQuantity", 40);
+					properties.put("pathProperties", new HashMap<String, Object>() {
+						{
+							put("speed", 0.04f);
+							put("acceleratedSpeed", 0.5f);
+							put("accelerationStopPoint", 600f);
+							put("minSpeedFactor", 0.2f);
+							put("maxSpeed", 0.04f);
+							put("speedWhenReachBase", 0.4f);
+						}
+					});
+				}});
+
+				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
+				properties.put("placeables", new ArrayList(){{
 					add(new HashMap<String, Object>(){{
-						put("image", "level09_path");
+						put("image", "level06_path");
 						put("position", new Vector2f(400f, 300f));
 						put("layer", 0);
 					}});
 				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
-			}
-		}.build();
-		
-		Map<String, Object> level10 = new LevelBuilder() {
-			{
-				background("background");
-				path("levels/level10/path.svg");
-				level.put("ballsQuantity", 40);
-				level.put("pathProperties", new HashMap<String, Object>() {
-					{
-						put("speed", 0.04f);
-						put("acceleratedSpeed", 0.3f);
-						put("accelerationStopPoint", 500f);
-						put("minSpeedFactor", 0.2f);
-						put("maxSpeed", 0.035f);
-						put("speedWhenReachBase", 0.4f);
-					}
-				});
-				level.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
-				level.put("placeables", new ArrayList(){{
-					add(new HashMap<String, Object>(){{
-						put("image", "level10_path");
-						put("position", new Vector2f(400f, 300f));
-						put("layer", 0);
-					}});
-				}});
-				level.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
+				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 
-		return Arrays.asList(level01, level02, level03, level04, level05);
+		return Arrays.asList(level01, level02, level03, level04, level05, level06);
 	}
 
 	@SuppressWarnings("serial")

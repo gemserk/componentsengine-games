@@ -125,10 +125,6 @@ public class WorldEntityBuilder extends EntityBuilder {
 			}
 		}
 
-		final Path levelPath = new Path(slickSvgUtils.loadPoints((String) level.get("path"), "path"));
-
-		property("path", levelPath);
-
 		component(new OutOfBoundsRemover("outofboundsremover")).withProperties(new ComponentProperties() {
 			{
 				property("tags", new String[] { "bullet" });
@@ -221,28 +217,48 @@ public class WorldEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(templateProvider.getTemplate("zombierockers.entities.base").instantiate("base", new HashMap<String, Object>() {
-			{
-				put("position", levelPath.getPoint(levelPath.getPoints().size() - 1));
-				put("radius", 15f);
-			}
-		}));
+		ArrayList<Map<String, Object>> paths = (ArrayList<Map<String, Object>>) level.get("paths");
 
-		child(templateProvider.getTemplate("zombierockers.entities.spawner").instantiate("spawner", new HashMap<String, Object>() {
-			{
-				put("path", levelPath);
-				put("ballsQuantity", level.get("ballsQuantity"));
-				put("ballDefinitions", level.get("ballDefinitions"));
-				put("pathProperties", level.get("pathProperties"));
-				put("subPathDefinitions", level.get("subPathDefinitions"));
-			}
-		}));
+		for (int i = 0; i < paths.size(); i++) {
 
-		child(templateProvider.getTemplate("zombierockers.entities.limbo").instantiate("limbo", new HashMap<String, Object>() {
-			{
-				put("path", levelPath);
-			}
-		}));
+			final Map<String, Object> pathProperties = paths.get(i);
+
+			String pathId = (String) (pathProperties.get("pathId") != null ? pathProperties.get("pathId") : "path");
+			
+			final Path path = new Path(slickSvgUtils.loadPoints((String) pathProperties.get("path"), pathId));
+
+			child(templateProvider.getTemplate("zombierockers.entities.base").instantiate("base_" + i, new HashMap<String, Object>() {
+				{
+					put("position", path.getPoint(path.getPoints().size() - 1));
+					put("radius", 15f);
+				}
+			}));
+
+			child(templateProvider.getTemplate("zombierockers.entities.spawner").instantiate("spawner_" + i, new HashMap<String, Object>() {
+				{
+					put("path", path);
+
+					put("ballsQuantity", pathProperties.get("ballsQuantity"));
+					put("pathProperties", pathProperties.get("pathProperties"));
+
+					put("ballDefinitions", level.get("ballDefinitions"));
+					put("subPathDefinitions", level.get("subPathDefinitions"));
+				}
+			}));
+
+			child(templateProvider.getTemplate("zombierockers.entities.limbo").instantiate("limbo_" + i, new HashMap<String, Object>() {
+				{
+					put("path", path);
+				}
+			}));
+
+			child(templateProvider.getTemplate("zombierockers.entities.segmentsmanager").instantiate("segmentsManager_" + i, new HashMap<String, Object>() {
+				{
+					put("path", path);
+					put("baseReached", new ReferenceProperty<Object>("baseReached", entity));
+				}
+			}));
+		}
 
 		final float offset = 0f;
 
@@ -252,12 +268,6 @@ public class WorldEntityBuilder extends EntityBuilder {
 				put("ballDefinitions", level.get("ballDefinitions"));
 				put("collisionMap", level.get("collisionMap"));
 				put("subPathDefinitions", level.get("subPathDefinitions"));
-			}
-		}));
-
-		child(templateProvider.getTemplate("zombierockers.entities.segmentsmanager").instantiate("segmentsManager", new HashMap<String, Object>() {
-			{
-				put("baseReached", new ReferenceProperty<Object>("baseReached", entity));
 			}
 		}));
 
@@ -309,23 +319,6 @@ public class WorldEntityBuilder extends EntityBuilder {
 				return resourceManager.get("FontPlayingLabel").get();
 			}
 		});
-
-		// child(templateProvider.getTemplate("gemserk.gui.label").instantiate("ballsQuantityLabel", new HashMap<String, Object>() {
-		// {
-		// put("font", new ReferenceProperty<Object>("font", entity));
-		// put("position", slick.vector(screenBounds.getMaxX() - 60f, screenBounds.getMinY() + 30f));
-		// put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
-		// put("color", slick.color(0f, 0f, 0f, 1f));
-		// put("align", "left");
-		// put("valign", "center");
-		// put("layer", 40);
-		// put("message", new FixedProperty(entity) {
-		// public Object get() {
-		// return "Balls: " + Properties.getValue(getHolder(), "ballsQuantity").toString();
-		// };
-		// });
-		// }
-		// }));
 
 		component(new ReferencePropertyComponent("baseReachedHandler") {
 			@Handles

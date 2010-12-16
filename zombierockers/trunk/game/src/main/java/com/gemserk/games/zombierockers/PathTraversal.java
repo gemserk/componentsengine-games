@@ -17,6 +17,10 @@ public class PathTraversal implements Comparable<PathTraversal> {
 
 	Float distanceFromOrigin = null;
 	
+	public Path getPath() {
+		return path;
+	}
+	
 	public PathTraversal(Path path, int index, float innerDistance) {
 		this.path = path;
 		this.index = index;

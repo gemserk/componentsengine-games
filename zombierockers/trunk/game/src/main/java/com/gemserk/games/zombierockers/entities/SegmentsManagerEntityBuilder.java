@@ -11,6 +11,7 @@ import org.newdawn.slick.geom.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -35,16 +36,23 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
-	
-	@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
-	List<Entity> getSortedSegments(Entity entity) {
+	@Inject
+	ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
-		Collection<Entity> segments = entity.getRoot().getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), new Predicate<Entity>() {
+	List<Entity> getSortedSegments(Entity root, final Path path) {
+
+		Collection<Entity> segments = root.getEntities(Predicates.and(EntityPredicates.withAllTags("segment"), new Predicate<Entity>() {
 			@Override
 			public boolean apply(Entity segmentEntity) {
 				Boolean isEmpty = Properties.getValue(segmentEntity, "isEmpty");
 				return !isEmpty.booleanValue();
+			}
+		}, new Predicate<Entity>() {
+			@Override
+			public boolean apply(Entity segmentEntity) {
+				PathTraversal pathTraversal = Properties.getValue(segmentEntity, "pathTraversal");
+				return pathTraversal.getPath() == path;
 			}
 		}));
 
@@ -65,6 +73,9 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 		@EntityProperty
 		Property<Boolean> baseReached;
+
+		@EntityProperty
+		Property<Path> path;
 
 	}
 
@@ -89,13 +100,13 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 		@EntityProperty
 		Property<Color> color;
-		
+
 		@EntityProperty
 		Property<Vector2f> position;
 
 		@EntityProperty
 		Property<Float> radius;
-		
+
 		@EntityProperty
 		Property<PathTraversal> pathTraversal;
 	}
@@ -106,6 +117,7 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 		tags("segmentsManager");
 
 		property("baseReached", parameters.get("baseReached"));
+		property("path", parameters.get("path"));
 
 		component(new ReferencePropertyComponent("checkSameColorSegmentsHandler") {
 
@@ -115,12 +127,16 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 			BallWrapper lastBall = new BallWrapper();
 			BallWrapper firstBall = new BallWrapper();
 
+			SegmentsManagerWrapper segmentsManager = new SegmentsManagerWrapper();
+
 			@Handles
 			public void checkSameColorSegments(Message message) {
 
 				final float reverseSpeed = -0.3f;
 
-				List<Entity> sortedSegments = getSortedSegments(entity);
+				segmentsManager.wrap(entity);
+
+				List<Entity> sortedSegments = getSortedSegments(entity.getRoot(), segmentsManager.path.get());
 
 				if (logger.isInfoEnabled())
 					logger.info("Segments not empty: " + sortedSegments.size());
@@ -165,7 +181,7 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 				if (segmentsManager.baseReached.get())
 					return;
 
-				List<Entity> sortedSegments = getSortedSegments(entity);
+				List<Entity> sortedSegments = getSortedSegments(entity.getRoot(), segmentsManager.path.get());
 
 				if (logger.isInfoEnabled())
 					logger.info("Checking first segment should advance - cantSegments: " + sortedSegments.size());
@@ -186,6 +202,7 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 						}
 					}.build()));
 				}
+
 			}
 
 		});
@@ -200,7 +217,7 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 			}
 
 		});
-		
+
 		component(new ReferencePropertyComponent("collisionBetweenSegmentsDetector") {
 
 			SegmentWrapper segment = new SegmentWrapper();
@@ -209,15 +226,19 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 			BallWrapper lastBall = new BallWrapper();
 			BallWrapper firstBall = new BallWrapper();
 
+			SegmentsManagerWrapper segmentsManager = new SegmentsManagerWrapper();
+
 			@Handles
 			public void update(Message message) {
-				
-				List<Entity> sortedSegments = getSortedSegments(entity);
-				
+
+				segmentsManager.wrap(entity);
+
+				List<Entity> sortedSegments = getSortedSegments(entity.getRoot(), segmentsManager.path.get());
+
 				boolean collisionFound = false;
-				
+
 				for (int i = 0; i < sortedSegments.size() - 1; i++) {
-					
+
 					if (collisionFound)
 						break;
 
@@ -228,27 +249,26 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 					nextSegment.wrap(nextSegmentEntity);
 					lastBall.wrap(segment.lastBall.get());
 					firstBall.wrap(nextSegment.firstBall.get());
-					
+
 					float distance = Math.abs(lastBall.pathTraversal.get().getDistanceFromOrigin() - firstBall.pathTraversal.get().getDistanceFromOrigin());
-					
+
 					if (distance < lastBall.radius.get() * 2) {
-						
+
 						if (logger.isInfoEnabled())
 							logger.info("Collision detected with other segment - masterSegment.id: " + segmentEntity.getId() + " - slaveSegment.id: " + nextSegmentEntity.getId());
-						
-						
+
 						messageQueue.enqueue(new Message("mergeSegments", new PropertiesMapBuilder() {
 							{
 								property("masterSegment", segmentEntity);
 								property("slaveSegment", nextSegmentEntity);
 							}
 						}.build()));
-						
+
 						collisionFound = true;
 					}
 
 				}
-				
+
 			}
 
 		});
