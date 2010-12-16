@@ -1,6 +1,7 @@
 package com.gemserk.games.zombierockers.entities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Sound;
@@ -37,6 +38,11 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 		final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
 
 		property("buttonReleasedSound", parameters.get("buttonReleasedSound"), null);
+		
+		property("notFocusedColor", parameters.get("notFocusedColor"), slick.color(0f, 0f, 1f, 0.5f));
+		property("focusedColor", parameters.get("focusedColor"),slick.color(0f, 0f, 1f, 1f));
+		
+		final Color startColor = Properties.getValue(entity, "notFocusedColor");
 
 		component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
 			{
@@ -46,13 +52,14 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 
 		HashMap<String, Object> newParameters = new HashMap<String, Object>() {
 			{
-				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(slick.color(0f, 0f, 1f, 0.75f)), 0.005f, timeProvider));
+				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(new Color(startColor)), 0.005f, timeProvider));
 				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(slick.vector(1f, 1f)), 0.005f, timeProvider));
 				put("onEnterTrigger", new NullTrigger() {
 					@Override
 					public void trigger(Object... parameters) {
 						Entity labelEntity = (Entity) parameters[0];
-						Properties.setValue(labelEntity, "color", slick.color(0f, 0f, 1f, 1f));
+						Color focusedColor = Properties.getValue(labelEntity, "focusedColor");
+						Properties.setValue(labelEntity, "color", focusedColor);
 						Properties.setValue(labelEntity, "size", slick.vector(1.1f, 1.1f));
 					}
 				});
@@ -60,7 +67,8 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 					@Override
 					public void trigger(Object... parameters) {
 						Entity labelEntity = (Entity) parameters[0];
-						Properties.setValue(labelEntity, "color", slick.color(0f, 0f, 1f, 0.75f));
+						Color notFocusedColor = Properties.getValue(labelEntity, "notFocusedColor");
+						Properties.setValue(labelEntity, "color", notFocusedColor);
 						Properties.setValue(labelEntity, "size", slick.vector(1f, 1f));
 					}
 				});
@@ -91,9 +99,9 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 				});
 			}
 		};
-
-		newParameters.putAll(parameters.getWrappedParameters());
-
-		parent("gemserk.gui.labelbutton", newParameters);
+		
+		Map<String, Object> wrappedParameters = parameters.getWrappedParameters();
+		wrappedParameters.putAll(newParameters);
+		parent("gemserk.gui.labelbutton", wrappedParameters);
 	}
 }

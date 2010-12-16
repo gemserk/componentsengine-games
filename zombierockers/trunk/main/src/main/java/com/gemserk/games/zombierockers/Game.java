@@ -261,8 +261,10 @@ public class Game extends StateBasedGame {
 			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 48))));
 			resourceManager.add("FontDialogMessage", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36))));
 
-			resourceManager.add("FontDialogMessage2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36))));
-			resourceManager.add("FontTitle2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48))));
+//			resourceManager.add("FontDialogMessage2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36))));
+//			resourceManager.add("FontTitle2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48))));
+			resourceManager.add("FontTitle2", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/gui_window_title.fnt", "assets/fonts/gui_window_title.png"))));
+			resourceManager.add("FontDialogMessage2", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/gui_window_button_36.fnt", "assets/fonts/gui_window_button_36.png"))));
 			
 			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 24))));
 			resourceManager.add("FontPointsLabel", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));

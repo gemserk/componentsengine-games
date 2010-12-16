@@ -165,7 +165,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
 				put("position", slick.vector(screenResolution.getCenterX(), 40f));
-				put("color", slick.color(0.5f, 0.2f, 0.2f, 1f));
+				put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
@@ -188,7 +188,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Play");
+				put("message", "PLAY");
 				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
@@ -201,7 +201,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Settings");
+				put("message", "SETTINGS");
 				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
@@ -214,7 +214,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("align", "center");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Exit");
+				put("message", "EXIT");
 				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 			}
 		}));
