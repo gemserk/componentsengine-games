@@ -231,8 +231,9 @@ public class WorldEntityBuilder extends EntityBuilder {
 					put("path", path);
 					put("ballsQuantity", pathProperties.get("ballsQuantity"));
 					put("pathProperties", pathProperties.get("pathProperties"));
+					put("subPathDefinitions", pathProperties.get("subPathDefinitions"));
+
 					put("ballDefinitions", level.get("ballDefinitions"));
-					put("subPathDefinitions", level.get("subPathDefinitions"));
 				}
 			}));
 		}

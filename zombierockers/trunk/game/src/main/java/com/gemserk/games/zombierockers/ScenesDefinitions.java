@@ -125,6 +125,7 @@ public class ScenesDefinitions {
 							put("speedWhenReachBase", 0.4f);
 						}
 					});
+					properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 				}});
 				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
 				properties.put("placeables", new ArrayList(){{
@@ -134,7 +135,6 @@ public class ScenesDefinitions {
 						put("layer", 0);
 					}});
 				}});
-				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 
@@ -155,6 +155,7 @@ public class ScenesDefinitions {
 							put("speedWhenReachBase", 0.4f);
 						}
 					});
+					properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 				}});
 				
 				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
@@ -165,7 +166,6 @@ public class ScenesDefinitions {
 						put("layer", 0);
 					}});
 				}});
-				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 		
@@ -186,6 +186,7 @@ public class ScenesDefinitions {
 							put("speedWhenReachBase", 0.4f);
 						}
 					});
+					properties.put("subPathDefinitions", new SubPathDefinitions(Arrays.asList(subPathDefinition(1081f, 1300f, 9, 1)), defaultSubPathDefinition));
 				}});
 				
 				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType));
@@ -196,7 +197,6 @@ public class ScenesDefinitions {
 						put("layer", 0);
 					}});
 				}});
-				properties.put("subPathDefinitions", new SubPathDefinitions(Arrays.asList(subPathDefinition(1081f, 1300f, 9, 1)), defaultSubPathDefinition));
 			}
 		}.build();
 		
@@ -217,6 +217,7 @@ public class ScenesDefinitions {
 							put("speedWhenReachBase", 0.4f);
 						}
 					});
+					properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 				}});
 
 				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
@@ -227,7 +228,6 @@ public class ScenesDefinitions {
 						put("layer", 0);
 					}});
 				}});
-				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 		
@@ -248,6 +248,7 @@ public class ScenesDefinitions {
 							put("speedWhenReachBase", 0.4f);
 						}
 					});
+					properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 				}});
 
 				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
@@ -258,7 +259,6 @@ public class ScenesDefinitions {
 						put("layer", 0);
 					}});
 				}});
-				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 		
@@ -280,6 +280,7 @@ public class ScenesDefinitions {
 							put("speedWhenReachBase", 0.4f);
 						}
 					});
+					properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 				}});
 
 				path(new PathBuilder(){{
@@ -296,6 +297,7 @@ public class ScenesDefinitions {
 							put("speedWhenReachBase", 0.4f);
 						}
 					});
+					properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 				}});
 
 				properties.put("ballDefinitions", ballDefinitions(redBallType, blueBallType, greenBallType, whiteBallType));
@@ -306,7 +308,6 @@ public class ScenesDefinitions {
 						put("layer", 0);
 					}});
 				}});
-				properties.put("subPathDefinitions", new SubPathDefinitions(defaultSubPathDefinition));
 			}
 		}.build();
 
