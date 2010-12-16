@@ -235,36 +235,6 @@ public class WorldEntityBuilder extends EntityBuilder {
 					put("subPathDefinitions", level.get("subPathDefinitions"));
 				}
 			}));
-
-			// child(templateProvider.getTemplate("zombierockers.entities.base").instantiate("base_" + i, new HashMap<String, Object>() {
-			// {
-			// put("position", path.getPoint(path.getPoints().size() - 1));
-			// put("radius", 15f);
-			// }
-			// }));
-			//
-			// child(templateProvider.getTemplate("zombierockers.entities.spawner").instantiate("spawner_" + i, new HashMap<String, Object>() {
-			// {
-			// put("path", path);
-			// put("ballsQuantity", pathProperties.get("ballsQuantity"));
-			// put("pathProperties", pathProperties.get("pathProperties"));
-			// put("ballDefinitions", level.get("ballDefinitions"));
-			// put("subPathDefinitions", level.get("subPathDefinitions"));
-			// }
-			// }));
-			//
-			// child(templateProvider.getTemplate("zombierockers.entities.limbo").instantiate("limbo_" + i, new HashMap<String, Object>() {
-			// {
-			// put("path", path);
-			// }
-			// }));
-			//
-			// child(templateProvider.getTemplate("zombierockers.entities.segmentsmanager").instantiate("segmentsManager_" + i, new HashMap<String, Object>() {
-			// {
-			// put("path", path);
-			// put("baseReached", new ReferenceProperty<Object>("baseReached", entity));
-			// }
-			// }));
 		}
 
 		final float offset = 0f;
@@ -274,7 +244,6 @@ public class WorldEntityBuilder extends EntityBuilder {
 				put("bounds", slick.rectangle(20f + offset, 20f, screenBounds.getMaxX() - 40f - offset, screenBounds.getMaxY() - 40f));
 				put("ballDefinitions", level.get("ballDefinitions"));
 				put("collisionMap", level.get("collisionMap"));
-				put("subPathDefinitions", level.get("subPathDefinitions"));
 			}
 		}));
 

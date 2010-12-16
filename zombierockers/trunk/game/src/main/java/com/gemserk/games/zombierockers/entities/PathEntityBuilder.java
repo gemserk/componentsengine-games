@@ -32,6 +32,7 @@ public class PathEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.entities.spawner").instantiate(entity.getId() + "_spawner", new HashMap<String, Object>() {
 			{
 				put("path", new ReferenceProperty<Object>("path", entity));
+				put("pathEntity", entity);
 				put("ballsQuantity", new ReferenceProperty<Object>("ballsQuantity", entity));
 				put("pathProperties", new ReferenceProperty<Object>("pathProperties", entity));
 				put("ballDefinitions", new ReferenceProperty<Object>("ballDefinitions", entity));

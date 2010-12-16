@@ -21,9 +21,9 @@ import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplate
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplateImpl;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
+import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.games.zombierockers.PathTraversal;
 import com.google.inject.Inject;
@@ -42,7 +42,7 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 		ArrayList<K> keyArray = new ArrayList<K>(keySet);
 		return items.get(keyArray.get(random.nextInt(keyArray.size())));
 	}
-	
+
 	@Override
 	public void build() {
 
@@ -53,8 +53,9 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 
 		property("spawnQuantity", parameters.get("ballsQuantity"));
 		property("fired", false);
-		
+
 		property("path", parameters.get("path"));
+		property("pathEntity", parameters.get("pathEntity"));
 
 		property("pathProperties", parameters.get("pathProperties"));
 
@@ -69,8 +70,9 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 						put("direction", new Vector2f(0, 1));
 						put("radius", 16f);
 						put("definition", data.get("ballDefinition"));
+
 						put("collisionMap", data.get("collisionMap"));
-						put("subPathDefinitions", data.get("subPathDefinitions"));
+						// put("subPathDefinitions", data.get("subPathDefinitions"));
 					}
 				};
 			}
@@ -98,6 +100,8 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 						put("speed", 0.04f);
 						put("accelerated", true);
 						put("pathLength", data.get("pathLength"));
+						
+						put("pathEntity", data.get("pathEntity"));
 					}
 				};
 			}
@@ -148,7 +152,7 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 					Entity ball = ballTemplate.get().get(new HashMap<String, Object>() {
 						{
 							put("ballDefinition", ballDefinition);
-							put("subPathDefinitions", Properties.getValue(entity, "subPathDefinitions"));
+							// put("subPathDefinitions", Properties.getValue(entity, "subPathDefinitions"));
 						}
 					});
 
@@ -170,10 +174,13 @@ public class SpawnerEntityBuilder extends EntityBuilder {
 					{
 						put("pathTraversal", pathTraversal);
 						put("pathLength", pathLength);
+						put("pathEntity", new ReferenceProperty<Object>("pathEntity", entity));
 					}
 				};
 				properties.putAll(pathProperties.get());
 				final Entity segment = segmentTemplate.get().get(properties);
+				
+//				final Entity segment = templateProvider.getTemplate("zombierockers.entities.segment").instantiate(null, properties);
 
 				messageQueue.enqueue(new Message("spawnedSegment", new PropertiesMapBuilder() {
 					{

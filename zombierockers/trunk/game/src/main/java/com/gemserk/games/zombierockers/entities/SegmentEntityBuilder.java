@@ -41,6 +41,9 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 		@EntityProperty
 		Property<List<Entity>> balls;
+		
+		@EntityProperty
+		Property<Entity> pathEntity;
 
 		@EntityProperty
 		Property<Entity> lastBall;
@@ -173,6 +176,7 @@ public class SegmentEntityBuilder extends EntityBuilder {
 
 		tags("segment");
 
+		property("pathEntity", parameters.get("pathEntity"));
 		property("pathTraversal", parameters.get("pathTraversal"));
 		property("speed", parameters.get("speed"));
 		property("balls", parameters.get("balls") != null ? parameters.get("balls") : new LinkedList());
@@ -198,6 +202,14 @@ public class SegmentEntityBuilder extends EntityBuilder {
 			public Object get() {
 				List<Entity> balls = Properties.getValue(getHolder(), "balls");
 				return balls.isEmpty();
+			}
+		});
+		
+		property("subPathDefinitions", new FixedProperty(entity) {
+			@Override
+			public Object get() {
+				Entity pathEntity = Properties.getValue(getHolder(), "pathEntity");
+				return Properties.getValue(pathEntity, "subPathDefinitions");
 			}
 		});
 
@@ -226,6 +238,8 @@ public class SegmentEntityBuilder extends EntityBuilder {
 						put("maxSpeed", data.get("maxSpeed"));
 						put("speedWhenReachBase", data.get("speedWhenReachBase"));
 						put("pathLength", data.get("pathLength"));
+						
+						put("pathEntity", data.get("pathEntity"));
 					}
 				};
 			}
@@ -752,6 +766,8 @@ public class SegmentEntityBuilder extends EntityBuilder {
 								put("minSpeedFactor", segment.minSpeedFactor.get());
 								put("maxSpeed", segment.maxSpeed.get());
 								put("speedWhenReachBase", segment.speedWhenReachBase.get());
+								
+								put("pathEntity", segment.pathEntity.get());
 							}
 						});
 

@@ -127,7 +127,15 @@ public class BallEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		property("subPathDefinitions", parameters.get("subPathDefinitions"));
+		property("subPathDefinitions", new FixedProperty(entity){
+			@Override
+			public Object get() {
+				Entity segment = Properties.getValue(getHolder(), "segment");
+				if (segment == null)
+					return null;
+				return Properties.getValue(segment, "subPathDefinitions");
+			}
+		});
 
 		property("layer", 0);
 		property("collisionMask", 0);

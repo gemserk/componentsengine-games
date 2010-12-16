@@ -21,10 +21,6 @@ public class ScenesDefinitions {
 			properties.put("background", bg);
 		}
 
-//		void path(String path) {
-//			properties.put("path", path);
-//		}
-		
 		void path(PathBuilder pathBuilder){ 
 			pathBuilders.add(pathBuilder);
 		}
@@ -115,7 +111,6 @@ public class ScenesDefinitions {
 		Map<String, Object> level01 = new LevelBuilder() {
 			{
 				background("background");
-//				path("levels/level01/path.svg");
 				
 				path(new PathBuilder(){{
 					path("levels/level01/path.svg");

@@ -57,9 +57,10 @@ public class CannonEntityBuilder extends EntityBuilder {
 
 	@Inject
 	ResourceManager resourceManager;
-	
-	@Inject ChildrenManagementMessageFactory childrenManagementMessageFactory;
-	
+
+	@Inject
+	ChildrenManagementMessageFactory childrenManagementMessageFactory;
+
 	@Inject
 	SlickUtils slick;
 
@@ -122,7 +123,6 @@ public class CannonEntityBuilder extends EntityBuilder {
 		Entity ball = instantiationTemplate.get(new HashMap<String, Object>() {
 			{
 				put("ballDefinition", ballDefinition);
-				put("subPathDefinitions", Properties.getValue(cannon, "subPathDefinitions"));
 			}
 		});
 
@@ -192,7 +192,6 @@ public class CannonEntityBuilder extends EntityBuilder {
 		});
 
 		property("ballDefinitions", parameters.get("ballDefinitions"));
-		property("subPathDefinitions", parameters.get("subPathDefinitions"));
 		property("collisionMap", parameters.get("collisionMap"));
 
 		property("fireRate", 300);
@@ -210,7 +209,6 @@ public class CannonEntityBuilder extends EntityBuilder {
 						put("definition", data.get("ballDefinition"));
 						put("state", "inWorld");
 						put("fired", "true");
-						put("subPathDefinitions", data.get("subPathDefinitions"));
 					}
 				};
 			}
@@ -253,7 +251,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 						return Properties.getValue(ball, "currentFrame");
 					}
 				});
-				property("color", slick.color(1f,1f,1f,1f));
+				property("color", slick.color(1f, 1f, 1f, 1f));
 				propertyRef("position", "bulletPosition");
 				property("direction", new Vector2f(0, -1));
 			}
@@ -268,7 +266,7 @@ public class CannonEntityBuilder extends EntityBuilder {
 						return Properties.getValue(ball, "currentFrame");
 					}
 				});
-				property("color", slick.color(1f,1f,1f,1f));
+				property("color", slick.color(1f, 1f, 1f, 1f));
 				propertyRef("position", "nextBulletPosition");
 				property("direction", new Vector2f(0, -1));
 			}
@@ -383,9 +381,9 @@ public class CannonEntityBuilder extends EntityBuilder {
 				});
 			}
 		});
-		
+
 		component(new FieldsReflectionComponent("bulletFiredSound") {
-			
+
 			@EntityProperty
 			Resource<Sound> bulletFiredSound;
 
