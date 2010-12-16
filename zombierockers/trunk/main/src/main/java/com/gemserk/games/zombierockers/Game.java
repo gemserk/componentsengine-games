@@ -51,6 +51,7 @@ import com.gemserk.games.zombierockers.entities.CustomButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.FadeEffectEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LabelButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
+import com.gemserk.games.zombierockers.entities.PathEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentsManagerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
@@ -185,6 +186,7 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.entities.cursor", javaEntityTemplateProvider.get().with(new CursorEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.spawner", javaEntityTemplateProvider.get().with(new SpawnerEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.segment", javaEntityTemplateProvider.get().with(new SegmentEntityBuilder()));
+			registrableTemplateProvider.add("zombierockers.entities.path", javaEntityTemplateProvider.get().with(new PathEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.entities.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.world", javaEntityTemplateProvider.get().with(new WorldEntityBuilder()));

@@ -79,14 +79,15 @@ public class LimboEntityBuilder extends EntityBuilder {
 
 		tags("limbo");
 
-		Path path = (Path) parameters.get("path");
+		property("path", parameters.get("path"));
+		Path path = Properties.getValue(entity, "path");
 
 		property("deque", new LinkedList<Entity>());
-		property("path", path);
 		property("nextBallPoint", new PathTraversal(path, 0, 0).add(32f));
 		property("done", false);
 
 		property("segment", null);
+
 
 		property("isEmpty", new FixedProperty(entity) {
 			@Override

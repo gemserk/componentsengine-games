@@ -116,7 +116,7 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 		tags("segmentsManager");
 
-		property("baseReached", parameters.get("baseReached"));
+		property("baseReached", false);
 		property("path", parameters.get("path"));
 
 		component(new ReferencePropertyComponent("checkSameColorSegmentsHandler") {
@@ -271,6 +271,13 @@ public class SegmentsManagerEntityBuilder extends EntityBuilder {
 
 			}
 
+		});
+		
+		component(new ReferencePropertyComponent("baseReachedHandler") {
+			@Handles
+			public void baseReached(Message message) {
+				Properties.setValue(entity, "baseReached", true);
+			}
 		});
 
 	}

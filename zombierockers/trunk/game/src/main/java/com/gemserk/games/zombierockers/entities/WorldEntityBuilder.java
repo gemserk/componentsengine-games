@@ -38,7 +38,6 @@ import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.PropertiesWrapper;
 import com.gemserk.componentsengine.properties.Property;
-import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.render.RenderQueue;
 import com.gemserk.componentsengine.slick.render.SlickCallableRenderObject;
 import com.gemserk.componentsengine.slick.utils.SlickSvgUtils;
@@ -224,40 +223,48 @@ public class WorldEntityBuilder extends EntityBuilder {
 			final Map<String, Object> pathProperties = paths.get(i);
 
 			String pathId = (String) (pathProperties.get("pathId") != null ? pathProperties.get("pathId") : "path");
-			
+
 			final Path path = new Path(slickSvgUtils.loadPoints((String) pathProperties.get("path"), pathId));
 
-			child(templateProvider.getTemplate("zombierockers.entities.base").instantiate("base_" + i, new HashMap<String, Object>() {
-				{
-					put("position", path.getPoint(path.getPoints().size() - 1));
-					put("radius", 15f);
-				}
-			}));
-
-			child(templateProvider.getTemplate("zombierockers.entities.spawner").instantiate("spawner_" + i, new HashMap<String, Object>() {
+			child(templateProvider.getTemplate("zombierockers.entities.path").instantiate("path_" + i, new HashMap<String, Object>() {
 				{
 					put("path", path);
-
 					put("ballsQuantity", pathProperties.get("ballsQuantity"));
 					put("pathProperties", pathProperties.get("pathProperties"));
-
 					put("ballDefinitions", level.get("ballDefinitions"));
 					put("subPathDefinitions", level.get("subPathDefinitions"));
 				}
 			}));
 
-			child(templateProvider.getTemplate("zombierockers.entities.limbo").instantiate("limbo_" + i, new HashMap<String, Object>() {
-				{
-					put("path", path);
-				}
-			}));
-
-			child(templateProvider.getTemplate("zombierockers.entities.segmentsmanager").instantiate("segmentsManager_" + i, new HashMap<String, Object>() {
-				{
-					put("path", path);
-					put("baseReached", new ReferenceProperty<Object>("baseReached", entity));
-				}
-			}));
+			// child(templateProvider.getTemplate("zombierockers.entities.base").instantiate("base_" + i, new HashMap<String, Object>() {
+			// {
+			// put("position", path.getPoint(path.getPoints().size() - 1));
+			// put("radius", 15f);
+			// }
+			// }));
+			//
+			// child(templateProvider.getTemplate("zombierockers.entities.spawner").instantiate("spawner_" + i, new HashMap<String, Object>() {
+			// {
+			// put("path", path);
+			// put("ballsQuantity", pathProperties.get("ballsQuantity"));
+			// put("pathProperties", pathProperties.get("pathProperties"));
+			// put("ballDefinitions", level.get("ballDefinitions"));
+			// put("subPathDefinitions", level.get("subPathDefinitions"));
+			// }
+			// }));
+			//
+			// child(templateProvider.getTemplate("zombierockers.entities.limbo").instantiate("limbo_" + i, new HashMap<String, Object>() {
+			// {
+			// put("path", path);
+			// }
+			// }));
+			//
+			// child(templateProvider.getTemplate("zombierockers.entities.segmentsmanager").instantiate("segmentsManager_" + i, new HashMap<String, Object>() {
+			// {
+			// put("path", path);
+			// put("baseReached", new ReferenceProperty<Object>("baseReached", entity));
+			// }
+			// }));
 		}
 
 		final float offset = 0f;
