@@ -88,6 +88,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						put("paused", "paused");
 						put("editor", "editor");
 						put("settings", "settings");
+						put("highscores", "highscores");
 					}
 				});
 				put("stateEntities", new HashMap<String, Object>() {
@@ -125,6 +126,11 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 							}
 						}));
+						put("highscores", templateProvider.getTemplate("zombierockers.screens.highscores").instantiate("highscores", new HashMap<String, Object>() {
+							{
+								put("screenBounds", screenBounds);
+							}
+						}));
 					}
 				});
 			}
@@ -138,6 +144,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void enterState(Message message) {
 				messageQueue.enqueueDelay(new Message("splash"));
+//				messageQueue.enqueueDelay(new Message("highscores"));
 				// messageQueue.enqueueDelay(new Message("resume"));
 			}
 

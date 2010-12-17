@@ -59,13 +59,18 @@
 		<dependency>
 			<groupId>com.gemserk.commons.animation</groupId>
 			<artifactId>animation</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.jcraft</groupId>
 			<artifactId>jorbis</artifactId>
-			<version>0.0.17</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.gemserk.datastore</groupId>
+			<artifactId>datastore</artifactId>
+		</dependency>
+
 	</dependencies>
 
 </project>

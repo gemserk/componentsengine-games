@@ -1,6 +1,8 @@
 package com.gemserk.games.zombierockers;
 
+import java.io.File;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import net.sf.json.JSONArray;
 
@@ -58,6 +60,8 @@ import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.WorldEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.HighscoresScreenEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.HighscoresTableEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
@@ -79,6 +83,8 @@ import com.gemserk.resources.slick.PropertiesSoundLoader;
 import com.gemserk.resources.slick.dataloaders.SlickAngelCodeFontLoader;
 import com.gemserk.resources.slick.dataloaders.SlickMusicLoader;
 import com.gemserk.resources.slick.dataloaders.SlickTrueTypeFontLoader;
+import com.gemserk.scores.Scores;
+import com.gemserk.scores.ScoresHttpImpl;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -154,6 +160,13 @@ public class Game extends StateBasedGame {
 		// container.setVSync(true);
 		container.setShowFPS(false);
 		
+		// getGameProperties().put("scores", );
+		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/zombierockers/scores.data");
+//		final Scores scores = new ScoresFileImpl(storageFile);
+		final Scores scores = new ScoresHttpImpl("9eba9d1d13f8190d934e3dd0f58f58ca", "http://gemserkscores.appspot.com/");
+		getGameProperties().put("scores", scores);
+		getGameProperties().put("executor", Executors.newCachedThreadPool());
+		
 		Injector injector = Guice.createInjector(new SlickModule(container, this), // 
 				new SlickSoundSystemModule(), // 
 				new BasicModule(), //
@@ -167,6 +180,8 @@ public class Game extends StateBasedGame {
 						bind(ResourceManager.class).to(ResourceManagerImpl.class).in(Singleton.class);
 						bind(FilesMonitor.class).to(FilesMonitorImpl.class).in(Singleton.class);
 						bind(FileMonitorResourceHelper.class).to(FileMonitorResourceHelperNullImpl.class).in(Singleton.class);
+						
+						bind(Scores.class).toInstance(scores);
 					}
 				});
 
@@ -202,6 +217,7 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
+			registrableTemplateProvider.add("zombierockers.screens.highscores", javaEntityTemplateProvider.get().with(new HighscoresScreenEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.sceneEditor", javaEntityTemplateProvider.get().with(new EditorGameStateEntityBuilder()));
 
@@ -215,6 +231,8 @@ public class Game extends StateBasedGame {
 			
 			registrableTemplateProvider.add("zombierockers.gui.bonusmessage", javaEntityTemplateProvider.get().with(new BonusMessageEntityBuilder()));
 			
+			registrableTemplateProvider.add("zombierockers.gui.highscorestable", javaEntityTemplateProvider.get().with(new HighscoresTableEntityBuilder()));
+			
 			registrableTemplateProvider.add("zombierockers.effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
 		}
 
@@ -226,6 +244,7 @@ public class Game extends StateBasedGame {
 		addState(gameState);
 
 		getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(new Image(800, 600))).load());
+
 	}
 
 	class GameGameState extends GemserkGameState {
@@ -275,6 +294,8 @@ public class Game extends StateBasedGame {
 			
 			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
 			resourceManager.add("PlayMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/game.ogg"))));
+			
+			
 			
 			
 			builderUtils.put("svg", new SlickSvgUtils());
