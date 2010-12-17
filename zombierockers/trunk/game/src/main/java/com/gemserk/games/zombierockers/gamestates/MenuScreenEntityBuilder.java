@@ -201,6 +201,8 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("layer", 1);
 				put("message", "EXIT");
 				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				
+				put("buttonReleasedMessageId", "exitButton");
 			}
 		}));
 
@@ -224,6 +226,17 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				if ("exitButton".equals(id))
 					buttonPressed = "exit";
 
+				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
+					{
+						property("animationId", "fadeOutEffect");
+					}
+				}.build()));
+			}
+			
+			@Handles
+			public void exitButton(Message message) {
+				System.out.println("EXIT BUTTON");
+				buttonPressed = "exit";
 				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 					{
 						property("animationId", "fadeOutEffect");

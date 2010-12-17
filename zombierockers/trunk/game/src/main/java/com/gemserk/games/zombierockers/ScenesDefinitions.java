@@ -17,6 +17,10 @@ public class ScenesDefinitions {
 		
 		ArrayList<PathBuilder> pathBuilders = new ArrayList<PathBuilder>();
 		
+		void name(String name) {
+			properties.put("name", name);
+		}
+		
 		void background(String bg) {
 			properties.put("background", bg);
 		}
@@ -110,6 +114,7 @@ public class ScenesDefinitions {
 
 		Map<String, Object> level01 = new LevelBuilder() {
 			{
+				name("level01");
 				background("background");
 				
 				path(new PathBuilder(){{
@@ -140,6 +145,7 @@ public class ScenesDefinitions {
 
 		Map<String, Object> level02 = new LevelBuilder() {
 			{
+				name("level02");
 				background("background");
 				
 				path(new PathBuilder(){{
@@ -171,6 +177,7 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level03 = new LevelBuilder() {
 			{
+				name("level03");
 				background("background");
 				
 				path(new PathBuilder(){{
@@ -202,6 +209,7 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level04 = new LevelBuilder() {
 			{
+				name("level04");
 				background("background");
 				
 				path(new PathBuilder(){{
@@ -233,6 +241,7 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level05 = new LevelBuilder() {
 			{
+				name("level05");
 				background("background");
 				
 				path(new PathBuilder(){{
@@ -264,6 +273,7 @@ public class ScenesDefinitions {
 		
 		Map<String, Object> level06 = new LevelBuilder() {
 			{
+				name("level07");
 				background("background");
 				
 				path(new PathBuilder(){{

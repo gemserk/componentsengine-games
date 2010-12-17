@@ -128,6 +128,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						}));
 						put("highscores", templateProvider.getTemplate("zombierockers.screens.highscores").instantiate("highscores", new HashMap<String, Object>() {
 							{
+								put("level", new ReferenceProperty("currentLevel", entity));
 								put("screenBounds", screenBounds);
 							}
 						}));

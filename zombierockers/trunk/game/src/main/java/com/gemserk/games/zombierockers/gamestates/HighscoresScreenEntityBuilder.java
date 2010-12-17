@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -65,10 +66,17 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 
 		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
 
+		property("level", parameters.get("level"));
 		property("screenBounds", parameters.get("screenBounds"));
 
 		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
 
+		property("future", null);
+		property("refreshScoresTimer", null);
+		property("refreshingScoresLabel", null);
+		property("childPanel", null);
+		property("highscoresTable", null);
+		
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
 				property("position", slick.vector((float) (screenBounds.getWidth() * 0.5f), (float) (screenBounds.getHeight() * 0.5f)));
@@ -101,40 +109,85 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Property<Entity> childPanel;
+			
+			@EntityProperty
+			Property<Entity> highscoresTable;
+
+			@EntityProperty
+			Property<Map<String, Object>> level;
 
 			@Handles
 			public void enterNodeState(Message message) {
 
-				// final Message sourceMessage = Properties.getValue(message, "message");
-
 				childPanel.set(new Entity("childPanel"));
 
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(childPanel.get(), entity));
+				
+				if (highscoresTable.get() != null)
+					messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(highscoresTable.get()));
 
 				final Set<String> tags = new HashSet<String>();
 
-				tags.add("level01");
+				tags.add((String) level.get().get("name"));
 
 				messageQueue.enqueue(new Message("refreshScores", new PropertiesMapBuilder() {
 					{
-						property("timeOut", 5000);
+						property("timeOut", 8000);
 						property("ascending", false);
 						property("tags", tags);
 						property("limit", 10);
 					}
 				}.build()));
+
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				propertyRef("childPanel");
-			}
 		});
+		
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "playAgainButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage2"));
+				put("position", slick.vector(screenBounds.getCenterX() - 150, screenBounds.getMaxY() - 60f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "Play again");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
 
-		property("future", null);
-		property("refreshScoresTimer", null);
-		property("refreshingScoresLabel", null);
-		property("childPanel", null);
+				put("buttonReleasedMessageId", "playAgainPressed");
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "nextLevelButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage2"));
+				put("position", slick.vector(screenBounds.getCenterX() + 150, screenBounds.getMaxY() - 60f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "Next level");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+
+				put("buttonReleasedMessageId", "nextLevelPressed");
+			}
+		}));
+
+		component(new ReferencePropertyComponent("guiHandler") {
+
+			@Handles
+			public void playAgainPressed(Message message) {
+				messageQueue.enqueue(new Message("resume"));
+				messageQueue.enqueueDelay(new Message("restartLevel"));
+			}
+
+			@Handles
+			public void nextLevelPressed(Message message) {
+				messageQueue.enqueue(new Message("resume"));
+				messageQueue.enqueueDelay(new Message("nextLevel"));
+			}
+
+		});
 
 		component(new ReferencePropertyComponent("refreshScoresHandler") {
 
@@ -167,11 +220,6 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 				messageQueue.enqueue(new Message("refreshScoresStarted"));
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				propertyRef("future");
-				propertyRef("refreshScoresTimer");
-			}
 		});
 
 		component(new ReferencePropertyComponent("showMessageWhenRefreshScoresStarted") {
@@ -199,11 +247,6 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(refreshingScoresLabel.get(), childPanel.get()));
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				propertyRef("refreshingScoresLabel");
-				propertyRef("childPanel");
-			}
 		});
 
 		component(new ReferencePropertyComponent("checkScoresRefreshedHandler") {
@@ -255,11 +298,6 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 				future.set(null);
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				propertyRef("future");
-				propertyRef("refreshScoresTimer");
-			}
 		});
 
 		component(new ReferencePropertyComponent("scoresRefreshFailedHandler") {
@@ -286,16 +324,15 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(scoresFailedLabel, childPanel.get()));
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				propertyRef("childPanel");
-			}
 		});
 
 		component(new ReferencePropertyComponent("scoresRefreshedHandler") {
 
 			@EntityProperty
 			Property<Entity> childPanel;
+			
+			@EntityProperty
+			Property<Entity> highscoresTable;
 
 			@Handles
 			public void scoresRefreshed(final Message message) {
@@ -306,14 +343,15 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 
 				if (scores.size() > 0) {
 
-					Entity highscoresTable = templateProvider.getTemplate("zombierockers.gui.highscorestable").instantiate("highscoresTable", new HashMap<String, Object>() {
+					highscoresTable.set(templateProvider.getTemplate("zombierockers.gui.highscorestable").instantiate("highscoresTable", new HashMap<String, Object>() {
 						{
 							put("scoreList", new ArrayList<Score>(scores));
 							put("screenBounds", new ReferenceProperty("screenBounds", entity));
+							put("font", resourceManager.get("FontScores"));
 						}
-					});
+					}));
 
-					messageQueue.enqueue(childrenManagementMessageFactory.addEntity(highscoresTable, entity));
+					messageQueue.enqueue(childrenManagementMessageFactory.addEntity(highscoresTable.get(), entity));
 					messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(childPanel.get()));
 
 					childPanel.set(null);
@@ -337,10 +375,6 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 				}
 			}
 
-		}).withProperties(new ComponentProperties() {
-			{
-				propertyRef("childPanel");
-			}
 		});
 
 	}

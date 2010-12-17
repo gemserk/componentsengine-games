@@ -10,11 +10,15 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
 import com.gemserk.commons.animation.properties.InterpolatedProperty;
 import com.gemserk.commons.animation.properties.InterpolatedPropertyTimeProvider;
+import com.gemserk.componentsengine.components.ReferencePropertyComponent;
+import com.gemserk.componentsengine.components.annotations.EntityProperty;
+import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
+import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.triggers.NullTrigger;
@@ -38,10 +42,12 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 		final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
 
 		property("buttonReleasedSound", parameters.get("buttonReleasedSound"), null);
-		
+
 		property("notFocusedColor", parameters.get("notFocusedColor"), slick.color(0f, 0f, 1f, 0.5f));
-		property("focusedColor", parameters.get("focusedColor"),slick.color(0f, 0f, 1f, 1f));
-		
+		property("focusedColor", parameters.get("focusedColor"), slick.color(0f, 0f, 1f, 1f));
+
+		property("buttonReleasedMessageId", parameters.get("buttonReleasedMessageId"), "buttonReleased");
+
 		final Color startColor = Properties.getValue(entity, "notFocusedColor");
 
 		component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
@@ -57,49 +63,97 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 				put("onEnterTrigger", new NullTrigger() {
 					@Override
 					public void trigger(Object... parameters) {
-						Entity labelEntity = (Entity) parameters[0];
-						Color focusedColor = Properties.getValue(labelEntity, "focusedColor");
-						Properties.setValue(labelEntity, "color", focusedColor);
-						Properties.setValue(labelEntity, "size", slick.vector(1.1f, 1.1f));
+						messageQueue.enqueue(new Message("onButtonFocused", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
 					}
 				});
 				put("onLeaveTrigger", new NullTrigger() {
 					@Override
 					public void trigger(Object... parameters) {
-						Entity labelEntity = (Entity) parameters[0];
-						Color notFocusedColor = Properties.getValue(labelEntity, "notFocusedColor");
-						Properties.setValue(labelEntity, "color", notFocusedColor);
-						Properties.setValue(labelEntity, "size", slick.vector(1f, 1f));
+						messageQueue.enqueue(new Message("onButtonLostFocus", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
 					}
 				});
 				put("onPressedTrigger", new NullTrigger() {
 					@Override
 					public void trigger(Object... parameters) {
-						Entity labelEntity = (Entity) parameters[0];
-						Properties.setValue(labelEntity, "size", slick.vector(0.9f, 0.9f));
+						messageQueue.enqueue(new Message("onButtonPressed", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
 					}
 				});
 				put("onReleasedTrigger", new NullTrigger() {
 					@Override
 					public void trigger(Object... parameters) {
-						final Entity labelEntity = (Entity) parameters[0];
-						Properties.setValue(labelEntity, "size", slick.vector(1.1f, 1.1f));
-
-						Resource<Sound> sound = Properties.getValue(labelEntity, "buttonReleasedSound");
-						if (sound != null)
-							sound.get().play();
-
-						messageQueue.enqueue(new Message("buttonReleased", new PropertiesMapBuilder() {
-							{
-								property("source", labelEntity);
-								property("buttonId", labelEntity.getId());
-							}
-						}.build()));
+						messageQueue.enqueue(new Message("onButtonReleased", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
 					}
 				});
 			}
 		};
-		
+
+		component(new ReferencePropertyComponent("buttonFocusedHandler") {
+
+			@Handles
+			public void onButtonFocused(Message message) {
+				Entity source = Properties.getValue(message, "source");
+				if (entity != source)
+					return;
+				Color focusedColor = Properties.getValue(entity, "focusedColor");
+				Properties.setValue(entity, "color", focusedColor);
+				Properties.setValue(entity, "size", slick.vector(1.1f, 1.1f));
+			}
+
+		});
+
+		component(new ReferencePropertyComponent("buttonLostFocusHandler") {
+
+			@Handles
+			public void onButtonLostFocus(Message message) {
+				Entity source = Properties.getValue(message, "source");
+				if (entity != source)
+					return;
+				Color notFocusedColor = Properties.getValue(entity, "notFocusedColor");
+				Properties.setValue(entity, "color", notFocusedColor);
+				Properties.setValue(entity, "size", slick.vector(1f, 1f));
+			}
+
+		});
+
+		component(new ReferencePropertyComponent("buttonPressedHandler") {
+
+			@Handles
+			public void onButtonPressed(Message message) {
+				Entity source = Properties.getValue(message, "source");
+				if (entity != source)
+					return;
+				Properties.setValue(entity, "size", slick.vector(0.9f, 0.9f));
+			}
+
+		});
+
+		component(new ReferencePropertyComponent("buttonReleasedHandler") {
+			
+			@EntityProperty
+			Property<String> buttonReleasedMessageId;
+
+			@Handles
+			public void onButtonReleased(Message message) {
+				Entity source = Properties.getValue(message, "source");
+				if (entity != source)
+					return;
+
+				Properties.setValue(entity, "size", slick.vector(1.1f, 1.1f));
+				Resource<Sound> sound = Properties.getValue(entity, "buttonReleasedSound");
+				if (sound != null)
+					sound.get().play();
+
+				messageQueue.enqueue(new Message(buttonReleasedMessageId.get(), new PropertiesMapBuilder() {
+					{
+						property("source", entity);
+						property("buttonId", entity.getId());
+					}
+				}.build()));
+
+			}
+
+		});
+
 		Map<String, Object> wrappedParameters = parameters.getWrappedParameters();
 		wrappedParameters.putAll(newParameters);
 		parent("gemserk.gui.labelbutton", wrappedParameters);

@@ -1,6 +1,8 @@
 package com.gemserk.games.zombierockers;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
@@ -41,6 +43,9 @@ import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.templates.RegistrableTemplateProvider;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
+import com.gemserk.datastore.Data;
+import com.gemserk.datastore.DataStore;
+import com.gemserk.datastore.DataStoreJSONInFileImpl;
 import com.gemserk.games.zombierockers.entities.BallEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BaseEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BonusMessageEntityBuilder;
@@ -85,6 +90,7 @@ import com.gemserk.resources.slick.dataloaders.SlickMusicLoader;
 import com.gemserk.resources.slick.dataloaders.SlickTrueTypeFontLoader;
 import com.gemserk.scores.Scores;
 import com.gemserk.scores.ScoresHttpImpl;
+import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -161,11 +167,32 @@ public class Game extends StateBasedGame {
 		container.setShowFPS(false);
 		
 		// getGameProperties().put("scores", );
-		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/zombierockers/scores.data");
+		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/zombierockers/profiles.data");
+		
 //		final Scores scores = new ScoresFileImpl(storageFile);
 		final Scores scores = new ScoresHttpImpl("9eba9d1d13f8190d934e3dd0f58f58ca", "http://gemserkscores.appspot.com/");
 		getGameProperties().put("scores", scores);
 		getGameProperties().put("executor", Executors.newCachedThreadPool());
+		
+		final DataStore dataStore = new DataStoreJSONInFileImpl(storageFile);
+		Collection<Data> profilesData = dataStore.get(Sets.newHashSet("profile", "selected"));
+		
+		Data profile = null;
+		if (profilesData.size() != 1) {
+			dataStore.remove(Sets.newHashSet("profile", "selected"));
+			profile = new Data(Sets.newHashSet("profile", "selected", "guest"), new HashMap<String, Object>(){{
+				put("name", "guest-" + Math.random());
+			}});
+			dataStore.submit(profile);
+			if (logger.isInfoEnabled())
+				logger.info("creating new profile " + profile.getValues().get("name"));
+		} else {
+			profile = profilesData.iterator().next();
+			if (logger.isInfoEnabled())
+				logger.info("using existing profile " + profile.getValues().get("name"));
+		}
+		
+		getGameProperties().put("profile", profile);
 		
 		Injector injector = Guice.createInjector(new SlickModule(container, this), // 
 				new SlickSoundSystemModule(), // 
@@ -182,6 +209,7 @@ public class Game extends StateBasedGame {
 						bind(FileMonitorResourceHelper.class).to(FileMonitorResourceHelperNullImpl.class).in(Singleton.class);
 						
 						bind(Scores.class).toInstance(scores);
+						bind(DataStore.class).toInstance(dataStore);
 					}
 				});
 
@@ -286,6 +314,8 @@ public class Game extends StateBasedGame {
 //			resourceManager.add("FontTitle2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48))));
 			resourceManager.add("FontTitle2", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/gui_window_title.fnt", "assets/fonts/gui_window_title.png"))));
 			resourceManager.add("FontDialogMessage2", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/gui_window_button_36.fnt", "assets/fonts/gui_window_button_36.png"))));
+			
+			resourceManager.add("FontScores", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 24))));
 			
 			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 24))));
 			resourceManager.add("FontPointsLabel", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));
