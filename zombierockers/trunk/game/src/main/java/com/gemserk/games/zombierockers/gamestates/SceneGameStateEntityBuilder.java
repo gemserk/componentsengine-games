@@ -31,6 +31,7 @@ import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.games.zombierockers.ScenesDefinitions;
+import com.gemserk.resources.ResourceManager;
 import com.gemserk.resources.monitor.FilesMonitor;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -47,6 +48,9 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	GlobalProperties globalProperties;
+	
+	@Inject
+	ResourceManager resourceManager;
 
 	@SuppressWarnings( { "unchecked", "serial" })
 	@Override
@@ -279,6 +283,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("fpsLabel", new HashMap<String, Object>() {
 			{
+				put("font", resourceManager.get("FontFps"));
 				put("position", slick.vector(screenBounds.getMinX() + 60f, screenBounds.getMinY() + 30f));
 				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));

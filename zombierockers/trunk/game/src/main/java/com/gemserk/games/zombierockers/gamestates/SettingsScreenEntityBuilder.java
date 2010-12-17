@@ -21,11 +21,9 @@ import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
-import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
-import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -59,14 +57,7 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 		final Rectangle screenResolution = (Rectangle) globalProperties.getProperties().get("screenResolution");
 		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
 
-		property("fontResource", resourceManager.get("FontDialogMessage2"));
-		property("font", new FixedProperty(entity) {
-			@Override
-			public Object get() {
-				Resource fontResource = Properties.getValue(getHolder(), "fontResource");
-				return fontResource.get();
-			}
-		});
+		property("font", resourceManager.get("FontDialogMessage2"));
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
@@ -118,6 +109,7 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
+				put("font", resourceManager.get("FontTitle2"));
 				put("position", slick.vector(screenResolution.getCenterX(), 40f));
 				put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
 				put("bounds", labelRectangle);
@@ -125,18 +117,12 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 1);
 				put("message", "Settings");
-				put("font", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						return resourceManager.get("FontTitle2").get();
-					}
-				});
 			}
 		}));
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("backButton", new HashMap<String, Object>() {
 			{
-				put("font", new ReferenceProperty<Object>("font", entity));
+				put("font", resourceManager.get("FontDialogMessage2"));
 				put("position", slick.vector(screenResolution.getMaxX() - 100, screenResolution.getMaxY() - 40f));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -149,7 +135,7 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("fullScreenLabel", new HashMap<String, Object>() {
 			{
-				put("font", new ReferenceProperty<Object>("font", entity));
+				put("font", resourceManager.get("FontDialogMessage2"));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 80f));
 				put("bounds", slick.rectangle(-200, -25, 400, 50));
 				put("align", "left");

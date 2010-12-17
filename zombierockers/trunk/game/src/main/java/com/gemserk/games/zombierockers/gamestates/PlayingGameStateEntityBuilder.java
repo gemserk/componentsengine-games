@@ -41,6 +41,7 @@ import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+@SuppressWarnings("unchecked")
 public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 	private static final Logger logger = LoggerFactory.getLogger(PlayingGameStateEntityBuilder.class);
@@ -104,7 +105,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@Inject
 			MessageQueue messageQueue;
-			
+
 			@EntityProperty
 			Integer points;
 
@@ -238,12 +239,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("pointsLabel", new HashMap<String, Object>() {
 			{
-				put("font", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						return resourceManager.get("FontPointsLabel").get();
-					}
-				});
+				put("font", resourceManager.get("FontPointsLabel"));
 				put("position", slick.vector(screenResolution.getMinX() + 140f, screenResolution.getMinY() + 30f));
 				put("bounds", slick.rectangle(-100, -20, 200, 40));
 				put("align", "left");
@@ -262,7 +258,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 		final Entity messageLabel = templateProvider.getTemplate("gemserk.gui.label").instantiate("winMessageLabel", new HashMap<String, Object>() {
 			{
-				put("font", new ReferenceProperty<Object>("font", entity));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 50f));
 				put("bounds", slick.rectangle(screenResolution.getCenterX() - 160, screenResolution.getCenterY() - 25, 320, 50));
 				put("align", "center");
@@ -273,15 +269,6 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 		child(messageLabel);
-
-		property("fontResource", resourceManager.get("FontDialogMessage"));
-		property("font", new FixedProperty(entity) {
-			@Override
-			public Object get() {
-				Resource fontResource = Properties.getValue(getHolder(), "fontResource");
-				return fontResource.get();
-			}
-		});
 
 		property("win", false);
 

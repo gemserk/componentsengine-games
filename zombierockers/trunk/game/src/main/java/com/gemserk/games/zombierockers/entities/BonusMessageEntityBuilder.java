@@ -13,7 +13,6 @@ import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
@@ -65,11 +64,7 @@ public class BonusMessageEntityBuilder extends EntityBuilder {
 
 		property("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(startColor, endColor), 0.005f, timeProvider));
 		property("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(startSize, endSize), 0.005f, timeProvider));
-		property("font", new FixedProperty(entity) {
-			public Object get() {
-				return resourceManager.get("FontBonusMessage").get();
-			};
-		});
+		property("font", resourceManager.get("FontBonusMessage"));
 
 		HashMap<String, Object> newParameters = new HashMap<String, Object>() {
 			{

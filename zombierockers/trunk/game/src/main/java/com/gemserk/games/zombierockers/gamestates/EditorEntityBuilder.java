@@ -254,6 +254,7 @@ public class EditorEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("velocityLabel", new HashMap<String, Object>() {
 			{
+				put("font", resourceManager.get("FontFps"));
 				put("position", slick.vector(60f, 20f));
 				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
@@ -269,6 +270,7 @@ public class EditorEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("positionLabel", new HashMap<String, Object>() {
 			{
+				put("font", resourceManager.get("FontFps"));
 				put("position", slick.vector(60f, 40f));
 				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));

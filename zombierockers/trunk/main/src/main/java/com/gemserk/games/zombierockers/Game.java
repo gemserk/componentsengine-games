@@ -256,6 +256,8 @@ public class Game extends StateBasedGame {
 			propertiesImageLoader.load("assets/images.properties");
 			propertiesAnimationLoader.load("assets/animations.properties");
 			propertiesSoundLoader.load("assets/sounds.properties");
+			
+			resourceManager.add("FontFps", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 18)))));
 
 //			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36)))));
 			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 48))));
