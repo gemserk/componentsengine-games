@@ -16,7 +16,6 @@ import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
@@ -59,12 +58,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				property("color", slick.color(1, 1, 1, 1));
 				property("direction", slick.vector(1, 0));
 				property("layer", 0);
-				property("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						return resourceManager.get("background").get();
-					}
-				});
+				property("image", resourceManager.get("background"));
 			}
 		});
 

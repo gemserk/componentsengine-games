@@ -75,8 +75,6 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 		final Rectangle screenResolution = Properties.getValue(entity, "screenBounds");
 
-		// child(templateProvider.getTemplate("zombierockers.entities.world").instantiate("world", parameters));
-
 		component(new ReferencePropertyComponent("mouseMoveConverter") {
 
 			@Inject

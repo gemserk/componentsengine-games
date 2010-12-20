@@ -11,10 +11,8 @@ import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
-import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -29,7 +27,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	GlobalProperties globalProperties;
-	
+
 	@Inject
 	ResourceManager resourceManager;
 
@@ -46,14 +44,13 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", 900);
-
-				property("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						Resource resource = (Resource) globalProperties.getProperties().get("screenshot");
-						return resource.get();
-					}
-				});
+				property("image", globalProperties.getProperties().get("screenshot"));
+				// property("image", new FixedProperty(entity) {
+				// @Override
+				// public Object get() {
+				// return globalProperties.getProperties().get("screenshot");
+				// }
+				// });
 			}
 		});
 
@@ -92,7 +89,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				put("message", "Press \"r\" to restart");
 			}
 		}));
-		
+
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("quitLabel", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));

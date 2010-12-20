@@ -179,14 +179,7 @@ public class EditorEntityBuilder extends EntityBuilder {
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", -1000);
-
-				property("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						Resource resource = Properties.getValue(getHolder(), "backgroundImage");
-						return resource.get();
-					}
-				});
+				propertyRef("image", "backgroundImage");
 			}
 		});
 

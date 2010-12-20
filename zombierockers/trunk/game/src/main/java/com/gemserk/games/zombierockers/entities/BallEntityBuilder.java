@@ -54,16 +54,6 @@ public class BallEntityBuilder extends EntityBuilder {
 		property("color", definition.get("color"));
 
 		property("image", definition.get("image"));
-		// property("image", resourceManager.get((String) definition.get("image")));
-
-		// property("animationResource", animationResource);
-		// property("animation", new FixedProperty(entity){
-		// @Override
-		// public Object get() {
-		// Resource resource = Properties.getValue(getHolder(), "animationResource");
-		// return resource.get();
-		// }
-		// });
 
 		property("radius", parameters.get("radius"));
 		property("finalRadius", parameters.get("finalRadius") != null ? parameters.get("finalRadius") : parameters.get("radius"));
@@ -127,7 +117,7 @@ public class BallEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		property("subPathDefinitions", new FixedProperty(entity){
+		property("subPathDefinitions", new FixedProperty(entity) {
 			@Override
 			public Object get() {
 				Entity segment = Properties.getValue(getHolder(), "segment");
@@ -140,19 +130,14 @@ public class BallEntityBuilder extends EntityBuilder {
 		property("layer", 0);
 		property("collisionMask", 0);
 
-		property("currentFrame", new FixedProperty(entity) {
-			@Override
-			public Object get() {
-
-				// Resource<Image> imageResource = Properties.getValue(getHolder(), "image");
-				String image = Properties.getValue(getHolder(), "image");
-				return resourceManager.get(image).get();
-				// return imageResource.get();
-
-				// Animation animation = Properties.getValue(getHolder(), "animation");
-				// return animation.getCurrentFrame();
-			}
-		});
+		property("currentFrame", resourceManager.get(definition.get("image")));
+		// property("currentFrame", new FixedProperty(entity) {
+		// @Override
+		// public Object get() {
+		// String image = Properties.getValue(getHolder(), "image");
+		// return resourceManager.get(image);
+		// }
+		// });
 
 		component(new FieldsReflectionComponent("updatePositionHandler") {
 

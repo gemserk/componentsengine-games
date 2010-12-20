@@ -81,7 +81,7 @@ public class WorldEntityBuilder extends EntityBuilder {
 	class BallWrapper extends PropertiesWrapper {
 
 		@EntityProperty
-		Property<Image> currentFrame;
+		Property<Resource<Image>> currentFrame;
 
 		@EntityProperty
 		Property<Vector2f> position;
@@ -135,20 +135,11 @@ public class WorldEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
-				// property("image", slick.getResources().image((String) level.get("background")));
-				// property("image", resourceManager.get(level.get("background"), Image.class));
 				property("color", slick.color(1, 1, 1, 1));
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", -1000);
-
-				property("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						Resource resource = Properties.getValue(getHolder(), "backgroundImageResource");
-						return resource.get();
-					}
-				});
+				propertyRef("image", "backgroundImageResource");
 			}
 		});
 
@@ -170,9 +161,6 @@ public class WorldEntityBuilder extends EntityBuilder {
 				for (Map<String, Object> placeable : placeables) {
 					final Vector2f position = (Vector2f) placeable.get("position");
 					Integer layer = (Integer) placeable.get("layer");
-
-					// property("image", resourceManager.get(level.get("background"), Image.class));
-					// final Image image = slick.getResources().image((String) placeable.get("image"));
 
 					Resource<Image> imageResource = resourceManager.get(placeable.get("image"));
 					final Image image = imageResource.get();
@@ -560,13 +548,13 @@ public class WorldEntityBuilder extends EntityBuilder {
 					for (Entity ballEntity : balls) {
 						ball.wrap(ballEntity);
 
-						Image image = ball.currentFrame.get();
+						Resource<Image> image = ball.currentFrame.get();
 						Vector2f position = ball.position.get();
 						Vector2f direction = ball.direction.get();
 						Vector2f size = ball.size.get();
 						// Color color = ball.color.get();
 
-						ballsSprites.add(new AlphaMaskedSprite(image, position, direction, size, ballColor));
+						ballsSprites.add(new AlphaMaskedSprite(image.get(), position, direction, size, ballColor));
 						shadowSprites.add(new AlphaMaskedSprite(ballShadowImage.get(), position.copy().add(shadowDispacement), direction, size, shadowColor));
 					}
 

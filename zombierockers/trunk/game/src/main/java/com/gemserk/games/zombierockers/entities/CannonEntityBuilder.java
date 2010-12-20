@@ -274,17 +274,10 @@ public class CannonEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("imagerenderer")).withProperties(new ComponentProperties() {
 			{
-				// property("image", slickUtils.getResources().image("ship"));
-				// property("image", resourceManager.get("ship", Image.class));
 				property("color", new Color(1f, 1f, 1f, 1f));
 				propertyRef("position", "position");
 				propertyRef("direction", "direction");
-				property("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						return resourceManager.get("ship").get();
-					}
-				});
+				property("image", resourceManager.get("ship"));
 			}
 		});
 
@@ -461,18 +454,10 @@ public class CannonEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.entities.cursor").instantiate("cursor", new HashMap<String, Object>() {
 			{
 				put("color", colorProperty);
-				// put("image", slickUtils.getResources().image("cursor"));
-				// put("image", resourceManager.get("cursor", Image.class));
 				put("position", new Vector2f(400, 300));
 				put("bounds", new Rectangle(20, 20, 760, 520));
 				put("layer", 10);
-
-				put("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						return resourceManager.get("cursor").get();
-					}
-				});
+				put("image", resourceManager.get("cursor"));
 			}
 		}));
 

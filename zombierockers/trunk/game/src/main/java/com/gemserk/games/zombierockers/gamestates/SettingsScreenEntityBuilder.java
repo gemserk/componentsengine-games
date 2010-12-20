@@ -65,12 +65,7 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 				property("color", slick.color(1, 1, 1, 1));
 				property("direction", slick.vector(1, 0));
 				property("layer", 0);
-				property("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						return resourceManager.get("background").get();
-					}
-				});
+				property("image", resourceManager.get("background"));
 			}
 		});
 

@@ -3,7 +3,6 @@ package com.gemserk.games.zombierockers.entities;
 import java.util.HashMap;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
@@ -19,7 +18,6 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.triggers.NullTrigger;
-import com.gemserk.resources.Resource;
 import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
 import com.gemserk.slick.animation.timeline.Vector2fInterpolatedValue;
 import com.google.inject.Inject;
@@ -117,13 +115,7 @@ public class CheckboxEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("renderer")).withProperties(new ComponentProperties() {
 			{
-				property("image", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						Resource<Image> image = Properties.getValue(getHolder(), "image");
-						return image.get();
-					}
-				});
+				propertyRef("image");
 				propertyRef("color", "color");
 				propertyRef("size", "size");
 				propertyRef("position", "position");
