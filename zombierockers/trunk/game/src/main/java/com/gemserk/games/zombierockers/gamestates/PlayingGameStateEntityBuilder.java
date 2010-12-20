@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -179,7 +180,8 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					return;
 				if ((Boolean) globalProperties.getProperties().get("runningInDebug"))
 					return;
-				slick.getGameContainer().setMouseGrabbed(true);
+				if (!Mouse.isGrabbed())
+					slick.getGameContainer().setMouseGrabbed(true);
 			}
 
 		}).withProperties(new ComponentProperties() {
