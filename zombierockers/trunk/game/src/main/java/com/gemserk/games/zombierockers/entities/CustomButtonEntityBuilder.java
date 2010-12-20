@@ -21,7 +21,6 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.componentsengine.triggers.NullTrigger;
 import com.gemserk.resources.Resource;
 import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
 import com.gemserk.slick.animation.timeline.Vector2fInterpolatedValue;
@@ -60,30 +59,6 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 			{
 				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(new Color(startColor)), 0.005f, timeProvider));
 				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(slick.vector(1f, 1f)), 0.005f, timeProvider));
-				put("onEnterTrigger", new NullTrigger() {
-					@Override
-					public void trigger(Object... parameters) {
-						messageQueue.enqueue(new Message("onButtonFocused", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
-					}
-				});
-				put("onLeaveTrigger", new NullTrigger() {
-					@Override
-					public void trigger(Object... parameters) {
-						messageQueue.enqueue(new Message("onButtonLostFocus", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
-					}
-				});
-				put("onPressedTrigger", new NullTrigger() {
-					@Override
-					public void trigger(Object... parameters) {
-						messageQueue.enqueue(new Message("onButtonPressed", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
-					}
-				});
-				put("onReleasedTrigger", new NullTrigger() {
-					@Override
-					public void trigger(Object... parameters) {
-						messageQueue.enqueue(new Message("onButtonReleased", new PropertiesMapBuilder().property("source", (Entity) parameters[0]).build()));
-					}
-				});
 			}
 		};
 

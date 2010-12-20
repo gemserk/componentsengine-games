@@ -34,23 +34,16 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 	@Override
 	public void build() {
 
-		final Rectangle labelRectangle = slick.rectangle(-220, -50, 440, 100);
+		final Rectangle labelRectangle = slick.rectangle(-120, -20, 240, 40);
 		final Rectangle screenBounds = (Rectangle) parameters.get("screenBounds");
 
 		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
-				// property("image", globalProperties.getProperties().get("screenshot"));
 				property("color", slick.color(1, 1, 1, 1));
 				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
-				property("layer", 900);
+				property("layer", 0);
 				property("image", globalProperties.getProperties().get("screenshot"));
-				// property("image", new FixedProperty(entity) {
-				// @Override
-				// public Object get() {
-				// return globalProperties.getProperties().get("screenshot");
-				// }
-				// });
 			}
 		});
 
@@ -60,46 +53,52 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				property("rectangle", screenBounds);
 				property("lineColor", slick.color(0.2f, 0.2f, 0.2f, 0.0f));
 				property("fillColor", slick.color(0.5f, 0.5f, 0.5f, 0.5f));
-				property("layer", 1000);
+				property("layer", 1);
 			}
 		});
 
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("pausedLabel", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("resumeButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage"));
+				put("font", resourceManager.get("FontDialogMessage2"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 50f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 2);
+				put("message", "Resume");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				
+				put("buttonReleasedMessageId", "resume");
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("restartButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage2"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
-				put("color", slick.color(0f, 0f, 0f, 1f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
-				put("layer", 1010);
-				put("message", "Paused, press click to continue...");
+				put("layer", 2);
+				put("message", "Restart");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				
+				put("buttonReleasedMessageId", "restartLevel");
 			}
 		}));
 
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("restartLabel", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("quitButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 40f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
+				put("font", resourceManager.get("FontDialogMessage2"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
-				put("layer", 1010);
-				put("message", "Press \"r\" to restart");
-			}
-		}));
-
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("quitLabel", new HashMap<String, Object>() {
-			{
-				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 80f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
-				put("bounds", labelRectangle);
-				put("align", "center");
-				put("valign", "center");
-				put("layer", 1010);
-				put("message", "or press \"q\" to quit");
+				put("layer", 2);
+				put("message", "Quit");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				
+				put("buttonReleasedMessageId", "menu");
 			}
 		}));
 
@@ -124,8 +123,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				mouse(new MouseMappingBuilder() {
 					@Override
 					public void build() {
-						press("left", "resume");
-						press("right", "resume");
+						
 					}
 				});
 			}
