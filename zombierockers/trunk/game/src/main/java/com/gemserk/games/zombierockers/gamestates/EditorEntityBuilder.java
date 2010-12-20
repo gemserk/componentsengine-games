@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ import com.gemserk.componentsengine.commons.components.CircleRenderableComponent
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.Path;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
-import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.entities.Entity;
@@ -27,16 +24,12 @@ import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
-import com.gemserk.componentsengine.render.RenderQueue;
-import com.gemserk.componentsengine.slick.render.SlickCallableRenderObject;
 import com.gemserk.componentsengine.slick.utils.SlickSvgUtils;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.games.zombierockers.PathTraversal;
-import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -182,47 +175,19 @@ public class EditorEntityBuilder extends EntityBuilder {
 				propertyRef("image", "backgroundImage");
 			}
 		});
+		
+		List<Map<String, Object>> placeables = (List<Map<String, Object>>) level.get("placeables");
 
-		// TODO: create the placeables as entities instead....
-		component(new ReferencePropertyComponent("placeablesRender") {
-
-			@EntityProperty
-			Property<Map<String, Object>> level;
-
-			@Handles
-			public void render(Message message) {
-
-				RenderQueue renderer = Properties.getValue(message, "renderer");
-
-				List<Map<String, Object>> placeables = (List<Map<String, Object>>) level.get().get("placeables");
-
-				for (Map<String, Object> placeable : placeables) {
-					final Vector2f position = (Vector2f) placeable.get("position");
-					Integer layer = (Integer) placeable.get("layer");
-
-					Resource<Image> imageResource = resourceManager.get(placeable.get("image"));
-					final Image image = imageResource.get();
-
-					renderer.enqueue(new SlickCallableRenderObject(layer) {
-
-						@Override
-						public void execute(Graphics g) {
-							g.pushTransform();
-							g.translate(position.x, position.y);
-							g.drawImage(image, (float) -(image.getWidth() / 2), (float) -(image.getHeight() / 2));
-							g.popTransform();
-						}
-
-					});
+		for (int i = 0; i < placeables.size(); i++) {
+			final Map<String, Object> placeable = placeables.get(i);
+			child(templateProvider.getTemplate("entities.placeable").instantiate("placeable_" + i, new HashMap<String, Object>() {
+				{
+					put("position", placeable.get("position"));
+					put("layer", placeable.get("layer"));
+					put("image", resourceManager.get(placeable.get("image")));
 				}
-
-			}
-
-		}).withProperties(new ComponentProperties() {
-			{
-				propertyRef("level");
-			}
-		});
+			}));
+		}
 
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
