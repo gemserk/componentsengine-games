@@ -29,6 +29,7 @@ import com.gemserk.componentsengine.input.MouseMappingBuilder;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
@@ -65,6 +66,9 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
+
+	@Inject
+	MessageBuilder messageBuilder;
 
 	@Override
 	public void build() {
@@ -377,13 +381,26 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					return;
 
 				if (win.get()) {
-					Data profile = (Data) globalProperties.getProperties().get("profile");
-					String name = (String) profile.getValues().get("name");
-					String levelName = (String) level.get().get("name");
+
+					// go to enter score
 					long pts = (long) points.get();
 
-					// TODO: submit async
-					scores.submit(new Score(name, pts, Sets.newHashSet(levelName), new HashMap<String, Object>()));
+					Data profile = (Data) globalProperties.getProperties().get("profile");
+					String levelName = (String) level.get().get("name");
+
+					if (profile.getTags().contains("guest")) {
+						messageQueue.enqueue(messageBuilder.newMessage("enterscore") //
+								.property("win", win.get()) //
+								.property("points", pts) //
+								.property("levelName", levelName) //
+								.get());
+						return;
+					} else {
+						String name = (String) profile.getValues().get("name");
+
+						// TODO: submit async
+						scores.submit(new Score(name, pts, Sets.newHashSet(levelName), new HashMap<String, Object>()));
+					}
 				}
 
 				messageQueue.enqueue(new Message("highscores", new PropertiesMapBuilder().property("win", win.get()).build()));
@@ -441,7 +458,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				messageQueue.enqueue(new Message("paused"));
 			}
 		});
-		
+
 		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
 	}

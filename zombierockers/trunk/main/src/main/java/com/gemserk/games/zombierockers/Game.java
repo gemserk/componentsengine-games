@@ -68,6 +68,7 @@ import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.WorldEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.EnterScoreGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EnterScoreScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.HighscoresScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.HighscoresTableEntityBuilder;
@@ -255,6 +256,8 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.highscores", javaEntityTemplateProvider.get().with(new HighscoresScreenEntityBuilder()));
+			
+			registrableTemplateProvider.add("gamestates.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreScreenEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.sceneEditor", javaEntityTemplateProvider.get().with(new EditorGameStateEntityBuilder()));
@@ -326,9 +329,11 @@ public class Game extends StateBasedGame {
 			resourceManager.add("FontScores", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 24))));
 
 			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 24))));
-			resourceManager.add("FontPointsLabel", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));
 
-			resourceManager.add("FontBonusMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));
+			CachedResourceLoader bonusResourceLoader = new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png")));
+			
+			resourceManager.add("FontPointsLabel", bonusResourceLoader);
+			resourceManager.add("FontBonusMessage", bonusResourceLoader);
 
 			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
 			resourceManager.add("PlayMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/game.ogg"))));

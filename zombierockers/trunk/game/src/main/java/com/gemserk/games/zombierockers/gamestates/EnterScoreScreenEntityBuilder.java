@@ -1,17 +1,14 @@
 package com.gemserk.games.zombierockers.gamestates;
 
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
+import java.util.HashMap;
+
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
-import com.gemserk.componentsengine.commons.gui.ClipboardAwtImpl;
-import com.gemserk.componentsengine.commons.gui.TextField;
 import com.gemserk.componentsengine.commons.gui.TextFieldSlickImpl;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -23,14 +20,19 @@ import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
+import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.Property;
-import com.gemserk.componentsengine.render.RenderQueue;
-import com.gemserk.componentsengine.slick.render.SlickCallableRenderObject;
+import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
+import com.gemserk.datastore.Data;
+import com.gemserk.datastore.DataStore;
 import com.gemserk.resources.ResourceManager;
+import com.gemserk.scores.Score;
 import com.gemserk.scores.Scores;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -49,6 +51,9 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 	MessageQueue messageQueue;
 
 	@Inject
+	MessageBuilder messageBuilder;
+	
+	@Inject
 	ResourceManager resourceManager;
 
 	@Inject
@@ -59,9 +64,12 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 
 	@Inject
 	Input input;
-	
+
 	@Inject
 	Provider<InputMappingBuilderConfigurator> inputMappingConfiguratorProvider;
+	
+	@Inject
+	DataStore dataStore;
 
 	@Override
 	public void build() {
@@ -91,64 +99,91 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 				property("layer", 1);
 			}
 		});
-		
-		property("textFieldSlickImpl", null);
-		
-		component(new ReferencePropertyComponent("enterStateHandler") {
-			
-			@EntityProperty
-			Property<TextFieldSlickImpl> textFieldSlickImpl;
 
-			@Handles
-			public void enterNodeState(Message message) {
-				TextField textField = new TextField("", new ClipboardAwtImpl());
-				textFieldSlickImpl.set(new TextFieldSlickImpl(textField));
-				input.addKeyListener(textFieldSlickImpl.get());
-			}
+		property("levelName", parameters.get("levelName"));
+		property("points", parameters.get("points"));
+		property("textFieldSlickImpl", parameters.get("textFieldSlickImpl"));
 
-		});
-		
-		component(new ReferencePropertyComponent("leaveStateHandler") {
-
-			@EntityProperty
-			Property<TextFieldSlickImpl> textFieldSlickImpl;
-			
-			@Handles
-			public void leaveNodeState(Message message) {
-				input.removeKeyListener(textFieldSlickImpl.get());
-			}
-
-		});
-		
 		property("position", slick.vector(400, 300));
-		property("color", slick.color(0f,0f,0f,1f));
+		property("color", slick.color(0f, 0f, 0f, 1f));
 		
-		component(new ReferencePropertyComponent("renderTextField") {
+		final Long points = Properties.getValue(entity, "points");
+
+		property("text", new FixedProperty(entity) {
+			@Override
+			public Object get() {
+				TextFieldSlickImpl textFieldSlickImpl = Properties.getValue(getHolder(), "textFieldSlickImpl");
+				return textFieldSlickImpl.getTextField().getText();
+			}
+		});
+
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("enterScoreLabel", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 40));
+				put("color", slick.color(0.2f, 0.2f, 0.8f, 1f));
+				put("bounds", slick.rectangle(-160, -25, 320, 50));
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 10);
+				put("message", "You made " + points + " points, enter your name");
+			}
+		}));
+
+		component(new RectangleRendererComponent("background2")).withProperties(new ComponentProperties() {
+			{
+				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
+				property("rectangle", slick.rectangle(-160, -25, 320, 50));
+				property("lineColor", slick.color(0f, 0f, 0f, 1f));
+				property("fillColor", slick.color(1f, 1f, 1f, 1f));
+				property("layer", 5);
+				property("cornerRadius", 3);
+			}
+		});
+
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("textFieldTextLabel", new HashMap<String, Object>() {
+			{
+				 put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
+				put("color", slick.color(0.2f, 0.8f, 0.2f, 1f));
+				put("bounds", slick.rectangle(-160, -25, 320, 50));
+				put("align", "left");
+				put("valign", "center");
+				put("layer", 10);
+				put("message", new ReferenceProperty<Object>("text", entity));
+			}
+		}));
+
+		component(new ReferencePropertyComponent("saveScoreWhenEnter") {
 
 			@EntityProperty
-			Property<Vector2f> position;
+			Property<String> levelName;
 
 			@EntityProperty
-			Property<Color> color;
-			
+			Property<Long> points;
+
 			@EntityProperty
 			Property<TextFieldSlickImpl> textFieldSlickImpl;
 			
 			@Handles
-			public void render(Message message) {
-				RenderQueue renderQueue = Properties.getValue(message, "renderer");
-				
-				renderQueue.enqueue(new SlickCallableRenderObject(100) {
-					
-					@Override
-					public void execute(Graphics graphics) {
+			public void scoreEntered(Message message) {
+				final String name = textFieldSlickImpl.get().getTextField().getText();
 
-						graphics.setColor(color.get());
-						graphics.drawString(textFieldSlickImpl.get().getTextField().getText(), position.get().x, position.get().y);
-						
+				dataStore.remove(Sets.newHashSet("profile", "guest"));
+				Data newProfile = new Data(Sets.newHashSet("profile", "selected"), new HashMap<String, Object>() {
+					{
+						put("name", name);
 					}
 				});
+				dataStore.submit(newProfile);
 				
+				globalProperties.getProperties().put("profile", newProfile);
+				
+				// submit to server
+				
+				scores.submit(new Score(name, points.get(), Sets.newHashSet(levelName.get()), new HashMap<String, Object>()));
+				
+				messageQueue.enqueue(messageBuilder.newMessage("highscores").get());
 			}
 
 		});

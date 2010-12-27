@@ -17,6 +17,7 @@ import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplate;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
@@ -44,6 +45,12 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	ResourceManager resourceManager;
+
+	@Inject
+	MessageQueue messageQueue;
+
+	@Inject
+	MessageBuilder messageBuilder;
 
 	@SuppressWarnings( { "unchecked", "serial" })
 	@Override
@@ -126,7 +133,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 								put("screenBounds", screenBounds);
 							}
 						}));
-						put("enterscore", templateProvider.getTemplate("screens.enterscore").instantiate("enterscore", new HashMap<String, Object>() {
+						put("enterscore", templateProvider.getTemplate("gamestates.enterscore").instantiate("enterscore", new HashMap<String, Object>() {
 							{
 								put("screenBounds", screenBounds);
 							}
@@ -144,12 +151,36 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void enterState(Message message) {
 				messageQueue.enqueueDelay(new Message("splash"));
-//				 messageQueue.enqueueDelay(new Message("enterscore"));
 				// messageQueue.enqueueDelay(new Message("highscores"));
 				// messageQueue.enqueueDelay(new Message("resume"));
+				// messageQueue.enqueueDelay(new Message("enterscore"));
 			}
 
 		});
+
+		// component(new ReferencePropertyComponent("temporalComponentToChangeToEnterScoreScreen") {
+		//
+		// @Handles
+		// public void newScoreToEnter(Message message) {
+		// messageQueue.enqueueDelay(messageBuilder.newMessage("enterscore").property("points", 5600l).property("levelName", "Level 01").get());
+		// }
+		//
+		// });
+		//		
+		// component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
+		//
+		// @Override
+		// public void build() {
+		//
+		// keyboard(new KeyboardMappingBuilder() {
+		// @Override
+		// public void build() {
+		// press("m", "newScoreToEnter");
+		// }
+		// });
+		// }
+		//
+		// }));
 
 		// child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
