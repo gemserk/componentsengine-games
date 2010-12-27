@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
+import com.gemserk.componentsengine.commons.entities.FpsEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
+import com.gemserk.componentsengine.commons.entities.ScreenshotGrabberEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.gui.LabelEntityBuilder;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -66,6 +68,7 @@ import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.WorldEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.EnterScoreScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.HighscoresScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.HighscoresTableEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
@@ -249,6 +252,7 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.highscores", javaEntityTemplateProvider.get().with(new HighscoresScreenEntityBuilder()));
+			registrableTemplateProvider.add("screens.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreScreenEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.sceneEditor", javaEntityTemplateProvider.get().with(new EditorGameStateEntityBuilder()));
 
@@ -265,6 +269,9 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.gui.highscorestable", javaEntityTemplateProvider.get().with(new HighscoresTableEntityBuilder()));
 			
 			registrableTemplateProvider.add("zombierockers.effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
+			
+			registrableTemplateProvider.add("commons.entities.screenshotGrabber", javaEntityTemplateProvider.get().with(new ScreenshotGrabberEntityBuilder()));
+			registrableTemplateProvider.add("commons.entities.fps", javaEntityTemplateProvider.get().with(new FpsEntityBuilder()));
 		}
 
 		injector.getInstance(InitBuilderUtilsSlick.class).config();
@@ -328,12 +335,8 @@ public class Game extends StateBasedGame {
 			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
 			resourceManager.add("PlayMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/game.ogg"))));
 			
-			
-			
-			
 			builderUtils.put("svg", new SlickSvgUtils());
 			builderUtils.put("resourceManager", resourceManager);
-
 		}
 
 		public GameGameState(int id) {

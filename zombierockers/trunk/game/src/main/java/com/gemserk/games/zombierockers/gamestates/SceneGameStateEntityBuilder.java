@@ -10,7 +10,6 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -32,7 +31,6 @@ import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.games.zombierockers.ScenesDefinitions;
 import com.gemserk.resources.ResourceManager;
-import com.gemserk.resources.monitor.FilesMonitor;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -48,7 +46,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	GlobalProperties globalProperties;
-	
+
 	@Inject
 	ResourceManager resourceManager;
 
@@ -89,6 +87,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						put("editor", "editor");
 						put("settings", "settings");
 						put("highscores", "highscores");
+						put("enterscore", "enterscore");
 					}
 				});
 				put("stateEntities", new HashMap<String, Object>() {
@@ -132,6 +131,11 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 								put("screenBounds", screenBounds);
 							}
 						}));
+						put("enterscore", templateProvider.getTemplate("screens.enterscore").instantiate("enterscore", new HashMap<String, Object>() {
+							{
+								put("screenBounds", screenBounds);
+							}
+						}));
 					}
 				});
 			}
@@ -145,48 +149,34 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void enterState(Message message) {
 				messageQueue.enqueueDelay(new Message("splash"));
-//				messageQueue.enqueueDelay(new Message("highscores"));
+				// messageQueue.enqueueDelay(new Message("enterscore"));
+				// messageQueue.enqueueDelay(new Message("highscores"));
 				// messageQueue.enqueueDelay(new Message("resume"));
 			}
 
 		});
 
-		component(new ReflectionComponent("makeScreenshotHandler") {
-
-			@Inject
-			ScreenshotGrabber screenshotGrabber;
-
-			@Handles
-			public void makeScreenshot(Message message) {
-				screenshotGrabber.saveScreenshot("zombierockers-", "png");
+		child(templateProvider.getTemplate("commons.entities.screenshotGrabber").instantiate("screenshotEntity", new HashMap<String, Object>() {
+			{
+				put("prefix", "zombierockers-");
+				put("extension", "png");
 			}
+		}));
 
-		});
-
-		component(new ReflectionComponent("toggleFpsHandler") {
-
-			@Inject
-			GlobalProperties globalProperties;
-
-			@Handles
-			public void toggleFps(Message message) {
-				Boolean showFps = (Boolean) globalProperties.getProperties().get("showFps");
-				globalProperties.getProperties().put("showFps", !showFps);
+		child(templateProvider.getTemplate("commons.entities.fps").instantiate("fpsLabel", new HashMap<String, Object>() {
+			{
+				put("enabled", new FixedProperty(entity) {
+					@Override
+					public Object get() {
+						return globalProperties.getProperties().get("showFps");
+					}
+					@Override
+					public void set(Object value) {
+						globalProperties.getProperties().put("showFps", value);
+					}
+				});
 			}
-
-		});
-
-		component(new ReflectionComponent("reloadResourcesHandler") {
-
-			@Inject
-			FilesMonitor filesMonitor;
-
-			@Handles
-			public void reloadResources(Message message) {
-				filesMonitor.checkModifiedFiles();
-			}
-
-		});
+		}));
 
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
@@ -198,7 +188,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 					public void build() {
 						press("x", "dumpEntities");
 						press("n", "nextLevel");
-						press("k", "makeScreenshot");
+						press("k", "takeScreenshot");
 						press("f", "toggleFps");
 						press("u", "reloadResources");
 					}
@@ -288,26 +278,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 				propertyRef("sceneInstantiationTemplate");
 			}
 		});
-
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("fpsLabel", new HashMap<String, Object>() {
-			{
-				put("font", resourceManager.get("FontFps"));
-				put("position", slick.vector(screenBounds.getMinX() + 60f, screenBounds.getMinY() + 30f));
-				put("color", slick.color(0f, 0f, 0f, 1f));
-				put("bounds", slick.rectangle(-50f, -20f, 100f, 40f));
-				put("align", "left");
-				put("valign", "top");
-				put("layer", 10000);
-				put("message", new FixedProperty(entity) {
-					public Object get() {
-						Boolean showFps = (Boolean) globalProperties.getProperties().get("showFps");
-						if (showFps)
-							return "FPS: " + slick.getGameContainer().getFPS();
-						return "";
-					};
-				});
-			}
-		}));
 
 	}
 }
