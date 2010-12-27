@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONArray;
-
 import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +13,7 @@ import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
-import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
-import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.instantiationtemplates.InstantiationTemplate;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
@@ -28,7 +24,6 @@ import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.games.zombierockers.ScenesDefinitions;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
@@ -149,62 +144,14 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void enterState(Message message) {
 				messageQueue.enqueueDelay(new Message("splash"));
-				// messageQueue.enqueueDelay(new Message("enterscore"));
+//				 messageQueue.enqueueDelay(new Message("enterscore"));
 				// messageQueue.enqueueDelay(new Message("highscores"));
 				// messageQueue.enqueueDelay(new Message("resume"));
 			}
 
 		});
 
-		child(templateProvider.getTemplate("commons.entities.screenshotGrabber").instantiate("screenshotEntity", new HashMap<String, Object>() {
-			{
-				put("prefix", "zombierockers-");
-				put("extension", "png");
-			}
-		}));
-
-		child(templateProvider.getTemplate("commons.entities.fps").instantiate("fpsLabel", new HashMap<String, Object>() {
-			{
-				put("enabled", new FixedProperty(entity) {
-					@Override
-					public Object get() {
-						return globalProperties.getProperties().get("showFps");
-					}
-					@Override
-					public void set(Object value) {
-						globalProperties.getProperties().put("showFps", value);
-					}
-				});
-			}
-		}));
-
-		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
-
-			@Override
-			public void build() {
-
-				keyboard(new KeyboardMappingBuilder() {
-					@Override
-					public void build() {
-						press("x", "dumpEntities");
-						press("n", "nextLevel");
-						press("k", "takeScreenshot");
-						press("f", "toggleFps");
-						press("u", "reloadResources");
-					}
-				});
-			}
-
-		}));
-
-		component(new ReflectionComponent("dumpEntitiesHandler") {
-
-			@Handles
-			public void dumpEntities(Message message) {
-				System.out.println(JSONArray.fromObject(new EntityDumper().dumpEntity(entity.getRoot())).toString(4));
-			}
-
-		});
+		// child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
 		component(new ReflectionComponent("nextLevelHandler") {
 

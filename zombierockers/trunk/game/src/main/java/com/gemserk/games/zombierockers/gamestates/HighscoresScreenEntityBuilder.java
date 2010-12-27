@@ -88,7 +88,7 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontTitle2"));
+				put("font", resourceManager.get("FontTitle"));
 				put("position", slick.vector(screenBounds.getCenterX(), 40f));
 				put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
 				put("bounds", labelRectangle);
@@ -139,7 +139,7 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 		
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "playAgainButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX() - 150, screenBounds.getMaxY() - 60f));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -154,7 +154,7 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "nextLevelButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX() + 150, screenBounds.getMaxY() - 60f));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -228,7 +228,7 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 			public void refreshScoresStarted(Message message) {
 				refreshingScoresLabel.set(templateProvider.getTemplate("gemserk.gui.label").instantiate("dialogMessageLabel", new HashMap<String, Object>() {
 					{
-						put("font", resourceManager.get("FontDialogMessage2"));
+						put("font", resourceManager.get("FontDialogMessage"));
 						put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 						put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
 						put("bounds", slick.rectangle(-160, -25, 320, 50));
@@ -304,7 +304,7 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 
 				Entity scoresFailedLabel = templateProvider.getTemplate("gemserk.gui.label").instantiate("dialogMessageLabel", new HashMap<String, Object>() {
 					{
-						put("font", resourceManager.get("FontDialogMessage2"));
+						put("font", resourceManager.get("FontDialogMessage"));
 						put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 						put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
 						put("bounds", slick.rectangle(-160, -25, 320, 50));
@@ -353,7 +353,7 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 
 					Entity scoresFailedLabel = templateProvider.getTemplate("gemserk.gui.label").instantiate("dialogMessageLabel", new HashMap<String, Object>() {
 						{
-							put("font", resourceManager.get("FontDialogMessage2"));
+							put("font", resourceManager.get("FontDialogMessage"));
 							put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 							put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
 							put("bounds", slick.rectangle(-160, -25, 320, 50));
@@ -370,6 +370,8 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 			}
 
 		});
+		
+		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
 	}
 }

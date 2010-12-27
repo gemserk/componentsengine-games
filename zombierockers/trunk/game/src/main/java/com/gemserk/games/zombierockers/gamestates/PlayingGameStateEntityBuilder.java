@@ -441,6 +441,8 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				messageQueue.enqueue(new Message("paused"));
 			}
 		});
+		
+		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
 	}
 }

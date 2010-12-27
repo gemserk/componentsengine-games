@@ -10,10 +10,7 @@ import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
-import com.gemserk.componentsengine.input.InputMappingBuilder;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
-import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
-import com.gemserk.componentsengine.input.MouseMappingBuilder;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.Properties;
@@ -148,7 +145,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontTitle2"));
+				put("font", resourceManager.get("FontTitle"));
 				put("position", slick.vector(screenResolution.getCenterX(), 40f));
 				put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
 				put("bounds", labelRectangle);
@@ -161,7 +158,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("playButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 50f));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -174,7 +171,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("settingsButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY()));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -187,7 +184,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("exitButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() + 50f));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -264,27 +261,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 
 		});
 
-		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
-
-			@Override
-			public void build() {
-
-				keyboard(new KeyboardMappingBuilder() {
-					@Override
-					public void build() {
-
-					}
-				});
-
-				mouse(new MouseMappingBuilder() {
-					@Override
-					public void build() {
-
-					}
-				});
-			}
-
-		}));
+		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
 	}
 }

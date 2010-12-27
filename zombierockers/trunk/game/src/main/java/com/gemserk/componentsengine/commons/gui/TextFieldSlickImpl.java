@@ -59,8 +59,7 @@ public class TextFieldSlickImpl implements KeyListener {
 
 	@Override
 	public void inputStarted() {
-		// TODO Auto-generated method stub
-		// throw new RuntimeException("inputStarted not implemented yet");
+		
 	}
 
 }

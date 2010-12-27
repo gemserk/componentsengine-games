@@ -13,7 +13,6 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.StateBasedGame;
@@ -26,6 +25,7 @@ import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
 import com.gemserk.componentsengine.commons.entities.FpsEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.ScreenshotGrabberEntityBuilder;
+import com.gemserk.componentsengine.commons.entities.UtilsEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.gui.LabelEntityBuilder;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -92,6 +92,7 @@ import com.gemserk.resources.slick.PropertiesSoundLoader;
 import com.gemserk.resources.slick.dataloaders.SlickAngelCodeFontLoader;
 import com.gemserk.resources.slick.dataloaders.SlickMusicLoader;
 import com.gemserk.resources.slick.dataloaders.SlickTrueTypeFontLoader;
+import com.gemserk.resources.slick.dataloaders.SlickUnicodeFontLoader;
 import com.gemserk.scores.Scores;
 import com.gemserk.scores.ScoresHttpImpl;
 import com.google.common.collect.Sets;
@@ -169,24 +170,26 @@ public class Game extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		// container.setVSync(true);
 		container.setShowFPS(false);
-		
+
 		// getGameProperties().put("scores", );
 		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/zombierockers/profiles.data");
-		
-//		final Scores scores = new ScoresFileImpl(storageFile);
+
+		// final Scores scores = new ScoresFileImpl(storageFile);
 		final Scores scores = new ScoresHttpImpl("9eba9d1d13f8190d934e3dd0f58f58ca", "http://gemserkscores.appspot.com/");
 		getGameProperties().put("scores", scores);
 		getGameProperties().put("executor", Executors.newCachedThreadPool());
-		
+
 		final DataStore dataStore = new DataStoreJSONInFileImpl(storageFile);
 		Collection<Data> profilesData = dataStore.get(Sets.newHashSet("profile", "selected"));
-		
+
 		Data profile = null;
 		if (profilesData.size() != 1) {
 			dataStore.remove(Sets.newHashSet("profile", "selected"));
-			profile = new Data(Sets.newHashSet("profile", "selected", "guest"), new HashMap<String, Object>(){{
-				put("name", "guest-" + Math.random());
-			}});
+			profile = new Data(Sets.newHashSet("profile", "selected", "guest"), new HashMap<String, Object>() {
+				{
+					put("name", "guest-" + Math.random());
+				}
+			});
 			dataStore.submit(profile);
 			if (logger.isInfoEnabled())
 				logger.info("creating new profile " + profile.getValues().get("name"));
@@ -195,9 +198,9 @@ public class Game extends StateBasedGame {
 			if (logger.isInfoEnabled())
 				logger.info("using existing profile " + profile.getValues().get("name"));
 		}
-		
+
 		getGameProperties().put("profile", profile);
-		
+
 		Injector injector = Guice.createInjector(new SlickModule(container, this), // 
 				new SlickSoundSystemModule(), // 
 				new BasicModule(), //
@@ -211,7 +214,7 @@ public class Game extends StateBasedGame {
 						bind(ResourceManager.class).to(ResourceManagerImpl.class).in(Singleton.class);
 						bind(FilesMonitor.class).to(FilesMonitorImpl.class).in(Singleton.class);
 						bind(FileMonitorResourceHelper.class).to(FileMonitorResourceHelperNullImpl.class).in(Singleton.class);
-						
+
 						bind(Scores.class).toInstance(scores);
 						bind(DataStore.class).toInstance(dataStore);
 					}
@@ -238,9 +241,9 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("zombierockers.entities.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.entities.world", javaEntityTemplateProvider.get().with(new WorldEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("entities.placeable", javaEntityTemplateProvider.get().with(new PlaceableEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.entities.editor", javaEntityTemplateProvider.get().with(new EditorEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.playing", javaEntityTemplateProvider.get().with(new PlayingGameStateEntityBuilder()));
@@ -263,15 +266,16 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("zombierockers.gui.button", javaEntityTemplateProvider.get().with(new CustomButtonEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.gui.checkbox", javaEntityTemplateProvider.get().with(new CheckboxEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.gui.bonusmessage", javaEntityTemplateProvider.get().with(new BonusMessageEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.gui.highscorestable", javaEntityTemplateProvider.get().with(new HighscoresTableEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("zombierockers.effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("commons.entities.screenshotGrabber", javaEntityTemplateProvider.get().with(new ScreenshotGrabberEntityBuilder()));
 			registrableTemplateProvider.add("commons.entities.fps", javaEntityTemplateProvider.get().with(new FpsEntityBuilder()));
+			registrableTemplateProvider.add("commons.entities.utils", javaEntityTemplateProvider.get().with(new UtilsEntityBuilder()));
 		}
 
 		injector.getInstance(InitBuilderUtilsSlick.class).config();
@@ -284,7 +288,7 @@ public class Game extends StateBasedGame {
 		getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(new Image(800, 600))).load());
 
 	}
-
+	
 	class GameGameState extends GemserkGameState {
 
 		@Inject
@@ -296,13 +300,13 @@ public class Game extends StateBasedGame {
 
 		@Inject
 		PropertiesImageLoader propertiesImageLoader;
-		
+
 		@Inject
 		PropertiesSoundLoader propertiesSoundLoader;
 
 		@Inject
 		ResourceManager resourceManager;
-		
+
 		@Override
 		public void onInit() {
 			super.onInit();
@@ -313,28 +317,22 @@ public class Game extends StateBasedGame {
 			propertiesImageLoader.load("assets/images.properties");
 			propertiesAnimationLoader.load("assets/animations.properties");
 			propertiesSoundLoader.load("assets/sounds.properties");
-			
+
 			resourceManager.add("FontFps", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 18)))));
 
-//			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36)))));
-			resourceManager.add("FontTitle", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 48))));
-			resourceManager.add("FontDialogMessage", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 36))));
-
-//			resourceManager.add("FontDialogMessage2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 36))));
-//			resourceManager.add("FontTitle2", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 48))));
-			resourceManager.add("FontTitle2", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/gui_window_title.fnt", "assets/fonts/gui_window_title.png"))));
-			resourceManager.add("FontDialogMessage2", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/gui_window_button_36.fnt", "assets/fonts/gui_window_button_36.png"))));
+			resourceManager.add("FontTitle", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_title.hiero"))));
+			resourceManager.add("FontDialogMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_button.hiero"))));
 			
 			resourceManager.add("FontScores", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 24))));
-			
+
 			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 24))));
 			resourceManager.add("FontPointsLabel", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));
-			
+
 			resourceManager.add("FontBonusMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png"))));
-			
+
 			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
 			resourceManager.add("PlayMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/game.ogg"))));
-			
+
 			builderUtils.put("svg", new SlickSvgUtils());
 			builderUtils.put("resourceManager", resourceManager);
 		}
@@ -363,9 +361,6 @@ public class Game extends StateBasedGame {
 		@Override
 		public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 			try {
-				if (container.getInput().isKeyPressed(Input.KEY_BACK))
-					container.exit();
-
 				int minimumTargetFPS = 30;
 				int maximumDelta = (int) (1000f / minimumTargetFPS);
 				if (delta > maximumDelta)

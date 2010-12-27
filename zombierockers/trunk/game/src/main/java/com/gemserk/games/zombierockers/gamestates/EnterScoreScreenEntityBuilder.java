@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
+import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.commons.gui.ClipboardAwtImpl;
 import com.gemserk.componentsengine.commons.gui.TextField;
 import com.gemserk.componentsengine.commons.gui.TextFieldSlickImpl;
@@ -16,6 +17,9 @@ import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
+import com.gemserk.componentsengine.input.InputMappingBuilder;
+import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
+import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
@@ -28,6 +32,7 @@ import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.scores.Scores;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 @SuppressWarnings( { "unchecked", "unused" })
 public class EnterScoreScreenEntityBuilder extends EntityBuilder {
@@ -54,8 +59,10 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 
 	@Inject
 	Input input;
+	
+	@Inject
+	Provider<InputMappingBuilderConfigurator> inputMappingConfiguratorProvider;
 
-	@SuppressWarnings("serial")
 	@Override
 	public void build() {
 
@@ -65,13 +72,23 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 
 		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
 
-		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
+		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
-				property("position", slick.vector((float) (screenBounds.getWidth() * 0.5f), (float) (screenBounds.getHeight() * 0.5f)));
 				property("color", slick.color(1, 1, 1, 1));
+				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", 0);
-				property("image", resourceManager.get("background"));
+				property("image", globalProperties.getProperties().get("screenshot"));
+			}
+		});
+
+		component(new RectangleRendererComponent("background")).withProperties(new ComponentProperties() {
+			{
+				property("position", slick.vector(0, 0));
+				property("rectangle", screenBounds);
+				property("lineColor", slick.color(0.2f, 0.2f, 0.2f, 0.0f));
+				property("fillColor", slick.color(0.5f, 0.5f, 0.5f, 0.5f));
+				property("layer", 1);
 			}
 		});
 		
@@ -136,6 +153,20 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 
 		});
 
+		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
+
+			@Override
+			public void build() {
+
+				keyboard(new KeyboardMappingBuilder() {
+					@Override
+					public void build() {
+						press("return", "scoreEntered");
+					}
+				});
+			}
+
+		}));
 
 	}
 }

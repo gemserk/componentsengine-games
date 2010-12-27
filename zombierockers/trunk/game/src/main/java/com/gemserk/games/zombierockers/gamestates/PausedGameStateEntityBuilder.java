@@ -59,7 +59,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("resumeButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 50f));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -74,7 +74,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("restartButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				put("bounds", labelRectangle);
 				put("align", "center");
@@ -89,7 +89,7 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("quitButton", new HashMap<String, Object>() {
 			{
-				put("font", resourceManager.get("FontDialogMessage2"));
+				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50));
 				put("bounds", labelRectangle);
 				put("align", "center");

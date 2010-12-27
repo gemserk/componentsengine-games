@@ -16,6 +16,7 @@ import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
@@ -33,6 +34,9 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
+	
+	@Inject
+	MessageBuilder messageBuilder;
 
 	@SuppressWarnings("serial")
 	@Override
@@ -42,8 +46,8 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 
 		property("buttonReleasedSound", parameters.get("buttonReleasedSound"), null);
 
-		property("notFocusedColor", parameters.get("notFocusedColor"), slick.color(0f, 0f, 1f, 0.5f));
-		property("focusedColor", parameters.get("focusedColor"), slick.color(0f, 0f, 1f, 1f));
+		property("notFocusedColor", parameters.get("notFocusedColor"), slick.color(0.2f, 0.2f, 1f, 0.9f));
+		property("focusedColor", parameters.get("focusedColor"), slick.color(0.2f, 0.2f, 1f, 1f));
 
 		property("buttonReleasedMessageId", parameters.get("buttonReleasedMessageId"), "buttonReleased");
 
@@ -117,6 +121,8 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 				Resource<Sound> sound = Properties.getValue(entity, "buttonReleasedSound");
 				if (sound != null)
 					sound.get().play();
+				
+//				messageQueue.enqueue(messageBuilder.newMessage("").property("source", entity));
 
 				messageQueue.enqueue(new Message(buttonReleasedMessageId.get(), new PropertiesMapBuilder() {
 					{
