@@ -13,6 +13,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.commons.components.FutureCallableComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -75,7 +76,7 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 		property("refreshingScoresLabel", null);
 		property("childPanel", null);
 		property("highscoresTable", null);
-		
+
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
 				property("position", slick.vector((float) (screenBounds.getWidth() * 0.5f), (float) (screenBounds.getHeight() * 0.5f)));
@@ -103,7 +104,7 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Property<Entity> childPanel;
-			
+
 			@EntityProperty
 			Property<Entity> highscoresTable;
 
@@ -112,17 +113,17 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void enterNodeState(Message message) {
-				
+
 				Message sourceMessage = Properties.getValue(message, "message");
 				String levelName = Properties.getValue(sourceMessage, "levelName");
-				
+
 				if (levelName == null)
 					levelName = (String) level.get().get("name");
 
 				childPanel.set(new Entity("childPanel"));
 
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(childPanel.get(), entity));
-				
+
 				if (highscoresTable.get() != null)
 					messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(highscoresTable.get()));
 
@@ -140,7 +141,7 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
-		
+
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "playAgainButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
@@ -247,55 +248,11 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 
 		});
 
-		component(new ReferencePropertyComponent("checkScoresRefreshedHandler") {
-
-			@EntityProperty
-			Property<Future> future;
-
-			@EntityProperty
-			Property<Timer> refreshScoresTimer;
-
-			@Handles
-			public void update(Message message) {
-
-				if (future.get() == null)
-					return;
-
-				Integer delta = Properties.getValue(message, "delta");
-
-				boolean triggered = refreshScoresTimer.get().update(delta);
-
-				if (future.get().isDone()) {
-
-					try {
-						messageQueue.enqueue(new Message("scoresRefreshed", new PropertiesMapBuilder() {
-							{
-								property("scores", future.get().get());
-							}
-						}.build()));
-
-					} catch (Exception e) {
-						logger.error("Failed to load highscores from server", e);
-					}
-
-				} else {
-
-					if (!triggered)
-						return;
-
-					if (logger.isInfoEnabled())
-						logger.info("Refresh scores timer expired!!, failed to load highscores from server");
-
-					messageQueue.enqueue(new Message("scoresRefreshFailed", new PropertiesMapBuilder() {
-						{
-							property("reason", "Failed to load highscores from server");
-						}
-					}.build()));
-				}
-
-				future.set(null);
+		component(new FutureCallableComponent("checkScoresRefreshedHandler")).withProperties(new ComponentProperties() {
+			{
+				propertyRef("future", "future");
+				propertyRef("timer", "refreshScoresTimer");
 			}
-
 		});
 
 		component(new ReferencePropertyComponent("scoresRefreshFailedHandler") {
@@ -304,7 +261,7 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 			Property<Entity> childPanel;
 
 			@Handles
-			public void scoresRefreshFailed(final Message message) {
+			public void futureTimedOut(final Message message) {
 
 				Entity scoresFailedLabel = templateProvider.getTemplate("gemserk.gui.label").instantiate("dialogMessageLabel", new HashMap<String, Object>() {
 					{
@@ -328,13 +285,13 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Property<Entity> childPanel;
-			
+
 			@EntityProperty
 			Property<Entity> highscoresTable;
 
 			@Handles
-			public void scoresRefreshed(final Message message) {
-				final Collection<Score> scores = Properties.getValue(message, "scores");
+			public void futureDone(final Message message) {
+				final Collection<Score> scores = Properties.getValue(message, "data");
 
 				if (logger.isInfoEnabled())
 					logger.info("Scores refreshed");
@@ -374,7 +331,7 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
-		
+
 		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
 	}
