@@ -381,6 +381,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 							.property("points", (long) points.get()) //
 							.property("levelName", levelName) //
 							.get());
+					return;
 				}
 
 				messageQueue.enqueue(new Message("highscores", new PropertiesMapBuilder().property("win", win.get()).property("levelName", levelName).build()));
