@@ -101,7 +101,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						}));
 						put("menu", templateProvider.getTemplate("gamestates.menu").instantiate("menu", new HashMap<String, Object>() {
 							{
-
+								put("screenBounds", screenBounds);
 							}
 						}));
 						put("playing", templateProvider.getTemplate("zombierockers.scenes.playing").instantiate("playing", new HashMap<String, Object>() {
@@ -122,9 +122,9 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 								put("screenBounds", screenBounds);
 							}
 						}));
-						put("settings", templateProvider.getTemplate("zombierockers.screens.settings").instantiate("settings", new HashMap<String, Object>() {
+						put("settings", templateProvider.getTemplate("gamestates.settings").instantiate("settings", new HashMap<String, Object>() {
 							{
-
+								put("screenBounds", screenBounds);
 							}
 						}));
 						put("highscores", templateProvider.getTemplate("gamestates.highscores").instantiate("highscores", new HashMap<String, Object>() {
@@ -151,6 +151,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void enterState(Message message) {
 				messageQueue.enqueueDelay(new Message("splash"));
+				// messageQueue.enqueueDelay(new Message("settings"));
 				// messageQueue.enqueueDelay(new Message("highscores"));
 				// messageQueue.enqueueDelay(new Message("resume"));
 				// messageQueue.enqueueDelay(new Message("enterscore"));
