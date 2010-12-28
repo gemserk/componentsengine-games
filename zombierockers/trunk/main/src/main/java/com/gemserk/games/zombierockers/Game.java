@@ -75,6 +75,7 @@ import com.gemserk.games.zombierockers.gamestates.HighscoresTableEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.MenuGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.PausedScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SceneGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SettingsGameStateEntityBuilder;
@@ -250,12 +251,14 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.entities.editor", javaEntityTemplateProvider.get().with(new EditorEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.playing", javaEntityTemplateProvider.get().with(new PlayingGameStateEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.scenes.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.scene", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
-			
+
+			registrableTemplateProvider.add("gamestates.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
+			registrableTemplateProvider.add("screens.paused", javaEntityTemplateProvider.get().with(new PausedScreenEntityBuilder()));
+
 			registrableTemplateProvider.add("gamestates.settings", javaEntityTemplateProvider.get().with(new SettingsGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
 			

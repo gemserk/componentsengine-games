@@ -7,6 +7,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
+import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.messages.MessageQueue;
@@ -50,13 +51,23 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
 		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
 
-		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
+		component(new ImageRenderableComponent("gameScreenshotRenderer")).withProperties(new ComponentProperties() {
 			{
-				property("position", slick.vector((float) (screenBounds.getWidth() * 0.5f), (float) (screenBounds.getHeight() * 0.5f)));
 				property("color", slick.color(1, 1, 1, 1));
+				property("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
 				property("direction", slick.vector(1, 0));
 				property("layer", 0);
-				property("image", resourceManager.get("background"));
+				property("image", parameters.get("background"));
+			}
+		});
+
+		component(new RectangleRendererComponent("background")).withProperties(new ComponentProperties() {
+			{
+				property("position", slick.vector(0, 0));
+				property("rectangle", screenBounds);
+				property("lineColor", slick.color(0.2f, 0.2f, 0.2f, 0.0f));
+				property("fillColor", slick.color(0.5f, 0.5f, 0.5f, 0.5f));
+				property("layer", 1);
 			}
 		});
 

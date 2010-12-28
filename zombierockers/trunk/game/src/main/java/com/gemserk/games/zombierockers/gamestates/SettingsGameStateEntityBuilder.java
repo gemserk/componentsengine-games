@@ -65,6 +65,7 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 					{
 						put("screenBounds", screenBounds.get());
 						put("backButtonMessage", "onSettingsBack");
+						put("background", resourceManager.get("background"));
 					}
 				});
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(settingsScreen, entity));

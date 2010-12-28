@@ -111,7 +111,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 								put("screenBounds", screenBounds);
 							}
 						}));
-						put("paused", templateProvider.getTemplate("zombierockers.scenes.paused").instantiate("paused", new HashMap<String, Object>() {
+						put("paused", templateProvider.getTemplate("gamestates.paused").instantiate("paused", new HashMap<String, Object>() {
 							{
 								put("screenBounds", screenBounds);
 							}
