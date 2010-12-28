@@ -25,7 +25,6 @@ import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
 import com.gemserk.componentsengine.commons.entities.FpsEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.ScreenshotGrabberEntityBuilder;
-import com.gemserk.componentsengine.commons.entities.UtilsEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.gui.LabelEntityBuilder;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.entities.Root;
@@ -65,13 +64,15 @@ import com.gemserk.games.zombierockers.entities.PlaceableEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SegmentsManagerEntityBuilder;
 import com.gemserk.games.zombierockers.entities.SpawnerEntityBuilder;
+import com.gemserk.games.zombierockers.entities.UtilsEntityBuilder;
 import com.gemserk.games.zombierockers.entities.WorldEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EditorGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EnterScoreGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EnterScoreScreenEntityBuilder;
-import com.gemserk.games.zombierockers.gamestates.HighscoresScreenEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.HighscoresGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.HighscoresTableEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.MenuGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
@@ -253,9 +254,12 @@ public class Game extends StateBasedGame {
 			registrableTemplateProvider.add("zombierockers.scenes.scene", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
 			registrableTemplateProvider.add("zombierockers.screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.screens.highscores", javaEntityTemplateProvider.get().with(new HighscoresScreenEntityBuilder()));
+			
+			registrableTemplateProvider.add("gamestates.highscores", javaEntityTemplateProvider.get().with(new HighscoresGameStateEntityBuilder()));
+			
+			registrableTemplateProvider.add("gamestates.menu", javaEntityTemplateProvider.get().with(new MenuGameStateEntityBuilder()));
+			registrableTemplateProvider.add("screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
 			
 			registrableTemplateProvider.add("gamestates.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreScreenEntityBuilder()));
@@ -325,6 +329,8 @@ public class Game extends StateBasedGame {
 
 			resourceManager.add("FontTitle", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_title.hiero"))));
 			resourceManager.add("FontDialogMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_button.hiero"))));
+			
+			resourceManager.add("FontMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_message.hiero"))));
 			
 			resourceManager.add("FontScores", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 24))));
 

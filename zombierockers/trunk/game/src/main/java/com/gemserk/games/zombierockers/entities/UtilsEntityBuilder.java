@@ -1,4 +1,4 @@
-package com.gemserk.componentsengine.commons.entities;
+package com.gemserk.games.zombierockers.entities;
 
 import java.util.HashMap;
 

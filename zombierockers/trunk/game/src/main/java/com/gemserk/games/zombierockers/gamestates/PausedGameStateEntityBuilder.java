@@ -86,11 +86,26 @@ public class PausedGameStateEntityBuilder extends EntityBuilder {
 				put("buttonReleasedMessageId", "restartLevel");
 			}
 		}));
+		
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("highscoresButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 2);
+				put("message", "Highscores");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				
+				put("buttonReleasedMessageId", "highscores");
+			}
+		}));
 
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("quitButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 100));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");

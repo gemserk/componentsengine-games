@@ -37,9 +37,9 @@ import com.gemserk.scores.Scores;
 import com.google.inject.Inject;
 
 @SuppressWarnings( { "unchecked", "unused" })
-public class HighscoresScreenEntityBuilder extends EntityBuilder {
+public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 
-	protected static final Logger logger = LoggerFactory.getLogger(HighscoresScreenEntityBuilder.class);
+	protected static final Logger logger = LoggerFactory.getLogger(HighscoresGameStateEntityBuilder.class);
 
 	@Inject
 	SlickUtils slick;

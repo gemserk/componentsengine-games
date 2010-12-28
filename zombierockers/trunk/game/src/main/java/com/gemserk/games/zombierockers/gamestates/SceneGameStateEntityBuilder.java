@@ -99,7 +99,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 							}
 						}));
-						put("menu", templateProvider.getTemplate("zombierockers.screens.menu").instantiate("menu", new HashMap<String, Object>() {
+						put("menu", templateProvider.getTemplate("gamestates.menu").instantiate("menu", new HashMap<String, Object>() {
 							{
 
 							}
@@ -127,7 +127,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 							}
 						}));
-						put("highscores", templateProvider.getTemplate("zombierockers.screens.highscores").instantiate("highscores", new HashMap<String, Object>() {
+						put("highscores", templateProvider.getTemplate("gamestates.highscores").instantiate("highscores", new HashMap<String, Object>() {
 							{
 								put("level", new ReferenceProperty("currentLevel", entity));
 								put("screenBounds", screenBounds);
