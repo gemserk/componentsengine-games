@@ -74,7 +74,7 @@ public class PausedScreenEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("resumeButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 50f));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 100f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
@@ -89,7 +89,7 @@ public class PausedScreenEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("restartButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 50));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
@@ -104,7 +104,7 @@ public class PausedScreenEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("highscoresButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() ));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
@@ -119,7 +119,7 @@ public class PausedScreenEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("settingsButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 100));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
@@ -134,7 +134,7 @@ public class PausedScreenEntityBuilder extends EntityBuilder {
 		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("quitButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 150));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 100));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");

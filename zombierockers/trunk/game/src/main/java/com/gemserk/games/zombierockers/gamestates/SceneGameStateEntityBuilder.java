@@ -163,11 +163,11 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 		//
 		// @Handles
 		// public void newScoreToEnter(Message message) {
-		// messageQueue.enqueueDelay(messageBuilder.newMessage("enterscore").property("points", 5600l).property("levelName", "Level 01").get());
+		// messageQueue.enqueueDelay(messageBuilder.newMessage("enterscore").property("points", 5600l).property("levelName", "level01").get());
 		// }
 		//
 		// });
-		//		
+		//
 		// component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 		//
 		// @Override

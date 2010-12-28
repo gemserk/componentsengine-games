@@ -147,10 +147,6 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 						press("p", "pauseGame");
 						press("space", "pauseGame");
 						press("g", "dumpEditorPositions");
-						press("z", "accelerateSystem2000-press");
-						release("z", "accelerateSystem2000-release");
-
-						press("h", "highscores");
 					}
 				});
 
