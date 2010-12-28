@@ -37,13 +37,10 @@ import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.datastore.Data;
 import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
-import com.gemserk.scores.Score;
 import com.gemserk.scores.Scores;
 import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -377,26 +374,11 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					return;
 
 				if (win.get()) {
-
-					// go to enter score
-					long pts = (long) points.get();
-
-					Data profile = (Data) globalProperties.getProperties().get("profile");
-					String levelName = (String) level.get().get("name");
-
-					if (profile.getTags().contains("guest")) {
-						messageQueue.enqueue(messageBuilder.newMessage("enterscore") //
-								.property("win", win.get()) //
-								.property("points", pts) //
-								.property("levelName", levelName) //
-								.get());
-						return;
-					} else {
-						String name = (String) profile.getValues().get("name");
-
-						// TODO: submit async
-						scores.submit(new Score(name, pts, Sets.newHashSet(levelName), new HashMap<String, Object>()));
-					}
+					messageQueue.enqueue(messageBuilder.newMessage("enterscore") //
+							.property("win", win.get()) //
+							.property("points", (long) points.get()) //
+							.property("levelName", level.get().get("name")) //
+							.get());
 				}
 
 				messageQueue.enqueue(new Message("highscores", new PropertiesMapBuilder().property("win", win.get()).build()));

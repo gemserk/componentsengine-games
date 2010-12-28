@@ -10,6 +10,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.commons.components.FutureCallableComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.commons.gui.TextFieldSlickImpl;
@@ -27,7 +28,6 @@ import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
 import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
@@ -46,6 +46,59 @@ import com.google.inject.Provider;
 
 @SuppressWarnings( { "unchecked", "unused" })
 public class EnterScoreScreenEntityBuilder extends EntityBuilder {
+
+	public static class UploadScoreEntityBuilder extends EntityBuilder {
+
+		@Inject
+		GlobalProperties globalProperties;
+
+		@Inject
+		Scores scores;
+
+		@Inject
+		MessageQueue messageQueue;
+
+		@Inject
+		MessageBuilder messageBuilder;
+
+		@Override
+		public void build() {
+
+			final String name = parameters.get("name");
+			final Long points = parameters.get("points");
+			final String levelName = parameters.get("levelName");
+
+			ExecutorService executor = (ExecutorService) globalProperties.getProperties().get("executor");
+			Future future = executor.submit(new Callable<String>() {
+				@Override
+				public String call() throws Exception {
+					return scores.submit(new Score(name, points, Sets.newHashSet(levelName), new HashMap<String, Object>()));
+				}
+			});
+
+			Timer timer = new CountDownTimer(10000, true);
+
+			property("future", future);
+			property("timer", timer);
+
+			component(new FutureCallableComponent("futureDoneHandler"));
+
+			component(new ReferencePropertyComponent("showScoresWhenScoreUploadedOrFailed") {
+
+				@Handles
+				public void futureDone(Message message) {
+					messageQueue.enqueue(messageBuilder.newMessage("highscores").get());
+				}
+
+				@Handles
+				public void futureTimedOut(Message message) {
+					messageQueue.enqueue(messageBuilder.newMessage("highscores").get());
+				}
+
+			});
+
+		}
+	}
 
 	protected static final Logger logger = LoggerFactory.getLogger(EnterScoreScreenEntityBuilder.class);
 
@@ -119,6 +172,7 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 		property("color", slick.color(0f, 0f, 0f, 1f));
 
 		final Long points = Properties.getValue(entity, "points");
+		final String levelName = Properties.getValue(entity, "levelName");
 
 		property("text", new FixedProperty(entity) {
 			@Override
@@ -128,7 +182,7 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(javaEntityTemplateProvider.get().with(new EntityBuilder() {
+		property("enterScorePanel", javaEntityTemplateProvider.get().with(new EntityBuilder() {
 			@Override
 			public void build() {
 
@@ -198,141 +252,86 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 
 		}).instantiate(entity.getId() + "_uploadingScorePanel"));
 
-		property("future", null);
-		property("submitScoreTimer", null);
+		Entity enterScorePanel = Properties.getValue(entity, "enterScorePanel");
+		Entity uploadingScorePanel = Properties.getValue(entity, "uploadingScorePanel");
 
-		component(new ReferencePropertyComponent("saveScoreWhenEnter") {
+		final Data currentProfile = (Data) globalProperties.getProperties().get("profile");
 
-			@EntityProperty
-			Property<String> levelName;
+		if (currentProfile.getTags().contains("guest")) {
+			child(enterScorePanel);
+			component(new ReferencePropertyComponent("saveScoreWhenEnter") {
 
-			@EntityProperty
-			Property<Long> points;
+				@EntityProperty
+				Property<String> levelName;
 
-			@EntityProperty
-			Property<TextFieldSlickImpl> textFieldSlickImpl;
+				@EntityProperty
+				Property<Long> points;
 
-			@EntityProperty
-			Property<Entity> uploadingScorePanel;
+				@EntityProperty
+				Property<TextFieldSlickImpl> textFieldSlickImpl;
 
-			@EntityProperty
-			Property<Future> future;
+				@EntityProperty
+				Property<Entity> uploadingScorePanel;
 
-			@EntityProperty
-			Property<Timer> submitScoreTimer;
+				@Handles
+				public void scoreEntered(Message message) {
 
-			@Handles
-			public void scoreEntered(Message message) {
+					Data currentProfile = (Data) globalProperties.getProperties().get("profile");
 
-				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity.getId() + "_enterScorePanel"));
-				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(uploadingScorePanel.get(), entity));
+					final String name = textFieldSlickImpl.get().getTextField().getText();
 
-				final String name = textFieldSlickImpl.get().getTextField().getText();
-
-				dataStore.remove(Sets.newHashSet("profile", "guest"));
-				Data newProfile = new Data(Sets.newHashSet("profile", "selected"), new HashMap<String, Object>() {
-					{
-						put("name", name);
-					}
-				});
-				dataStore.submit(newProfile);
-
-				globalProperties.getProperties().put("profile", newProfile);
-
-				// submit to server
-
-				ExecutorService executor = (ExecutorService) globalProperties.getProperties().get("executor");
-				future.set(executor.submit(new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return scores.submit(new Score(name, points.get(), Sets.newHashSet(levelName.get()), new HashMap<String, Object>()));
-					}
-				}));
-				submitScoreTimer.set(new CountDownTimer(10000, true));
-
-			}
-
-		});
-
-		component(new ReferencePropertyComponent("checkScoreUploadedHandler") {
-
-			@EntityProperty
-			Property<Future> future;
-
-			@EntityProperty
-			Property<Timer> submitScoreTimer;
-
-			@Handles
-			public void update(Message message) {
-
-				if (future.get() == null)
-					return;
-
-				Integer delta = Properties.getValue(message, "delta");
-
-				boolean triggered = submitScoreTimer.get().update(delta);
-
-				if (future.get().isDone()) {
-
-					try {
-						messageQueue.enqueue(new Message("scoreUploaded", new PropertiesMapBuilder() {
-							{
-								property("score", future.get().get());
-							}
-						}.build()));
-
-					} catch (Exception e) {
-						logger.error("Failed to upload highscores to server", e);
-					}
-
-				} else {
-
-					if (!triggered)
-						return;
-
-					if (logger.isInfoEnabled())
-						logger.info("Upload score timer expired!!, failed to upload highscore to server");
-
-					messageQueue.enqueue(new Message("scoresUploadFailed", new PropertiesMapBuilder() {
+					dataStore.remove(Sets.newHashSet("profile", "guest"));
+					Data newProfile = new Data(Sets.newHashSet("profile", "selected"), new HashMap<String, Object>() {
 						{
-
+							put("name", name);
 						}
-					}.build()));
+					});
+					dataStore.submit(newProfile);
+
+					globalProperties.getProperties().put("profile", newProfile);
+
+					// move this outside...
+					
+					messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity.getId() + "_enterScorePanel"));
+					messageQueue.enqueue(childrenManagementMessageFactory.addEntity(uploadingScorePanel.get(), entity));
+
+					Entity uploadScoreEntity = templateProvider.getTemplate("entities.uploadScore").instantiate("uploadScore", new HashMap<String, Object>() {
+						{
+							put("name", name);
+							put("points", points.get());
+							put("levelName", levelName.get());
+						}
+					});
+					messageQueue.enqueue(childrenManagementMessageFactory.addEntity(uploadScoreEntity, entity));
 				}
 
-				future.set(null);
-			}
+			});
+			
+			component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
-		});
+				@Override
+				public void build() {
 
-		component(new ReferencePropertyComponent("showScoresWhenScoreUploadedOrFailed") {
+					keyboard(new KeyboardMappingBuilder() {
+						@Override
+						public void build() {
+							press("return", "scoreEntered");
+						}
+					});
+				}
 
-			@Handles
-			public void scoreUploaded(Message message) {
-				messageQueue.enqueue(messageBuilder.newMessage("highscores").get());
-			}
+			}));
 
-			@Handles
-			public void scoresUploadFailed(Message message) {
-				messageQueue.enqueue(messageBuilder.newMessage("highscores").get());
-			}
-
-		});
-
-		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
-
-			@Override
-			public void build() {
-
-				keyboard(new KeyboardMappingBuilder() {
-					@Override
-					public void build() {
-						press("return", "scoreEntered");
-					}
-				});
-			}
-
-		}));
+		} else {
+			child(uploadingScorePanel);
+			child(templateProvider.getTemplate("entities.uploadScore").instantiate("uploadScore", new HashMap<String, Object>() {
+				{
+					put("name", currentProfile.getValues().get("name"));
+					put("points", points);
+					put("levelName", levelName);
+				}
+			}));
+		}
 
 	}
 }

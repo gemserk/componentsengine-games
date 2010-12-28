@@ -81,6 +81,7 @@ import com.gemserk.games.zombierockers.gamestates.SceneGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SettingsGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SettingsScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.EnterScoreScreenEntityBuilder.UploadScoreEntityBuilder;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.resources.ResourceManagerImpl;
 import com.gemserk.resources.dataloaders.StaticDataLoader;
@@ -269,6 +270,7 @@ public class Game extends StateBasedGame {
 			
 			registrableTemplateProvider.add("gamestates.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreScreenEntityBuilder()));
+			registrableTemplateProvider.add("entities.uploadScore", javaEntityTemplateProvider.get().with(new UploadScoreEntityBuilder()));
 
 			registrableTemplateProvider.add("zombierockers.scenes.sceneEditor", javaEntityTemplateProvider.get().with(new EditorGameStateEntityBuilder()));
 
