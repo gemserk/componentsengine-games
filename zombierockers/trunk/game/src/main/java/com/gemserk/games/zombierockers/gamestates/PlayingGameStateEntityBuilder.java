@@ -373,15 +373,17 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				if (!"fadeOutEffect".equalsIgnoreCase(animationId))
 					return;
 
+				Object levelName = level.get().get("name");
+				
 				if (win.get()) {
 					messageQueue.enqueue(messageBuilder.newMessage("enterscore") //
 							.property("win", win.get()) //
 							.property("points", (long) points.get()) //
-							.property("levelName", level.get().get("name")) //
+							.property("levelName", levelName) //
 							.get());
 				}
 
-				messageQueue.enqueue(new Message("highscores", new PropertiesMapBuilder().property("win", win.get()).build()));
+				messageQueue.enqueue(new Message("highscores", new PropertiesMapBuilder().property("win", win.get()).property("levelName", levelName).build()));
 
 			}
 

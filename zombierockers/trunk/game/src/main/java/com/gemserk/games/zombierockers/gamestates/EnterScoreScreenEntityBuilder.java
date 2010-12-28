@@ -64,9 +64,13 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 		@Override
 		public void build() {
 
-			final String name = parameters.get("name");
-			final Long points = parameters.get("points");
-			final String levelName = parameters.get("levelName");
+			property("name", parameters.get("name"));
+			property("points", parameters.get("points"));
+			property("levelName", parameters.get("levelName"));
+
+			final String name = Properties.getValue(entity, "name");
+			final Long points = Properties.getValue(entity, "points");
+			final String levelName = Properties.getValue(entity, "levelName");
 
 			ExecutorService executor = (ExecutorService) globalProperties.getProperties().get("executor");
 			Future future = executor.submit(new Callable<String>() {
@@ -85,14 +89,17 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 
 			component(new ReferencePropertyComponent("showScoresWhenScoreUploadedOrFailed") {
 
+				@EntityProperty
+				Property<String> levelName;
+
 				@Handles
 				public void futureDone(Message message) {
-					messageQueue.enqueue(messageBuilder.newMessage("highscores").get());
+					messageQueue.enqueue(messageBuilder.newMessage("highscores").property("levelName", levelName.get()).get());
 				}
 
 				@Handles
 				public void futureTimedOut(Message message) {
-					messageQueue.enqueue(messageBuilder.newMessage("highscores").get());
+					messageQueue.enqueue(messageBuilder.newMessage("highscores").property("levelName", levelName.get()).get());
 				}
 
 			});
@@ -291,7 +298,7 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 					globalProperties.getProperties().put("profile", newProfile);
 
 					// move this outside...
-					
+
 					messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity.getId() + "_enterScorePanel"));
 					messageQueue.enqueue(childrenManagementMessageFactory.addEntity(uploadingScorePanel.get(), entity));
 
@@ -306,7 +313,7 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 				}
 
 			});
-			
+
 			component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
 				@Override

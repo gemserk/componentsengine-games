@@ -3,7 +3,6 @@ package com.gemserk.games.zombierockers.gamestates;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -34,6 +33,7 @@ import com.gemserk.componentsengine.timers.Timer;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.scores.Score;
 import com.gemserk.scores.Scores;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 @SuppressWarnings( { "unchecked", "unused" })
@@ -112,6 +112,12 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void enterNodeState(Message message) {
+				
+				Message sourceMessage = Properties.getValue(message, "message");
+				String levelName = Properties.getValue(sourceMessage, "levelName");
+				
+				if (levelName == null)
+					levelName = (String) level.get().get("name");
 
 				childPanel.set(new Entity("childPanel"));
 
@@ -120,9 +126,7 @@ public class HighscoresGameStateEntityBuilder extends EntityBuilder {
 				if (highscoresTable.get() != null)
 					messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(highscoresTable.get()));
 
-				final Set<String> tags = new HashSet<String>();
-
-				tags.add((String) level.get().get("name"));
+				final Set<String> tags = Sets.newHashSet(levelName);
 
 				messageQueue.enqueue(new Message("refreshScores", new PropertiesMapBuilder() {
 					{
