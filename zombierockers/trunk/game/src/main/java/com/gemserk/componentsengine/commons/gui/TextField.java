@@ -334,4 +334,9 @@ public class TextField {
       }
     }
   }
+  
+  public void insert(String string) {
+	  for (int i = 0; i < string.length(); i++)
+		  this.insert(string.charAt(i));
+  }
 }

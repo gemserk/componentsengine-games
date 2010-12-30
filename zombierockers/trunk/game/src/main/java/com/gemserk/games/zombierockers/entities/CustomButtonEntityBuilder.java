@@ -18,7 +18,6 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
@@ -34,7 +33,7 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
-	
+
 	@Inject
 	MessageBuilder messageBuilder;
 
@@ -49,9 +48,13 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 		property("notFocusedColor", parameters.get("notFocusedColor"), slick.color(0.2f, 0.2f, 1f, 0.9f));
 		property("focusedColor", parameters.get("focusedColor"), slick.color(0.2f, 0.2f, 1f, 1f));
 
+		property("notFocusedSize", parameters.get("notFocusedSize"), slick.vector(1f, 1f));
+		property("focusedSize", parameters.get("focusedSize"), slick.vector(1.1f, 1.1f));
+
 		property("buttonReleasedMessageId", parameters.get("buttonReleasedMessageId"), "buttonReleased");
 
 		final Color startColor = Properties.getValue(entity, "notFocusedColor");
+		final Vector2f startSize = Properties.getValue(entity, "notFocusedSize");
 
 		component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
 			{
@@ -62,75 +65,65 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 		HashMap<String, Object> newParameters = new HashMap<String, Object>() {
 			{
 				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(new Color(startColor)), 0.005f, timeProvider));
-				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(slick.vector(1f, 1f)), 0.005f, timeProvider));
+				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(startSize.copy()), 0.005f, timeProvider));
 			}
 		};
 
-		component(new ReferencePropertyComponent("buttonFocusedHandler") {
+		component(new ReferencePropertyComponent("buttonHandler") {
+
+			@EntityProperty
+			Property<Color> focusedColor;
+
+			@EntityProperty
+			Property<Color> notFocusedColor;
+
+			@EntityProperty
+			Property<Vector2f> notFocusedSize;
+
+			@EntityProperty
+			Property<Vector2f> focusedSize;
+
+			@EntityProperty
+			Property<String> buttonReleasedMessageId;
+			
+			@EntityProperty
+			Property<Resource<Sound>> buttonReleasedSound;
 
 			@Handles
 			public void onButtonFocused(Message message) {
 				Entity source = Properties.getValue(message, "source");
 				if (entity != source)
 					return;
-				Color focusedColor = Properties.getValue(entity, "focusedColor");
-				Properties.setValue(entity, "color", focusedColor);
-				Properties.setValue(entity, "size", slick.vector(1.1f, 1.1f));
+				Properties.setValue(entity, "color", focusedColor.get());
+				Properties.setValue(entity, "size", focusedSize.get());
 			}
-
-		});
-
-		component(new ReferencePropertyComponent("buttonLostFocusHandler") {
 
 			@Handles
 			public void onButtonLostFocus(Message message) {
 				Entity source = Properties.getValue(message, "source");
 				if (entity != source)
 					return;
-				Color notFocusedColor = Properties.getValue(entity, "notFocusedColor");
-				Properties.setValue(entity, "color", notFocusedColor);
-				Properties.setValue(entity, "size", slick.vector(1f, 1f));
+				Properties.setValue(entity, "color", notFocusedColor.get());
+				Properties.setValue(entity, "size", notFocusedSize.get());
 			}
-
-		});
-
-		component(new ReferencePropertyComponent("buttonPressedHandler") {
 
 			@Handles
 			public void onButtonPressed(Message message) {
 				Entity source = Properties.getValue(message, "source");
 				if (entity != source)
 					return;
-				Properties.setValue(entity, "size", slick.vector(0.9f, 0.9f));
+				Properties.setValue(entity, "size", notFocusedSize.get());
 			}
-
-		});
-
-		component(new ReferencePropertyComponent("buttonReleasedHandler") {
-			
-			@EntityProperty
-			Property<String> buttonReleasedMessageId;
 
 			@Handles
 			public void onButtonReleased(Message message) {
 				Entity source = Properties.getValue(message, "source");
 				if (entity != source)
 					return;
-
-				Properties.setValue(entity, "size", slick.vector(1.1f, 1.1f));
-				Resource<Sound> sound = Properties.getValue(entity, "buttonReleasedSound");
-				if (sound != null)
-					sound.get().play();
-				
-//				messageQueue.enqueue(messageBuilder.newMessage("").property("source", entity));
-
-				messageQueue.enqueue(new Message(buttonReleasedMessageId.get(), new PropertiesMapBuilder() {
-					{
-						property("source", entity);
-						property("buttonId", entity.getId());
-					}
-				}.build()));
-
+				Properties.setValue(entity, "size", focusedSize.get());
+				if (buttonReleasedSound.get().get() != null)
+					buttonReleasedSound.get().get().play();
+				messageQueue.enqueue(messageBuilder.newMessage(buttonReleasedMessageId.get()).property("source", entity).property("buttonId", entity.getId()).get());
 			}
 
 		});

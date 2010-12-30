@@ -22,12 +22,12 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+@SuppressWarnings({"unchecked", "unused", "serial"})
 public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
@@ -49,22 +49,20 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 	ResourceManager resourceManager;
 
 	@Inject
-	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
-
-	@Inject
 	ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
 	@Override
 	public void build() {
 
-		final Rectangle screenResolution = (Rectangle) globalProperties.getProperties().get("screenResolution");
 		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
 
-		property("screenBounds", screenResolution);
+		property("screenBounds", parameters.get("screenBounds"));
+		
+		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
-				property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
+				property("position", slick.vector((float) (screenBounds.getWidth() * 0.5f), (float) (screenBounds.getHeight() * 0.5f)));
 				property("color", slick.color(1, 1, 1, 1));
 				property("direction", slick.vector(1, 0));
 				property("layer", 0);
@@ -78,7 +76,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				put("time", 1000);
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
-				put("screenResolution", screenResolution);
+				put("screenResolution", screenBounds);
 				put("effect", "fadeIn");
 			}
 		}));
@@ -89,7 +87,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				put("time", 1000);
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
-				put("screenResolution", screenResolution);
+				put("screenResolution", screenBounds);
 				put("effect", "fadeOut");
 			}
 		}));
@@ -105,6 +103,9 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			@EntityProperty
 			Property<Entity> mainMenuScreen;
 
+			// @EntityProperty
+			// Property<Entity> profileScreen;
+
 			@EntityProperty
 			Property<String> buttonPressed;
 
@@ -115,9 +116,16 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 						put("screenBounds", screenBounds.get());
 						put("onPlayButton", "onPlayButton");
 						put("onSettingsButton", "onSettingsButton");
+						put("onProfileButton", "onProfileButton");
 						put("onExitButton", "onExitButton");
 					}
 				}));
+				// profileScreen.set(templateProvider.getTemplate("screens.menu").instantiate(entity.getId() + "_menuScreen", new HashMap<String, Object>() {
+				// {
+				// put("screenBounds", screenBounds.get());
+				// put("onProfileEntered", "onProfileEntered");
+				// }
+				// }));
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(mainMenuScreen.get(), entity));
 			}
 
@@ -125,6 +133,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			public void leaveNodeState(Message message) {
 				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(mainMenuScreen.get()));
 				mainMenuScreen.set(null);
+				// profileScreen.set(null);
 			}
 
 			@Handles
@@ -138,6 +147,23 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				buttonPressed.set("settings");
 				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
 			}
+
+			@Handles
+			public void onProfileButton(Message message) {
+				// without animation for now...
+				// messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(mainMenuScreen.get()));
+				// messageQueue.enqueue(childrenManagementMessageFactory.addEntity(profileScreen.get(), entity));
+				buttonPressed.set("profile");
+				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+			}
+
+			//			
+			// @Handles
+			// public void onProfileEntered(Message message) {
+			// // without animation for now...
+			// messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(profileScreen.get()));
+			// messageQueue.enqueue(childrenManagementMessageFactory.addEntity(mainMenuScreen.get(), entity));
+			// }
 
 			@Handles
 			public void onExitButton(Message message) {
@@ -232,6 +258,8 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 					} else if ("play".equals(buttonPressed)) {
 						messageQueue.enqueue(new Message("resume"));
 						messageQueue.enqueueDelay(new Message("restartLevel"));
+					} else if ("profile".equals(buttonPressed)) {
+						messageQueue.enqueue(new Message("profile"));
 					}
 
 				}

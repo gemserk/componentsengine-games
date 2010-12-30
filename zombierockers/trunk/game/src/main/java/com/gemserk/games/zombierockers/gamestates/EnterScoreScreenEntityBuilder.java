@@ -283,21 +283,14 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 				@Handles
 				public void scoreEntered(Message message) {
 
-					Data currentProfile = (Data) globalProperties.getProperties().get("profile");
-
 					final String name = textFieldSlickImpl.get().getTextField().getText();
 
-					dataStore.remove(Sets.newHashSet("profile", "guest"));
-					Data newProfile = new Data(Sets.newHashSet("profile", "selected"), new HashMap<String, Object>() {
-						{
-							put("name", name);
-						}
-					});
-					dataStore.submit(newProfile);
+					Data profile = (Data) globalProperties.getProperties().get("profile");
+					
+					profile.getTags().remove("guest");
+					profile.getValues().put("name", name);
 
-					globalProperties.getProperties().put("profile", newProfile);
-
-					// move this outside...
+					dataStore.update(profile);
 
 					messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity.getId() + "_enterScorePanel"));
 					messageQueue.enqueue(childrenManagementMessageFactory.addEntity(uploadingScorePanel.get(), entity));

@@ -78,6 +78,8 @@ import com.gemserk.games.zombierockers.gamestates.MenuScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PausedScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.PlayingGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.ProfileGameStateEntityBuilder;
+import com.gemserk.games.zombierockers.gamestates.ProfileScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SceneGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SettingsGameStateEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.SettingsScreenEntityBuilder;
@@ -270,6 +272,9 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("gamestates.menu", javaEntityTemplateProvider.get().with(new MenuGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
+
+			registrableTemplateProvider.add("gamestates.profile", javaEntityTemplateProvider.get().with(new ProfileGameStateEntityBuilder()));
+			registrableTemplateProvider.add("screens.profile", javaEntityTemplateProvider.get().with(new ProfileScreenEntityBuilder()));
 
 			registrableTemplateProvider.add("gamestates.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreScreenEntityBuilder()));

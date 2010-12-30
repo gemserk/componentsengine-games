@@ -41,7 +41,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 		
 		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
 		
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate(entity.getId() + "_titleLabel", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontTitle"));
 				put("position", slick.vector(screenBounds.getCenterX(), 40f));
@@ -54,7 +54,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("playButton", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "_playButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 50f));
@@ -68,7 +68,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("settingsButton", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "_settingsButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
@@ -81,11 +81,25 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("buttonReleasedMessageId", parameters.get("onSettingsButton"));
 			}
 		}));
-
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("exitButton", new HashMap<String, Object>() {
+		
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "_profileButton", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "Profile");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				put("buttonReleasedMessageId", parameters.get("onProfileButton"));
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate(entity.getId() + "_exitButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 100f));
 				put("bounds", labelRectangle);
 				put("align", "center");
 				put("valign", "center");
@@ -107,7 +121,7 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 		else 
 			text = "Welcome, you are playing as " + name;
 		
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("welcomeBackProfileLabel", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate(entity.getId() + "_welcomeBackProfileLabel", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontMessage"));
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getMaxY() - 50f));

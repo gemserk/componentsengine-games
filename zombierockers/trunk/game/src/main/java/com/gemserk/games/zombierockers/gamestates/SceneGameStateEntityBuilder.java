@@ -90,6 +90,7 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 						put("settings", "settings");
 						put("highscores", "highscores");
 						put("enterscore", "enterscore");
+						put("profile", "profile");
 					}
 				});
 				put("stateEntities", new HashMap<String, Object>() {
@@ -134,6 +135,11 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 							}
 						}));
 						put("enterscore", templateProvider.getTemplate("gamestates.enterscore").instantiate("enterscore", new HashMap<String, Object>() {
+							{
+								put("screenBounds", screenBounds);
+							}
+						}));
+						put("profile", templateProvider.getTemplate("gamestates.profile").instantiate("profile", new HashMap<String, Object>() {
 							{
 								put("screenBounds", screenBounds);
 							}
