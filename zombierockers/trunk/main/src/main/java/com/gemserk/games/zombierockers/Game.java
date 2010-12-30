@@ -86,6 +86,7 @@ import com.gemserk.games.zombierockers.gamestates.EnterScoreScreenEntityBuilder.
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.resources.ResourceManagerImpl;
 import com.gemserk.resources.dataloaders.StaticDataLoader;
+import com.gemserk.resources.datasources.ClassPathDataSource;
 import com.gemserk.resources.monitor.FileMonitorResourceHelper;
 import com.gemserk.resources.monitor.FileMonitorResourceHelperNullImpl;
 import com.gemserk.resources.monitor.FilesMonitor;
@@ -263,13 +264,13 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("gamestates.settings", javaEntityTemplateProvider.get().with(new SettingsGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("gamestates.highscores", javaEntityTemplateProvider.get().with(new HighscoresGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.highscores", javaEntityTemplateProvider.get().with(new HighscoresScreenEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("gamestates.menu", javaEntityTemplateProvider.get().with(new MenuGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
-			
+
 			registrableTemplateProvider.add("gamestates.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreGameStateEntityBuilder()));
 			registrableTemplateProvider.add("screens.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreScreenEntityBuilder()));
 			registrableTemplateProvider.add("entities.uploadScore", javaEntityTemplateProvider.get().with(new UploadScoreEntityBuilder()));
@@ -305,7 +306,7 @@ public class Game extends StateBasedGame {
 		getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(new Image(800, 600))).load());
 
 	}
-	
+
 	class GameGameState extends GemserkGameState {
 
 		@Inject
@@ -339,15 +340,15 @@ public class Game extends StateBasedGame {
 
 			resourceManager.add("FontTitle", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_title.hiero"))));
 			resourceManager.add("FontDialogMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_button.hiero"))));
-			
+
 			resourceManager.add("FontMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_message.hiero"))));
-			
-			resourceManager.add("FontScores", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/dszombiecry.ttf", java.awt.Font.PLAIN, 24))));
 
-			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader("assets/fonts/Mugnuts.ttf", java.awt.Font.PLAIN, 24))));
+			resourceManager.add("FontScores", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new ClassPathDataSource("assets/fonts/dszombiecry.ttf"), java.awt.Font.PLAIN, 24))));
 
-			CachedResourceLoader bonusResourceLoader = new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader("assets/fonts/bonusmessage.fnt", "assets/fonts/bonusmessage.png")));
-			
+			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new ClassPathDataSource("assets/fonts/Mugnuts.ttf"), java.awt.Font.PLAIN, 24))));
+
+			CachedResourceLoader bonusResourceLoader = new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader(new ClassPathDataSource("assets/fonts/bonusmessage.fnt"), new ClassPathDataSource("assets/fonts/bonusmessage.png"))));
+
 			resourceManager.add("FontPointsLabel", bonusResourceLoader);
 			resourceManager.add("FontBonusMessage", bonusResourceLoader);
 

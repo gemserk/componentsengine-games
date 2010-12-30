@@ -33,7 +33,7 @@
 	<properties>
 		<compiler.version>1.6</compiler.version>
 		<componentsengine.version>0.0.9-SNAPSHOT</componentsengine.version>
-		<resourcesmanager.version>0.0.8-SNAPSHOT</resourcesmanager.version>
+		<resourcesmanager.version>0.0.9-SNAPSHOT</resourcesmanager.version>
 	</properties>
 
 	<build>
@@ -172,12 +172,6 @@
 				<groupId>com.gemserk.resources</groupId>
 				<artifactId>resourcesmanager-slickmodule</artifactId>
 				<version>${resourcesmanager.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>slick</groupId>
-						<artifactId>slick</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<dependency>
