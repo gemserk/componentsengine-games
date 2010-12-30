@@ -16,6 +16,7 @@ import com.gemserk.componentsengine.input.InputMappingBuilderConfigurator;
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
+import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
 import com.gemserk.componentsengine.properties.Properties;
 import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
@@ -40,6 +41,9 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
+
+	@Inject
+	MessageBuilder messageBuilder;
 
 	@Inject
 	ResourceManager resourceManager;
@@ -89,6 +93,65 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				put("effect", "fadeOut");
 			}
 		}));
+
+		property("mainMenuScreen", null);
+		property("buttonPressed", "play");
+
+		component(new ReferencePropertyComponent("gameStateLogic") {
+
+			@EntityProperty
+			Property<Rectangle> screenBounds;
+
+			@EntityProperty
+			Property<Entity> mainMenuScreen;
+
+			@EntityProperty
+			Property<String> buttonPressed;
+
+			@Handles
+			public void enterNodeState(Message message) {
+				mainMenuScreen.set(templateProvider.getTemplate("screens.menu").instantiate(entity.getId() + "_menuScreen", new HashMap<String, Object>() {
+					{
+						put("screenBounds", screenBounds.get());
+						put("onPlayButton", "onPlayButton");
+						put("onSettingsButton", "onSettingsButton");
+						put("onExitButton", "onExitButton");
+					}
+				}));
+				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(mainMenuScreen.get(), entity));
+			}
+
+			@Handles
+			public void leaveNodeState(Message message) {
+				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(mainMenuScreen.get()));
+				mainMenuScreen.set(null);
+			}
+
+			@Handles
+			public void onPlayButton(Message message) {
+				buttonPressed.set("play");
+				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+			}
+
+			@Handles
+			public void onSettingsButton(Message message) {
+				buttonPressed.set("settings");
+				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+			}
+
+			@Handles
+			public void onExitButton(Message message) {
+				buttonPressed.set("exit");
+				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+				// fadeOutAnimation.start();
+				// add custom child with logic fo animation end.
+				// {
+				// property(animation, fadeoutanimation)
+				// property(callback, callback)
+				// }
+			}
+
+		});
 
 		component(new FieldsReflectionComponent("fadeInWhenEnterState") {
 			@Handles
@@ -152,100 +215,6 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 		});
 
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
-			{
-				put("font", resourceManager.get("FontTitle"));
-				put("position", slick.vector(screenResolution.getCenterX(), 40f));
-				put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
-				put("bounds", labelRectangle);
-				put("align", "center");
-				put("valign", "center");
-				put("layer", 1);
-				put("message", "Main Menu");
-			}
-		}));
-
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("playButton", new HashMap<String, Object>() {
-			{
-				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() - 50f));
-				put("bounds", labelRectangle);
-				put("align", "center");
-				put("valign", "center");
-				put("layer", 1);
-				put("message", "PLAY");
-				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
-			}
-		}));
-
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("settingsButton", new HashMap<String, Object>() {
-			{
-				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY()));
-				put("bounds", labelRectangle);
-				put("align", "center");
-				put("valign", "center");
-				put("layer", 1);
-				put("message", "SETTINGS");
-				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
-			}
-		}));
-
-		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("exitButton", new HashMap<String, Object>() {
-			{
-				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getCenterY() + 50f));
-				put("bounds", labelRectangle);
-				put("align", "center");
-				put("valign", "center");
-				put("layer", 1);
-				put("message", "EXIT");
-				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
-
-				put("buttonReleasedMessageId", "exitButton");
-			}
-		}));
-
-		property("buttonPressed", "play");
-
-		component(new FieldsReflectionComponent("guiHandler") {
-
-			@EntityProperty
-			String buttonPressed;
-
-			@Handles
-			public void buttonReleased(Message message) {
-				String id = Properties.getValue(message, "buttonId");
-
-				if ("playButton".equals(id))
-					buttonPressed = "play";
-
-				if ("settingsButton".equals(id))
-					buttonPressed = "settings";
-
-				if ("exitButton".equals(id))
-					buttonPressed = "exit";
-
-				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-					{
-						property("animationId", "fadeOutEffect");
-					}
-				}.build()));
-			}
-
-			@Handles
-			public void exitButton(Message message) {
-				System.out.println("EXIT BUTTON");
-				buttonPressed = "exit";
-				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-					{
-						property("animationId", "fadeOutEffect");
-					}
-				}.build()));
-			}
-
-		});
-
 		component(new FieldsReflectionComponent("animationComponentHandler") {
 
 			@EntityProperty
@@ -272,45 +241,5 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
-		// Data profile = (Data) globalProperties.getProperties().get("profile");
-		//		
-		// final String text;
-		//		
-		// String name = (String) profile.getValues().get("name");
-		//		
-		// if (profile.getTags().contains("guest"))
-		// text = "Welcome, you are playing as Guest";
-		// else
-		// text = "Welcome back, " + name;
-		//		
-		// child(templateProvider.getTemplate("gemserk.gui.label").instantiate("welcomeBackProfileLabel", new HashMap<String, Object>() {
-		// {
-		// put("font", resourceManager.get("FontDialogMessage"));
-		// put("position", slick.vector(screenResolution.getCenterX(), screenResolution.getMaxY() - 50f));
-		// put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
-		// put("bounds", labelRectangle);
-		// put("align", "center");
-		// put("valign", "center");
-		// put("layer", 1);
-		// put("message", text);
-		// }
-		// }));
-
-		component(new ReferencePropertyComponent("createScreenOnEnterState") {
-
-			@EntityProperty
-			Property<Rectangle> screenBounds;
-
-			@Handles
-			public void enterNodeState(Message message) {
-				Entity scoreScreen = templateProvider.getTemplate("screens.menu").instantiate(entity.getId() + "_menuScreen", new HashMap<String, Object>() {
-					{
-						put("screenBounds", screenBounds.get());
-					}
-				});
-				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(scoreScreen, entity));
-			}
-
-		});
 	}
 }

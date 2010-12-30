@@ -39,6 +39,63 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 		
 		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
 		
+		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
+		
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate("titleLabel", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontTitle"));
+				put("position", slick.vector(screenBounds.getCenterX(), 40f));
+				put("color", slick.color(0.3f, 0.8f, 0.3f, 1f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "Main Menu");
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("playButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 50f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "PLAY");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				put("buttonReleasedMessageId", parameters.get("onPlayButton"));
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("settingsButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "SETTINGS");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				put("buttonReleasedMessageId", parameters.get("onSettingsButton"));
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.gui.button").instantiate("exitButton", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() + 50f));
+				put("bounds", labelRectangle);
+				put("align", "center");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "EXIT");
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+				put("buttonReleasedMessageId", parameters.get("onExitButton"));
+			}
+		}));
+		
 		Data profile = (Data) globalProperties.getProperties().get("profile");
 		
 		final String text;
