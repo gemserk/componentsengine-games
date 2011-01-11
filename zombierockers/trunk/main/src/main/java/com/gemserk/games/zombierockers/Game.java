@@ -20,6 +20,11 @@ import org.newdawn.slick.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
 import com.gemserk.componentsengine.commons.entities.FpsEntityBuilder;
@@ -162,6 +167,23 @@ public class Game extends StateBasedGame {
 
 	public Game() {
 		super("Zombie Rockers");
+		
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+		try {
+			JoranConfigurator configurator = new JoranConfigurator();
+			configurator.setContext(lc);
+			// the context was probably already configured by default configuration
+			// rules
+			lc.reset();
+			configurator.doConfigure(Thread.currentThread().getContextClassLoader().getResourceAsStream("zombierockers-logback.xml"));
+		} catch (JoranException je) {
+			je.printStackTrace();
+			// StatusPrinter will handle this
+		}
+		StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+		
+		
 		Map<String, Object> gameProperties = getGameProperties();
 		gameProperties.put("runningInDebug", System.getProperty("runningInDebug") != null);
 		System.out.println(gameProperties);
