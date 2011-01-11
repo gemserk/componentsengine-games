@@ -137,7 +137,6 @@ public class Game extends StateBasedGame {
 			Game game = new Game();
 
 			game.getGameProperties().put("runningFromMain", true);
-			game.getGameProperties().put("screenResolution", new Rectangle(0, 0, 800, 600));
 
 			AppGameContainer app = new AppGameContainer(game);
 
@@ -149,12 +148,6 @@ public class Game extends StateBasedGame {
 			app.setFullscreen(false);
 
 			app.setMinimumLogicUpdateInterval(1);
-
-			app.setShowFPS(false);
-			app.setVSync(true);
-
-			game.getGameProperties().put("showFps", false);
-			// app.setTargetFrameRate(60);
 
 			app.setForceExit(true);
 			app.start();
@@ -183,10 +176,15 @@ public class Game extends StateBasedGame {
 		}
 		StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
 		
-		
 		Map<String, Object> gameProperties = getGameProperties();
+
+		gameProperties.put("screenResolution", new Rectangle(0, 0, 800, 600));
+		gameProperties.put("showFps", false);
+
 		gameProperties.put("runningInDebug", System.getProperty("runningInDebug") != null);
+
 		System.out.println(gameProperties);
+
 		Log.setLogSystem(new SlickToSlf4j());
 
 		logger.info("OS: " + System.getProperty("os.name"));
@@ -199,8 +197,9 @@ public class Game extends StateBasedGame {
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		// container.setVSync(true);
+		container.setVSync(true);
 		container.setShowFPS(false);
+		container.setTargetFrameRate(60);
 
 		// getGameProperties().put("scores", );
 		File storageFile = new File(System.getProperty("user.home") + "/.gemserk/zombierockers/profiles.data");
