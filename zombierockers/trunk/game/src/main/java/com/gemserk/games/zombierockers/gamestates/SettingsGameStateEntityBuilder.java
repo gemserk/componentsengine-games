@@ -2,8 +2,14 @@ package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 
+import com.gemserk.commons.animation.Animation;
+import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
+import com.gemserk.commons.animation.timeline.TimelineAnimation;
+import com.gemserk.commons.animation.timeline.TimelineBuilder;
+import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -46,19 +52,30 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 	@Inject
 	ResourceManager resourceManager;
 
+	@SuppressWarnings( { "serial", "unchecked" })
 	@Override
 	public void build() {
 
 		property("screenBounds", parameters.get("screenBounds"));
 
 		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
+		
+		property("animationEndCallback", null);
 
-		component(new ReferencePropertyComponent("enterStateHandler") {
+		component(new ReferencePropertyComponent("stateLogic") {
 
 			@EntityProperty
 			Property<Rectangle> screenBounds;
 
-			@SuppressWarnings("serial")
+			@EntityProperty
+			Property<Animation> fadeOutAnimation;
+
+			@EntityProperty
+			Property<Animation> fadeInAnimation;
+
+			@EntityProperty
+			Property<Runnable> animationEndCallback;
+
 			@Handles
 			public void enterNodeState(Message message) {
 				Entity settingsScreen = templateProvider.getTemplate("screens.settings").instantiate(entity.getId() + "_settingsScreen", new HashMap<String, Object>() {
@@ -69,96 +86,86 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(settingsScreen, entity));
+				fadeInAnimation.get().restart();
 			}
 
 			@Handles
 			public void leaveNodeState(Message message) {
 				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity.getId() + "_settingsScreen"));
+				fadeInAnimation.get().stop();
 			}
-			
+
 			@Handles
 			public void onSettingsBack(Message message) {
-				messageQueue.enqueue(messageBuilder.newMessage("menu").get());
+				fadeOutAnimation.get().restart();
+				animationEndCallback.set(new Runnable() {
+					@Override
+					public void run() {
+						messageQueue.enqueue(messageBuilder.newMessage("menu").get());
+					}
+				});
+			}
+
+			@Handles
+			public void update(Message message) {
+				if (fadeOutAnimation.get().isFinished()) {
+					fadeOutAnimation.get().stop();
+					if (animationEndCallback.get() != null)
+						animationEndCallback.get().run();
+				}
 			}
 
 		});
 
 		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
-		// child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate(entity.getId() + "_fadeInEffect", new HashMap<String, Object>() {
-		// {
-		// put("started", false);
-		// put("time", 1000);
-		// put("layer", 10);
-		// put("image", resourceManager.get("background"));
-		// put("screenResolution", screenBounds);
-		// put("effect", "fadeIn");
-		// }
-		// }));
-		//
-		// child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate(entity.getId() + "_fadeOutEffect", new HashMap<String, Object>() {
-		// {
-		// put("started", false);
-		// put("time", 1000);
-		// put("layer", 10);
-		// put("image", resourceManager.get("background"));
-		// put("screenResolution", screenBounds);
-		// put("effect", "fadeOut");
-		// }
-		// }));
-		//
-		// component(new ReferencePropertyComponent("fadeInWhenEnterState") {
-		// @Handles
-		// public void enterNodeState(Message message) {
-		// messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-		// {
-		// property("animationId", "fadeInEffect");
-		// }
-		// }.build()));
-		// }
-		// });
+		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
+			{
+				delay(0);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 1f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 0f));
+					}
+				});
+			}
+		}.build(), false);
 
-		// property("buttonPressed", "back");
-		//
-		// component(new FieldsReflectionComponent("guiHandler") {
-		//
-		// @EntityProperty
-		// String buttonPressed;
-		//
-		// @Handles
-		// public void buttonReleased(Message message) {
-		// String id = Properties.getValue(message, "buttonId");
-		//
-		// if ("backButton".equals(id)) {
-		// buttonPressed = "back";
-		// messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-		// {
-		// property("animationId", "fadeOutEffect");
-		// }
-		// }.build()));
-		// } else if ("fullScreenCheckbox".equals(id)) {
-		//
-		// }
-		//
-		// }
-		//
-		// });
-		//
-		// component(new FieldsReflectionComponent("animationComponentHandler") {
-		//
-		// @EntityProperty
-		// String buttonPressed;
-		//
-		// @Handles
-		// public void animationEnded(Message message) {
-		// String animationId = Properties.getValue(message, "entityId");
-		// if ("fadeOutEffect".equalsIgnoreCase(animationId)) {
-		// if ("back".equals(buttonPressed)) {
-		// messageQueue.enqueue(new Message("menu"));
-		// }
-		// }
-		// }
-		//
-		// });
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+			{
+				put("layer", 10);
+				put("image", resourceManager.get("background"));
+				put("screenResolution", screenBounds);
+				put("animation", fadeInAnimation);
+			}
+		}));
+
+		property("fadeInAnimation", fadeInAnimation);
+
+		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
+			{
+				delay(0);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 0f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 1f));
+					}
+				});
+			}
+		}.build(), false);
+
+		property("fadeOutAnimation", fadeOutAnimation);
+
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+			{
+				put("layer", 10);
+				put("image", resourceManager.get("background"));
+				put("screenResolution", screenBounds);
+				put("animation", fadeOutAnimation);
+			}
+		}));
+
 	}
 }

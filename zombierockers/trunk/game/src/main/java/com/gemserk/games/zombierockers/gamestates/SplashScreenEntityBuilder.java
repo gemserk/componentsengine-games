@@ -2,10 +2,16 @@ package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.commons.animation.Animation;
+import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
+import com.gemserk.commons.animation.timeline.TimelineAnimation;
+import com.gemserk.commons.animation.timeline.TimelineBuilder;
+import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -50,11 +56,11 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 	@Override
 	public void build() {
 
-		final Rectangle screenResolution = (Rectangle) globalProperties.getProperties().get("screenResolution");
+		final Rectangle screenBounds = (Rectangle) globalProperties.getProperties().get("screenResolution");
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
-				property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
+				property("position", slick.vector((float) (screenBounds.getWidth() * 0.5f), (float) (screenBounds.getHeight() * 0.5f)));
 				property("color", slick.color(1, 1, 1, 1));
 				property("direction", slick.vector(1, 0));
 				property("layer", 0);
@@ -64,7 +70,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 
 		component(new ImageRenderableComponent("logo")).withProperties(new ComponentProperties() {
 			{
-				property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
+				property("position", slick.vector((float) (screenBounds.getWidth() * 0.5f), (float) (screenBounds.getHeight() * 0.5f)));
 				property("color", slick.color(1, 1, 1, 1));
 				property("direction", slick.vector(1, 0));
 				property("layer", 1);
@@ -72,27 +78,53 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
 			{
-				put("time", 1000);
+				delay(0);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 1f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 0f));
+					}
+				});
+			}
+		}.build(), true);
+
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+			{
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
-				put("screenResolution", screenResolution);
-				put("effect", "fadeIn");
+				put("screenResolution", screenBounds);
+				put("animation", fadeInAnimation);
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
 			{
-				put("delay", 2000);
-				put("time", 1000);
+				delay(2000);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 0f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 1f));
+					}
+				});
+			}
+		}.build(), true);
+
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+			{
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
-				put("screenResolution", screenResolution);
-				put("effect", "fadeOut");
+				put("screenResolution", screenBounds);
+				put("animation", fadeOutAnimation);
 			}
 		}));
-		
+
+		property("fadeInAnimation", fadeInAnimation);
+		property("fadeOutAnimation", fadeOutAnimation);
+
 		property("nextScreenLoaded", false);
 		component(new FieldsReflectionComponent("nextScreenComponent") {
 
@@ -106,7 +138,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 				messageQueue.enqueueDelay(new Message("menu"));
 				nextScreenLoaded = true;
 			}
-			
+
 			@Handles
 			public void animationEnded(Message message) {
 				if (nextScreenLoaded)

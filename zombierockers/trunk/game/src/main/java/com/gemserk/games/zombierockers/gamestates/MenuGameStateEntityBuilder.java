@@ -2,9 +2,16 @@ package com.gemserk.games.zombierockers.gamestates;
 
 import java.util.HashMap;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.geom.Rectangle;
 
+import com.gemserk.commons.animation.Animation;
+import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
+import com.gemserk.commons.animation.timeline.TimelineAnimation;
+import com.gemserk.commons.animation.timeline.TimelineBuilder;
+import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
@@ -18,7 +25,6 @@ import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.messages.messageBuilder.MessageBuilder;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
@@ -27,7 +33,7 @@ import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-@SuppressWarnings({"unchecked", "unused", "serial"})
+@SuppressWarnings( { "unchecked", "unused", "serial" })
 public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
@@ -51,13 +57,16 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 	@Inject
 	ChildrenManagementMessageFactory childrenManagementMessageFactory;
 
+	@Inject
+	GameContainer container;
+
 	@Override
 	public void build() {
 
 		final Rectangle labelRectangle = slick.rectangle(-160, -25, 320, 50);
 
 		property("screenBounds", parameters.get("screenBounds"));
-		
+
 		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
@@ -70,30 +79,57 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
 			{
-				put("started", false);
-				put("time", 1000);
+				delay(0);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 1f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 0f));
+					}
+				});
+			}
+		}.build(), false);
+
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+			{
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
 				put("screenResolution", screenBounds);
-				put("effect", "fadeIn");
+				put("animation", fadeInAnimation);
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
 			{
-				put("started", false);
-				put("time", 1000);
+				delay(0);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 0f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 1f));
+					}
+				});
+			}
+		}.build(), false);
+
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+			{
 				put("layer", 10);
 				put("image", resourceManager.get("background"));
 				put("screenResolution", screenBounds);
-				put("effect", "fadeOut");
+				put("animation", fadeOutAnimation);
 			}
 		}));
+
+		property("fadeInAnimation", fadeInAnimation);
+		property("fadeOutAnimation", fadeOutAnimation);
 
 		property("mainMenuScreen", null);
 		property("buttonPressed", "play");
+
+		property("animationEndCallback", null);
 
 		component(new ReferencePropertyComponent("gameStateLogic") {
 
@@ -108,6 +144,18 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Property<String> buttonPressed;
+
+			@EntityProperty
+			Property<Animation> fadeInAnimation;
+
+			@EntityProperty
+			Property<Animation> fadeOutAnimation;
+
+			@EntityProperty
+			Property<Runnable> animationEndCallback;
+
+			@EntityProperty
+			Property<Resource<Music>> backgroundMusic;
 
 			@Handles
 			public void enterNodeState(Message message) {
@@ -127,34 +175,52 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				// }
 				// }));
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(mainMenuScreen.get(), entity));
+				
+				if (!backgroundMusic.get().get().playing())
+					backgroundMusic.get().get().fade(1000, 1.0f, false);
 			}
 
 			@Handles
 			public void leaveNodeState(Message message) {
 				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(mainMenuScreen.get()));
 				mainMenuScreen.set(null);
+				fadeInAnimation.get().stop();
 				// profileScreen.set(null);
 			}
 
 			@Handles
 			public void onPlayButton(Message message) {
-				buttonPressed.set("play");
-				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+				backgroundMusic.get().get().fade(1000, 0.0f, true);
+				fadeOutAnimation.get().restart();
+				animationEndCallback.set(new Runnable() {
+					@Override
+					public void run() {
+						messageQueue.enqueue(new Message("resume"));
+						messageQueue.enqueueDelay(new Message("restartLevel"));
+					}
+				});
 			}
 
 			@Handles
 			public void onSettingsButton(Message message) {
-				buttonPressed.set("settings");
-				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+				fadeOutAnimation.get().restart();
+				animationEndCallback.set(new Runnable() {
+					@Override
+					public void run() {
+						messageQueue.enqueue(new Message("settings"));
+					}
+				});
 			}
 
 			@Handles
 			public void onProfileButton(Message message) {
-				// without animation for now...
-				// messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(mainMenuScreen.get()));
-				// messageQueue.enqueue(childrenManagementMessageFactory.addEntity(profileScreen.get(), entity));
-				buttonPressed.set("profile");
-				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+				fadeOutAnimation.get().restart();
+				animationEndCallback.set(new Runnable() {
+					@Override
+					public void run() {
+						messageQueue.enqueue(new Message("profile"));
+					}
+				});
 			}
 
 			//			
@@ -167,8 +233,13 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void onExitButton(Message message) {
-				buttonPressed.set("exit");
-				messageQueue.enqueue(messageBuilder.newMessage("restartAnimation").property("animationId", "fadeOutEffect").get());
+				fadeOutAnimation.get().restart();
+				animationEndCallback.set(new Runnable() {
+					@Override
+					public void run() {
+						System.exit(0);
+					}
+				});
 				// fadeOutAnimation.start();
 				// add custom child with logic fo animation end.
 				// {
@@ -177,16 +248,25 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				// }
 			}
 
+			@Handles
+			public void update(Message message) {
+				if (fadeOutAnimation.get().isFinished()) {
+					fadeOutAnimation.get().stop();
+					if (animationEndCallback.get() != null)
+						animationEndCallback.get().run();
+				}
+			}
+
 		});
 
-		component(new FieldsReflectionComponent("fadeInWhenEnterState") {
+		component(new ReferencePropertyComponent("fadeInWhenEnterState") {
+
+			@EntityProperty
+			Property<Animation> fadeInAnimation;
+
 			@Handles
 			public void enterNodeState(Message message) {
-				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-					{
-						property("animationId", "fadeInEffect");
-					}
-				}.build()));
+				fadeInAnimation.get().restart();
 			}
 		});
 
@@ -218,53 +298,6 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			{
 				property("time", 1000);
 			}
-		});
-
-		component(new FieldsReflectionComponent("backgroundMusicComponent") {
-
-			@EntityProperty
-			Resource<Music> backgroundMusic;
-
-			@Handles
-			public void enterNodeState(Message message) {
-				if (!backgroundMusic.get().playing())
-					backgroundMusic.get().fade(1000, 1.0f, false);
-			}
-
-			@Handles
-			public void buttonReleased(Message message) {
-				String id = Properties.getValue(message, "buttonId");
-
-				if ("playButton".equals(id))
-					backgroundMusic.get().fade(1000, 0.0f, true);
-			}
-
-		});
-
-		component(new FieldsReflectionComponent("animationComponentHandler") {
-
-			@EntityProperty
-			String buttonPressed;
-
-			@Handles
-			public void animationEnded(Message message) {
-				String animationId = Properties.getValue(message, "entityId");
-				if ("fadeOutEffect".equalsIgnoreCase(animationId)) {
-
-					if ("exit".equals(buttonPressed)) {
-						System.exit(0);
-					} else if ("settings".equals(buttonPressed)) {
-						messageQueue.enqueue(new Message("settings"));
-					} else if ("play".equals(buttonPressed)) {
-						messageQueue.enqueue(new Message("resume"));
-						messageQueue.enqueueDelay(new Message("restartLevel"));
-					} else if ("profile".equals(buttonPressed)) {
-						messageQueue.enqueue(new Message("profile"));
-					}
-
-				}
-			}
-
 		});
 
 		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));

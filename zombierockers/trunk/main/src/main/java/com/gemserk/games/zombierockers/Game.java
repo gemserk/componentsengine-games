@@ -52,6 +52,7 @@ import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
 import com.gemserk.datastore.Data;
 import com.gemserk.datastore.DataStore;
 import com.gemserk.datastore.DataStoreJSONInFileImpl;
+import com.gemserk.games.zombierockers.entities.FadeEffectEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BallEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BaseEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BonusMessageEntityBuilder;
@@ -61,7 +62,6 @@ import com.gemserk.games.zombierockers.entities.CannonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CheckboxEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CursorEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CustomButtonEntityBuilder;
-import com.gemserk.games.zombierockers.entities.FadeEffectEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LabelButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
 import com.gemserk.games.zombierockers.entities.PathEntityBuilder;
@@ -160,7 +160,7 @@ public class Game extends StateBasedGame {
 
 	public Game() {
 		super("Zombie Rockers");
-		
+
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
 		try {
@@ -175,7 +175,7 @@ public class Game extends StateBasedGame {
 			// StatusPrinter will handle this
 		}
 		StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
-		
+
 		Map<String, Object> gameProperties = getGameProperties();
 
 		gameProperties.put("screenResolution", new Rectangle(0, 0, 800, 600));
@@ -315,7 +315,7 @@ public class Game extends StateBasedGame {
 
 			registrableTemplateProvider.add("zombierockers.gui.highscorestable", javaEntityTemplateProvider.get().with(new HighscoresTableEntityBuilder()));
 
-			registrableTemplateProvider.add("zombierockers.effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
+			registrableTemplateProvider.add("effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
 
 			registrableTemplateProvider.add("commons.entities.screenshotGrabber", javaEntityTemplateProvider.get().with(new ScreenshotGrabberEntityBuilder()));
 			registrableTemplateProvider.add("commons.entities.fps", javaEntityTemplateProvider.get().with(new FpsEntityBuilder()));
@@ -354,9 +354,6 @@ public class Game extends StateBasedGame {
 		@Override
 		public void onInit() {
 			super.onInit();
-
-			// images("assets/images.properties");
-			// animations("assets/animations.properties");
 
 			propertiesImageLoader.load("assets/images.properties");
 			propertiesAnimationLoader.load("assets/animations.properties");

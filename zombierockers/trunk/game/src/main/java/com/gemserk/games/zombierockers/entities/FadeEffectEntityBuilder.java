@@ -10,12 +10,9 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.commons.animation.Animation;
 import com.gemserk.commons.animation.handlers.AnimationEventHandler;
 import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
-import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
 import com.gemserk.commons.animation.timeline.Timeline;
 import com.gemserk.commons.animation.timeline.TimelineAnimation;
-import com.gemserk.commons.animation.timeline.TimelineBuilder;
 import com.gemserk.commons.animation.timeline.TimelineValue;
-import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -100,20 +97,15 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 
 		final Rectangle screenResolution = Properties.getValue(entity, "screenResolution");
 
-		final Integer delay = parameters.get("delay", 0);
-		final Boolean started = parameters.get("started", true);
-
 		property("color", slick.color(1, 1, 1, 1));
 		property("layer", parameters.get("layer"));
-		property("time", parameters.get("time"));
-		property("delay", parameters.get("delay"));
 		property("image", parameters.get("image"));
-
-		property("effect", parameters.get("effect"));
 
 		property("position", slick.vector((float) (screenResolution.getWidth() * 0.5f), (float) (screenResolution.getHeight() * 0.5f)));
 		property("direction", slick.vector(1, 0));
 		property("size", slick.vector(1, 1));
+
+		property("animation", parameters.get("animation"));
 
 		component(new FieldsReflectionComponent("renderer") {
 
@@ -140,48 +132,26 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void render(Message message) {
-				if (animation.isFinished() || !animation.isStarted())
+				// if (animation.isFinished() || !animation.isStarted())
+				// return;
+				if (!animation.isStarted())
 					return;
-
 				RenderQueue renderQueue = Properties.getValue(message, "renderer");
 				renderQueue.enqueue(new SlickImageRenderObject(layer, image.get(), position, size, (float) direction.getTheta(), color));
 			}
 
 		});
 
-		String effect = parameters.get("effect");
-		final Integer time = parameters.get("time");
-
-		boolean fadeInEffect = "fadeIn".equals(effect);
-
-		final Color startColor = fadeInEffect ? slick.color(1f, 1f, 1f, 1f) : slick.color(1f, 1f, 1f, 0f);
-		final Color endColor = fadeInEffect ? slick.color(1f, 1f, 1f, 0f) : slick.color(1f, 1f, 1f, 1f);
-
-		Timeline timeline = new TimelineBuilder() {
-			{
-				delay(delay);
-				value("color", new TimelineValueBuilder<Color>() {
-					{
-						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
-						keyFrame(0, startColor);
-						keyFrame(time, endColor);
-					}
-				});
-			}
-		}.build();
-
-		final TimelineAnimation timelineAnimation = new TimelineAnimation(timeline, started);
-
 		component(new SynchronizeAnimationPropertiesComponent("animationComponent")).withProperties(new ComponentProperties() {
 			{
-				property("timelineAnimation", timelineAnimation);
+				propertyRef("timelineAnimation", "animation");
 			}
 		});
 
-		property("animation", timelineAnimation);
+		Animation animation = Properties.getValue(entity, "animation");
 
 		AnimationHandlerManager animationHandlerManager = new AnimationHandlerManager();
-		animationHandlerManager.handleAnimationChanges(entity.getId(), timelineAnimation);
+		animationHandlerManager.handleAnimationChanges(entity.getId(), animation);
 		animationHandlerManager.addAnimationHandler(entity.getId(), new AnimationHandler(entity));
 
 		property("animationHandlerManager", animationHandlerManager);
@@ -194,15 +164,6 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 			@Handles
 			public void update(Message message) {
 				animationHandlerManager.checkAnimationChanges();
-			}
-
-			@Handles
-			public void restartAnimation(Message message) {
-				String animationId = Properties.getValue(message, "animationId");
-				Animation animation = animationHandlerManager.getAnimation(animationId);
-				if (animation == null)
-					return;
-				animation.restart();
 			}
 
 		});

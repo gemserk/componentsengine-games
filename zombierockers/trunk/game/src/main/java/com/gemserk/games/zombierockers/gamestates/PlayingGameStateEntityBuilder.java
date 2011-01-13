@@ -15,7 +15,12 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.commons.animation.Animation;
 import com.gemserk.commons.animation.properties.InterpolatedProperty;
+import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
+import com.gemserk.commons.animation.timeline.TimelineAnimation;
+import com.gemserk.commons.animation.timeline.TimelineBuilder;
+import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -185,26 +190,74 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+		// child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+		// {
+		// put("started", false);
+		// put("time", 1000);
+		// put("layer", 50);
+		// put("image", resourceManager.get("background"));
+		// put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
+		// put("effect", "fadeIn");
+		// }
+		// }));
+		//
+		// child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+		// {
+		// put("started", false);
+		// put("delay", 2000);
+		// put("time", 1000);
+		// put("layer", 50);
+		// put("image", resourceManager.get("background"));
+		// put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
+		// put("effect", "fadeOut");
+		// }
+		// }));
+
+		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
 			{
-				put("started", false);
-				put("time", 1000);
+				delay(0);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 1f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 0f));
+					}
+				});
+			}
+		}.build(), false);
+
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
+			{
 				put("layer", 50);
 				put("image", resourceManager.get("background"));
 				put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
-				put("effect", "fadeIn");
+				put("animation", fadeInAnimation);
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+		property("fadeInAnimation", fadeInAnimation);
+
+		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
 			{
-				put("started", false);
-				put("delay", 2000);
-				put("time", 1000);
+				delay(2000);
+				value("color", new TimelineValueBuilder<Color>() {
+					{
+						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
+						keyFrame(0, slick.color(1f, 1f, 1f, 0f));
+						keyFrame(1000, slick.color(1f, 1f, 1f, 1f));
+					}
+				});
+			}
+		}.build(), false);
+
+		property("fadeOutAnimation", fadeOutAnimation);
+
+		child(templateProvider.getTemplate("effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
+			{
 				put("layer", 50);
 				put("image", resourceManager.get("background"));
 				put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
-				put("effect", "fadeOut");
+				put("animation", fadeOutAnimation);
 			}
 		}));
 
@@ -286,9 +339,16 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			@EntityProperty
 			Resource<Sound> loseSoundResource;
 
+			@EntityProperty
+			Animation fadeOutAnimation;
+
+			@EntityProperty
+			Animation fadeInAnimation;
+
 			@Handles
 			public void levelStarted(Message message) {
 				Properties.setValue(messageLabel, "color", slick.color(0f, 0f, 0f, 0f));
+				fadeInAnimation.restart();
 				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
 					{
 						property("animationId", "fadeInEffect");
@@ -307,11 +367,12 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					loseSoundResource.get().play();
 					Properties.setValue(messageLabel, "message", "You lose, try again!");
 				}
-				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-					{
-						property("animationId", "fadeOutEffect");
-					}
-				}.build()));
+				fadeOutAnimation.restart();
+				// messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
+				// {
+				// property("animationId", "fadeOutEffect");
+				// }
+				// }.build()));
 			}
 		}).withProperties(new ComponentProperties() {
 			{
@@ -374,7 +435,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					return;
 
 				Object levelName = level.get().get("name");
-				
+
 				if (win.get()) {
 					messageQueue.enqueue(messageBuilder.newMessage("enterscore") //
 							.property("win", win.get()) //

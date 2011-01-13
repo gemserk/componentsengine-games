@@ -217,7 +217,7 @@ public class HighscoresScreenEntityBuilder extends EntityBuilder {
 						put("align", "center");
 						put("valign", "center");
 						put("layer", 1);
-						put("message", Properties.getValue(message, "reason"));
+						put("message", "Failed to retrieve highscores from server, try again later");
 					}
 				});
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(scoresFailedLabel, childPanel.get()));
