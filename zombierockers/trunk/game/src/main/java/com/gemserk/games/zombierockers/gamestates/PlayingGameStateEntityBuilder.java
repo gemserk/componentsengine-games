@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.animation.Animation;
+import com.gemserk.commons.animation.handlers.AnimationEventHandler;
+import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
 import com.gemserk.commons.animation.properties.InterpolatedProperty;
 import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
 import com.gemserk.commons.animation.timeline.TimelineAnimation;
@@ -321,16 +323,15 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@EntityProperty
 			Animation fadeInAnimation;
+			
+			@Inject
+			AnimationHandlerManager animationHandlerManager;
 
 			@Handles
 			public void levelStarted(Message message) {
 				Properties.setValue(messageLabel, "color", slick.color(0f, 0f, 0f, 0f));
+				fadeOutAnimation.stop();
 				fadeInAnimation.restart();
-				messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-					{
-						property("animationId", "fadeInEffect");
-					}
-				}.build()));
 			}
 
 			@Handles
@@ -345,11 +346,12 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					Properties.setValue(messageLabel, "message", "You lose, try again!");
 				}
 				fadeOutAnimation.restart();
-				// messageQueue.enqueue(new Message("restartAnimation", new PropertiesMapBuilder() {
-				// {
-				// property("animationId", "fadeOutEffect");
-				// }
-				// }.build()));
+				animationHandlerManager.with(new AnimationEventHandler(){
+					@Override
+					public void onAnimationFinished(Animation animation) {
+						messageQueue.enqueue(messageBuilder.newMessage("onLevelFinished").get());
+					}
+				}).handleChangesOf(fadeOutAnimation);
 			}
 		}).withProperties(new ComponentProperties() {
 			{
@@ -405,12 +407,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			GlobalProperties globalProperties;
 
 			@Handles
-			public void animationEnded(Message message) {
-				String animationId = Properties.getValue(message, "entityId");
-
-				if (!"fadeOutEffect".equalsIgnoreCase(animationId))
-					return;
-
+			public void onLevelFinished(Message message) {
 				Object levelName = level.get().get("name");
 
 				if (win.get()) {
@@ -428,21 +425,24 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 		});
 
-		component(new ReferencePropertyComponent("grabMouse-enternodestate") {
+		component(new ReferencePropertyComponent("grabMouse-component") {
+			
+			@EntityProperty
+			Property<Boolean> shouldGrabMouse;
+			
 			@Handles
 			public void enterNodeState(Message message) {
-				Properties.setValue(entity, "shouldGrabMouse", true);
+				shouldGrabMouse.set(true);
 				logger.info("Entering playing state");
 			}
-		});
-
-		component(new ReferencePropertyComponent("grabMouse-leavenodestate") {
+			
 			@Handles
 			public void leaveNodeState(Message message) {
-				Properties.setValue(entity, "shouldGrabMouse", false);
+				shouldGrabMouse.set(false);
 				slick.getGameContainer().setMouseGrabbed(false);
 				logger.info("Leaving playing state");
 			}
+
 		});
 
 		component(new ReferencePropertyComponent("grabscreenshot-leavenodestate") {

@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.commons.animation.Animation;
+import com.gemserk.commons.animation.handlers.AnimationEventHandler;
+import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
 import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
 import com.gemserk.commons.animation.timeline.TimelineAnimation;
 import com.gemserk.commons.animation.timeline.TimelineBuilder;
 import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
-import com.gemserk.componentsengine.components.FieldsReflectionComponent;
+import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
@@ -23,7 +25,7 @@ import com.gemserk.componentsengine.input.KeyboardMappingBuilder;
 import com.gemserk.componentsengine.input.MouseMappingBuilder;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
-import com.gemserk.componentsengine.properties.Properties;
+import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
@@ -52,6 +54,9 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 
 	@Inject
 	Provider<JavaEntityTemplate> javaEntityTemplateProvider;
+
+	@Inject
+	AnimationHandlerManager animationHandlerManager;
 
 	@Override
 	public void build() {
@@ -126,28 +131,31 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 		property("fadeOutAnimation", fadeOutAnimation);
 
 		property("nextScreenLoaded", false);
-		component(new FieldsReflectionComponent("nextScreenComponent") {
+
+		component(new ReferencePropertyComponent("nextScreenComponent") {
 
 			@EntityProperty
-			Boolean nextScreenLoaded;
+			Property<Boolean> nextScreenLoaded;
+
+			@EntityProperty
+			Property<Animation> fadeOutAnimation;
 
 			@Handles(ids = { "continue" })
 			public void continueHandler(Message message) {
-				if (nextScreenLoaded)
+				if (nextScreenLoaded.get())
 					return;
 				messageQueue.enqueueDelay(new Message("menu"));
-				nextScreenLoaded = true;
+				nextScreenLoaded.set(true);
 			}
 
 			@Handles
-			public void animationEnded(Message message) {
-				if (nextScreenLoaded)
-					return;
-				String animationId = Properties.getValue(message, "entityId");
-				if ("fadeOutEffect".equalsIgnoreCase(animationId)) {
-					messageQueue.enqueueDelay(new Message("menu"));
-					nextScreenLoaded = true;
-				}
+			public void enterNodeState(Message message) {
+				animationHandlerManager.with(new AnimationEventHandler() {
+					@Override
+					public void onAnimationFinished(Animation animation) {
+						messageQueue.enqueueDelay(new Message("menu"));
+					}
+				}).handleChangesOf(fadeOutAnimation.get());
 			}
 
 		});

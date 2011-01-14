@@ -6,6 +6,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.commons.animation.Animation;
+import com.gemserk.commons.animation.handlers.AnimationEventHandler;
+import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
 import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
 import com.gemserk.commons.animation.timeline.TimelineAnimation;
 import com.gemserk.commons.animation.timeline.TimelineBuilder;
@@ -60,8 +62,6 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 
 		final Rectangle screenBounds = Properties.getValue(entity, "screenBounds");
 		
-		property("animationEndCallback", null);
-
 		component(new ReferencePropertyComponent("stateLogic") {
 
 			@EntityProperty
@@ -73,8 +73,8 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 			@EntityProperty
 			Property<Animation> fadeInAnimation;
 
-			@EntityProperty
-			Property<Runnable> animationEndCallback;
+			@Inject
+			AnimationHandlerManager animationHandlerManager;
 
 			@Handles
 			public void enterNodeState(Message message) {
@@ -86,33 +86,25 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(settingsScreen, entity));
+				
+				fadeOutAnimation.get().stop();
 				fadeInAnimation.get().restart();
 			}
 
 			@Handles
 			public void leaveNodeState(Message message) {
 				messageQueue.enqueue(childrenManagementMessageFactory.removeEntity(entity.getId() + "_settingsScreen"));
-				fadeInAnimation.get().stop();
 			}
 
 			@Handles
 			public void onSettingsBack(Message message) {
 				fadeOutAnimation.get().restart();
-				animationEndCallback.set(new Runnable() {
+				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void run() {
+					public void onAnimationFinished(Animation animation) {
 						messageQueue.enqueue(messageBuilder.newMessage("menu").get());
 					}
-				});
-			}
-
-			@Handles
-			public void update(Message message) {
-				if (fadeOutAnimation.get().isFinished()) {
-					fadeOutAnimation.get().stop();
-					if (animationEndCallback.get() != null)
-						animationEndCallback.get().run();
-				}
+				}).handleChangesOf(fadeOutAnimation.get());
 			}
 
 		});

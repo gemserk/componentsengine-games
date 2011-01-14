@@ -8,6 +8,8 @@ import org.newdawn.slick.Music;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.commons.animation.Animation;
+import com.gemserk.commons.animation.handlers.AnimationEventHandler;
+import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
 import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
 import com.gemserk.commons.animation.timeline.TimelineAnimation;
 import com.gemserk.commons.animation.timeline.TimelineBuilder;
@@ -129,8 +131,6 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 		property("mainMenuScreen", null);
 		property("buttonPressed", "play");
 
-		property("animationEndCallback", null);
-
 		component(new ReferencePropertyComponent("gameStateLogic") {
 
 			@EntityProperty
@@ -152,10 +152,10 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			Property<Animation> fadeOutAnimation;
 
 			@EntityProperty
-			Property<Runnable> animationEndCallback;
-
-			@EntityProperty
 			Property<Resource<Music>> backgroundMusic;
+
+			@Inject
+			AnimationHandlerManager animationHandlerManager;
 
 			@Handles
 			public void enterNodeState(Message message) {
@@ -175,9 +175,12 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				// }
 				// }));
 				messageQueue.enqueue(childrenManagementMessageFactory.addEntity(mainMenuScreen.get(), entity));
-				
+
 				if (!backgroundMusic.get().get().playing())
 					backgroundMusic.get().get().fade(1000, 1.0f, false);
+				
+				fadeInAnimation.get().restart();
+				fadeOutAnimation.get().stop();
 			}
 
 			@Handles
@@ -192,35 +195,36 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			public void onPlayButton(Message message) {
 				backgroundMusic.get().get().fade(1000, 0.0f, true);
 				fadeOutAnimation.get().restart();
-				animationEndCallback.set(new Runnable() {
+				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void run() {
-						messageQueue.enqueue(new Message("resume"));
-						messageQueue.enqueueDelay(new Message("restartLevel"));
+					public void onAnimationFinished(Animation animation) {
+						messageQueue.enqueue(messageBuilder.newMessage("resume").get());
+						messageQueue.enqueueDelay(messageBuilder.newMessage("restartLevel").get());
 					}
-				});
+				}).handleChangesOf(fadeOutAnimation.get());
+
 			}
 
 			@Handles
 			public void onSettingsButton(Message message) {
 				fadeOutAnimation.get().restart();
-				animationEndCallback.set(new Runnable() {
+				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void run() {
-						messageQueue.enqueue(new Message("settings"));
+					public void onAnimationFinished(Animation animation) {
+						messageQueue.enqueue(messageBuilder.newMessage("settings").get());
 					}
-				});
+				}).handleChangesOf(fadeOutAnimation.get());
 			}
 
 			@Handles
 			public void onProfileButton(Message message) {
 				fadeOutAnimation.get().restart();
-				animationEndCallback.set(new Runnable() {
+				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void run() {
-						messageQueue.enqueue(new Message("profile"));
+					public void onAnimationFinished(Animation animation) {
+						messageQueue.enqueue(messageBuilder.newMessage("profile").get());
 					}
-				});
+				}).handleChangesOf(fadeOutAnimation.get());
 			}
 
 			//			
@@ -234,40 +238,14 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			@Handles
 			public void onExitButton(Message message) {
 				fadeOutAnimation.get().restart();
-				animationEndCallback.set(new Runnable() {
+				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void run() {
+					public void onAnimationFinished(Animation animation) {
 						System.exit(0);
 					}
-				});
-				// fadeOutAnimation.start();
-				// add custom child with logic fo animation end.
-				// {
-				// property(animation, fadeoutanimation)
-				// property(callback, callback)
-				// }
+				}).handleChangesOf(fadeOutAnimation.get());
 			}
 
-			@Handles
-			public void update(Message message) {
-				if (fadeOutAnimation.get().isFinished()) {
-					fadeOutAnimation.get().stop();
-					if (animationEndCallback.get() != null)
-						animationEndCallback.get().run();
-				}
-			}
-
-		});
-
-		component(new ReferencePropertyComponent("fadeInWhenEnterState") {
-
-			@EntityProperty
-			Property<Animation> fadeInAnimation;
-
-			@Handles
-			public void enterNodeState(Message message) {
-				fadeInAnimation.get().restart();
-			}
 		});
 
 		property("backgroundMusic", resourceManager.get("BackgroundMusic"));

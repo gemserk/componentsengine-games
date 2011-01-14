@@ -8,7 +8,6 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.commons.animation.Animation;
-import com.gemserk.commons.animation.handlers.AnimationEventHandler;
 import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
 import com.gemserk.commons.animation.timeline.Timeline;
 import com.gemserk.commons.animation.timeline.TimelineAnimation;
@@ -16,11 +15,9 @@ import com.gemserk.commons.animation.timeline.TimelineValue;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
-import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.Message;
 import com.gemserk.componentsengine.messages.MessageQueue;
 import com.gemserk.componentsengine.properties.Properties;
-import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.render.RenderQueue;
 import com.gemserk.componentsengine.slick.render.SlickImageRenderObject;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
@@ -31,35 +28,6 @@ import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")
 public class FadeEffectEntityBuilder extends EntityBuilder {
-
-	class AnimationHandler implements AnimationEventHandler {
-
-		private final Entity entity;
-
-		public AnimationHandler(Entity entity) {
-			this.entity = entity;
-		}
-
-		@Override
-		public void onAnimationStarted(Animation animation) {
-			messageQueue.enqueue(new Message("animationStarted", new PropertiesMapBuilder() {
-				{
-					property("entity", entity);
-					property("entityId", entity.getId());
-				}
-			}.build()));
-		}
-
-		@Override
-		public void onAnimationFinished(Animation animation) {
-			messageQueue.enqueue(new Message("animationEnded", new PropertiesMapBuilder() {
-				{
-					property("entity", entity);
-					property("entityId", entity.getId());
-				}
-			}.build()));
-		}
-	}
 
 	public static class SynchronizeAnimationPropertiesComponent extends FieldsReflectionComponent {
 
@@ -89,6 +57,9 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 
 	@Inject
 	MessageQueue messageQueue;
+
+	@Inject
+	AnimationHandlerManager animationHandlerManager;
 
 	@Override
 	public void build() {
@@ -132,10 +103,10 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void render(Message message) {
-				if (animation.isFinished() || !animation.isStarted())
-					return;
-				// if (!animation.isStarted())
+				// if (animation.isFinished() || !animation.isStarted())
 				// return;
+				if (!animation.isStarted())
+					return;
 				RenderQueue renderQueue = Properties.getValue(message, "renderer");
 				renderQueue.enqueue(new SlickImageRenderObject(layer, image.get(), position, size, (float) direction.getTheta(), color));
 			}
@@ -146,26 +117,6 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 			{
 				propertyRef("timelineAnimation", "animation");
 			}
-		});
-
-		Animation animation = Properties.getValue(entity, "animation");
-
-		AnimationHandlerManager animationHandlerManager = new AnimationHandlerManager();
-		animationHandlerManager.handleAnimationChanges(entity.getId(), animation);
-		animationHandlerManager.addAnimationHandler(entity.getId(), new AnimationHandler(entity));
-
-		property("animationHandlerManager", animationHandlerManager);
-
-		component(new FieldsReflectionComponent("animationManagerComponent") {
-
-			@EntityProperty
-			AnimationHandlerManager animationHandlerManager;
-
-			@Handles
-			public void update(Message message) {
-				animationHandlerManager.checkAnimationChanges();
-			}
-
 		});
 
 	}

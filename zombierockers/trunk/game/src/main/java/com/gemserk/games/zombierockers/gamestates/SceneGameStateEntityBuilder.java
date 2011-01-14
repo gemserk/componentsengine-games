@@ -8,6 +8,8 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
+import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -262,6 +264,18 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 				propertyRef("levels");
 				propertyRef("sceneInstantiationTemplate");
 			}
+		});
+		
+		component(new FieldsReflectionComponent("animationManagerComponent") {
+
+			@Inject
+			AnimationHandlerManager animationHandlerManager;
+
+			@Handles
+			public void update(Message message) {
+				animationHandlerManager.checkAnimationChanges();
+			}
+
 		});
 
 	}

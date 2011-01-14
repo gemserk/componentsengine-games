@@ -25,6 +25,7 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 
+import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
 import com.gemserk.commons.slick.util.ScreenshotGrabber;
 import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
 import com.gemserk.componentsengine.commons.entities.FpsEntityBuilder;
@@ -255,6 +256,8 @@ public class Game extends StateBasedGame {
 
 						bind(Scores.class).toInstance(scores);
 						bind(DataStore.class).toInstance(dataStore);
+						
+						bind(AnimationHandlerManager.class).in(Singleton.class);
 					}
 				});
 
