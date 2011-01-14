@@ -5,7 +5,10 @@ import java.util.HashMap;
 import net.sf.json.JSONArray;
 
 import org.newdawn.slick.GameContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.Handles;
 import com.gemserk.componentsengine.game.GlobalProperties;
@@ -17,10 +20,13 @@ import com.gemserk.componentsengine.properties.FixedProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.utils.EntityDumper;
+import com.gemserk.resources.ResourcesMonitor;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class UtilsEntityBuilder extends EntityBuilder {
+
+	protected static final Logger logger = LoggerFactory.getLogger(UtilsEntityBuilder.class);
 
 	@Inject
 	Provider<InputMappingBuilderConfigurator> inputMappingConfiguratorProvider;
@@ -31,7 +37,7 @@ public class UtilsEntityBuilder extends EntityBuilder {
 	@Inject
 	GlobalProperties globalProperties;
 
-	@SuppressWarnings( { "serial" , "unused"})
+	@SuppressWarnings( { "serial", "unused" })
 	@Override
 	public void build() {
 
@@ -70,6 +76,20 @@ public class UtilsEntityBuilder extends EntityBuilder {
 
 		});
 
+		component(new ReferencePropertyComponent("resouceReloadingHandler") {
+
+			@Inject
+			ResourcesMonitor resourcesMonitor;
+
+			@Handles
+			public void reloadAllResources(Message message) {
+				resourcesMonitor.reloadAll();
+				if (logger.isInfoEnabled())
+					logger.info("Reloading all resources");
+			}
+
+		});
+
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
 			@Override
@@ -84,6 +104,7 @@ public class UtilsEntityBuilder extends EntityBuilder {
 						press("f", "toggleFps");
 						press("u", "reloadResources");
 						press("back", "closeGame");
+						press("f5", "reloadAllResources");
 					}
 				});
 			}

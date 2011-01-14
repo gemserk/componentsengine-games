@@ -136,7 +136,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
-
+		
 		component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
 
 			@Override
@@ -189,29 +189,6 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				propertyRef("shouldGrabMouse");
 			}
 		});
-
-		// child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
-		// {
-		// put("started", false);
-		// put("time", 1000);
-		// put("layer", 50);
-		// put("image", resourceManager.get("background"));
-		// put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
-		// put("effect", "fadeIn");
-		// }
-		// }));
-		//
-		// child(templateProvider.getTemplate("zombierockers.effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
-		// {
-		// put("started", false);
-		// put("delay", 2000);
-		// put("time", 1000);
-		// put("layer", 50);
-		// put("image", resourceManager.get("background"));
-		// put("screenResolution", new ReferenceProperty<Object>("screenBounds", entity));
-		// put("effect", "fadeOut");
-		// }
-		// }));
 
 		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
 			{

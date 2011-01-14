@@ -52,7 +52,6 @@ import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
 import com.gemserk.datastore.Data;
 import com.gemserk.datastore.DataStore;
 import com.gemserk.datastore.DataStoreJSONInFileImpl;
-import com.gemserk.games.zombierockers.entities.FadeEffectEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BallEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BaseEntityBuilder;
 import com.gemserk.games.zombierockers.entities.BonusMessageEntityBuilder;
@@ -62,6 +61,7 @@ import com.gemserk.games.zombierockers.entities.CannonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CheckboxEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CursorEntityBuilder;
 import com.gemserk.games.zombierockers.entities.CustomButtonEntityBuilder;
+import com.gemserk.games.zombierockers.entities.FadeEffectEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LabelButtonEntityBuilder;
 import com.gemserk.games.zombierockers.entities.LimboEntityBuilder;
 import com.gemserk.games.zombierockers.entities.PathEntityBuilder;
@@ -92,6 +92,8 @@ import com.gemserk.games.zombierockers.gamestates.SplashScreenEntityBuilder;
 import com.gemserk.games.zombierockers.gamestates.EnterScoreScreenEntityBuilder.UploadScoreEntityBuilder;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.resources.ResourceManagerImpl;
+import com.gemserk.resources.ResourcesMonitor;
+import com.gemserk.resources.ResourcesMonitorImpl;
 import com.gemserk.resources.dataloaders.StaticDataLoader;
 import com.gemserk.resources.datasources.ClassPathDataSource;
 import com.gemserk.resources.monitor.FileMonitorResourceHelper;
@@ -240,8 +242,14 @@ public class Game extends StateBasedGame {
 						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
 						bind(GlobalProperties.class).toInstance(globalProperties);
 						bind(SlickSvgUtils.class).in(Singleton.class);
+						
+						ResourceManager resourceManager = new ResourceManagerImpl();
+						requestInjection(resourceManager);
+						ResourcesMonitorImpl resourcesMonitor = new ResourcesMonitorImpl(resourceManager);
 
-						bind(ResourceManager.class).to(ResourceManagerImpl.class).in(Singleton.class);
+						bind(ResourceManager.class).toInstance(resourcesMonitor);
+						bind(ResourcesMonitor.class).toInstance(resourcesMonitor);
+						
 						bind(FilesMonitor.class).to(FilesMonitorImpl.class).in(Singleton.class);
 						bind(FileMonitorResourceHelper.class).to(FileMonitorResourceHelperNullImpl.class).in(Singleton.class);
 

@@ -132,10 +132,10 @@ public class FadeEffectEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void render(Message message) {
-				// if (animation.isFinished() || !animation.isStarted())
-				// return;
-				if (!animation.isStarted())
+				if (animation.isFinished() || !animation.isStarted())
 					return;
+				// if (!animation.isStarted())
+				// return;
 				RenderQueue renderQueue = Properties.getValue(message, "renderer");
 				renderQueue.enqueue(new SlickImageRenderObject(layer, image.get(), position, size, (float) direction.getTheta(), color));
 			}
