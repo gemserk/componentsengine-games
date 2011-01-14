@@ -83,9 +83,9 @@ public class UtilsEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void reloadAllResources(Message message) {
-				resourcesMonitor.reloadAll();
 				if (logger.isInfoEnabled())
 					logger.info("Reloading all resources");
+				resourcesMonitor.reloadAll();
 			}
 
 		});

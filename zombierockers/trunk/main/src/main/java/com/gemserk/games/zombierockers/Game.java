@@ -97,10 +97,6 @@ import com.gemserk.resources.ResourcesMonitor;
 import com.gemserk.resources.ResourcesMonitorImpl;
 import com.gemserk.resources.dataloaders.StaticDataLoader;
 import com.gemserk.resources.datasources.ClassPathDataSource;
-import com.gemserk.resources.monitor.FileMonitorResourceHelper;
-import com.gemserk.resources.monitor.FileMonitorResourceHelperNullImpl;
-import com.gemserk.resources.monitor.FilesMonitor;
-import com.gemserk.resources.monitor.FilesMonitorImpl;
 import com.gemserk.resources.resourceloaders.CachedResourceLoader;
 import com.gemserk.resources.resourceloaders.ResourceLoaderImpl;
 import com.gemserk.resources.slick.PropertiesAnimationLoader;
@@ -251,9 +247,6 @@ public class Game extends StateBasedGame {
 						bind(ResourceManager.class).toInstance(resourcesMonitor);
 						bind(ResourcesMonitor.class).toInstance(resourcesMonitor);
 						
-						bind(FilesMonitor.class).to(FilesMonitorImpl.class).in(Singleton.class);
-						bind(FileMonitorResourceHelper.class).to(FileMonitorResourceHelperNullImpl.class).in(Singleton.class);
-
 						bind(Scores.class).toInstance(scores);
 						bind(DataStore.class).toInstance(dataStore);
 						
