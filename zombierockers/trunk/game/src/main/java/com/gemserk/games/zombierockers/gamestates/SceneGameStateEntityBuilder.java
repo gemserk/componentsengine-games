@@ -158,7 +158,8 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void enterState(Message message) {
-				messageQueue.enqueueDelay(new Message("splash"));
+//				messageQueue.enqueueDelay(new Message("splash"));
+				messageQueue.enqueueDelay(new Message("menu"));
 				// messageQueue.enqueueDelay(new Message("settings"));
 				// messageQueue.enqueueDelay(new Message("highscores"));
 				// messageQueue.enqueueDelay(new Message("resume"));
@@ -166,32 +167,6 @@ public class SceneGameStateEntityBuilder extends EntityBuilder {
 			}
 
 		});
-
-		// component(new ReferencePropertyComponent("temporalComponentToChangeToEnterScoreScreen") {
-		//
-		// @Handles
-		// public void newScoreToEnter(Message message) {
-		// messageQueue.enqueueDelay(messageBuilder.newMessage("enterscore").property("points", 5600l).property("levelName", "level01").get());
-		// }
-		//
-		// });
-		//
-		// component(inputMappingConfiguratorProvider.get().configure(new InputMappingBuilder("inputMappingComponent") {
-		//
-		// @Override
-		// public void build() {
-		//
-		// keyboard(new KeyboardMappingBuilder() {
-		// @Override
-		// public void build() {
-		// press("m", "newScoreToEnter");
-		// }
-		// });
-		// }
-		//
-		// }));
-
-		// child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
 		component(new ReflectionComponent("nextLevelHandler") {
 
