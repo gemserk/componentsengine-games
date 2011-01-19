@@ -353,7 +353,7 @@ public class Game extends StateBasedGame {
 		ResourcesDeclaration resourcesDeclaration = injector.getInstance(ResourcesDeclaration.class);
 		resourcesDeclaration.init();
 
-		addState(new LoadingGameState(1, gameState, resourceManager.get("gemserkLogoWhite"), taskQueue, new Rectangle(0, 0, 800, 600)));
+		addState(new LoadingGameState(1, gameState, resourceManager.get("gemserkLogoWhite"), taskQueue));
 
 		getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(new Image(800, 600))).load());
 
