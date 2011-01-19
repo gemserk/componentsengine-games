@@ -47,7 +47,6 @@ import com.gemserk.componentsengine.slick.modules.SlickSoundSystemModule;
 import com.gemserk.componentsengine.slick.utils.SlickSvgUtils;
 import com.gemserk.componentsengine.slick.utils.SlickToSlf4j;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
-import com.gemserk.componentsengine.templates.RegistrableTemplateProvider;
 import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
 import com.gemserk.datastore.Data;
@@ -133,6 +132,8 @@ public class Game extends StateBasedGame {
 
 	GlobalProperties globalProperties = new GlobalProperties();
 
+	static long time;
+
 	public static void main(String[] arguments) {
 
 		try {
@@ -162,6 +163,10 @@ public class Game extends StateBasedGame {
 
 	public Game() {
 		super("Zombie Rockers");
+
+		time = System.currentTimeMillis();
+
+		System.out.println("APPLICATION CONSTRUCTOR");
 
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
@@ -242,7 +247,7 @@ public class Game extends StateBasedGame {
 						bind(ScreenshotGrabber.class).to(SlickScreenshotGrabber.class).in(Singleton.class);
 						bind(GlobalProperties.class).toInstance(globalProperties);
 						bind(SlickSvgUtils.class).in(Singleton.class);
-						
+
 						TaskQueue taskQueue = new TaskQueue();
 						bind(TaskQueue.class).toInstance(taskQueue);
 
@@ -263,79 +268,82 @@ public class Game extends StateBasedGame {
 		injector.getInstance(InitEntityManager.class).config();
 		injector.getInstance(InitBuilderUtilsBasic.class).config();
 		injector.getInstance(InitDefaultTemplateProvider.class).config();
-
-		{
-			// register each java template provdier to the template provider manager...
-			RegistrableTemplateProvider registrableTemplateProvider = injector.getInstance(RegistrableTemplateProvider.class);
-			registrableTemplateProvider.add("GameStateManager", javaEntityTemplateProvider.get().with(new GameStateManagerEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.entities.ball", javaEntityTemplateProvider.get().with(new BallEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.bullet", javaEntityTemplateProvider.get().with(new BulletEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.limbo", javaEntityTemplateProvider.get().with(new LimboEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.base", javaEntityTemplateProvider.get().with(new BaseEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.cannon", javaEntityTemplateProvider.get().with(new CannonEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.cursor", javaEntityTemplateProvider.get().with(new CursorEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.spawner", javaEntityTemplateProvider.get().with(new SpawnerEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.segment", javaEntityTemplateProvider.get().with(new SegmentEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.path", javaEntityTemplateProvider.get().with(new PathEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.entities.segmentsmanager", javaEntityTemplateProvider.get().with(new SegmentsManagerEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.entities.world", javaEntityTemplateProvider.get().with(new WorldEntityBuilder()));
-
-			registrableTemplateProvider.add("entities.placeable", javaEntityTemplateProvider.get().with(new PlaceableEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.entities.editor", javaEntityTemplateProvider.get().with(new EditorEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.scenes.playing", javaEntityTemplateProvider.get().with(new PlayingGameStateEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.scenes.scene", javaEntityTemplateProvider.get().with(new SceneGameStateEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.screens.splash", javaEntityTemplateProvider.get().with(new SplashScreenEntityBuilder()));
-
-			registrableTemplateProvider.add("gamestates.paused", javaEntityTemplateProvider.get().with(new PausedGameStateEntityBuilder()));
-			registrableTemplateProvider.add("screens.paused", javaEntityTemplateProvider.get().with(new PausedScreenEntityBuilder()));
-
-			registrableTemplateProvider.add("gamestates.settings", javaEntityTemplateProvider.get().with(new SettingsGameStateEntityBuilder()));
-			registrableTemplateProvider.add("screens.settings", javaEntityTemplateProvider.get().with(new SettingsScreenEntityBuilder()));
-
-			registrableTemplateProvider.add("gamestates.highscores", javaEntityTemplateProvider.get().with(new HighscoresGameStateEntityBuilder()));
-			registrableTemplateProvider.add("screens.highscores", javaEntityTemplateProvider.get().with(new HighscoresScreenEntityBuilder()));
-
-			registrableTemplateProvider.add("gamestates.menu", javaEntityTemplateProvider.get().with(new MenuGameStateEntityBuilder()));
-			registrableTemplateProvider.add("screens.menu", javaEntityTemplateProvider.get().with(new MenuScreenEntityBuilder()));
-
-			registrableTemplateProvider.add("gamestates.profile", javaEntityTemplateProvider.get().with(new ProfileGameStateEntityBuilder()));
-			registrableTemplateProvider.add("screens.profile", javaEntityTemplateProvider.get().with(new ProfileScreenEntityBuilder()));
-
-			registrableTemplateProvider.add("gamestates.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreGameStateEntityBuilder()));
-			registrableTemplateProvider.add("screens.enterscore", javaEntityTemplateProvider.get().with(new EnterScoreScreenEntityBuilder()));
-			registrableTemplateProvider.add("entities.uploadScore", javaEntityTemplateProvider.get().with(new UploadScoreEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.scenes.sceneEditor", javaEntityTemplateProvider.get().with(new EditorGameStateEntityBuilder()));
-
-			registrableTemplateProvider.add("gemserk.gui.label", javaEntityTemplateProvider.get().with(new LabelEntityBuilder()));
-			registrableTemplateProvider.add("gemserk.gui.button", javaEntityTemplateProvider.get().with(new ButtonEntityBuilder()));
-
-			registrableTemplateProvider.add("gemserk.gui.labelbutton", javaEntityTemplateProvider.get().with(new LabelButtonEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.gui.button", javaEntityTemplateProvider.get().with(new CustomButtonEntityBuilder()));
-			registrableTemplateProvider.add("zombierockers.gui.checkbox", javaEntityTemplateProvider.get().with(new CheckboxEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.gui.bonusmessage", javaEntityTemplateProvider.get().with(new BonusMessageEntityBuilder()));
-
-			registrableTemplateProvider.add("zombierockers.gui.highscorestable", javaEntityTemplateProvider.get().with(new HighscoresTableEntityBuilder()));
-
-			registrableTemplateProvider.add("effects.fade", javaEntityTemplateProvider.get().with(new FadeEffectEntityBuilder()));
-
-			registrableTemplateProvider.add("commons.entities.screenshotGrabber", javaEntityTemplateProvider.get().with(new ScreenshotGrabberEntityBuilder()));
-			registrableTemplateProvider.add("commons.entities.fps", javaEntityTemplateProvider.get().with(new FpsEntityBuilder()));
-			registrableTemplateProvider.add("commons.entities.utils", javaEntityTemplateProvider.get().with(new UtilsEntityBuilder()));
-		}
-
+		
 		injector.getInstance(InitBuilderUtilsSlick.class).config();
 		injector.getInstance(InitSlickRenderer.class).config();
+		
+		{
+			// declare entity templates
 
-		GemserkGameState gameState = new GameGameState(0, "zombierockers.scenes.scene");
+			TemplateRegistrator templateRegistrator = injector.getInstance(TemplateRegistrator.class);
+
+			templateRegistrator.with("GameStateManager").register(new GameStateManagerEntityBuilder());
+
+			templateRegistrator.with("zombierockers.entities.ball").register(new BallEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.bullet").register(new BulletEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.limbo").register(new LimboEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.base").register(new BaseEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.cannon").register(new CannonEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.cursor").register(new CursorEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.spawner").register(new SpawnerEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.segment").register(new SegmentEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.path").register(new PathEntityBuilder());
+
+			templateRegistrator.with("zombierockers.entities.segmentsmanager").register(new SegmentsManagerEntityBuilder());
+			templateRegistrator.with("zombierockers.entities.world").register(new WorldEntityBuilder());
+
+			templateRegistrator.with("entities.placeable").register(new PlaceableEntityBuilder());
+
+			templateRegistrator.with("zombierockers.entities.editor").register(new EditorEntityBuilder());
+
+			templateRegistrator.with("zombierockers.scenes.playing").register(new PlayingGameStateEntityBuilder());
+
+			templateRegistrator.with("zombierockers.scenes.scene").register(new SceneGameStateEntityBuilder());
+
+			templateRegistrator.with("zombierockers.screens.splash").register(new SplashScreenEntityBuilder());
+
+			templateRegistrator.with("gamestates.paused").register(new PausedGameStateEntityBuilder());
+			templateRegistrator.with("screens.paused").register(new PausedScreenEntityBuilder());
+
+			templateRegistrator.with("gamestates.settings").register(new SettingsGameStateEntityBuilder());
+			templateRegistrator.with("screens.settings").register(new SettingsScreenEntityBuilder());
+
+			templateRegistrator.with("gamestates.highscores").register(new HighscoresGameStateEntityBuilder());
+			templateRegistrator.with("screens.highscores").register(new HighscoresScreenEntityBuilder());
+
+			templateRegistrator.with("gamestates.menu").register(new MenuGameStateEntityBuilder());
+			templateRegistrator.with("screens.menu").register(new MenuScreenEntityBuilder());
+
+			templateRegistrator.with("gamestates.profile").register(new ProfileGameStateEntityBuilder());
+			templateRegistrator.with("screens.profile").register(new ProfileScreenEntityBuilder());
+
+			templateRegistrator.with("gamestates.enterscore").register(new EnterScoreGameStateEntityBuilder());
+			templateRegistrator.with("screens.enterscore").register(new EnterScoreScreenEntityBuilder());
+			templateRegistrator.with("entities.uploadScore").register(new UploadScoreEntityBuilder());
+
+			templateRegistrator.with("zombierockers.scenes.sceneEditor").register(new EditorGameStateEntityBuilder());
+
+			templateRegistrator.with("gemserk.gui.label").register(new LabelEntityBuilder());
+			templateRegistrator.with("gemserk.gui.button").register(new ButtonEntityBuilder());
+
+			templateRegistrator.with("gemserk.gui.labelbutton").register(new LabelButtonEntityBuilder());
+
+			templateRegistrator.with("zombierockers.gui.button").register(new CustomButtonEntityBuilder());
+			templateRegistrator.with("zombierockers.gui.checkbox").register(new CheckboxEntityBuilder());
+
+			templateRegistrator.with("zombierockers.gui.bonusmessage").register(new BonusMessageEntityBuilder());
+
+			templateRegistrator.with("zombierockers.gui.highscorestable").register(new HighscoresTableEntityBuilder());
+
+			templateRegistrator.with("effects.fade").register(new FadeEffectEntityBuilder());
+
+			templateRegistrator.with("commons.entities.screenshotGrabber").register(new ScreenshotGrabberEntityBuilder());
+			templateRegistrator.with("commons.entities.fps").register(new FpsEntityBuilder());
+			templateRegistrator.with("commons.entities.utils").register(new UtilsEntityBuilder());
+
+		}
+
+		GemserkGameState gameState = new ZombieRockersGameState(0, "zombierockers.scenes.scene");
 		injector.injectMembers(gameState);
 
 		ResourceManager resourceManager = injector.getInstance(ResourceManager.class);
@@ -345,18 +353,16 @@ public class Game extends StateBasedGame {
 		ResourcesDeclaration resourcesDeclaration = injector.getInstance(ResourcesDeclaration.class);
 		resourcesDeclaration.init();
 
-		addState(new LoadingGameState(1, gameState, resourceManager.get("gemserkLogoWhite"), taskQueue) {
-			{
-				setScreenBounds(new Rectangle(0, 0, 800, 600));
-			}
-		});
+		addState(new LoadingGameState(1, gameState, resourceManager.get("gemserkLogoWhite"), taskQueue, new Rectangle(0, 0, 800, 600)));
 
 		getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(new Image(800, 600))).load());
+
+		System.out.println("AFTER INITIALIZING - " + (System.currentTimeMillis() - time));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static class ResourcesDeclaration {
-		
+
 		@Inject
 		ResourceManager resourceManager;
 
@@ -368,7 +374,7 @@ public class Game extends StateBasedGame {
 
 		@Inject
 		PropertiesSoundLoader propertiesSoundLoader;
-		
+
 		public void init() {
 			propertiesImageLoader.load("assets/images.properties");
 			propertiesAnimationLoader.load("assets/animations.properties");
@@ -393,10 +399,10 @@ public class Game extends StateBasedGame {
 			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
 			resourceManager.add("PlayMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/game.ogg"))));
 		}
-		
+
 	}
 
-	class GameGameState extends GemserkGameState {
+	class ZombieRockersGameState extends GemserkGameState {
 
 		@Inject
 		@BuilderUtils
@@ -410,13 +416,15 @@ public class Game extends StateBasedGame {
 			super.onInit();
 			builderUtils.put("svg", new SlickSvgUtils());
 			builderUtils.put("resourceManager", resourceManager);
+
+			System.out.println("AFTER LOADING RESOURCES - " + (System.currentTimeMillis() - time));
 		}
 
-		public GameGameState(int id) {
+		public ZombieRockersGameState(int id) {
 			super(id);
 		}
 
-		public GameGameState(int id, String defaultScene) {
+		public ZombieRockersGameState(int id, String defaultScene) {
 			super(id, defaultScene);
 		}
 

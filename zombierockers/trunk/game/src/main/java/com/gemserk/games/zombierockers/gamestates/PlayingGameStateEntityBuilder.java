@@ -336,7 +336,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 			@Handles
 			public void levelFinished(Message message) {
-				Properties.setValue(messageLabel, "color", slick.color(0f, 0f, 0f, 1f));
+				Properties.setValue(messageLabel, "color", slick.color(0f, 0f, 1f, 1f));
 				win = Properties.getValue(message, "win");
 				if (win) {
 					winSoundResource.get().play();
