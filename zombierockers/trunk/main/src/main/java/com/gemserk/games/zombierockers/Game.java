@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 import net.sf.json.JSONArray;
 
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -95,16 +94,12 @@ import com.gemserk.resources.ResourceManagerImpl;
 import com.gemserk.resources.ResourcesMonitor;
 import com.gemserk.resources.ResourcesMonitorImpl;
 import com.gemserk.resources.dataloaders.StaticDataLoader;
-import com.gemserk.resources.datasources.ClassPathDataSource;
-import com.gemserk.resources.resourceloaders.CachedResourceLoader;
+import com.gemserk.resources.resourceloaders.ResourceLoader;
 import com.gemserk.resources.resourceloaders.ResourceLoaderImpl;
 import com.gemserk.resources.slick.PropertiesAnimationLoader;
 import com.gemserk.resources.slick.PropertiesImageLoader;
 import com.gemserk.resources.slick.PropertiesSoundLoader;
-import com.gemserk.resources.slick.dataloaders.SlickAngelCodeFontLoader;
-import com.gemserk.resources.slick.dataloaders.SlickMusicLoader;
-import com.gemserk.resources.slick.dataloaders.SlickTrueTypeFontLoader;
-import com.gemserk.resources.slick.dataloaders.SlickUnicodeFontLoader;
+import com.gemserk.resources.slick.SlickResourcesBuilder;
 import com.gemserk.resources.slick.gamestates.LoadingGameState;
 import com.gemserk.resources.slick.gamestates.ResourceManagerLoaderProxyImpl;
 import com.gemserk.resources.slick.gamestates.TaskQueue;
@@ -398,24 +393,27 @@ public class Game extends StateBasedGame {
 			propertiesAnimationLoader.load("assets/animations.properties");
 			propertiesSoundLoader.load("assets/sounds.properties");
 
-			resourceManager.add("FontFps", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new java.awt.Font("Arial", java.awt.Font.PLAIN, 18)))));
+			new SlickResourcesBuilder(resourceManager) {
+				{
+					resource("FontFps", cached(loader(trueTypeFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 18)))));
+					resource("FontTitle", cached(loader(unicodeFont("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_title.hiero"))));
+					resource("FontDialogMessage", cached(loader(unicodeFont("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_button.hiero"))));
 
-			resourceManager.add("FontTitle", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_title.hiero"))));
-			resourceManager.add("FontDialogMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_button.hiero"))));
+					resource("FontMessage", cached(loader(unicodeFont("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_message.hiero"))));
 
-			resourceManager.add("FontMessage", new CachedResourceLoader(new ResourceLoaderImpl(new SlickUnicodeFontLoader("assets/fonts/dszombiecry.ttf", "assets/fonts/gui_message.hiero"))));
+					resource("FontScores", cached(loader(trueTypeFont(classpath("assets/fonts/dszombiecry.ttf"), java.awt.Font.PLAIN, 24))));
 
-			resourceManager.add("FontScores", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new ClassPathDataSource("assets/fonts/dszombiecry.ttf"), java.awt.Font.PLAIN, 24))));
+					resource("FontPlayingLabel", cached(loader(trueTypeFont(classpath("assets/fonts/Mugnuts.ttf"), java.awt.Font.PLAIN, 24))));
 
-			resourceManager.add("FontPlayingLabel", new CachedResourceLoader<Font>(new ResourceLoaderImpl<Font>(new SlickTrueTypeFontLoader(new ClassPathDataSource("assets/fonts/Mugnuts.ttf"), java.awt.Font.PLAIN, 24))));
+					ResourceLoader bonusResourceLoader = cached(loader(angelCodeFont(classpath("assets/fonts/bonusmessage.fnt"), classpath("assets/fonts/bonusmessage.png"))));
 
-			CachedResourceLoader bonusResourceLoader = new CachedResourceLoader(new ResourceLoaderImpl(new SlickAngelCodeFontLoader(new ClassPathDataSource("assets/fonts/bonusmessage.fnt"), new ClassPathDataSource("assets/fonts/bonusmessage.png"))));
+					resource("FontPointsLabel", bonusResourceLoader);
+					resource("FontBonusMessage", bonusResourceLoader);
 
-			resourceManager.add("FontPointsLabel", bonusResourceLoader);
-			resourceManager.add("FontBonusMessage", bonusResourceLoader);
-
-			resourceManager.add("BackgroundMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/music.ogg"))));
-			resourceManager.add("PlayMusic", new CachedResourceLoader(new ResourceLoaderImpl(new SlickMusicLoader("assets/musics/game.ogg"))));
+					resource("BackgroundMusic", cached(loader(music("assets/musics/music.ogg"))));
+					resource("PlayMusic", cached(loader(music("assets/musics/game.ogg"))));
+				}
+			};
 		}
 
 	}
