@@ -6,11 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-import net.sf.json.JSONArray;
-
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
@@ -31,8 +28,6 @@ import com.gemserk.componentsengine.commons.entities.FpsEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.ScreenshotGrabberEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.gui.LabelEntityBuilder;
-import com.gemserk.componentsengine.entities.Entity;
-import com.gemserk.componentsengine.entities.Root;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.modules.BasicModule;
 import com.gemserk.componentsengine.modules.InitBuilderUtilsBasic;
@@ -46,7 +41,6 @@ import com.gemserk.componentsengine.slick.modules.SlickSoundSystemModule;
 import com.gemserk.componentsengine.slick.utils.SlickSvgUtils;
 import com.gemserk.componentsengine.slick.utils.SlickToSlf4j;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
-import com.gemserk.componentsengine.utils.EntityDumper;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
 import com.gemserk.datastore.Data;
 import com.gemserk.datastore.DataStore;
@@ -111,7 +105,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
@@ -172,7 +165,9 @@ public class Game extends StateBasedGame {
 			// the context was probably already configured by default configuration
 			// rules
 			lc.reset();
-			configurator.doConfigure(Thread.currentThread().getContextClassLoader().getResourceAsStream("zombierockers-logback.xml"));
+			// ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			ClassLoader classLoader = Game.class.getClassLoader();
+			configurator.doConfigure(classLoader.getResourceAsStream("zombierockers-logback.xml"));
 		} catch (JoranException je) {
 			je.printStackTrace();
 			// StatusPrinter will handle this
@@ -276,7 +271,7 @@ public class Game extends StateBasedGame {
 				injector.getInstance(InitBuilderUtilsSlick.class).config();
 				injector.getInstance(InitSlickRenderer.class).config();
 
-				GemserkGameState gameState = new ZombieRockersGameState(0, "zombierockers.scenes.scene");
+				GemserkGameState gameState = new LimitedDeltaUpdateGameState(0, "zombierockers.scenes.scene");
 				injector.injectMembers(gameState);
 
 				ResourceManager resourceManager = injector.getInstance(ResourceManager.class);
@@ -351,12 +346,21 @@ public class Game extends StateBasedGame {
 
 				ResourcesDeclaration resourcesDeclaration = injector.getInstance(ResourcesDeclaration.class);
 				resourcesDeclaration.init();
+				
+				getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(getScreenShotImage())).load());
+				
+				injector.getInstance(InitCustomBuilderUtils.class).config();
+
+				taskQueue.add(new Runnable() {
+					@Override
+					public void run() {
+						System.out.println("AFTER LOADING RESOURCES - " + (System.currentTimeMillis() - time));
+					}
+				});
 
 				taskQueue.add(new EnterNextStateRunnable(container, Game.this, gameState));
 
-				getGameProperties().put("screenshot", new ResourceLoaderImpl<Image>(new StaticDataLoader<Image>(getScreenShotImage())).load());
-
-				System.out.println("AFTER INITIALIZING - " + (System.currentTimeMillis() - time));
+				// System.out.println("AFTER INITIALIZING - " + (System.currentTimeMillis() - time));
 
 			}
 
@@ -367,9 +371,29 @@ public class Game extends StateBasedGame {
 					throw new RuntimeException(e);
 				}
 			}
+
 		});
 
 		System.out.println("AFTER INITIALIZING - " + (System.currentTimeMillis() - time));
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public static class InitCustomBuilderUtils {
+
+		@Inject
+		@BuilderUtils
+		Map<String, Object> builderUtils;
+
+		@Inject
+		ResourceManager resourceManager;
+
+		public void config() {
+			if (logger.isDebugEnabled())
+				logger.debug("Registering custom builder utils.");
+			builderUtils.put("svg", new SlickSvgUtils());
+			builderUtils.put("resourceManager", resourceManager);
+		}
 
 	}
 
@@ -414,64 +438,6 @@ public class Game extends StateBasedGame {
 					resource("PlayMusic", cached(loader(music("assets/musics/game.ogg"))));
 				}
 			};
-		}
-
-	}
-
-	class ZombieRockersGameState extends GemserkGameState {
-
-		@Inject
-		@BuilderUtils
-		Map<String, Object> builderUtils;
-
-		@Inject
-		ResourceManager resourceManager;
-
-		@Override
-		public void onInit() {
-			super.onInit();
-			builderUtils.put("svg", new SlickSvgUtils());
-			builderUtils.put("resourceManager", resourceManager);
-
-			System.out.println("AFTER LOADING RESOURCES - " + (System.currentTimeMillis() - time));
-		}
-
-		public ZombieRockersGameState(int id) {
-			super(id);
-		}
-
-		public ZombieRockersGameState(int id, String defaultScene) {
-			super(id, defaultScene);
-		}
-
-		@Override
-		public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-			try {
-				super.render(container, game, g);
-			} catch (Exception e) {
-				Entity rootEntity = injector.getInstance(Key.get(Entity.class, Root.class));
-				JSONArray jobject = JSONArray.fromObject(new EntityDumper().dumpEntity(rootEntity));
-				logger.info(jobject.toString(4));
-				throw new RuntimeException(e);
-			}
-
-		}
-
-		@Override
-		public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-			try {
-				int minimumTargetFPS = 30;
-				int maximumDelta = (int) (1000f / minimumTargetFPS);
-				if (delta > maximumDelta)
-					delta = maximumDelta;
-				super.update(container, game, delta);
-			} catch (Exception e) {
-				Entity rootEntity = injector.getInstance(Key.get(Entity.class, Root.class));
-				JSONArray jobject = JSONArray.fromObject(new EntityDumper().dumpEntity(rootEntity));
-				logger.info(jobject.toString(4));
-				throw new RuntimeException(e);
-			}
-
 		}
 
 	}

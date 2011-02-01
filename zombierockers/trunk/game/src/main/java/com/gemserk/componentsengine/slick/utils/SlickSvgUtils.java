@@ -18,7 +18,9 @@ public class SlickSvgUtils {
 	public List<Vector2f> loadPoints(String file, String pathName) {
 		try {
 			ArrayList<Vector2f> points = new ArrayList<Vector2f>();
-			URI fileUri = Thread.currentThread().getContextClassLoader().getResource(file).toURI();
+//			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			ClassLoader classLoader = SlickSvgUtils.class.getClassLoader();
+			URI fileUri = classLoader.getResource(file).toURI();
 			SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(fileUri);
 			SVGElement element = diagram.getElement(pathName);
 			List vector = element.getPath(null);

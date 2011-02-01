@@ -241,7 +241,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
 					public void onAnimationFinished(Animation animation) {
-						System.exit(0);
+						container.exit();
 					}
 				}).handleChangesOf(fadeOutAnimation.get());
 			}
