@@ -55,6 +55,7 @@ public class EnterScoreScreenEntityBuilder extends EntityBuilder {
 		@Inject
 		Scores scores;
 
+		
 		@Inject
 		MessageQueue messageQueue;
 
