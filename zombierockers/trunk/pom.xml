@@ -33,7 +33,7 @@
 	<properties>
 		<compiler.version>1.6</compiler.version>
 		<componentsengine.version>0.0.9-SNAPSHOT</componentsengine.version>
-		<resourcesmanager.version>0.0.10-SNAPSHOT</resourcesmanager.version>
+		<resourcesmanager.version>0.0.11-SNAPSHOT</resourcesmanager.version>
 		<animations.version>0.0.3-SNAPSHOT</animations.version>
 	</properties>
 
