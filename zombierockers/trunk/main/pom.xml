@@ -25,7 +25,7 @@
 
 		<appletGameParameter>com.gemserk.games.zombierockers.Game</appletGameParameter>
 		<mainClass>${appletGameParameter}</mainClass>
-		<jnlp.applet.mainClass>org.newdawn.slick.AppletGameContainer</jnlp.applet.mainClass>
+		<jnlp.applet.mainClass>com.gemserk.componentsengine.slick.applet.OpenALBugFixAppletGameContainer</jnlp.applet.mainClass>
 
 		<natives>${basedir}/target/natives/</natives>
 
