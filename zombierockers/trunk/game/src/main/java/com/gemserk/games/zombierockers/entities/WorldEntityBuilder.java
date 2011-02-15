@@ -18,6 +18,7 @@ import com.gemserk.componentsengine.commons.components.ExplosionComponent;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.OutOfBoundsRemover;
 import com.gemserk.componentsengine.commons.components.Path;
+import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
 import com.gemserk.componentsengine.commons.components.TimerComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
@@ -130,6 +131,16 @@ public class WorldEntityBuilder extends EntityBuilder {
 		});
 
 		property("backgroundImageResource", resourceManager.get(level.get("background")));
+		
+		component(new RectangleRendererComponent("backgroundRectangle")).withProperties(new ComponentProperties() {
+			{
+				property("position", slick.vector(0, 0));
+				property("rectangle", new Rectangle(-20, -20, screenBounds.getWidth() + 40, screenBounds.getHeight()+40));
+				property("lineColor", slick.color(1f, 1f, 1f, 1f));
+				property("fillColor", slick.color(1f, 1f, 1f, 1f));
+				property("layer", -1001);
+			}
+		});
 
 		component(new ImageRenderableComponent("background")).withProperties(new ComponentProperties() {
 			{
