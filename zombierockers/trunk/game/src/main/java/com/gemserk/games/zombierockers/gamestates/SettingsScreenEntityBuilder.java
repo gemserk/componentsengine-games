@@ -3,8 +3,8 @@ package com.gemserk.games.zombierockers.gamestates;
 import java.util.HashMap;
 
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.openal.SoundStore;
 
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent;
@@ -99,36 +99,114 @@ public class SettingsScreenEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		child(templateProvider.getTemplate("gemserk.gui.label").instantiate(entity.getId() + "_fullScreenLabel", new HashMap<String, Object>() {
+		// child(templateProvider.getTemplate("gemserk.gui.label").instantiate(entity.getId() + "_fullScreenLabel", new HashMap<String, Object>() {
+		// {
+		// put("font", resourceManager.get("FontDialogMessage"));
+		// put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 80f));
+		// put("bounds", slick.rectangle(-200, -25, 400, 50));
+		// put("align", "left");
+		// put("valign", "center");
+		// put("layer", 1);
+		// put("message", "Fullscreen");
+		// put("color", slick.color(0.3f, 0.3f, 0.8f, 1f));
+		// }
+		// }));
+
+		// child(templateProvider.getTemplate("zombierockers.gui.checkbox").instantiate(entity.getId() + "_fullScreenCheckbox", new HashMap<String, Object>() {
+		// {
+		// put("position", slick.vector(screenBounds.getCenterX() + 140, screenBounds.getCenterY() - 80f));
+		// put("value", new FixedProperty(entity) {
+		// @Override
+		// public void set(Object value) {
+		// Boolean fullscreen = (Boolean) value;
+		// try {
+		// gameContainer.setFullscreen(fullscreen);
+		// } catch (SlickException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		//
+		// @Override
+		// public Object get() {
+		// return gameContainer.isFullscreen();
+		// }
+		// });
+		// put("layer", 1);
+		// put("imageFalse", resourceManager.get("false"));
+		// put("imageTrue", resourceManager.get("true"));
+		// put("bounds", slick.rectangle(-30, -30, 60, 60));
+		// put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+		// }
+		// }));
+
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate(entity.getId() + "_soundsEnabledLabel", new HashMap<String, Object>() {
 			{
 				put("font", resourceManager.get("FontDialogMessage"));
-				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 80f));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY() - 60f));
 				put("bounds", slick.rectangle(-200, -25, 400, 50));
 				put("align", "left");
 				put("valign", "center");
 				put("layer", 1);
-				put("message", "Fullscreen");
+				put("message", "Sounds enabled");
 				put("color", slick.color(0.3f, 0.3f, 0.8f, 1f));
 			}
 		}));
 
-		child(templateProvider.getTemplate("zombierockers.gui.checkbox").instantiate(entity.getId() + "_fullScreenCheckbox", new HashMap<String, Object>() {
+		child(templateProvider.getTemplate("zombierockers.gui.checkbox").instantiate(entity.getId() + "_soundsCheckbox", new HashMap<String, Object>() {
 			{
-				put("position", slick.vector(screenBounds.getCenterX() + 140, screenBounds.getCenterY() - 80f));
+				put("position", slick.vector(screenBounds.getCenterX() + 140, screenBounds.getCenterY() - 60f));
 				put("value", new FixedProperty(entity) {
 					@Override
 					public void set(Object value) {
-						Boolean fullscreen = (Boolean) value;
-						try {
-							gameContainer.setFullscreen(fullscreen);
-						} catch (SlickException e) {
-							e.printStackTrace();
-						}
+						Boolean booleanValue = (Boolean) value;
+						if (booleanValue)
+							SoundStore.get().setSoundVolume(1);
+						else
+							SoundStore.get().setSoundVolume(0);
 					}
 
 					@Override
 					public Object get() {
-						return gameContainer.isFullscreen();
+						return SoundStore.get().getSoundVolume() > 0f;
+					}
+				});
+				put("layer", 1);
+				put("imageFalse", resourceManager.get("false"));
+				put("imageTrue", resourceManager.get("true"));
+				put("bounds", slick.rectangle(-30, -30, 60, 60));
+				put("buttonReleasedSound", resourceManager.get("ButtonSound"));
+			}
+		}));
+		
+		child(templateProvider.getTemplate("gemserk.gui.label").instantiate(entity.getId() + "_musicEnabledLabel", new HashMap<String, Object>() {
+			{
+				put("font", resourceManager.get("FontDialogMessage"));
+				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getCenterY()));
+				put("bounds", slick.rectangle(-200, -25, 400, 50));
+				put("align", "left");
+				put("valign", "center");
+				put("layer", 1);
+				put("message", "Music enabled");
+				put("color", slick.color(0.3f, 0.3f, 0.8f, 1f));
+			}
+		}));
+
+		child(templateProvider.getTemplate("zombierockers.gui.checkbox").instantiate(entity.getId() + "_musicCheckbox", new HashMap<String, Object>() {
+			{
+				put("position", slick.vector(screenBounds.getCenterX() + 140, screenBounds.getCenterY()));
+				put("value", new FixedProperty(entity) {
+					@Override
+					public void set(Object value) {
+						Boolean booleanValue = (Boolean) value;
+						if (booleanValue)
+							SoundStore.get().setMusicVolume(1f);
+						else
+							SoundStore.get().setMusicVolume(0f);
+					}
+
+					@Override
+					public Object get() {
+						return SoundStore.get().getMusicVolume() > 0f;
 					}
 				});
 				put("layer", 1);
