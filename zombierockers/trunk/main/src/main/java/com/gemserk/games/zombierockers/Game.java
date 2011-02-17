@@ -27,6 +27,7 @@ import com.gemserk.commons.slick.util.SlickScreenshotGrabber;
 import com.gemserk.componentsengine.commons.entities.FpsEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.GameStateManagerEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.ScreenshotGrabberEntityBuilder;
+import com.gemserk.componentsengine.commons.entities.gui.ImageEntityBuilder;
 import com.gemserk.componentsengine.commons.entities.gui.LabelEntityBuilder;
 import com.gemserk.componentsengine.game.GlobalProperties;
 import com.gemserk.componentsengine.modules.BasicModule;
@@ -343,6 +344,8 @@ public class Game extends StateBasedGame {
 				templateRegistrator.with("commons.entities.screenshotGrabber").register(new ScreenshotGrabberEntityBuilder());
 				templateRegistrator.with("commons.entities.fps").register(new FpsEntityBuilder());
 				templateRegistrator.with("commons.entities.utils").register(new UtilsEntityBuilder());
+				
+				templateRegistrator.with("gemserk.gui.image").register(new ImageEntityBuilder());
 
 				ResourcesDeclaration resourcesDeclaration = injector.getInstance(ResourcesDeclaration.class);
 				resourcesDeclaration.init();
