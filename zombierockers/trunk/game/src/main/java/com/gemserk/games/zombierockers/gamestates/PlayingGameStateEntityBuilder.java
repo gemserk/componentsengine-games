@@ -15,14 +15,15 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gemserk.commons.animation.Animation;
-import com.gemserk.commons.animation.handlers.AnimationEventHandler;
-import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
-import com.gemserk.commons.animation.properties.InterpolatedProperty;
-import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
-import com.gemserk.commons.animation.timeline.TimelineAnimation;
-import com.gemserk.commons.animation.timeline.TimelineBuilder;
-import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
+import com.gemserk.animation4j.Animation;
+import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
+import com.gemserk.animation4j.event.AnimationEventHandler;
+import com.gemserk.animation4j.event.AnimationHandlerManager;
+import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
+import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
+import com.gemserk.animation4j.timeline.TimelineAnimation;
+import com.gemserk.animation4j.timeline.TimelineBuilder;
+import com.gemserk.animation4j.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -47,7 +48,6 @@ import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.resources.Resource;
 import com.gemserk.resources.ResourceManager;
 import com.gemserk.scores.Scores;
-import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -197,9 +197,8 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
 					{
-						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
-						keyFrame(0, slick.color(1f, 1f, 1f, 1f));
-						keyFrame(1000, slick.color(1f, 1f, 1f, 0f));
+						keyFrame(0, slick.color(1f, 1f, 1f, 1f), new ColorInterpolator());
+						keyFrame(1000, slick.color(1f, 1f, 1f, 0f), new ColorInterpolator());
 					}
 				});
 			}
@@ -221,9 +220,8 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				delay(2000);
 				value("color", new TimelineValueBuilder<Color>() {
 					{
-						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
-						keyFrame(0, slick.color(1f, 1f, 1f, 0f));
-						keyFrame(1000, slick.color(1f, 1f, 1f, 1f));
+						keyFrame(0, slick.color(1f, 1f, 1f, 0f), new ColorInterpolator());
+						keyFrame(1000, slick.color(1f, 1f, 1f, 1f), new ColorInterpolator());
 					}
 				});
 			}

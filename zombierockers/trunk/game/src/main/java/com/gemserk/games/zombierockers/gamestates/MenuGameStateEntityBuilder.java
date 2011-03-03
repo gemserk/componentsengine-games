@@ -7,13 +7,13 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.geom.Rectangle;
 
-import com.gemserk.commons.animation.Animation;
-import com.gemserk.commons.animation.handlers.AnimationEventHandler;
-import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
-import com.gemserk.commons.animation.timeline.LinearInterpolatorFactory;
-import com.gemserk.commons.animation.timeline.TimelineAnimation;
-import com.gemserk.commons.animation.timeline.TimelineBuilder;
-import com.gemserk.commons.animation.timeline.TimelineValueBuilder;
+import com.gemserk.animation4j.Animation;
+import com.gemserk.animation4j.event.AnimationEventHandler;
+import com.gemserk.animation4j.event.AnimationHandlerManager;
+import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
+import com.gemserk.animation4j.timeline.TimelineAnimation;
+import com.gemserk.animation4j.timeline.TimelineBuilder;
+import com.gemserk.animation4j.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
@@ -35,7 +35,7 @@ import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-@SuppressWarnings( { "unchecked", "unused", "serial" })
+@SuppressWarnings({ "unchecked", "unused", "serial" })
 public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 	@Inject
@@ -86,9 +86,8 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
 					{
-						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
-						keyFrame(0, slick.color(1f, 1f, 1f, 1f));
-						keyFrame(1000, slick.color(1f, 1f, 1f, 0f));
+						keyFrame(0, slick.color(1f, 1f, 1f, 1f), new ColorInterpolator());
+						keyFrame(1000, slick.color(1f, 1f, 1f, 0f), new ColorInterpolator());
 					}
 				});
 			}
@@ -108,9 +107,8 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
 					{
-						interpolator(LinearInterpolatorFactory.linearInterpolatorColor());
-						keyFrame(0, slick.color(1f, 1f, 1f, 0f));
-						keyFrame(1000, slick.color(1f, 1f, 1f, 1f));
+						keyFrame(0, slick.color(1f, 1f, 1f, 0f), new ColorInterpolator());
+						keyFrame(1000, slick.color(1f, 1f, 1f, 1f), new ColorInterpolator());
 					}
 				});
 			}
@@ -178,7 +176,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 
 				if (!backgroundMusic.get().get().playing())
 					backgroundMusic.get().get().fade(1000, 1.0f, false);
-				
+
 				fadeInAnimation.get().restart();
 				fadeOutAnimation.get().stop();
 			}
@@ -227,7 +225,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				}).handleChangesOf(fadeOutAnimation.get());
 			}
 
-			//			
+			//
 			// @Handles
 			// public void onProfileEntered(Message message) {
 			// // without animation for now...

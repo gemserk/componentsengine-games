@@ -21,8 +21,8 @@ import com.gemserk.componentsengine.slick.effects.EffectFactory;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.games.zombierockers.PathTraversal;
-import com.gemserk.games.zombierockers.SubPathDefinition;
 import com.gemserk.games.zombierockers.ScenesDefinitions.SubPathDefinitions;
+import com.gemserk.games.zombierockers.SubPathDefinition;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 

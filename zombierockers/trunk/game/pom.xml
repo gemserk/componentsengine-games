@@ -57,10 +57,20 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.gemserk.commons.animation</groupId>
-			<artifactId>animation</artifactId>
+			<groupId>com.gemserk.animation4j</groupId>
+			<artifactId>animation4j-core</artifactId>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>com.gemserk.animation4j</groupId>
+			<artifactId>animation4j-componentsengine</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.gemserk.animation4j</groupId>
+			<artifactId>animation4j-slick</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.jcraft</groupId>
 			<artifactId>jorbis</artifactId>

@@ -5,9 +5,11 @@ import java.util.HashMap;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
-import com.gemserk.commons.animation.properties.InterpolatedProperty;
-import com.gemserk.commons.animation.properties.InterpolatedPropertyTimeProvider;
+import com.gemserk.animation4j.componentsengine.UpdateableTimeProvider;
+import com.gemserk.animation4j.componentsengine.components.UpdateTimeProviderComponent;
+import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
+import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
+import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.Message;
@@ -18,8 +20,6 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.componentsengine.triggers.NullTrigger;
-import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
-import com.gemserk.slick.animation.timeline.Vector2fInterpolatedValue;
 import com.google.inject.Inject;
 
 public class CheckboxEntityBuilder extends EntityBuilder {
@@ -83,7 +83,7 @@ public class CheckboxEntityBuilder extends EntityBuilder {
 
 		tags("checkbox");
 
-		final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
+		final UpdateableTimeProvider timeProvider = new UpdateableTimeProvider();
 
 		component(new UpdateTimeProviderComponent("updateTimeProvider")).withProperties(new ComponentProperties() {
 			{

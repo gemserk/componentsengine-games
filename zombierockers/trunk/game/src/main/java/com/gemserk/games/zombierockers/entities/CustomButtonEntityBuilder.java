@@ -7,9 +7,11 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
-import com.gemserk.commons.animation.properties.InterpolatedProperty;
-import com.gemserk.commons.animation.properties.InterpolatedPropertyTimeProvider;
+import com.gemserk.animation4j.componentsengine.UpdateableTimeProvider;
+import com.gemserk.animation4j.componentsengine.components.UpdateTimeProviderComponent;
+import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
+import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
+import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -22,8 +24,6 @@ import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.resources.Resource;
-import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
-import com.gemserk.slick.animation.timeline.Vector2fInterpolatedValue;
 import com.google.inject.Inject;
 
 public class CustomButtonEntityBuilder extends EntityBuilder {
@@ -41,7 +41,7 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 	@Override
 	public void build() {
 
-		final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
+		final UpdateableTimeProvider timeProvider = new UpdateableTimeProvider();
 
 		property("buttonReleasedSound", parameters.get("buttonReleasedSound"), null);
 

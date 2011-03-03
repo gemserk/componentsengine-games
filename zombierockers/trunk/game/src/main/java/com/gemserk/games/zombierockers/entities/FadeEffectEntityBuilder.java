@@ -7,11 +7,11 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.commons.animation.Animation;
-import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
-import com.gemserk.commons.animation.timeline.Timeline;
-import com.gemserk.commons.animation.timeline.TimelineAnimation;
-import com.gemserk.commons.animation.timeline.TimelineValue;
+import com.gemserk.animation4j.Animation;
+import com.gemserk.animation4j.event.AnimationHandlerManager;
+import com.gemserk.animation4j.timeline.Timeline;
+import com.gemserk.animation4j.timeline.TimelineAnimation;
+import com.gemserk.animation4j.timeline.TimelineValue;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;

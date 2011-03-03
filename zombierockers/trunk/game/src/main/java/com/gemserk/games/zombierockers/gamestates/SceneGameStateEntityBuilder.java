@@ -8,7 +8,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gemserk.commons.animation.handlers.AnimationHandlerManager;
+import com.gemserk.animation4j.event.AnimationHandlerManager;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.ReflectionComponent;

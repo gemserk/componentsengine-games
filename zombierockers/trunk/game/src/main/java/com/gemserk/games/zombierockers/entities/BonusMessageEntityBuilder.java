@@ -5,9 +5,11 @@ import java.util.HashMap;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.commons.animation.components.UpdateTimeProviderComponent;
-import com.gemserk.commons.animation.properties.InterpolatedProperty;
-import com.gemserk.commons.animation.properties.InterpolatedPropertyTimeProvider;
+import com.gemserk.animation4j.componentsengine.UpdateableTimeProvider;
+import com.gemserk.animation4j.componentsengine.components.UpdateTimeProviderComponent;
+import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
+import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
+import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -18,8 +20,6 @@ import com.gemserk.componentsengine.properties.ReferenceProperty;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
 import com.gemserk.resources.ResourceManager;
-import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
-import com.gemserk.slick.animation.timeline.Vector2fInterpolatedValue;
 import com.google.inject.Inject;
 
 public class BonusMessageEntityBuilder extends EntityBuilder {
@@ -52,7 +52,7 @@ public class BonusMessageEntityBuilder extends EntityBuilder {
 		final Vector2f startSize = parameters.get("startSize", slick.vector(0.6f, 0.6f));
 		final Vector2f endSize = parameters.get("endSize", slick.vector(1.0f, 1.0f));
 
-		final InterpolatedPropertyTimeProvider timeProvider = new InterpolatedPropertyTimeProvider();
+		final UpdateableTimeProvider timeProvider = new UpdateableTimeProvider();
 
 		String[] lines = parameters.get("lines");
 

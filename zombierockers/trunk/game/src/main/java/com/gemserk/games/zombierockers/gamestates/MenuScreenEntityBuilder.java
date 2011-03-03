@@ -6,7 +6,9 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.commons.animation.properties.InterpolatedProperty;
+import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
+import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
+import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -22,8 +24,6 @@ import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.utils.DesktopUtils;
 import com.gemserk.datastore.Data;
 import com.gemserk.resources.ResourceManager;
-import com.gemserk.slick.animation.timeline.ColorInterpolatedValue;
-import com.gemserk.slick.animation.timeline.Vector2fInterpolatedValue;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
