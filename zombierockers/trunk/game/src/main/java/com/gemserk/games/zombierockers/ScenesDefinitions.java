@@ -9,6 +9,9 @@ import java.util.Map;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.gemserk.componentsengine.commons.path.PathTraversal;
+import com.gemserk.componentsengine.commons.path.SubPathDefinition;
+
 public class ScenesDefinitions {
 
 	static class LevelBuilder {
@@ -353,7 +356,7 @@ public class ScenesDefinitions {
 			float distanceFromOrigin = pathTraversal.getDistanceFromOrigin();
 
 			for (SubPathDefinition subPathDefinition : elements)
-				if (subPathDefinition.start <= distanceFromOrigin && subPathDefinition.end > distanceFromOrigin)
+				if (subPathDefinition.getStart() <= distanceFromOrigin && subPathDefinition.getEnd() > distanceFromOrigin)
 					return subPathDefinition;
 
 			return defaultElement;

@@ -8,6 +8,8 @@ import org.newdawn.slick.geom.Vector2f;
 import com.gemserk.animation4j.componentsengine.UpdateableTimeProvider;
 import com.gemserk.animation4j.componentsengine.components.UpdateTimeProviderComponent;
 import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
+import com.gemserk.animation4j.interpolator.function.InterpolatorFunctionFactory;
+import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
 import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
 import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;

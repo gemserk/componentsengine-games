@@ -7,6 +7,8 @@ import java.util.Map;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.gemserk.componentsengine.commons.path.PathTraversal;
+import com.gemserk.componentsengine.commons.path.SubPathDefinition;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -20,9 +22,7 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.slick.effects.EffectFactory;
 import com.gemserk.componentsengine.slick.utils.SlickUtils;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.games.zombierockers.PathTraversal;
 import com.gemserk.games.zombierockers.ScenesDefinitions.SubPathDefinitions;
-import com.gemserk.games.zombierockers.SubPathDefinition;
 import com.gemserk.resources.ResourceManager;
 import com.google.inject.Inject;
 

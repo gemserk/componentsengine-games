@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.commons.components.Path;
+import com.gemserk.componentsengine.commons.path.PathTraversal;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -25,7 +26,6 @@ import com.gemserk.componentsengine.properties.PropertiesMapBuilder;
 import com.gemserk.componentsengine.properties.PropertiesWrapper;
 import com.gemserk.componentsengine.properties.Property;
 import com.gemserk.componentsengine.templates.EntityBuilder;
-import com.gemserk.games.zombierockers.PathTraversal;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
