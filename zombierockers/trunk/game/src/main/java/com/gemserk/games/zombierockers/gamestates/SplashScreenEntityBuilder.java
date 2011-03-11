@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.animation4j.Animation;
+import com.gemserk.animation4j.event.AnimationEvent;
 import com.gemserk.animation4j.event.AnimationEventHandler;
 import com.gemserk.animation4j.event.AnimationHandlerManager;
 import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
-import com.gemserk.animation4j.timeline.TimelineAnimation;
-import com.gemserk.animation4j.timeline.TimelineBuilder;
+import com.gemserk.animation4j.timeline.TimelineAnimationBuilder;
 import com.gemserk.animation4j.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
@@ -83,8 +83,9 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeInAnimation = new TimelineAnimationBuilder() {
 			{
+				started(true);
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
 					{
@@ -93,7 +94,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), true);
+		}.build();
 
 		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
 			{
@@ -104,8 +105,9 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeOutAnimation = new TimelineAnimationBuilder() {
 			{
+				started(true);
 				delay(2000);
 				value("color", new TimelineValueBuilder<Color>() {
 					{
@@ -114,7 +116,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), true);
+		}.build();
 
 		child(templateProvider.getTemplate("effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
 			{
@@ -150,7 +152,7 @@ public class SplashScreenEntityBuilder extends EntityBuilder {
 			public void enterNodeState(Message message) {
 				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void onAnimationFinished(Animation animation) {
+					public void onAnimationFinished(AnimationEvent e) {
 						messageQueue.enqueueDelay(new Message("menu"));
 					}
 				}).handleChangesOf(fadeOutAnimation.get());

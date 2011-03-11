@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory;
 
 import com.gemserk.animation4j.Animation;
 import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
+import com.gemserk.animation4j.event.AnimationEvent;
 import com.gemserk.animation4j.event.AnimationEventHandler;
 import com.gemserk.animation4j.event.AnimationHandlerManager;
 import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
 import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
-import com.gemserk.animation4j.timeline.TimelineAnimation;
-import com.gemserk.animation4j.timeline.TimelineBuilder;
+import com.gemserk.animation4j.timeline.TimelineAnimationBuilder;
 import com.gemserk.animation4j.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
@@ -192,7 +192,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeInAnimation = new TimelineAnimationBuilder() {
 			{
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
@@ -202,7 +202,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), false);
+		}.build();
 
 		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
 			{
@@ -215,7 +215,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 
 		property("fadeInAnimation", fadeInAnimation);
 
-		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeOutAnimation = new TimelineAnimationBuilder() {
 			{
 				delay(2000);
 				value("color", new TimelineValueBuilder<Color>() {
@@ -225,7 +225,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), false);
+		}.build();
 
 		property("fadeOutAnimation", fadeOutAnimation);
 
@@ -346,7 +346,7 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				fadeOutAnimation.restart();
 				animationHandlerManager.with(new AnimationEventHandler(){
 					@Override
-					public void onAnimationFinished(Animation animation) {
+					public void onAnimationFinished(AnimationEvent e) {
 						messageQueue.enqueue(messageBuilder.newMessage("onLevelFinished").get());
 					}
 				}).handleChangesOf(fadeOutAnimation);

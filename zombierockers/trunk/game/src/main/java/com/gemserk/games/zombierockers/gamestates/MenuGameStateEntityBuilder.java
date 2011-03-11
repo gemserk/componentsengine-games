@@ -8,11 +8,11 @@ import org.newdawn.slick.Music;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.animation4j.Animation;
+import com.gemserk.animation4j.event.AnimationEvent;
 import com.gemserk.animation4j.event.AnimationEventHandler;
 import com.gemserk.animation4j.event.AnimationHandlerManager;
 import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
-import com.gemserk.animation4j.timeline.TimelineAnimation;
-import com.gemserk.animation4j.timeline.TimelineBuilder;
+import com.gemserk.animation4j.timeline.TimelineAnimationBuilder;
 import com.gemserk.animation4j.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
@@ -81,7 +81,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeInAnimation = new TimelineAnimationBuilder() {
 			{
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
@@ -91,7 +91,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), false);
+		}.build();
 
 		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
 			{
@@ -102,7 +102,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 			}
 		}));
 
-		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeOutAnimation =  new TimelineAnimationBuilder() {
 			{
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
@@ -112,7 +112,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), false);
+		}.build();
 
 		child(templateProvider.getTemplate("effects.fade").instantiate("fadeOutEffect", new HashMap<String, Object>() {
 			{
@@ -195,7 +195,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				fadeOutAnimation.get().restart();
 				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void onAnimationFinished(Animation animation) {
+					public void onAnimationFinished(AnimationEvent e) {
 						messageQueue.enqueue(messageBuilder.newMessage("resume").get());
 						messageQueue.enqueueDelay(messageBuilder.newMessage("restartLevel").get());
 					}
@@ -208,7 +208,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				fadeOutAnimation.get().restart();
 				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void onAnimationFinished(Animation animation) {
+					public void onAnimationFinished(AnimationEvent e) {
 						messageQueue.enqueue(messageBuilder.newMessage("settings").get());
 					}
 				}).handleChangesOf(fadeOutAnimation.get());
@@ -219,7 +219,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				fadeOutAnimation.get().restart();
 				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void onAnimationFinished(Animation animation) {
+					public void onAnimationFinished(AnimationEvent e) {
 						messageQueue.enqueue(messageBuilder.newMessage("profile").get());
 					}
 				}).handleChangesOf(fadeOutAnimation.get());
@@ -238,7 +238,7 @@ public class MenuGameStateEntityBuilder extends EntityBuilder {
 				fadeOutAnimation.get().restart();
 				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void onAnimationFinished(Animation animation) {
+					public void onAnimationFinished(AnimationEvent e) {
 						container.exit();
 					}
 				}).handleChangesOf(fadeOutAnimation.get());

@@ -6,11 +6,11 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 
 import com.gemserk.animation4j.Animation;
+import com.gemserk.animation4j.event.AnimationEvent;
 import com.gemserk.animation4j.event.AnimationEventHandler;
 import com.gemserk.animation4j.event.AnimationHandlerManager;
 import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
-import com.gemserk.animation4j.timeline.TimelineAnimation;
-import com.gemserk.animation4j.timeline.TimelineBuilder;
+import com.gemserk.animation4j.timeline.TimelineAnimationBuilder;
 import com.gemserk.animation4j.timeline.TimelineValueBuilder;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -101,7 +101,7 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 				fadeOutAnimation.get().restart();
 				animationHandlerManager.with(new AnimationEventHandler() {
 					@Override
-					public void onAnimationFinished(Animation animation) {
+					public void onAnimationFinished(AnimationEvent e) {
 						messageQueue.enqueue(messageBuilder.newMessage("menu").get());
 					}
 				}).handleChangesOf(fadeOutAnimation.get());
@@ -111,7 +111,7 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 
 		child(templateProvider.getTemplate("commons.entities.utils").instantiate("utilsEntity"));
 
-		final Animation fadeInAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeInAnimation = new TimelineAnimationBuilder() {
 			{
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
@@ -121,7 +121,7 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), false);
+		}.build();
 
 		child(templateProvider.getTemplate("effects.fade").instantiate("fadeInEffect", new HashMap<String, Object>() {
 			{
@@ -134,7 +134,7 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 
 		property("fadeInAnimation", fadeInAnimation);
 
-		final Animation fadeOutAnimation = new TimelineAnimation(new TimelineBuilder() {
+		final Animation fadeOutAnimation = new TimelineAnimationBuilder() {
 			{
 				delay(0);
 				value("color", new TimelineValueBuilder<Color>() {
@@ -144,7 +144,7 @@ public class SettingsGameStateEntityBuilder extends EntityBuilder {
 					}
 				});
 			}
-		}.build(), false);
+		}.build();
 
 		property("fadeOutAnimation", fadeOutAnimation);
 
