@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gemserk.componentsengine.gamestates.GemserkGameState;
+import com.gemserk.scores.ScoreSerializerJSONImpl;
 import com.gemserk.scores.ScoresHttpImpl;
 
 public class Game extends StateBasedGame {
@@ -64,7 +65,7 @@ public class Game extends StateBasedGame {
 //		File scoresFile = new File(System.getProperty("user.home") + "/.gemserk/jylonwars/scores.data");
 //		gameProperties.put("scores", new ScoresFileImpl(scoresFile));
 		
-		gameProperties.put("scores", new ScoresHttpImpl("90eb28f982882fb5def25d61c9420be9", "http://gemserkscores.appspot.com/"));
+		gameProperties.put("scores", new ScoresHttpImpl("90eb28f982882fb5def25d61c9420be9", "http://gemserkscores.appspot.com/", new ScoreSerializerJSONImpl()));
 		
 		gameProperties.put("executor", Executors.newCachedThreadPool());
 	}

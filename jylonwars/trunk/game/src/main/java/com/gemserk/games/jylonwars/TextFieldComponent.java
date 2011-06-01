@@ -30,6 +30,8 @@ public class TextFieldComponent extends FieldsReflectionComponent implements Key
 	}
 
 	public void keyPressed(int key, char c) {
+		if (textField == null)
+			return;
 		if (key == Input.KEY_LEFT)
 			textField.cursorLeft();
 		else if (key == Input.KEY_RIGHT)

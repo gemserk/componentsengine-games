@@ -3,6 +3,7 @@ package jylonwars.scenes;
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
 
 import com.gemserk.componentsengine.commons.components.ComponentFromListOfClosures 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 import com.gemserk.componentsengine.messages.ChildrenManagementMessageFactory 
 import com.gemserk.componentsengine.messages.UpdateMessage 
@@ -41,7 +42,14 @@ builder.entity {
 		property("position",utils.vector(0,0))
 		property("rectangle", utils.rectangle(0,0, 800, 600))
 		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
-		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
+		property("fillColor", utils.color(0f,0f,0f,0.8f))
+	}
+	
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image("labelpanel"))
+		property("color", utils.color(1,1,1,1))
+		property("position", utils.vector(400,320))
+		property("direction", utils.vector(1,0))
 	}
 	
 	def submittingScorePanel = entity("submittingScorePanel") {

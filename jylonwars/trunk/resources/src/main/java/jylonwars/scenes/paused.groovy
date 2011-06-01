@@ -1,6 +1,6 @@
 package jylonwars.scenes;
 
-import com.gemserk.componentsengine.commons.components.ProcessingDisablerComponent 
+import com.gemserk.componentsengine.commons.components.ImageRenderableComponent 
 import com.gemserk.componentsengine.commons.components.RectangleRendererComponent 
 
 
@@ -14,7 +14,14 @@ builder.entity {
 		property("position",utils.vector(0,0))
 		property("rectangle", utils.rectangle(0,0, 800, 600))
 		property("lineColor", utils.color(0.2f,0.2f,0.2f,0.0f))
-		property("fillColor", utils.color(0.5f,0.5f,0.5f,0.5f))
+		property("fillColor", utils.color(0f,0f,0f,0.8f))
+	}
+	
+	component(new ImageRenderableComponent("imagerenderer")) {
+		property("image", utils.resources.image("highscorespanel"))
+		property("color", utils.color(1,1,1,1f))
+		property("position", utils.vector(400,300))
+		property("direction", utils.vector(1,0))
 	}
 	
 	child(entity("pausedLabel"){

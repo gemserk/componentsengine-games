@@ -36,8 +36,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.gemserk.datastore</groupId>
-			<artifactId>datastore</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<artifactId>datastore-desktop</artifactId>
+			<version>0.0.3</version>
 		</dependency>
 	</dependencies>
 
