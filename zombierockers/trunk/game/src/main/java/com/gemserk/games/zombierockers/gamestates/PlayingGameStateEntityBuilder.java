@@ -21,9 +21,9 @@ import com.gemserk.animation4j.event.AnimationEvent;
 import com.gemserk.animation4j.event.AnimationEventHandler;
 import com.gemserk.animation4j.event.AnimationHandlerManager;
 import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
-import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
 import com.gemserk.animation4j.timeline.TimelineAnimationBuilder;
 import com.gemserk.animation4j.timeline.TimelineValueBuilder;
+import com.gemserk.animation4j.transitions.AutoUpdateableTransition;
 import com.gemserk.componentsengine.components.FieldsReflectionComponent;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
@@ -298,7 +298,9 @@ public class PlayingGameStateEntityBuilder extends EntityBuilder {
 				put("valign", "center");
 				put("layer", 40);
 				put("message", "");
-				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(slick.color(0f, 0f, 0f, 0f)), 0.004f));
+				
+				// put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(slick.color(0f, 0f, 0f, 0f)), 0.004f));				
+				put("color", new InterpolatedProperty<Color>(new AutoUpdateableTransition<Color>(new Color(0f, 0f, 0f, 0f), new ColorInterpolator(), 0.004f)));
 			}
 		});
 		child(messageLabel);

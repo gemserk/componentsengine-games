@@ -7,11 +7,12 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.animation4j.componentsengine.UpdateableTimeProvider;
 import com.gemserk.animation4j.componentsengine.components.UpdateTimeProviderComponent;
 import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
-import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
-import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
+import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
+import com.gemserk.animation4j.slick.interpolators.Vector2fInterpolator;
+import com.gemserk.animation4j.time.UpdateableTimeProvider;
+import com.gemserk.animation4j.transitions.AutoUpdateableTransition;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -64,8 +65,11 @@ public class CustomButtonEntityBuilder extends EntityBuilder {
 
 		HashMap<String, Object> newParameters = new HashMap<String, Object>() {
 			{
-				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(new Color(startColor)), 0.005f, timeProvider));
-				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(startSize.copy()), 0.005f, timeProvider));
+				put("color", new InterpolatedProperty<Color>(new AutoUpdateableTransition<Color>(new Color(startColor), new ColorInterpolator(), 0.005f, timeProvider)));
+				put("size", new InterpolatedProperty<Vector2f>(new AutoUpdateableTransition<Vector2f>(startSize.copy(), new Vector2fInterpolator(), 0.005f, timeProvider)));
+
+//				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(new Color(startColor)), 0.005f, timeProvider));
+//				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(startSize.copy()), 0.005f, timeProvider));
 			}
 		};
 

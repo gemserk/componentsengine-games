@@ -44,6 +44,7 @@ import com.gemserk.componentsengine.slick.utils.SlickToSlf4j;
 import com.gemserk.componentsengine.templates.JavaEntityTemplate;
 import com.gemserk.componentsengine.utils.annotations.BuilderUtils;
 import com.gemserk.datastore.Data;
+import com.gemserk.datastore.DataSerializerJSONImpl;
 import com.gemserk.datastore.DataStore;
 import com.gemserk.datastore.DataStoreJSONInFileImpl;
 import com.gemserk.games.zombierockers.entities.BallEntityBuilder;
@@ -99,6 +100,7 @@ import com.gemserk.resources.slick.SlickResourcesBuilder;
 import com.gemserk.resources.slick.gamestates.LoadingGameState;
 import com.gemserk.resources.slick.gamestates.ResourceManagerLoaderProxyImpl;
 import com.gemserk.resources.slick.progress.task.EnterNextStateRunnable;
+import com.gemserk.scores.ScoreSerializerJSONImpl;
 import com.gemserk.scores.Scores;
 import com.gemserk.scores.ScoresHttpImpl;
 import com.google.common.collect.Sets;
@@ -213,11 +215,11 @@ public class Game extends StateBasedGame {
 				File storageFile = new File(System.getProperty("user.home") + "/.gemserk/zombierockers/profiles.data");
 
 				// final Scores scores = new ScoresFileImpl(storageFile);
-				final Scores scores = new ScoresHttpImpl("9eba9d1d13f8190d934e3dd0f58f58ca", "http://gemserkscores.appspot.com/");
+				final Scores scores = new ScoresHttpImpl("9eba9d1d13f8190d934e3dd0f58f58ca", "http://gemserkscores.appspot.com/", new ScoreSerializerJSONImpl());
 				getGameProperties().put("scores", scores);
 				getGameProperties().put("executor", Executors.newCachedThreadPool());
 
-				final DataStore dataStore = new DataStoreJSONInFileImpl(storageFile);
+				final DataStore dataStore = new DataStoreJSONInFileImpl(storageFile, new DataSerializerJSONImpl());
 				Collection<Data> profilesData = dataStore.get(Sets.newHashSet("profile", "selected"));
 
 				Data profile = null;

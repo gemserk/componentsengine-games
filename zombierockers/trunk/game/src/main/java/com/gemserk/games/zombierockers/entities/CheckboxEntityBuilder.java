@@ -5,11 +5,12 @@ import java.util.HashMap;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.gemserk.animation4j.componentsengine.UpdateableTimeProvider;
 import com.gemserk.animation4j.componentsengine.components.UpdateTimeProviderComponent;
 import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
-import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
-import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
+import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
+import com.gemserk.animation4j.slick.interpolators.Vector2fInterpolator;
+import com.gemserk.animation4j.time.UpdateableTimeProvider;
+import com.gemserk.animation4j.transitions.AutoUpdateableTransition;
 import com.gemserk.componentsengine.commons.components.ImageRenderableComponent;
 import com.gemserk.componentsengine.entities.Entity;
 import com.gemserk.componentsengine.messages.Message;
@@ -91,8 +92,11 @@ public class CheckboxEntityBuilder extends EntityBuilder {
 			}
 		});
 
-		property("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(slick.color(0f, 0f, 1f, 0.75f)), 0.005f, timeProvider));
-		property("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(slick.vector(1f, 1f)), 0.005f, timeProvider));
+		property("color", new InterpolatedProperty<Color>(new AutoUpdateableTransition<Color>(slick.color(0f, 0f, 1f, 0.75f), new ColorInterpolator(), 0.005f, timeProvider)));
+		property("size", new InterpolatedProperty<Vector2f>(new AutoUpdateableTransition<Vector2f>(slick.vector(1f, 1f), new Vector2fInterpolator(), 0.005f, timeProvider)));
+
+//		property("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(slick.color(0f, 0f, 1f, 0.75f)), 0.005f, timeProvider));
+//		property("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(slick.vector(1f, 1f)), 0.005f, timeProvider));
 
 		property("position", parameters.get("position"));
 

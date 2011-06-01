@@ -7,8 +7,9 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.gemserk.animation4j.componentsengine.properties.InterpolatedProperty;
-import com.gemserk.animation4j.slick.values.ColorInterpolatedValue;
-import com.gemserk.animation4j.slick.values.Vector2fInterpolatedValue;
+import com.gemserk.animation4j.slick.interpolators.ColorInterpolator;
+import com.gemserk.animation4j.slick.interpolators.Vector2fInterpolator;
+import com.gemserk.animation4j.transitions.AutoUpdateableTransition;
 import com.gemserk.componentsengine.components.ReferencePropertyComponent;
 import com.gemserk.componentsengine.components.annotations.EntityProperty;
 import com.gemserk.componentsengine.components.annotations.Handles;
@@ -223,8 +224,11 @@ public class MenuScreenEntityBuilder extends EntityBuilder {
 				put("position", slick.vector(screenBounds.getCenterX(), screenBounds.getMaxY() - 40f));
 				// put("color", new Color(0.4f, 0.4f, 0.6f, 1.0f));
 
-				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(new Color(0.4f, 0.4f, 0.6f, 1.0f)), 0.01f));
-				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(new Vector2f(0.9f, 0.9f)), 0.01f));
+//				put("color", new InterpolatedProperty<Color>(new ColorInterpolatedValue(new Color(0.4f, 0.4f, 0.6f, 1.0f)), 0.01f));
+//				put("size", new InterpolatedProperty<Vector2f>(new Vector2fInterpolatedValue(new Vector2f(0.9f, 0.9f)), 0.01f));
+
+				put("color", new InterpolatedProperty<Color>(new AutoUpdateableTransition<Color>(new Color(0.4f, 0.4f, 0.6f, 1.0f), new ColorInterpolator(), 0.01f)));
+				put("size", new InterpolatedProperty<Vector2f>(new AutoUpdateableTransition<Vector2f>(new Vector2f(0.9f, 0.9f), new Vector2fInterpolator(), 0.01f)));
 
 				put("homePageLinkId", homePageLinkEntityId);
 			}
